@@ -1,9 +1,0 @@
-C:\Users\User\source\repos\archive-system\archivesystemApp\archivesystemDomain\bin\Debug\netstandard2.0\archivesystemDomain.deps.json
-C:\Users\User\source\repos\archive-system\archivesystemApp\archivesystemDomain\bin\Debug\netstandard2.0\archivesystemDomain.dll
-C:\Users\User\source\repos\archive-system\archivesystemApp\archivesystemDomain\bin\Debug\netstandard2.0\archivesystemDomain.pdb
-C:\Users\User\source\repos\archive-system\archivesystemApp\archivesystemDomain\obj\Debug\netstandard2.0\archivesystemDomain.csprojAssemblyReference.cache
-C:\Users\User\source\repos\archive-system\archivesystemApp\archivesystemDomain\obj\Debug\netstandard2.0\archivesystemDomain.csproj.CoreCompileInputs.cache
-C:\Users\User\source\repos\archive-system\archivesystemApp\archivesystemDomain\obj\Debug\netstandard2.0\archivesystemDomain.AssemblyInfoInputs.cache
-C:\Users\User\source\repos\archive-system\archivesystemApp\archivesystemDomain\obj\Debug\netstandard2.0\archivesystemDomain.AssemblyInfo.cs
-C:\Users\User\source\repos\archive-system\archivesystemApp\archivesystemDomain\obj\Debug\netstandard2.0\archivesystemDomain.dll
-C:\Users\User\source\repos\archive-system\archivesystemApp\archivesystemDomain\obj\Debug\netstandard2.0\archivesystemDomain.pdb
