@@ -25,6 +25,36 @@ namespace archivesystemWebUI
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));
+
+
+
+            // Custom theme Bundles
+
+
+                // Scripts
+
+            bundles.Add(new ScriptBundle("~/bundles/custom/jquery").Include(
+                "~/Content/assets/js/jquery-3.5.1.min.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/custom/bootstrap").Include(
+                "~/Content/assets/js/popper.min.js",
+                "~/Content/assets/js/bootstrap.min.js"
+                ));
+            bundles.Add(new ScriptBundle("~/bundles/custom/js").Include(
+                "~/Content/assets/js/jquery.slimscroll.min.js",
+                "~/Content/assets/js/app.js"
+            ));
+
+
+            // Styles
+
+            bundles.Add(new StyleBundle("~/Content/custom/css").Include(
+                "~/Content/assets/css/bootstrap.min.css",
+                "~/Content/assets/css/font-awesome.min.css",
+                "~/Content/assets/css/line-awesome.min.css",
+                "~/Content/assets/css/style.css"
+                ));
+
         }
     }
 }
