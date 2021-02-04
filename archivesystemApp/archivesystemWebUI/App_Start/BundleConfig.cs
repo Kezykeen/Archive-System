@@ -36,13 +36,21 @@ namespace archivesystemWebUI
             bundles.Add(new ScriptBundle("~/bundles/custom/jquery").Include(
                 "~/Content/assets/js/jquery-3.5.1.min.js"));
 
+
             bundles.Add(new ScriptBundle("~/bundles/custom/bootstrap").Include(
                 "~/Content/assets/js/popper.min.js",
                 "~/Content/assets/js/bootstrap.min.js"
                 ));
+
             bundles.Add(new ScriptBundle("~/bundles/custom/js").Include(
                 "~/Content/assets/js/jquery.slimscroll.min.js",
                 "~/Content/assets/js/app.js"
+            ));
+
+            bundles.Add(new ScriptBundle("~/bundles/charts/js").Include(
+                "~/Content/assets/plugins/morris/morris.min.js",
+                "~/Content/assets/plugins/raphael/raphael.min.js",
+                "~/Content/assets/js/chart.js"
             ));
 
 
@@ -54,6 +62,10 @@ namespace archivesystemWebUI
                 "~/Content/assets/css/line-awesome.min.css",
                 "~/Content/assets/css/style.css"
                 ));
+
+            bundles.Add(new StyleBundle("~/Content/charts/css").Include(
+                "~/Content/assets/plugins/morris/morris.css"
+            ));
 
         }
     }

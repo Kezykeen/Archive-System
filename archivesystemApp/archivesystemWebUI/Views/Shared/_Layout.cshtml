@@ -13,7 +13,10 @@
     <link rel="shortcut icon" type="image/x-icon" href="/Content/assets/img/favicon.png">
 
     <!-- CSS Bundle -->
+
+    @Styles.Render("~/Content/charts/css")
     @Styles.Render("~/Content/custom/css")
+
     @Scripts.Render("~/bundles/modernizr")
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -137,8 +140,10 @@
 
     <!-- Bootstrap Core JS -->
     @Scripts.Render("~/bundles/custom/bootstrap")
+    
+    @Scripts.Render("~/bundles/charts/js")
 
-    <!-- Custom JS -->
+<!-- Custom JS -->
     @Scripts.Render("~/bundles/custom/js")
     @RenderSection("scripts", required: false)
     
