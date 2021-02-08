@@ -3,6 +3,8 @@ using Ninject;
 using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
+using archivesystemDomain;
+using archivesystemDomain.Entities;
 
 namespace archivesystemWebUI.Infrastructures
 {
