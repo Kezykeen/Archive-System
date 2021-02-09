@@ -165,7 +165,12 @@ namespace archivesystemWebUI.Controllers
                     if (result.Succeeded)
                     {
                         await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+
+
+                        // Update UserId of Staff class
+                        _unitOfWork.StaffRepo.UpdateUserId(model.Email, user.Id);
+                         _unitOfWork.Save();
+
                         // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                         // Send an email with this link
                         // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
@@ -178,7 +183,7 @@ namespace archivesystemWebUI.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError("EmailNotExisting", "Email does not Exist. Please contact Admin");
+                    ModelState.AddModelError("Email", "Email does not Exist. Please contact Admin");
                     return View(model);
                 }
             }

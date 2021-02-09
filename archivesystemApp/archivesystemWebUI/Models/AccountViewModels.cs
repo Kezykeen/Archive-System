@@ -71,7 +71,7 @@ namespace archivesystemWebUI.Models
 
         [Required(ErrorMessage = "Please input your phone number")]        
         [Display(Name = "Phone Number")]
-        [DataType(DataType.PhoneNumber)]
+        [Phone]
         public string PhoneNumber { get; set; }
 
         [Required]

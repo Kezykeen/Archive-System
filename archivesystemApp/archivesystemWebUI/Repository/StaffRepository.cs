@@ -18,10 +18,24 @@ namespace archivesystemWebUI.Repository
             _db = db;
         }
 
+        public Staff GetStaff(string email)
+        {
+            var staff = _db.Staffs.SingleOrDefault(m => m.Email == email);
+            return staff;
+        }
+
         public bool EmailExists(string email)
         {
-            var staff =   _db.Staffs.SingleOrDefault(m => m.Email == email);
+            var staff = GetStaff(email);
             return staff != null;
+        }
+
+
+        public void UpdateUserId(string email, string id)
+        {
+            var staff = GetStaff(email);
+            staff.UserId = id;
+            _db.SaveChangesAsync();
         }
     }
 }
