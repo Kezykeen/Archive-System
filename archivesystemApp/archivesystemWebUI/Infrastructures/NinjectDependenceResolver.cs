@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Web.Mvc;
 using archivesystemDomain;
 using archivesystemDomain.Entities;
+using archivesystemDomain.Interfaces;
+using archivesystemWebUI.Repository;
 
 namespace archivesystemWebUI.Infrastructures
 {
@@ -30,6 +32,8 @@ namespace archivesystemWebUI.Infrastructures
         private void AddBindings()
         {
             kernel.Bind(typeof(ApplicationDbContext)).ToSelf();
+            kernel.Bind<IStaffRepository>().To<StaffRepository>();
+            kernel.Bind<IUnitOfWork>().To<UnitOfWork>();
         }
     }
 }
