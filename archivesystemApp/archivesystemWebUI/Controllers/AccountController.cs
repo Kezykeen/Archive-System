@@ -167,7 +167,7 @@ namespace archivesystemWebUI.Controllers
                         await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
 
 
-                        // Update UserId of Staff class
+                        // Update UserId of Employee class
                         _unitOfWork.EmployeeRepo.UpdateUserId(model.Email, user.Id);
                         await _unitOfWork.Save();
 
