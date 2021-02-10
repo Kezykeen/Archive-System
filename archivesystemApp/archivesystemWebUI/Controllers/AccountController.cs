@@ -169,7 +169,7 @@ namespace archivesystemWebUI.Controllers
 
                         // Update UserId of Staff class
                         _unitOfWork.StaffRepo.UpdateUserId(model.Email, user.Id);
-                         _unitOfWork.Save();
+                        await _unitOfWork.Save();
 
                         // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                         // Send an email with this link
@@ -183,7 +183,7 @@ namespace archivesystemWebUI.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError("Email", "Email does not Exist. Please contact Admin");
+                    ModelState.AddModelError("Email", @"Email does not Exist. Please contact Admin");
                     return View(model);
                 }
             }

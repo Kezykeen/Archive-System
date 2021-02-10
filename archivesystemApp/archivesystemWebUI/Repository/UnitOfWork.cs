@@ -10,19 +10,20 @@ namespace archivesystemWebUI.Repository
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly ApplicationDbContext _Context;
+        private readonly ApplicationDbContext _context;
 
-        public UnitOfWork(IStaffRepository staffRepository, ApplicationDbContext dbContext)
+        public UnitOfWork(ApplicationDbContext dbContext, IStaffRepository staffRepository )
         {
+            _context = dbContext;
             StaffRepo = staffRepository;
-            _Context = dbContext;
+           
         }
 
         public IStaffRepository StaffRepo { get; }
 
-        public void Save()
+        public async Task Save()
         {
-            _Context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
            
         }
     }

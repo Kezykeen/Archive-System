@@ -11,16 +11,16 @@ namespace archivesystemWebUI.Repository
 {
     public class StaffRepository: IStaffRepository
     {
-        private readonly ApplicationDbContext _db;
+        private readonly ApplicationDbContext _context;
 
-        public StaffRepository(ApplicationDbContext db)
+        public StaffRepository(ApplicationDbContext context)
         {
-            _db = db;
+            _context = context;
         }
 
         public Staff GetStaff(string email)
         {
-            var staff = _db.Staffs.SingleOrDefault(m => m.Email == email);
+            var staff = _context.Staffs.SingleOrDefault(m => m.Email == email);
             return staff;
         }
 
@@ -35,7 +35,7 @@ namespace archivesystemWebUI.Repository
         {
             var staff = GetStaff(email);
             staff.UserId = id;
-            _db.SaveChangesAsync();
+           
         }
     }
 }

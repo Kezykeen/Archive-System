@@ -8,6 +8,6 @@ namespace archivesystemDomain.Interfaces
     public interface IUnitOfWork
     {
         IStaffRepository StaffRepo { get; }
-        void Save();
+        Task Save();
     }
 }

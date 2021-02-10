@@ -11,10 +11,7 @@ namespace archivesystemWebUI.Infrastructures
         {
         }
 
-        static ApplicationDbContext()
-        {
-            Database.SetInitializer<ApplicationDbContext>(new IdentityDbInit());
-        }
+       
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();
