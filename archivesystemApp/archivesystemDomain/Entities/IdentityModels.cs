@@ -16,4 +16,17 @@ namespace archivesystemDomain.Entities
             return userIdentity;
         }
     }
+
+    public class ApplicationRole : IdentityRole
+    {
+        public ApplicationRole() : base()
+        {
+
+        }
+
+        public ApplicationRole(string rolename) : base(rolename)
+        {
+
+        }
+    }
 }
