@@ -7,7 +7,7 @@ namespace archivesystemDomain.Interfaces
 {
     public interface IUnitOfWork
     {
-        IStaffRepository StaffRepo { get; }
+        IEmployeeRepository EmployeeRepo { get; }
         Task Save();
     }
 }

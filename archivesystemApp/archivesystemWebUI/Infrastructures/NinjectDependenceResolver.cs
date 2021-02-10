@@ -32,7 +32,7 @@ namespace archivesystemWebUI.Infrastructures
         private void AddBindings()
         {
             kernel.Bind(typeof(ApplicationDbContext)).ToSelf();
-            kernel.Bind<IStaffRepository>().To<StaffRepository>();
+            kernel.Bind<IEmployeeRepository>().To<EmployeeRepository>();
             kernel.Bind<IUnitOfWork>().To<UnitOfWork>();
         }
     }

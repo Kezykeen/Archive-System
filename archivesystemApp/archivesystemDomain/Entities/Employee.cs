@@ -4,7 +4,7 @@ using System.Text;
 
 namespace archivesystemDomain.Entities
 {
-    public class Staff
+    public class Employee
     {
         public int Id { get; set; }
         public string UserId { get; set; }

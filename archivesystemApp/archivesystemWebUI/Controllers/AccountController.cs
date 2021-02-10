@@ -157,7 +157,7 @@ namespace archivesystemWebUI.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (_unitOfWork.StaffRepo.EmailExists(model.Email))
+                if (_unitOfWork.EmployeeRepo.EmailExists(model.Email))
                 {
 
                     var user = new ApplicationUser { UserName = model.Email, Email = model.Email, PhoneNumber = model.PhoneNumber};
@@ -168,7 +168,7 @@ namespace archivesystemWebUI.Controllers
 
 
                         // Update UserId of Staff class
-                        _unitOfWork.StaffRepo.UpdateUserId(model.Email, user.Id);
+                        _unitOfWork.EmployeeRepo.UpdateUserId(model.Email, user.Id);
                         await _unitOfWork.Save();
 
                         // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771

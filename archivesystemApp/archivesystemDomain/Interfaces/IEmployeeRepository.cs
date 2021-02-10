@@ -5,10 +5,10 @@ using System.Text;
 
 namespace archivesystemDomain.Interfaces
 {
-    public interface IStaffRepository
+    public interface IEmployeeRepository
     {
         bool EmailExists(string email);
-        Staff GetStaff(string email);
+        Employee GetEmployee(string email);
         void UpdateUserId(string email, string id);
     }
 }

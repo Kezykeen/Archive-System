@@ -12,14 +12,14 @@ namespace archivesystemWebUI.Repository
     {
         private readonly ApplicationDbContext _context;
 
-        public UnitOfWork(ApplicationDbContext dbContext, IStaffRepository staffRepository )
+        public UnitOfWork(ApplicationDbContext dbContext, IEmployeeRepository employeeRepository )
         {
             _context = dbContext;
-            StaffRepo = staffRepository;
+            EmployeeRepo = employeeRepository;
            
         }
 
-        public IStaffRepository StaffRepo { get; }
+        public IEmployeeRepository EmployeeRepo { get; }
 
         public async Task Save()
         {

@@ -9,32 +9,32 @@ using System.Web;
 
 namespace archivesystemWebUI.Repository
 {
-    public class StaffRepository: IStaffRepository
+    public class EmployeeRepository: IEmployeeRepository
     {
         private readonly ApplicationDbContext _context;
 
-        public StaffRepository(ApplicationDbContext context)
+        public EmployeeRepository(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public Staff GetStaff(string email)
+        public Employee GetEmployee(string email)
         {
-            var staff = _context.Staffs.SingleOrDefault(m => m.Email == email);
-            return staff;
+            var employee = _context.Employees.SingleOrDefault(m => m.Email == email);
+            return employee;
         }
 
         public bool EmailExists(string email)
         {
-            var staff = GetStaff(email);
-            return staff != null;
+            var employee = GetEmployee(email);
+            return employee != null;
         }
 
 
         public void UpdateUserId(string email, string id)
         {
-            var staff = GetStaff(email);
-            staff.UserId = id;
+            var employee = GetEmployee(email);
+            employee.UserId = id;
            
         }
     }
