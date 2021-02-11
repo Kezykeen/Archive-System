@@ -16,10 +16,12 @@ namespace archivesystemWebUI.Repository
         {
             _context = context;
             EmployeeRepo = new EmployeeRepository(context);
+            RoleRepo = new RoleRepository();
            
         }
 
         public IEmployeeRepository EmployeeRepo { get; }
+        public IRoleRepository RoleRepo { get; }
 
         public async Task Save()
         {

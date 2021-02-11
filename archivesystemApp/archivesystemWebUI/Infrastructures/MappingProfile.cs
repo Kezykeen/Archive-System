@@ -6,10 +6,12 @@ using System.Web;
 
 namespace archivesystemWebUI.Infrastructures
 {
-    public class MappingProfile: Profile
+    public class MappingProfile : Profile
     {
         public MappingProfile()
         {
-            
+
+        }
+
     }
 }
