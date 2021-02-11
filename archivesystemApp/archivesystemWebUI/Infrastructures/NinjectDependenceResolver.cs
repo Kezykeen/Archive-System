@@ -34,6 +34,7 @@ namespace archivesystemWebUI.Infrastructures
             kernel.Bind(typeof(ApplicationDbContext)).ToSelf();
             kernel.Bind<IEmployeeRepository>().To<EmployeeRepository>();
             kernel.Bind<IUnitOfWork>().To<UnitOfWork>();
+            kernel.Bind<IAccessLevelRepository>().To<AccessLevelRepository>();
         }
     }
 }
