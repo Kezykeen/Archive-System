@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace archivesystemWebUI.Controllers
 {
-    public class RoleAdminController : Controller
+    public class RoleController : Controller
     {
         private ApplicationRoleManager RoleManager
         {
@@ -21,24 +21,31 @@ namespace archivesystemWebUI.Controllers
             }
         }
 
+        private ApplicationUserManager UserManager
+        {
+            get
+            {
+                return HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+        }
+
         // GET: RoleAdmin
         public ActionResult Index()
         {
-            //return View(RoleManager.Roles);
-            return Content("This is the list of roles page");
+            var roles = RoleManager.Roles.ToList();
+            return View(roles);
         }
 
-        //GET: /roleadmin/newrole
-        [Route("roleadmin/newrole")]
+        //GET: /roleadmin/newrole 
+        [Route("role/add")]
         [HttpGet()]
         public ActionResult Create()
         {
             return View("NewUserRoleView");
         }
 
-
         //POST: /roleadmin/newrole
-        [Route("roleadmin/newrole")]
+        [Route("role/add")]
         [HttpPost]
         public async Task<ActionResult> Create(NewRoleViewModel _role)
         {
@@ -55,6 +62,29 @@ namespace archivesystemWebUI.Controllers
             return RedirectToAction("Index");
         }
 
+        //POST: /roleadmin/delete
+        [HttpPost]
+        public ActionResult Delete(string roleId)
+        {
+            var role = RoleManager.FindById(roleId);
+            if (role != null)
+                RoleManager.Delete(role);
+
+            return RedirectToAction("Index");
+        }
+
+        //POST: /roleadmin/getusers
+        //[HttpPost]
+        //public ActionResult GetUsers(string roleId)
+        //{
+        //    ApplicationRole role=RoleManager.FindById(roleId);
+        //    var users=role.Users;
+        //    List<>
+        //    foreach(ApplicationUser user in users)
+        //    {
+        //      HttpContext.User.Identity.Name
+        //    }
+        //}
 
         private void AddErrorsFromResult(IdentityResult result)
         {
@@ -65,14 +95,6 @@ namespace archivesystemWebUI.Controllers
         }
 
 
-        [HttpPost]
-        public ActionResult Delete(string roleId)
-        {
-            var role=RoleManager.FindById(roleId);
-            if (role != null)
-                RoleManager.DeleteAsync(role);
-
-            return RedirectToAction("Index");
-        }
+        
     }
 }

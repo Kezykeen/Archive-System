@@ -9,4 +9,20 @@ namespace archivesystemWebUI.Models
     {
         public string Name { get; set; }
     }
+
+
+
+
+    public class UsersInRole
+    {
+        public Guid UserId { get; set; }
+        public string Name { get; set; }
+    }
+
+    public class UsersInRoleViewModel
+    {
+        public string RoleId { get; set; }
+
+        public IEnumerable<UsersInRole> Users { get; set; }
+    }
 }
