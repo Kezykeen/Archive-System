@@ -12,5 +12,7 @@ namespace archivesystemDomain.Interfaces
         IEnumerable<ApplicationRole> GetAllRoles();
         void DeleteRole(string roleId);
         Task<IdentityResult> AddRole(string _roleName);
+
+        Task<IdentityResult> EditRole(string oldName, string newName);
     }
 }

@@ -12,11 +12,12 @@ namespace archivesystemWebUI.Repository
     {
         private readonly ApplicationDbContext _context;
 
-        public UnitOfWork(ApplicationDbContext context )
+        public UnitOfWork(ApplicationDbContext context,IRoleRepository roleRepository )
+
         {
             _context = context;
             EmployeeRepo = new EmployeeRepository(context);
-            RoleRepo = new RoleRepository();
+            RoleRepo = roleRepository;
            
         }
 

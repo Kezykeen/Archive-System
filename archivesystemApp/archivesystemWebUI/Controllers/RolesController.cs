@@ -72,6 +72,22 @@ namespace archivesystemWebUI.Controllers
         //    }
         //}
 
+        public ActionResult Update(string oldName)
+        {
+            return View("EditRoleView", new EditRoleViewModel() { OldName = oldName, NewName = "" });
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Update(EditRoleViewModel model)
+        {
+            var result= await unitOfWork.RoleRepo.EditRole(model.OldName, model.NewName);
+            if (result.Succeeded)
+                return RedirectToAction("Index");
+
+            AddErrorsFromResult(result);
+            return View("EditRoleView", model);
+        }
+
         private void AddErrorsFromResult(IdentityResult result)
         {
             foreach (string error in result.Errors)
