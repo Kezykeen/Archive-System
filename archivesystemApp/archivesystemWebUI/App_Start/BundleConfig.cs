@@ -60,7 +60,8 @@ namespace archivesystemWebUI
                 "~/Content/assets/css/bootstrap.min.css",
                 "~/Content/assets/css/font-awesome.min.css",
                 "~/Content/assets/css/line-awesome.min.css",
-                "~/Content/assets/css/style.css"
+                "~/Content/assets/css/style.css",
+                "~/Content/assets/css/archive-custom.css"
                 ));
 
             bundles.Add(new StyleBundle("~/Content/charts/css").Include(

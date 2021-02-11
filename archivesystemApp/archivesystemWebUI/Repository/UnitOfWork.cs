@@ -12,24 +12,19 @@ namespace archivesystemWebUI.Repository
     {
         private readonly ApplicationDbContext _context;
 
-        public UnitOfWork(ApplicationDbContext context )
+        public UnitOfWork(ApplicationDbContext context,IRoleRepository roleRepository )
+
         {
             _context = context;
             EmployeeRepo = new EmployeeRepository(context);
-            AccessLevelRepo = new AccessLevelRepository(context);
-;           
+            RoleRepo = roleRepository;
+           
         }
 
         public IEmployeeRepository EmployeeRepo { get; }
-        public IAccessLevelRepository AccessLevelRepo { get; }
+        public IRoleRepository RoleRepo { get; }
 
-        public void Save()
-        {
-            _context.SaveChanges();
-           
-        }
-        
-        public async Task SaveAsync()
+        public async Task Save()
         {
             await _context.SaveChangesAsync();
            
