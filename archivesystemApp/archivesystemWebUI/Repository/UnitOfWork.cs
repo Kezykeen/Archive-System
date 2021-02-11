@@ -12,10 +12,10 @@ namespace archivesystemWebUI.Repository
     {
         private readonly ApplicationDbContext _context;
 
-        public UnitOfWork(ApplicationDbContext dbContext, IEmployeeRepository employeeRepository )
+        public UnitOfWork(ApplicationDbContext context )
         {
-            _context = dbContext;
-            EmployeeRepo = employeeRepository;
+            _context = context;
+            EmployeeRepo = new EmployeeRepository(context);
            
         }
 
