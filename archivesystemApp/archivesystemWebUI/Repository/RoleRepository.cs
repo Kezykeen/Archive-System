@@ -43,12 +43,20 @@ namespace archivesystemWebUI.Repository
 
         public async Task<IdentityResult> AddRole (string _roleName)
         {
-            ApplicationRole role = new ApplicationRole(_roleName);
+            ApplicationRole role = new ApplicationRole() { Name=_roleName,CreatedAt=DateTime.Now,UpDatedAt=DateTime.Now};
+
             IdentityResult result = await RoleManager.CreateAsync(role);
             return result;   
         }
 
-        //public async Task<IdentiyResult> EditRole ()
+        public async Task<IdentityResult> EditRole(string oldName, string newName)
+        {
+           ApplicationRole role=  await RoleManager.FindByNameAsync(oldName);
+           role.Name = newName;
+           role.UpDatedAt = DateTime.Now;
+           var result =await RoleManager.UpdateAsync(role);
+           return result;
+        }
 
         
     }

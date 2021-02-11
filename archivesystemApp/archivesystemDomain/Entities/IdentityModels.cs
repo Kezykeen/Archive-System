@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
@@ -28,5 +29,8 @@ namespace archivesystemDomain.Entities
         {
 
         }
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpDatedAt { get; set; }
     }
 }

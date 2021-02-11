@@ -10,7 +10,12 @@ namespace archivesystemWebUI.Models
         public string Name { get; set; }
     }
 
+    public class EditRoleViewModel
+    {
+        public  string OldName { get; set; }
 
+        public string NewName { get; set; }
+    }
 
 
     public class UsersInRole

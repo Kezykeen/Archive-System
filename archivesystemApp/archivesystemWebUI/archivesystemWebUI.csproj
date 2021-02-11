@@ -220,6 +220,10 @@
     <Compile Include="Migrations\202102111104570_changeName.Designer.cs">
       <DependentUpon>202102111104570_changeName.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202102111443400_addDateTimeColumnsToRoleTable.cs" />
+    <Compile Include="Migrations\202102111443400_addDateTimeColumnsToRoleTable.Designer.cs">
+      <DependentUpon>202102111443400_addDateTimeColumnsToRoleTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccessLevelViewModel.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -411,6 +415,7 @@
     <Content Include="Views\Shared\_AccountLayout.cshtml" />
     <Content Include="Views\Roles\NewUserRoleView.cshtml" />
     <Content Include="Views\Roles\Index.cshtml" />
+    <Content Include="Views\Roles\EditRoleView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -453,6 +458,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202102111104570_changeName.resx">
       <DependentUpon>202102111104570_changeName.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102111443400_addDateTimeColumnsToRoleTable.resx">
+      <DependentUpon>202102111443400_addDateTimeColumnsToRoleTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

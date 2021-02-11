@@ -56,24 +56,27 @@
                             <tbody>
                                 @foreach (ApplicationRole role in Model)
                                 {
-                                    <tr>
-                                        <td>@role.Id</td>
-                                        <td>@role.Name</td>
-                                        <td>
-                                            @using (Html.BeginForm())
-                                            {
+                                <tr>
+                                    <td>@role.Id</td>
+                                    <td>@role.Name</td>
+                                    <td>
+                                        @using (Html.BeginForm())
+                                        {
 
-                                                <button class="btn btn-outline-dark"> View Users</button>
-                                            }
-                                        </td>
-                                        <td>
-                                            @using (Html.BeginForm("Delete", "Roles", FormMethod.Post, new { roleId = @role.Id }))
-                                            {
-                                                @Html.Hidden("roleId", role.Id)
-                                                <button class="btn btn-danger" type="submit">Delete</button>
-                                            }
-                                        </td>
-                                    </tr>
+                                            <button class="btn btn-outline-dark"> View Users</button>
+                                        }
+                                    </td>
+                                    <td>
+                                        @using (Html.BeginForm("Delete", "Roles", FormMethod.Post, new { roleId = @role.Id }))
+                                        {
+                                            @Html.Hidden("roleId", role.Id)
+                                            <button class="btn btn-danger" type="submit">Delete</button>
+                                        }
+                                    </td>
+                                    <td>
+                                        @Html.ActionLink("Edit Role","Update", new { oldName=role.Name}, new { @class="btn btn-outline-dark"} )
+                                    </td>
+                                </tr>
                                 }
 
 
