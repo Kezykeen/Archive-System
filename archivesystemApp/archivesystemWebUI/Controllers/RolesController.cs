@@ -8,68 +8,54 @@ using Microsoft.AspNet.Identity;
 using archivesystemDomain.Entities;
 using archivesystemWebUI.Models;
 using System.Threading.Tasks;
+using archivesystemDomain.Interfaces;
 
 namespace archivesystemWebUI.Controllers
 {
-    public class RoleController : Controller
+    public class RolesController : Controller
     {
-        private ApplicationRoleManager RoleManager
+        private IUnitOfWork unitOfWork;
+        public RolesController(IUnitOfWork unitOfWork)
         {
-            get
-            {
-                return HttpContext.GetOwinContext().GetUserManager<ApplicationRoleManager>();
-            }
+            this.unitOfWork = unitOfWork;  
         }
+        
 
-        private ApplicationUserManager UserManager
-        {
-            get
-            {
-                return HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-        }
-
-        // GET: RoleAdmin
+        // GET: /role
+       
         public ActionResult Index()
         {
-            var roles = RoleManager.Roles.ToList();
-            return View(roles);
+            return View(unitOfWork.RoleRepo.GetAllRoles());
         }
 
-        //GET: /roleadmin/newrole 
-        [Route("role/add")]
+        //GET: /role/add 
+        [Route("roles/add")]
         [HttpGet()]
         public ActionResult Create()
         {
             return View("NewUserRoleView");
         }
 
-        //POST: /roleadmin/newrole
-        [Route("role/add")]
+        //POST: /role/add
+        [Route("roles/add")]
         [HttpPost]
         public async Task<ActionResult> Create(NewRoleViewModel _role)
         {
-            ApplicationRole role = new ApplicationRole(_role.Name);
-            IdentityResult result=await RoleManager.CreateAsync(role);
-            if (result.Succeeded)
-            {
-                return RedirectToAction("Index");
-            }
-            else
+            var result=await unitOfWork.RoleRepo.AddRole(_role.Name);
+            if (!result.Succeeded)
             {
                 AddErrorsFromResult(result);
+                return View("NewUserRoleView", _role);
             }
+                
             return RedirectToAction("Index");
         }
 
-        //POST: /roleadmin/delete
+        //POST: /role/delete
         [HttpPost]
         public ActionResult Delete(string roleId)
         {
-            var role = RoleManager.FindById(roleId);
-            if (role != null)
-                RoleManager.Delete(role);
-
+            unitOfWork.RoleRepo.DeleteRole(roleId); 
             return RedirectToAction("Index");
         }
 

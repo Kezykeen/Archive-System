@@ -13,7 +13,7 @@ namespace archivesystemWebUI.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "202102101351449_changeName"; }
+            get { return "202102111104570_changeName"; }
         }
         
         string IMigrationMetadata.Source

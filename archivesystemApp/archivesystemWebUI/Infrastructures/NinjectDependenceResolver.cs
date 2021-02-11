@@ -33,6 +33,7 @@ namespace archivesystemWebUI.Infrastructures
         {
             kernel.Bind(typeof(ApplicationDbContext)).ToSelf();
             kernel.Bind<IEmployeeRepository>().To<EmployeeRepository>();
+            kernel.Bind<IRoleRepository>().To<RoleRepository>();
             kernel.Bind<IUnitOfWork>().To<UnitOfWork>();
         }
     }
