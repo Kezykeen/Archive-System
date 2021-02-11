@@ -7,7 +7,9 @@ namespace archivesystemDomain.Entities
     public class AccessLevel
     {
         public int Id { get; set; }
-        public string Level { get; set; }
+        public int Level { get; set; }
         public string LevelName { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using archivesystemDomain.Entities;
 using archivesystemDomain.Interfaces;
 using archivesystemWebUI.Infrastructures;
+using archivesystemWebUI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,9 +18,11 @@ namespace archivesystemWebUI.Repository
             _context = context;
         }
 
-        public void CreateAccess()
+
+        public IEnumerable<AccessLevel> AccessLevels { get { return _context.AccessLevels.ToList(); } }
+        public void CreateAccess(AccessLevel newAccess)
         {
-           
+            _context.AccessLevels.Add(newAccess);
         }
     }
 }

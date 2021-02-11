@@ -169,7 +169,7 @@ namespace archivesystemWebUI.Controllers
 
                         // Update UserId of Employee class
                         _unitOfWork.EmployeeRepo.UpdateUserId(model.Email, user.Id);
-                        await _unitOfWork.Save();
+                        await _unitOfWork.SaveAsync();
 
                         // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                         // Send an email with this link

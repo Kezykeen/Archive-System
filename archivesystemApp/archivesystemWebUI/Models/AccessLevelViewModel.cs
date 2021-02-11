@@ -10,10 +10,11 @@ namespace archivesystemWebUI.Models
     {
         [Required(ErrorMessage ="Please input the level as a digit(1,2,3 ....")]
         [Display(Name = "Level")]
-        public string Level { get; set; }
+        public int Level { get; set; }
 
         [Required(ErrorMessage = "Please input the name of the Access Level")]
         [Display(Name = "Name")]
         public string LevelName { get; set; }
+
     }
 }

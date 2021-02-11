@@ -405,10 +405,10 @@
     <Content Include="Views\Shared\_AccountLayout.cshtml" />
     <Content Include="Views\Employees\Index.cshtml" />
     <Content Include="Views\RoleAdmin\NewUserRoleView.cshtml" />
+    <Content Include="Views\AccessLevel\Dashboard.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\AccessLevel\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

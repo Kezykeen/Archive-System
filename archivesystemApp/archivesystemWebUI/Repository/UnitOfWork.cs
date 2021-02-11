@@ -16,12 +16,20 @@ namespace archivesystemWebUI.Repository
         {
             _context = context;
             EmployeeRepo = new EmployeeRepository(context);
-           
+            AccessLevelRepo = new AccessLevelRepository(context);
+;           
         }
 
         public IEmployeeRepository EmployeeRepo { get; }
+        public IAccessLevelRepository AccessLevelRepo { get; }
 
-        public async Task Save()
+        public void Save()
+        {
+            _context.SaveChanges();
+           
+        }
+        
+        public async Task SaveAsync()
         {
             await _context.SaveChangesAsync();
            

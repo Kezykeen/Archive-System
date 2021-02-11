@@ -19,5 +19,6 @@ namespace archivesystemWebUI.Infrastructures
 
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Department> Departments { get; set; }
+        public DbSet<AccessLevel> AccessLevels { get; set; }
     }
 }
