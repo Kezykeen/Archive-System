@@ -20,6 +20,12 @@ namespace archivesystemWebUI.Repository
 
 
         public IEnumerable<AccessLevel> AccessLevels { get { return _context.AccessLevels.ToList(); } }
+
+        public AccessLevel GetAccessLevel(int levelNo)
+        {
+            var accessLevel = _context.AccessLevels.SingleOrDefault(m => m.Level == levelNo);
+            return accessLevel;
+        }
         public void CreateAccess(AccessLevel newAccess)
         {
             _context.AccessLevels.Add(newAccess);

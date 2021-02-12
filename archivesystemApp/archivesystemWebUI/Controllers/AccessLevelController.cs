@@ -48,19 +48,27 @@ namespace archivesystemWebUI.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(CreateAccessLevelViewModel model)
         {
-            try
+            if (ModelState.IsValid)
             {
-                // TODO: Add insert logic here
-                var newAccess = new AccessLevel { Level = model.Level, LevelName = model.LevelName, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now};
-                _unitOfWork.AccessLevelRepo.CreateAccess(newAccess);
-                await _unitOfWork.SaveAsync();
-                return RedirectToAction("Index");
+                try
+                {                    // TODO: Add insert logic here
+                    var newAccess = new AccessLevel { Level = model.Level, LevelName = model.LevelName, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now };
+                    _unitOfWork.AccessLevelRepo.CreateAccess(newAccess);
+                    await _unitOfWork.SaveAsync();
+                    return RedirectToAction("Index");
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError("", e.Message);
+                    return View(model);
+                }
             }
-            catch(Exception e)
-            {
-                ModelState.AddModelError("", e.Message);
-                return View(model);
-            }
+            return View(model);
+        }
+
+        public ActionResult ManageUserAccess()
+        {
+            return View();
         }
 
         // GET: AccessLevel/Edit/5
