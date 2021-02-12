@@ -12,7 +12,9 @@ namespace archivesystemWebUI
                         "~/Scripts/jquery-{version}.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
-                        "~/Scripts/jquery.validate*"));
+                        "~/Scripts/jquery.validate*",
+                        "~/Content/assets/js/select2.min.js"
+                        ));
 
             // Use the development version of Modernizr to develop with and learn from. Then, when you're
             // ready for production, use the build tool at https://modernizr.com to pick only the tests you need.
@@ -60,6 +62,8 @@ namespace archivesystemWebUI
                 "~/Content/assets/css/bootstrap.min.css",
                 "~/Content/assets/css/font-awesome.min.css",
                 "~/Content/assets/css/line-awesome.min.css",
+                "~/Content/assets/css/select2.min.css",
+                "~/Content/assets/css/style.css",
                 "~/Content/assets/css/style.css",
                 "~/Content/assets/css/archive-custom.css"
                 ));

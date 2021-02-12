@@ -1,3 +1,4 @@
+using archivesystemDomain.Entities;
 using archivesystemWebUI.Infrastructures;
 
 namespace archivesystemWebUI.Migrations

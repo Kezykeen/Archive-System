@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace archivesystemDomain.Entities
 {
@@ -7,7 +8,12 @@ namespace archivesystemDomain.Entities
         public int Id { get; set; }
 
         public string Name { get; set; }
-        public DateTime UpdatedAt { get; set; }
-        public DateTime CreatedAt { get; set; }
+
+        [Display(Name = "Faculty")] public int FacultyId { get; set; }
+        public Faculty Faculty { get; set; }
+
+        [Display(Name = "Created At")] public DateTime CreatedAt { get; set; }
+
+        [Display(Name = "Updated At")] public DateTime UpdatedAt { get; set; }
     }
 }

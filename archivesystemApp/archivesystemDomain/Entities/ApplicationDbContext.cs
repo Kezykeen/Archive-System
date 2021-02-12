@@ -1,8 +1,7 @@
 ﻿using System.Data.Entity;
-using archivesystemDomain.Entities;
 using Microsoft.AspNet.Identity.EntityFramework;
 
-namespace archivesystemWebUI.Infrastructures
+namespace archivesystemDomain.Entities
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
@@ -19,6 +18,7 @@ namespace archivesystemWebUI.Infrastructures
 
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Department> Departments { get; set; }
+        public DbSet<Faculty> Faculties { get; set; }
         public DbSet<AccessLevel> AccessLevels { get; set; }
     }
 }

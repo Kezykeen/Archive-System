@@ -7,13 +7,13 @@ namespace archivesystemWebUI.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class addUserRolesTable : IMigrationMetadata
+    public sealed partial class DeptFacultyModelAdded : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(addUserRolesTable));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(DeptFacultyModelAdded));
         
         string IMigrationMetadata.Id
         {
-            get { return "202102101139587_addUserRolesTable"; }
+            get { return "202102121300258_DeptFacultyModelAdded"; }
         }
         
         string IMigrationMetadata.Source

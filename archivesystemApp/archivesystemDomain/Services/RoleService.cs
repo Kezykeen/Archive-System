@@ -1,33 +1,21 @@
-﻿using archivesystemDomain.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
+using archivesystemDomain.Entities;
+using archivesystemDomain.Interfaces;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
-using Microsoft.AspNet.Identity.EntityFramework;
-using System.Web.Mvc;
-using archivesystemDomain.Entities;
-using archivesystemWebUI.Models;
-using System.Threading.Tasks;
-using Microsoft.Owin;
 
-namespace archivesystemWebUI.Repository
+namespace archivesystemDomain.Services
 {
-    public class RoleRepository : IRoleRepository
+    public class RoleService : IRoleService
     {
-        private HttpContext Context => HttpContext.Current;
+        private static HttpContext  Context => HttpContext.Current;
 
-
-        private ApplicationRoleManager RoleManager
-        {
-            get
-            {
-                return Context.GetOwinContext().Get<ApplicationRoleManager>();
-            }
-        } 
-
-        //private ApplicationUserManager UserManager => HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+        
+        private ApplicationRoleManager RoleManager => Context.GetOwinContext().GetUserManager<ApplicationRoleManager>();
 
         public IEnumerable<ApplicationRole> GetAllRoles()
         {
@@ -43,7 +31,7 @@ namespace archivesystemWebUI.Repository
 
         public async Task<IdentityResult> AddRole (string _roleName)
         {
-            ApplicationRole role = new ApplicationRole() { Name=_roleName,CreatedAt=DateTime.Now,UpDatedAt=DateTime.Now};
+            ApplicationRole role = new ApplicationRole { Name=_roleName,CreatedAt=DateTime.Now,UpDatedAt=DateTime.Now};
 
             IdentityResult result = await RoleManager.CreateAsync(role);
             return result;   

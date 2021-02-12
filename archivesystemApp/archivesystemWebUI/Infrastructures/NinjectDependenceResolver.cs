@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using archivesystemDomain;
 using archivesystemDomain.Entities;
 using archivesystemDomain.Interfaces;
+using archivesystemDomain.Services;
 using archivesystemWebUI.Repository;
 using Ninject.Web.Common;
 
@@ -32,9 +33,10 @@ namespace archivesystemWebUI.Infrastructures
 
         private void AddBindings()
         {
-            kernel.Bind(typeof(ApplicationDbContext)).ToSelf();
+            kernel.Bind(typeof(ApplicationDbContext)).ToSelf().InRequestScope();
             kernel.Bind<IEmployeeRepository>().To<EmployeeRepository>();
-            kernel.Bind<IRoleRepository>().To<RoleRepository>();
+            kernel.Bind<IDeptRepository>().To<DeptRepository>();
+            kernel.Bind<IRoleService>().To<RoleService>();
             kernel.Bind<IUnitOfWork>().To<UnitOfWork>();
             kernel.Bind<IAccessLevelRepository>().To<AccessLevelRepository>();
         }

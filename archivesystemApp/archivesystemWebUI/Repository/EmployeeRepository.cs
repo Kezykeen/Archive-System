@@ -9,11 +9,12 @@ using System.Web;
 
 namespace archivesystemWebUI.Repository
 {
-    public class EmployeeRepository: IEmployeeRepository
+    public class EmployeeRepository: Repository<Employee> , IEmployeeRepository
     {
         private readonly ApplicationDbContext _context;
 
         public EmployeeRepository(ApplicationDbContext context)
+        :base(context)
         {
             _context = context;
         }
@@ -37,5 +38,7 @@ namespace archivesystemWebUI.Repository
             employee.UserId = id;
            
         }
+
+        public ApplicationDbContext ApplicationDbContext => Context as ApplicationDbContext;
     }
 }

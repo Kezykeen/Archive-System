@@ -1,21 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using System.Web;
-using archivesystemDomain;
 using archivesystemDomain.Entities;
-using archivesystemWebUI.Infrastructures;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
-using archivesystemWebUI.Models;
 
-namespace archivesystemWebUI
+namespace archivesystemDomain.Services
 {
     public class EmailService : IIdentityMessageService
     {
@@ -120,7 +113,7 @@ namespace archivesystemWebUI
         public static ApplicationRoleManager Create(IdentityFactoryOptions<ApplicationRoleManager> options,IOwinContext context)
         {
             
-            var manager = new ApplicationRoleManager(new RoleStore<ApplicationRole>(context.Get<ApplicationDbContext>()));
+          
             return  new ApplicationRoleManager(new RoleStore<ApplicationRole>(context.Get<ApplicationDbContext>()));
         }
     }

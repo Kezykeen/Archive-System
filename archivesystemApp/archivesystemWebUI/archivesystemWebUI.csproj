@@ -52,6 +52,13 @@
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Owin, Version=4.1.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.4.1.1\lib\net45\Microsoft.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=4.1.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.4.1.1\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
     <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <HintPath>..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
     </Reference>
@@ -63,6 +70,10 @@
     </Reference>
     <Reference Include="Ninject.Web.Mvc, Version=3.3.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <HintPath>..\packages\Ninject.MVC5.3.3.0\lib\net45\Ninject.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -148,46 +159,19 @@
     <Reference Include="Microsoft.AspNet.Identity.EntityFramework">
       <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.3\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
     </Reference>
-    <Reference Include="Owin">
-      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin">
-      <HintPath>..\packages\Microsoft.Owin.4.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Host.SystemWeb">
-      <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.4.0.1\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security">
-      <HintPath>..\packages\Microsoft.Owin.Security.4.0.1\lib\net45\Microsoft.Owin.Security.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security.Cookies">
-      <HintPath>..\packages\Microsoft.Owin.Security.Facebook.4.0.1\lib\net45\Microsoft.Owin.Security.Facebook.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Owin.Security.Cookies">
       <HintPath>..\packages\Microsoft.Owin.Security.Cookies.4.0.1\lib\net45\Microsoft.Owin.Security.Cookies.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security.Google">
-      <HintPath>..\packages\Microsoft.Owin.Security.Google.4.0.1\lib\net45\Microsoft.Owin.Security.Google.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security.Twitter">
-      <HintPath>..\packages\Microsoft.Owin.Security.Twitter.4.0.1\lib\net45\Microsoft.Owin.Security.Twitter.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security.MicrosoftAccount">
-      <HintPath>..\packages\Microsoft.Owin.Security.MicrosoftAccount.4.0.1\lib\net45\Microsoft.Owin.Security.MicrosoftAccount.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security.OAuth">
-      <HintPath>..\packages\Microsoft.Owin.Security.OAuth.4.0.1\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
-    <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\NinjectWebCommon.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccessLevelController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\EmployeesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
@@ -200,45 +184,22 @@
     <Compile Include="Migrations\202102081444191_Initial.Designer.cs">
       <DependentUpon>202102081444191_Initial.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202102081536245_DeptStaffModelCreated.cs" />
-    <Compile Include="Migrations\202102081536245_DeptStaffModelCreated.Designer.cs">
-      <DependentUpon>202102081536245_DeptStaffModelCreated.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202102101021366_SeedDepartMent.cs" />
-    <Compile Include="Migrations\202102101021366_SeedDepartMent.Designer.cs">
-      <DependentUpon>202102101021366_SeedDepartMent.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202102101133227_ChangedStaffToEmployee.cs" />
-    <Compile Include="Migrations\202102101133227_ChangedStaffToEmployee.Designer.cs">
-      <DependentUpon>202102101133227_ChangedStaffToEmployee.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202102101139587_addUserRolesTable.cs" />
-    <Compile Include="Migrations\202102101139587_addUserRolesTable.Designer.cs">
-      <DependentUpon>202102101139587_addUserRolesTable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202102111104570_changeName.cs" />
-    <Compile Include="Migrations\202102111104570_changeName.Designer.cs">
-      <DependentUpon>202102111104570_changeName.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202102111443400_addDateTimeColumnsToRoleTable.cs" />
-    <Compile Include="Migrations\202102111443400_addDateTimeColumnsToRoleTable.Designer.cs">
-      <DependentUpon>202102111443400_addDateTimeColumnsToRoleTable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202102112111453_AddedAccessLevelTable.cs" />
-    <Compile Include="Migrations\202102112111453_AddedAccessLevelTable.Designer.cs">
-      <DependentUpon>202102112111453_AddedAccessLevelTable.cs</DependentUpon>
+    <Compile Include="Migrations\202102121300258_DeptFacultyModelAdded.cs" />
+    <Compile Include="Migrations\202102121300258_DeptFacultyModelAdded.Designer.cs">
+      <DependentUpon>202102121300258_DeptFacultyModelAdded.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccessLevelViewModel.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Infrastructures\ApplicationDbContext.cs" />
     <Compile Include="Models\EnrollViewModel.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\RoleAdminViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repository\AccessLevelRepository.cs" />
+    <Compile Include="Repository\DeptRepository.cs" />
     <Compile Include="Repository\EmployeeRepository.cs" />
-    <Compile Include="Repository\RoleRepository.cs" />
+    <Compile Include="Repository\FacultyRepository.cs" />
+    <Compile Include="Repository\Repository.cs" />
+    <Compile Include="Repository\AccessLevelRepository.cs" />
     <Compile Include="Repository\UnitOfWork.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -417,6 +378,9 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Shared\_SideBarPartial.cshtml" />
     <Content Include="Views\Shared\_AccountLayout.cshtml" />
+    <Content Include="Views\Employees\Index.cshtml" />
+    <Content Include="Views\RoleAdmin\NewUserRoleView.cshtml" />
+    <Content Include="Views\Employees\Enroll.cshtml" />
     <Content Include="Views\Roles\NewUserRoleView.cshtml" />
     <Content Include="Views\Roles\Index.cshtml" />
     <Content Include="Views\Roles\EditRoleView.cshtml" />
@@ -450,26 +414,8 @@
     <EmbeddedResource Include="Migrations\202102081444191_Initial.resx">
       <DependentUpon>202102081444191_Initial.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202102081536245_DeptStaffModelCreated.resx">
-      <DependentUpon>202102081536245_DeptStaffModelCreated.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202102101021366_SeedDepartMent.resx">
-      <DependentUpon>202102101021366_SeedDepartMent.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202102101133227_ChangedStaffToEmployee.resx">
-      <DependentUpon>202102101133227_ChangedStaffToEmployee.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202102101139587_addUserRolesTable.resx">
-      <DependentUpon>202102101139587_addUserRolesTable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202102111104570_changeName.resx">
-      <DependentUpon>202102111104570_changeName.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202102111443400_addDateTimeColumnsToRoleTable.resx">
-      <DependentUpon>202102111443400_addDateTimeColumnsToRoleTable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202102112111453_AddedAccessLevelTable.resx">
-      <DependentUpon>202102112111453_AddedAccessLevelTable.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202102121300258_DeptFacultyModelAdded.resx">
+      <DependentUpon>202102121300258_DeptFacultyModelAdded.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

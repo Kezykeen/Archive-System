@@ -5,7 +5,7 @@ using System.Text;
 
 namespace archivesystemDomain.Interfaces
 {
-    public interface IEmployeeRepository
+    public interface IEmployeeRepository : IRepository<Employee>
     {
         bool EmailExists(string email);
         Employee GetEmployee(string email);
