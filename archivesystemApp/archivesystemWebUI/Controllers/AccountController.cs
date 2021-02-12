@@ -8,10 +8,12 @@ using System.Web.Mvc;
 using archivesystemDomain;
 using archivesystemDomain.Entities;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
+
 using Microsoft.Owin.Security;
 using archivesystemWebUI.Models;
 using archivesystemDomain.Interfaces;
+using archivesystemDomain.Services;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace archivesystemWebUI.Controllers
 {

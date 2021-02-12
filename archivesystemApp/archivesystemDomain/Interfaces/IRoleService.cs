@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace archivesystemDomain.Interfaces
 {
-    public interface IRoleRepository
+    public interface IRoleService
     {
         IEnumerable<ApplicationRole> GetAllRoles();
         void DeleteRole(string roleId);

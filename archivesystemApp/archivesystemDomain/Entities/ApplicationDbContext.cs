@@ -1,8 +1,7 @@
 ﻿using System.Data.Entity;
-using archivesystemDomain.Entities;
 using Microsoft.AspNet.Identity.EntityFramework;
 
-namespace archivesystemWebUI.Infrastructures
+namespace archivesystemDomain.Entities
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {

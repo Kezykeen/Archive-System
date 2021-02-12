@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using Microsoft.AspNet.Identity.Owin;
+
 using Microsoft.AspNet.Identity;
 using archivesystemDomain.Entities;
 using archivesystemWebUI.Models;
@@ -14,10 +14,11 @@ namespace archivesystemWebUI.Controllers
 {
     public class RolesController : Controller
     {
-        private IUnitOfWork unitOfWork;
-        public RolesController(IUnitOfWork unitOfWork)
+        private readonly IRoleService _service;
+     
+        public RolesController(IRoleService service)
         {
-            this.unitOfWork = unitOfWork;  
+            _service = service;
         }
         
 
@@ -25,7 +26,7 @@ namespace archivesystemWebUI.Controllers
        
         public ActionResult Index()
         {
-            return View(unitOfWork.RoleRepo.GetAllRoles());
+            return View();
         }
 
         //GET: /role/add 
@@ -41,7 +42,7 @@ namespace archivesystemWebUI.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(NewRoleViewModel _role)
         {
-            var result=await unitOfWork.RoleRepo.AddRole(_role.Name);
+            var result=await _service.AddRole(_role.Name);
             if (!result.Succeeded)
             {
                 AddErrorsFromResult(result);
@@ -55,7 +56,7 @@ namespace archivesystemWebUI.Controllers
         [HttpPost]
         public ActionResult Delete(string roleId)
         {
-            unitOfWork.RoleRepo.DeleteRole(roleId); 
+            _service.DeleteRole(roleId); 
             return RedirectToAction("Index");
         }
 
@@ -80,7 +81,7 @@ namespace archivesystemWebUI.Controllers
         [HttpPost]
         public async Task<ActionResult> Update(EditRoleViewModel model)
         {
-            var result= await unitOfWork.RoleRepo.EditRole(model.OldName, model.NewName);
+            var result= await _service.EditRole(model.OldName, model.NewName);
             if (result.Succeeded)
                 return RedirectToAction("Index");
 
