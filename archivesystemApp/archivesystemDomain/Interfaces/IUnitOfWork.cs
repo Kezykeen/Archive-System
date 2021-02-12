@@ -8,9 +8,9 @@ namespace archivesystemDomain.Interfaces
     public interface IUnitOfWork
     {
         IEmployeeRepository EmployeeRepo { get; }
-
+        IAccessLevelRepository AccessLevelRepo { get; }
         IRoleRepository RoleRepo { get; }
-
-        Task Save();
+        Task SaveAsync();
+        void Save();
     }
 }

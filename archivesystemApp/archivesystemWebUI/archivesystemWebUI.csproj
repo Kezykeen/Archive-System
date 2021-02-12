@@ -224,6 +224,10 @@
     <Compile Include="Migrations\202102111443400_addDateTimeColumnsToRoleTable.Designer.cs">
       <DependentUpon>202102111443400_addDateTimeColumnsToRoleTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202102112111453_AddedAccessLevelTable.cs" />
+    <Compile Include="Migrations\202102112111453_AddedAccessLevelTable.Designer.cs">
+      <DependentUpon>202102112111453_AddedAccessLevelTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccessLevelViewModel.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -416,10 +420,11 @@
     <Content Include="Views\Roles\NewUserRoleView.cshtml" />
     <Content Include="Views\Roles\Index.cshtml" />
     <Content Include="Views\Roles\EditRoleView.cshtml" />
+    <Content Include="Views\AccessLevel\Create.cshtml" />
+    <Content Include="Views\AccessLevel\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\AccessLevel\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -461,6 +466,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202102111443400_addDateTimeColumnsToRoleTable.resx">
       <DependentUpon>202102111443400_addDateTimeColumnsToRoleTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102112111453_AddedAccessLevelTable.resx">
+      <DependentUpon>202102112111453_AddedAccessLevelTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

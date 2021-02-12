@@ -51,14 +51,14 @@ namespace archivesystemWebUI.Controllers
             try
             {
                 // TODO: Add insert logic here
-                var newAccess = new AccessLevel { Level = model.Level, LevelName = model.LevelName, CreatedAt = DateTime.Now };
+                var newAccess = new AccessLevel { Level = model.Level, LevelName = model.LevelName, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now};
                 _unitOfWork.AccessLevelRepo.CreateAccess(newAccess);
                 await _unitOfWork.SaveAsync();
-
                 return RedirectToAction("Index");
             }
-            catch
+            catch(Exception e)
             {
+                ModelState.AddModelError("", e.Message);
                 return View(model);
             }
         }
