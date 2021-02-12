@@ -24,13 +24,13 @@ namespace archivesystemWebUI.Controllers
         }
 
 
-        public ActionResult Enroll ()
+        public ActionResult Enroll()
         {
             var model = new EnrollViewModel
             {
                 Departments = _unitOfWork.DeptRepo.GetAll()
             };
-            
+
             return View(model);
         }
 
