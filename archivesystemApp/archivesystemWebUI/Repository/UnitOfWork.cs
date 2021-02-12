@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using archivesystemDomain.Entities;
 
 namespace archivesystemWebUI.Repository
 {
@@ -13,29 +14,30 @@ namespace archivesystemWebUI.Repository
         private readonly ApplicationDbContext _context;
         public IEmployeeRepository EmployeeRepo { get; }
         public IDeptRepository DeptRepo { get; }
-    
+        public IAccessLevelRepository AccessLevelRepo { get; }
+
 
 
         public UnitOfWork(
             ApplicationDbContext context,
             IEmployeeRepository employeeRepo,
-            IDeptRepository deptRepo
+            IDeptRepository deptRepo,
+            IAccessLevelRepository accessLevelRepo
             )
         {
             _context = context;
             DeptRepo = deptRepo;
+            AccessLevelRepo = accessLevelRepo;
             EmployeeRepo = employeeRepo;
-          
-           
+            
         }
 
-       
 
         public int Save()
         {
             return _context.SaveChanges();
         }
-
+        
         public async Task<int> SaveAsync()
         {
            return await _context.SaveChangesAsync();
