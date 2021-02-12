@@ -18,6 +18,7 @@ namespace archivesystemDomain.Entities
 
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Department> Departments { get; set; }
+        public DbSet<Faculty> Faculties { get; set; }
         public DbSet<AccessLevel> AccessLevels { get; set; }
     }
 }
