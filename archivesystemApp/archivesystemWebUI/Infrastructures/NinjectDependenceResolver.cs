@@ -7,6 +7,7 @@ using archivesystemDomain;
 using archivesystemDomain.Entities;
 using archivesystemDomain.Interfaces;
 using archivesystemWebUI.Repository;
+using Ninject.Web.Common;
 
 namespace archivesystemWebUI.Infrastructures
 {
@@ -31,8 +32,9 @@ namespace archivesystemWebUI.Infrastructures
 
         private void AddBindings()
         {
-            kernel.Bind(typeof(ApplicationDbContext)).ToSelf();
+            kernel.Bind(typeof(ApplicationDbContext)).ToSelf().InRequestScope();
             kernel.Bind<IEmployeeRepository>().To<EmployeeRepository>();
+            kernel.Bind<IDeptRepository>().To<DeptRepository>();
             kernel.Bind<IUnitOfWork>().To<UnitOfWork>();
         }
     }

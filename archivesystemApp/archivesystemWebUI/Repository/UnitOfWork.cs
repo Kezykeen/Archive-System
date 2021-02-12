@@ -11,20 +11,40 @@ namespace archivesystemWebUI.Repository
     public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationDbContext _context;
+        public IEmployeeRepository EmployeeRepo { get; }
+        public IDeptRepository DeptRepo { get; }
+    
 
-        public UnitOfWork(ApplicationDbContext context )
+
+        public UnitOfWork(
+            ApplicationDbContext context,
+            IEmployeeRepository employeeRepo,
+            IDeptRepository deptRepo
+            )
         {
             _context = context;
-            EmployeeRepo = new EmployeeRepository(context);
+            DeptRepo = deptRepo;
+            EmployeeRepo = employeeRepo;
+          
            
         }
 
-        public IEmployeeRepository EmployeeRepo { get; }
+       
 
-        public async Task Save()
+        public int Save()
         {
-            await _context.SaveChangesAsync();
+            return _context.SaveChanges();
+        }
+
+        public async Task<int> SaveAsync()
+        {
+           return await _context.SaveChangesAsync();
            
+        }
+
+        public void Dispose()
+        {
+            _context.Dispose();
         }
     }
 }
