@@ -25,12 +25,12 @@
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title mb-0">Two Column Horizontal Form</h4>
+                                <h4 class="card-title mb-0 text-center">Employee Enrollment</h4>
                             </div>
                            
                                
                             <div class="card-body">
-                                @using (Html.BeginForm("Save", "Employees", FormMethod.Post))
+                                @using (Html.BeginForm("Enroll", "Employees", FormMethod.Post))
                             {
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger " })
                                 <div class="row">

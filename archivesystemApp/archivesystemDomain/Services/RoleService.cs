@@ -29,9 +29,9 @@ namespace archivesystemDomain.Services
                 RoleManager.Delete(role);
         }
 
-        public async Task<IdentityResult> AddRole (string _roleName)
+        public async Task<IdentityResult> AddRole (string roleName)
         {
-            ApplicationRole role = new ApplicationRole { Name=_roleName,CreatedAt=DateTime.Now,UpDatedAt=DateTime.Now};
+            ApplicationRole role = new ApplicationRole { Name=roleName,CreatedAt=DateTime.Now,UpDatedAt=DateTime.Now};
 
             IdentityResult result = await RoleManager.CreateAsync(role);
             return result;   
