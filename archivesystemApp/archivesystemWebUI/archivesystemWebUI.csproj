@@ -178,8 +178,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructures\EmployeeValidator.cs" />
     <Compile Include="Infrastructures\NinjectDependenceResolver.cs" />
     <Compile Include="Infrastructures\MappingProfile.cs" />
+    <Compile Include="Infrastructures\EmpUniqueProps.cs" />
     <Compile Include="Migrations\202102081444191_Initial.cs" />
     <Compile Include="Migrations\202102081444191_Initial.Designer.cs">
       <DependentUpon>202102081444191_Initial.cs</DependentUpon>
@@ -187,6 +189,14 @@
     <Compile Include="Migrations\202102121300258_DeptFacultyModelAdded.cs" />
     <Compile Include="Migrations\202102121300258_DeptFacultyModelAdded.Designer.cs">
       <DependentUpon>202102121300258_DeptFacultyModelAdded.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202102131001516_AddPhoneToEmpTable.cs" />
+    <Compile Include="Migrations\202102131001516_AddPhoneToEmpTable.Designer.cs">
+      <DependentUpon>202102131001516_AddPhoneToEmpTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202102131513378_AddGenderToEmp.cs" />
+    <Compile Include="Migrations\202102131513378_AddGenderToEmp.Designer.cs">
+      <DependentUpon>202102131513378_AddGenderToEmp.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccessLevelViewModel.cs" />
@@ -331,6 +341,7 @@
     <Content Include="Content\assets\plugins\summernote\dist\font\summernote.eot" />
     <Content Include="Content\assets\plugins\summernote\dist\font\summernote.ttf" />
     <Content Include="Content\assets\plugins\summernote\dist\font\summernote.woff" />
+    <Content Include="ApiKeys.config" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
@@ -415,6 +426,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202102121300258_DeptFacultyModelAdded.resx">
       <DependentUpon>202102121300258_DeptFacultyModelAdded.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102131001516_AddPhoneToEmpTable.resx">
+      <DependentUpon>202102131001516_AddPhoneToEmpTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102131513378_AddGenderToEmp.resx">
+      <DependentUpon>202102131513378_AddGenderToEmp.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

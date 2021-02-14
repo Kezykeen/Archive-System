@@ -10,8 +10,12 @@ namespace archivesystemDomain.Entities
         public string UserId { get; set; }
         public string Email { get; set; }
         public string Name { get; set; }
+
+        public Gender Gender { get; set; }
+        public string Phone { get; set; }
         public string StaffId { get; set; }
-        public DateTime? DOB { get; set; }
+        public DateTime DOB { get; set; }
+        public DateTime Appointed { get; set; }
         public MaritalStatus MaritalStatus { get; set; }
         public string Address { get; set; }
         public Department Department { get; set; }
