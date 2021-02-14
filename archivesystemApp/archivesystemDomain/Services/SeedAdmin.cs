@@ -30,7 +30,7 @@ namespace archivesystemDomain.Services
                var user = await userManager.FindByNameAsync(AdminUser);
 
                if (user != null) return;
-               user = new ApplicationUser()
+               user = new ApplicationUser
                     {UserName = "Admin", Email = AdminEmail, PhoneNumber = AdminPhone, EmailConfirmed = true };
                var createUser = await userManager.CreateAsync(user, AdminPassword);
 
@@ -40,6 +40,4 @@ namespace archivesystemDomain.Services
                }
             }
         }
-
-    
 }
