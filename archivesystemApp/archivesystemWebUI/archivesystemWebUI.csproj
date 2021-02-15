@@ -201,6 +201,7 @@
     <Compile Include="Migrations\202102150106454_AddTokenEntity.cs" />
     <Compile Include="Migrations\202102150106454_AddTokenEntity.Designer.cs">
       <DependentUpon>202102150106454_AddTokenEntity.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\202102130649017_ModifiedAccessLevelEntity.cs" />
     <Compile Include="Migrations\202102130649017_ModifiedAccessLevelEntity.Designer.cs">
       <DependentUpon>202102130649017_ModifiedAccessLevelEntity.cs</DependentUpon>
@@ -451,6 +452,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202102150106454_AddTokenEntity.resx">
       <DependentUpon>202102150106454_AddTokenEntity.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202102130649017_ModifiedAccessLevelEntity.resx">
       <DependentUpon>202102130649017_ModifiedAccessLevelEntity.cs</DependentUpon>
     </EmbeddedResource>
