@@ -29,5 +29,11 @@ namespace archivesystemWebUI.Controllers
             var data = new CreateFolderViewModel() { Name = "", Departments = repo.DeptRepo.GetAll() };
             return View("CreateFolder",data);
         }
+
+        //[HttpPost]
+        //public ActionResult Create()
+        //{
+            
+        //}
     }
 }
