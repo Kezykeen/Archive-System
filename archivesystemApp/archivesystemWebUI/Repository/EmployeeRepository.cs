@@ -19,7 +19,13 @@ namespace archivesystemWebUI.Repository
             _context = context;
         }
 
-        public Employee GetEmployee(string email)
+        public bool NameExists(string name)
+        {
+            return GetAll().Any(e => string.Equals(e.Name, name,
+                StringComparison.OrdinalIgnoreCase));
+        }
+
+        public Employee GetEmployeeByMail(string email)
         {
             var employee = _context.Employees.SingleOrDefault(m => m.Email == email);
             return employee;
@@ -27,16 +33,29 @@ namespace archivesystemWebUI.Repository
 
         public bool EmailExists(string email)
         {
-            var employee = GetEmployee(email);
-            return employee != null;
+            return GetAll().Any(e => string.Equals(e.Email, email,
+                StringComparison.OrdinalIgnoreCase));
+        }
+
+
+        public bool StaffIdExists(string staffId)
+        {
+            return GetAll().Any(e => string.Equals(e.StaffId, staffId,
+                StringComparison.OrdinalIgnoreCase));
         }
 
 
         public void UpdateUserId(string email, string id)
         {
-            var employee = GetEmployee(email);
+            var employee = GetEmployeeByMail(email);
             employee.UserId = id;
            
+        }
+
+        public bool PhoneExists(string phone)
+        {
+             return GetAll().Any(e => string.Equals(e.Phone, phone,
+                StringComparison.OrdinalIgnoreCase));
         }
 
         public ApplicationDbContext ApplicationDbContext => Context as ApplicationDbContext;

@@ -36,7 +36,12 @@ namespace archivesystemWebUI.Infrastructures
             kernel.Bind(typeof(ApplicationDbContext)).ToSelf().InRequestScope();
             kernel.Bind<IEmployeeRepository>().To<EmployeeRepository>();
             kernel.Bind<IDeptRepository>().To<DeptRepository>();
+            kernel.Bind<IAccessDetailsRepository>().To<AccessDetailsRepository>();
+            kernel.Bind<IAccessLevelRepository>().To<AccessLevelRepository>();
+            kernel.Bind<ITokenRepo>().To<TokenRepository>();
             kernel.Bind<IRoleService>().To<RoleService>();
+            kernel.Bind<ITokenGenerator>().To<TokenGenerator>();
+            kernel.Bind<IEmailSender>().To<EmailSender>();
             kernel.Bind<IUnitOfWork>().To<UnitOfWork>();
             kernel.Bind<IAccessLevelRepository>().To<AccessLevelRepository>();
             kernel.Bind<IFacultyRepository>().To<FacultyRepository>();

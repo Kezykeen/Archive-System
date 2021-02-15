@@ -24,6 +24,7 @@ namespace archivesystemWebUI.Repository
 
         public IEnumerable<TEntity> GetAll()
         {
+            
             return Context.Set<TEntity>().ToList();
         }
 

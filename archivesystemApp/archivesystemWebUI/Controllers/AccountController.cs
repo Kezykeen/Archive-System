@@ -20,6 +20,7 @@ namespace archivesystemWebUI.Controllers
     [Authorize]
     public class AccountController : Controller
     {
+        private ApplicationRoleManager _roleManager;
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
         private readonly IUnitOfWork _unitOfWork;
@@ -29,8 +30,9 @@ namespace archivesystemWebUI.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, ApplicationRoleManager roleManager )
         {
+            _roleManager = roleManager;
             UserManager = userManager;
             SignInManager = signInManager;
         }
@@ -57,6 +59,18 @@ namespace archivesystemWebUI.Controllers
             private set
             {
                 _userManager = value;
+            }
+        }
+
+        public ApplicationRoleManager RoleManager
+        {
+            get
+            {
+                return _roleManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationRoleManager>();
+            }
+            private set
+            {
+                _roleManager = value;
             }
         }
 
@@ -145,9 +159,38 @@ namespace archivesystemWebUI.Controllers
         //
         // GET: /Account/Register
         [AllowAnonymous]
-        public ActionResult Register()
+        public ActionResult Register(int? userId, string code)
         {
-            return View();
+            if (userId == null || code == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            var token = _unitOfWork.TokenRepo.Find(t => t.Code == code).SingleOrDefault();
+            var employee = _unitOfWork.EmployeeRepo.Get(userId.Value);
+            
+            if (token == null)
+            {
+                ModelState.AddModelError("", "Invalid Link!,  Contact Admin");
+                return View();
+            }
+            if (DateTime.Now > token.Expire)
+            {
+                ModelState.AddModelError("", "Link Expired!,  Contact Admin");
+                return View();
+            }
+            if (employee == null)
+            {
+                ModelState.AddModelError("", "An Error Occured, Contact Admin");
+                return View();
+            }
+            var model = new RegisterViewModel {Email = employee.Email};
+
+            _unitOfWork.TokenRepo.Remove(token);
+            _unitOfWork.Save();
+
+            return View(model);
+
         }
 
         //
@@ -157,15 +200,22 @@ namespace archivesystemWebUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
+
+           
+          
+           
             if (ModelState.IsValid)
             {
                 if (_unitOfWork.EmployeeRepo.EmailExists(model.Email))
                 {
-
-                    var user = new ApplicationUser { UserName = model.Email, Email = model.Email, PhoneNumber = model.PhoneNumber};
+                    var employee = _unitOfWork.EmployeeRepo.GetEmployeeByMail(model.Email);
+                  
+                    var user = new ApplicationUser { UserName = employee.Name, Email = model.Email, EmailConfirmed = true, PhoneNumber = employee.Phone};
                     var result = await UserManager.CreateAsync(user, model.Password);
                     if (result.Succeeded)
                     {
+
+                        await  UserManager.AddToRoleAsync(user.Id, "Employee");
                         await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
 
 
@@ -439,6 +489,12 @@ namespace archivesystemWebUI.Controllers
                 {
                     _signInManager.Dispose();
                     _signInManager = null;
+                }
+
+                if (_roleManager != null)
+                {
+                    _roleManager.Dispose();
+                    _roleManager = null;
                 }
             }
 

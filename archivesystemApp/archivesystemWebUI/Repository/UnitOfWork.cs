@@ -7,12 +7,14 @@ namespace archivesystemWebUI.Repository
     public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationDbContext _context;
+        public ITokenRepo TokenRepo { get; }
         public IEmployeeRepository EmployeeRepo { get; }
         public IDeptRepository DeptRepo { get; }
         public IAccessLevelRepository AccessLevelRepo { get; }
         public IFacultyRepository FacultyRepo { get; set; }
 
 
+        public IAccessDetailsRepository AccessDetailsRepo { get; }
 
         public UnitOfWork(
             ApplicationDbContext context,
@@ -21,10 +23,15 @@ namespace archivesystemWebUI.Repository
             IAccessLevelRepository accessLevelRepo,
             IFacultyRepository facultyRepo
         )
+            ITokenRepo tokenRepo,
+            IAccessDetailsRepository accessDetailsRepository
+            )
         {
             _context = context;
+            TokenRepo = tokenRepo;
             DeptRepo = deptRepo;
             AccessLevelRepo = accessLevelRepo;
+            AccessDetailsRepo = accessDetailsRepository;
             EmployeeRepo = employeeRepo;
             FacultyRepo = facultyRepo;
         }

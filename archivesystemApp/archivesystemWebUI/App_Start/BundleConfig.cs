@@ -46,6 +46,8 @@ namespace archivesystemWebUI
 
             bundles.Add(new ScriptBundle("~/bundles/custom/js").Include(
                 "~/Content/assets/js/jquery.slimscroll.min.js",
+                "~/Content/assets/js/moment.min.js",
+                "~/Content/assets/js/bootstrap-datetimepicker.min.js",
                 "~/Content/assets/js/app.js"
             ));
 
@@ -63,7 +65,7 @@ namespace archivesystemWebUI
                 "~/Content/assets/css/font-awesome.min.css",
                 "~/Content/assets/css/line-awesome.min.css",
                 "~/Content/assets/css/select2.min.css",
-                "~/Content/assets/css/style.css",
+                "~/Content/assets/css/bootstrap-datetimepicker.min.css",
                 "~/Content/assets/css/style.css",
                 "~/Content/assets/css/archive-custom.css"
                 ));

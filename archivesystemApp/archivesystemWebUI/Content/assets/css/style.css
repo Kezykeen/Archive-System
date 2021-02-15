@@ -8200,3 +8200,13 @@ ul.comment-list li ul.children {
 		min-width: inherit;
 	}
 }
+
+/*  Custom Styles  */
+.field-validation-error {
+	color: #dc3545;
+	margin-top: .25rem;
+    font-size: 80%;
+}
+.input-validation-error{
+	border: 1px solid #dc3545;
+}

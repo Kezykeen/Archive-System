@@ -3,9 +3,8 @@ using System.Collections.Generic;
 
 namespace archivesystemDomain.Interfaces
 {
-    public interface IAccessLevelRepository
+    public interface IAccessLevelRepository : IRepository<AccessLevel>
     {
-        IEnumerable<AccessLevel> AccessLevels { get; } 
-        void CreateAccess(AccessLevel newAccess);
+        AccessLevel GetByLevel(string Level);
     }
 }
