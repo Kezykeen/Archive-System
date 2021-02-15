@@ -39,6 +39,7 @@ namespace archivesystemWebUI.Infrastructures
             kernel.Bind<IRoleService>().To<RoleService>();
             kernel.Bind<IUnitOfWork>().To<UnitOfWork>();
             kernel.Bind<IAccessLevelRepository>().To<AccessLevelRepository>();
+            kernel.Bind<IAccessDetailsRepository>().To<AccessDetailsRepository>();
         }
     }
 }

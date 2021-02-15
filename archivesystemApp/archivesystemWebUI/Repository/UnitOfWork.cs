@@ -15,19 +15,20 @@ namespace archivesystemWebUI.Repository
         public IEmployeeRepository EmployeeRepo { get; }
         public IDeptRepository DeptRepo { get; }
         public IAccessLevelRepository AccessLevelRepo { get; }
-
-
+        public IAccessDetailsRepository AccessDetailsRepo { get; }
 
         public UnitOfWork(
             ApplicationDbContext context,
             IEmployeeRepository employeeRepo,
             IDeptRepository deptRepo,
-            IAccessLevelRepository accessLevelRepo
+            IAccessLevelRepository accessLevelRepo,
+            IAccessDetailsRepository accessDetailsRepository
             )
         {
             _context = context;
             DeptRepo = deptRepo;
             AccessLevelRepo = accessLevelRepo;
+            AccessDetailsRepo = accessDetailsRepository;
             EmployeeRepo = employeeRepo;
             
         }

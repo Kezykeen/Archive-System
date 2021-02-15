@@ -13,6 +13,7 @@ namespace archivesystemWebUI.Infrastructures
         public MappingProfile()
         {
             Mapper.CreateMap<EnrollViewModel, Employee>();
+            Mapper.CreateMap<CreateAccessLevelViewModel, AccessLevel>().ForMember(dest => dest.CreatedAt, opt => opt.UseValue<DateTime>(DateTime.Now)).ForMember(m => m.UpdatedAt, opt => opt.UseValue<DateTime>(DateTime.Now));
 
         }
     }

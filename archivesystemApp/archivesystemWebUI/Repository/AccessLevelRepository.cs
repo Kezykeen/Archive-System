@@ -9,26 +9,20 @@ using System.Web;
 
 namespace archivesystemWebUI.Repository
 {
-    public class AccessLevelRepository: IAccessLevelRepository
+    public class AccessLevelRepository: Repository<AccessLevel>, IAccessLevelRepository
     {
         private readonly ApplicationDbContext _context;
 
         public AccessLevelRepository(ApplicationDbContext context)
+            :base(context)
         {
             _context = context;
         }
 
-
-        public IEnumerable<AccessLevel> AccessLevels { get { return _context.AccessLevels.ToList(); } }
-
-        public AccessLevel GetAccessLevel(int levelNo)
+        public AccessLevel GetByLevel(string Level)
         {
-            var accessLevel = _context.AccessLevels.SingleOrDefault(m => m.Level == levelNo);
-            return accessLevel;
-        }
-        public void CreateAccess(AccessLevel newAccess)
-        {
-            _context.AccessLevels.Add(newAccess);
+            var access = _context.AccessLevels.FirstOrDefault(m => m.Level == Level);
+            return access;
         }
     }
 }

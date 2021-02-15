@@ -1,4 +1,5 @@
-﻿
+﻿@model IEnumerable<archivesystemDomain.Entities.AccessDetails>
+
 @{
     ViewBag.Title = "ManageUserAccess";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -6,47 +7,53 @@
 
 <h2>ManageUserAccess</h2>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-    <meta name="description" content="Smarthr - Bootstrap Admin Template">
-    <meta name="keywords" content="admin, estimates, bootstrap, business, corporate, creative, management, minimal, modern, accounts, invoice, html5, responsive, CRM, Projects">
-    <meta name="author" content="Dreamguys - Bootstrap Admin Template">
-    <meta name="robots" content="noindex, nofollow">
-    <title>Leaves - HRMS admin template</title>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.EmployeeId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EmployeeName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AccessLevel)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AccessCode)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Status)
+        </th>
+        <th></th>
+    </tr>
 
-    <!-- Favicon -->
-    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.png">
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.EmployeeId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EmployeeName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AccessLevel)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AccessCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+            </td>
+        </tr>
+    }
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-
-    <!-- Fontawesome CSS -->
-    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
-
-    <!-- Lineawesome CSS -->
-    <link rel="stylesheet" href="assets/css/line-awesome.min.css">
-
-    <!-- Datatable CSS -->
-    <link rel="stylesheet" href="assets/css/dataTables.bootstrap4.min.css">
-
-    <!-- Select2 CSS -->
-    <link rel="stylesheet" href="assets/css/select2.min.css">
-
-    <!-- Datetimepicker CSS -->
-    <link rel="stylesheet" href="assets/css/bootstrap-datetimepicker.min.css">
-
-    <!-- Main CSS -->
-    <link rel="stylesheet" href="assets/css/style.css">
-
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-        <script src="assets/js/html5shiv.min.js"></script>
-        <script src="assets/js/respond.min.js"></script>
-    <![endif]-->
-</head>
+</table>
 <body>
     <!-- Main Wrapper -->
     <div class="main-wrapper">
@@ -1327,4 +1334,3 @@
     <script src="assets/js/app.js"></script>
 
 </body>
-</html>
