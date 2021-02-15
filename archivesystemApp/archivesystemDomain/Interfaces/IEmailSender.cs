@@ -5,6 +5,6 @@ namespace archivesystemDomain.Interfaces
 {
     public interface IEmailSender
     {
-        Task SendEmailAsync(Message message);
+        Task SendEmailAsync(string destination, string subject, string body);
     }
 }

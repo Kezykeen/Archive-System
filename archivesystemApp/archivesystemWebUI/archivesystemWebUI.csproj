@@ -198,6 +198,10 @@
     <Compile Include="Migrations\202102131513378_AddGenderToEmp.Designer.cs">
       <DependentUpon>202102131513378_AddGenderToEmp.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202102150106454_AddTokenEntity.cs" />
+    <Compile Include="Migrations\202102150106454_AddTokenEntity.Designer.cs">
+      <DependentUpon>202102150106454_AddTokenEntity.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccessLevelViewModel.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -210,6 +214,7 @@
     <Compile Include="Repository\FacultyRepository.cs" />
     <Compile Include="Repository\Repository.cs" />
     <Compile Include="Repository\AccessLevelRepository.cs" />
+    <Compile Include="Repository\TokenRepository.cs" />
     <Compile Include="Repository\UnitOfWork.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -432,6 +437,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202102131513378_AddGenderToEmp.resx">
       <DependentUpon>202102131513378_AddGenderToEmp.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102150106454_AddTokenEntity.resx">
+      <DependentUpon>202102150106454_AddTokenEntity.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

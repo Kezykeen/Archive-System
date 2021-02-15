@@ -12,7 +12,9 @@ namespace archivesystemDomain.Services
 {
     public class EmailSender : IEmailSender
     {
-        public async Task SendEmailAsync(Message message)
+
+
+        public async Task SendEmailAsync(string destination, string subject, string body)
         {
             var apiKey = WebConfigurationManager.AppSettings["apiKey"];
             var user = WebConfigurationManager.AppSettings["user"];
@@ -21,16 +23,15 @@ namespace archivesystemDomain.Services
 
             var email = new SendGridMessage()
             {
-                From = new EmailAddress("Demo@Domain.com", user),
-                Subject = message.Subject,
-                PlainTextContent = message.Body,
-                HtmlContent = message.Body
+                From = new EmailAddress("tochukwuchinedu21@gmail.com", user),
+                Subject = subject,
+                PlainTextContent = body,
+                HtmlContent = body
             };
 
-            email.AddTo(new EmailAddress(message.Destination));
+            email.AddTo(new EmailAddress(destination));
             email.SetClickTracking(false, false);
             await mailClient.SendEmailAsync(email);
-
         }
     }
 }
