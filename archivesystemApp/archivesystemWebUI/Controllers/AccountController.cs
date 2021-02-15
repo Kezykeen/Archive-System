@@ -186,6 +186,9 @@ namespace archivesystemWebUI.Controllers
             }
             var model = new RegisterViewModel {Email = employee.Email};
 
+            _unitOfWork.TokenRepo.Remove(token);
+            _unitOfWork.Save();
+
             return View(model);
 
         }
