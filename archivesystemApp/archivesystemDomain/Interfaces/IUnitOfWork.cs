@@ -12,6 +12,7 @@ namespace archivesystemDomain.Interfaces
         IAccessLevelRepository AccessLevelRepo { get; }
         ITokenRepo TokenRepo { get; }
         IAccessDetailsRepository AccessDetailsRepo { get; }
+        IFolderRepo FolderRepo { get; }
         int Save();
         Task<int> SaveAsync();
 

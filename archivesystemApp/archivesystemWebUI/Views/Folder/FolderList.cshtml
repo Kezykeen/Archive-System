@@ -1,0 +1,82 @@
+﻿@using archivesystemWebUI.Models
+@model IEnumerable<FolderListViewModel>
+@{
+    ViewBag.Title = "Folder List";
+}
+
+
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+    <div class="content container-fluid">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row">
+                <div class="col">
+                    <h3 class="page-title">Folder List</h3>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Header -->
+
+        <div class="row">
+            <div class="col-sm-12" style="display:flex;justify-content:start">
+                <div class="card mb-0">
+
+                    @if (Model.Count() == 0)
+                    {
+                    <div class="card-header">
+                        <h4>No folders have being added</h4>
+                    </div>
+
+                    }
+                    else
+                    {
+                        
+                        <div >
+
+                            <div class="table-responsive">
+                                <table class="datatable table table-stripped ">
+                                    <thead id="folder-thead">
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Department</th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (FolderListViewModel folder in Model)
+                                        {
+                                            <tr>
+                                                <td>@folder.FolderName </td>
+                                                <td>@folder.DepartmentName</td>
+                                                <td>
+                                                    @Html.ActionLink("Edit Folder", "Update", null, new { @class = "btn btn-outline-dark" })
+                                                </td>
+                                                <td>
+                                                    @using (Html.BeginForm("Delete", "folder", FormMethod.Post, new { roleId = @folder.Id }))
+                                                    {
+                                                        @Html.Hidden("folderId", folder.Id)
+                                                        <button class="btn btn-danger" type="submit">Delete</button>
+                                                    }
+                                                </td>
+
+                                            </tr>
+                                        }
+
+
+                                    </tbody>
+                                </table>
+
+                            </div>
+
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- /Page Wrapper -->

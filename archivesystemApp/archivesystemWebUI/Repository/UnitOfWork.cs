@@ -18,13 +18,16 @@ namespace archivesystemWebUI.Repository
         public IAccessLevelRepository AccessLevelRepo { get; }
         public IAccessDetailsRepository AccessDetailsRepo { get; }
 
+        public IFolderRepo FolderRepo { get; }
+
         public UnitOfWork(
             ApplicationDbContext context,
             IEmployeeRepository employeeRepo,
             IDeptRepository deptRepo,
             IAccessLevelRepository accessLevelRepo,
             ITokenRepo tokenRepo,
-            IAccessDetailsRepository accessDetailsRepository
+            IAccessDetailsRepository accessDetailsRepository,
+            IFolderRepo folderRepo
             )
         {
             _context = context;
@@ -33,6 +36,7 @@ namespace archivesystemWebUI.Repository
             AccessLevelRepo = accessLevelRepo;
             AccessDetailsRepo = accessDetailsRepository;
             EmployeeRepo = employeeRepo;
+            FolderRepo = folderRepo;
             
         }
 

@@ -216,6 +216,10 @@
     <Compile Include="Migrations\202102151020112_unknown.Designer.cs">
       <DependentUpon>202102151020112_unknown.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202102151343469_addFoldersTable.cs" />
+    <Compile Include="Migrations\202102151343469_addFoldersTable.Designer.cs">
+      <DependentUpon>202102151343469_addFoldersTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccessLevelViewModel.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -228,6 +232,7 @@
     <Compile Include="Repository\DeptRepository.cs" />
     <Compile Include="Repository\EmployeeRepository.cs" />
     <Compile Include="Repository\FacultyRepository.cs" />
+    <Compile Include="Repository\FolderRepo.cs" />
     <Compile Include="Repository\Repository.cs" />
     <Compile Include="Repository\AccessLevelRepository.cs" />
     <Compile Include="Repository\TokenRepository.cs" />
@@ -426,6 +431,7 @@
     <Content Include="Views\AccessDetails\Edit.cshtml" />
     <Content Include="Views\AccessDetails\Index.cshtml" />
     <Content Include="Views\Folder\CreateFolder.cshtml" />
+    <Content Include="Views\Folder\FolderList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -473,6 +479,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202102151020112_unknown.resx">
       <DependentUpon>202102151020112_unknown.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102151343469_addFoldersTable.resx">
+      <DependentUpon>202102151343469_addFoldersTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
