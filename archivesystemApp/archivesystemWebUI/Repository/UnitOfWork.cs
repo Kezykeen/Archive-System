@@ -23,7 +23,7 @@ namespace archivesystemWebUI.Repository
             IEmployeeRepository employeeRepo,
             IDeptRepository deptRepo,
             IAccessLevelRepository accessLevelRepo,
-            ITokenRepo tokenRepo
+            ITokenRepo tokenRepo,
             IAccessDetailsRepository accessDetailsRepository
             )
         {
