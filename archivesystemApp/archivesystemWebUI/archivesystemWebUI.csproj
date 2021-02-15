@@ -169,6 +169,7 @@
     <Compile Include="App_Start\NinjectWebCommon.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="Controllers\AccessDetailsController.cs" />
     <Compile Include="Controllers\AccessLevelController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\EmployeesController.cs" />
@@ -398,6 +399,11 @@
     <Content Include="Views\AccessLevel\ManageUserAccess.cshtml" />
     <Content Include="Views\AccessLevel\AddUserToAccess.cshtml" />
     <Content Include="Views\AccessLevel\Delete.cshtml" />
+    <Content Include="Views\AccessDetails\Create.cshtml" />
+    <Content Include="Views\AccessDetails\Delete.cshtml" />
+    <Content Include="Views\AccessDetails\Details.cshtml" />
+    <Content Include="Views\AccessDetails\Edit.cshtml" />
+    <Content Include="Views\AccessDetails\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

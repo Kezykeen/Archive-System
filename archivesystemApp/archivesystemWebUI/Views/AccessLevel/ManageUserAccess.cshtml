@@ -9,9 +9,7 @@
 
 <table class="table">
     <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.EmployeeId)
-        </th>
+       
         <th>
             @Html.DisplayNameFor(model => model.EmployeeName)
         </th>
@@ -31,9 +29,6 @@
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.EmployeeId)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.EmployeeName)
             </td>
             <td>
@@ -46,9 +41,14 @@
                 @Html.DisplayFor(modelItem => item.Status)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                <div class="dropdown dropdown-action">
+                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a class="dropdown-item" href="@Url.Action("AddUserToAccess", "AccessLevel")"><i class="fa fa-plus-circle" aria-hidden="true"></i> Edit</a>
+                        <a class="dropdown-item" href="@Url.Action("Delete", "AccessLevel", new {id = item.Id })"><i class="fa fa-eye" aria-hidden="true"></i> Remove</a>
+
+                    </div>
+                </div>
             </td>
         </tr>
     }

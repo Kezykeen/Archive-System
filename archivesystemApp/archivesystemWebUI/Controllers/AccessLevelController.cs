@@ -153,10 +153,15 @@ namespace archivesystemWebUI.Controllers
             }
         }
 
-        // GET: AccessLevel/Delete/5
-        public ActionResult Delete(int id)
-        {          
-            var model = _unitOfWork.AccessDetailsRepo.Get(id);
+        
+        // GET: AccessDetails/Delete/5
+        public ActionResult Delete(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var model = _unitOfWork.AccessDetailsRepo.Get(id.Value);
             if (model == null)
             {
                 return HttpNotFound();
@@ -164,17 +169,17 @@ namespace archivesystemWebUI.Controllers
             return View(model);
         }
 
-
-        // POST: AccessLevel/Delete/5
-        [HttpPost]
+        // POST: AccessDetails/Delete/5
+        [HttpPost, ActionName(nameof(Delete))]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, AccessDetails model)
+        public async Task<ActionResult> DeleteConfirmed(int id)
         {
             try
             {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
+                var accessDetails = _unitOfWork.AccessDetailsRepo.Get(id);
+                _unitOfWork.AccessDetailsRepo.Remove(accessDetails);
+                await _unitOfWork.SaveAsync();
+                return RedirectToAction(nameof(ManageUserAccess));
             }
             catch
             {
