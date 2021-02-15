@@ -1,10 +1,5 @@
 ﻿using archivesystemDomain.Interfaces;
-using archivesystemWebUI.Infrastructures;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using archivesystemDomain.Entities;
 
 namespace archivesystemWebUI.Repository
@@ -16,6 +11,9 @@ namespace archivesystemWebUI.Repository
         public IEmployeeRepository EmployeeRepo { get; }
         public IDeptRepository DeptRepo { get; }
         public IAccessLevelRepository AccessLevelRepo { get; }
+        public IFacultyRepository FacultyRepo { get; set; }
+
+
         public IAccessDetailsRepository AccessDetailsRepo { get; }
 
         public IFolderRepo FolderRepo { get; }
@@ -25,6 +23,7 @@ namespace archivesystemWebUI.Repository
             IEmployeeRepository employeeRepo,
             IDeptRepository deptRepo,
             IAccessLevelRepository accessLevelRepo,
+            IFacultyRepository facultyRepo, 
             ITokenRepo tokenRepo,
             IAccessDetailsRepository accessDetailsRepository,
             IFolderRepo folderRepo
@@ -37,7 +36,7 @@ namespace archivesystemWebUI.Repository
             AccessDetailsRepo = accessDetailsRepository;
             EmployeeRepo = employeeRepo;
             FolderRepo = folderRepo;
-            
+            FacultyRepo = facultyRepo;
         }
 
 

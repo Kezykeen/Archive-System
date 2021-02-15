@@ -74,6 +74,10 @@ namespace archivesystemWebUI
                 "~/Content/assets/plugins/morris/morris.css"
             ));
 
+            bundles.Add(new ScriptBundle("~/Content/datatables/js").Include(
+                "~/Content/assets/js/jquery.dataTables.min.js",
+                "~/Content/assets/js/dataTables.bootstrap4.min.js"
+                ));
         }
     }
 }
