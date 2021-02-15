@@ -211,6 +211,10 @@
     <Compile Include="Migrations\202102131002350_AddedAccessDetailsEntity.Designer.cs">
       <DependentUpon>202102131002350_AddedAccessDetailsEntity.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202102151020112_unknown.cs" />
+    <Compile Include="Migrations\202102151020112_unknown.Designer.cs">
+      <DependentUpon>202102151020112_unknown.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccessLevelViewModel.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -464,6 +468,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202102131002350_AddedAccessDetailsEntity.resx">
       <DependentUpon>202102131002350_AddedAccessDetailsEntity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102151020112_unknown.resx">
+      <DependentUpon>202102151020112_unknown.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
