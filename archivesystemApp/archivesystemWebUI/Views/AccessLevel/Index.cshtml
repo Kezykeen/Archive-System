@@ -5,35 +5,131 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Level)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.LevelName)
-        </th>
-    </tr>
+   <!-- Page Content -->
+    <div class="content container-fluid">
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Level)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.LevelName)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-}
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h3 class="page-title">Access Level Management Dashboard</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item active">Dashboard</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Header -->
 
-</table>
+
+        <div class="row">
+            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-6">
+                <div class="card dash-widget">
+                    <div class="card-body">
+                        <span class="dash-widget-icon"><i class="fa fa-cubes"></i></span>
+                        <div class="dash-widget-info">
+                            <h3>Manage Access Level</h3>
+                            <span>
+                                <div class="dropdown dropdown-action">
+                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item" href="@Url.Action("Create", "AccessLevel")"><i class="fa fa-plus-circle" aria-hidden="true"></i> Create Level</a>
+                                        @*<a class="dropdown-item" href="#" data-target="#approve_leave"><i class="fa fa-plus-circle" aria-hidden="true"></i> Create Levels</a>*@
+                                        <a class="dropdown-item" href="@Url.Action("Create", "AccessLevel")"><i class="fa fa-eye" aria-hidden="true"></i> View Levels</a>
+                                    </div>
+                                </div>
+
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-6">
+                <div class="card dash-widget">
+                    <div class="card-body">
+                        <span class="dash-widget-icon"><i class="fa fa-cubes"></i></span>
+                        <div class="dash-widget-info">
+                            <h3>Manage User Access</h3>
+                            <span>
+                                <div class="dropdown dropdown-action">
+                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item" href="@Url.Action("AddUserToAccess", "AccessLevel")"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add User</a>
+                                        <a class="dropdown-item" href="@Url.Action("ManageUserAccess", "AccessLevel")"><i class="fa fa-eye" aria-hidden="true"></i> View Users</a>
+
+                                    </div>
+                                </div>
+
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <div class="modal custom-modal fade" id="approve_leave" role="dialog">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class="form-header">
+                                <h3>Leave Approve</h3>
+                                <p>Are you sure want to approve for this leave?</p>
+                            </div>
+                            <div class="modal-btn delete-action">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <a href="javascript:void(0);" class="btn btn-primary continue-btn">Approve</a>
+                                    </div>
+                                    <div class="col-6">
+                                        <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Decline</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+      
+        <table class="table">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Level)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LevelDescription)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CreatedAt)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.UpdatedAt)
+                </th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Level)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LevelDescription)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CreatedAt)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UpdatedAt)
+                    </td>
+                    
+                </tr>
+            }
+
+        </table>
+    </div>

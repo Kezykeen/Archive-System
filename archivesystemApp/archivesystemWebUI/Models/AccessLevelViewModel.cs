@@ -1,4 +1,5 @@
-﻿using System;
+﻿using archivesystemDomain.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -10,11 +11,24 @@ namespace archivesystemWebUI.Models
     {
         [Required(ErrorMessage ="Please input the level as a digit(1,2,3 ....")]
         [Display(Name = "Level")]
-        public int Level { get; set; }
+        public string Level { get; set; }
 
         [Required(ErrorMessage = "Please input the name of the Access Level")]
-        [Display(Name = "Name")]
-        public string LevelName { get; set; }
+        [Display(Name = "Description")]
+        public string LevelDescription { get; set; }
 
+    }
+
+    public class AddUserToAccessViewModel
+    {
+        [Required(ErrorMessage ="Enter a valid identification for the user.")]
+        [Display(Name = "Email Address")]
+        public string UserIdentification { get; set; }
+
+        [Required(ErrorMessage = "Choose an access level.")]
+        [Display(Name = "Access Level")]
+        public string AccessLevel { get; set; }
+
+        public IEnumerable<AccessLevel> AccessLevels { get; set; }
     }
 }

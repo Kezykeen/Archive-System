@@ -201,6 +201,13 @@
     <Compile Include="Migrations\202102150106454_AddTokenEntity.cs" />
     <Compile Include="Migrations\202102150106454_AddTokenEntity.Designer.cs">
       <DependentUpon>202102150106454_AddTokenEntity.cs</DependentUpon>
+    <Compile Include="Migrations\202102130649017_ModifiedAccessLevelEntity.cs" />
+    <Compile Include="Migrations\202102130649017_ModifiedAccessLevelEntity.Designer.cs">
+      <DependentUpon>202102130649017_ModifiedAccessLevelEntity.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202102131002350_AddedAccessDetailsEntity.cs" />
+    <Compile Include="Migrations\202102131002350_AddedAccessDetailsEntity.Designer.cs">
+      <DependentUpon>202102131002350_AddedAccessDetailsEntity.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccessLevelViewModel.cs" />
@@ -209,6 +216,7 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\RoleAdminViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\AccessDetailsRepository.cs" />
     <Compile Include="Repository\DeptRepository.cs" />
     <Compile Include="Repository\EmployeeRepository.cs" />
     <Compile Include="Repository\FacultyRepository.cs" />
@@ -402,6 +410,9 @@
     <Content Include="Views\Roles\EditRoleView.cshtml" />
     <Content Include="Views\AccessLevel\Create.cshtml" />
     <Content Include="Views\AccessLevel\Index.cshtml" />
+    <Content Include="Views\AccessLevel\ManageUserAccess.cshtml" />
+    <Content Include="Views\AccessLevel\AddUserToAccess.cshtml" />
+    <Content Include="Views\AccessLevel\Delete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -440,6 +451,11 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202102150106454_AddTokenEntity.resx">
       <DependentUpon>202102150106454_AddTokenEntity.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202102130649017_ModifiedAccessLevelEntity.resx">
+      <DependentUpon>202102130649017_ModifiedAccessLevelEntity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102131002350_AddedAccessDetailsEntity.resx">
+      <DependentUpon>202102131002350_AddedAccessDetailsEntity.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
