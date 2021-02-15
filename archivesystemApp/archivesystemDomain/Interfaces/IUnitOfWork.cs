@@ -10,6 +10,9 @@ namespace archivesystemDomain.Interfaces
         IEmployeeRepository EmployeeRepo { get; }
         IDeptRepository DeptRepo { get; }
         IAccessLevelRepository AccessLevelRepo { get; }
+        ITokenRepo TokenRepo { get; }
+        IFacultyRepository FacultyRepo { get; }
+        IAccessDetailsRepository AccessDetailsRepo { get; }
         int Save();
         Task<int> SaveAsync();
 
