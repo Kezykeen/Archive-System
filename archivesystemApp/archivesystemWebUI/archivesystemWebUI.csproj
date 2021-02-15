@@ -173,6 +173,7 @@
     <Compile Include="Controllers\AccessLevelController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\EmployeesController.cs" />
+    <Compile Include="Controllers\FolderController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
@@ -215,8 +216,9 @@
     <Compile Include="Models\AccessLevelViewModel.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\EnrollViewModel.cs" />
+    <Compile Include="Models\FolderViewModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
-    <Compile Include="Models\RoleAdminViewModels.cs" />
+    <Compile Include="Models\RoleViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\AccessDetailsRepository.cs" />
     <Compile Include="Repository\DeptRepository.cs" />
@@ -405,7 +407,6 @@
     <Content Include="Views\Shared\_SideBarPartial.cshtml" />
     <Content Include="Views\Shared\_AccountLayout.cshtml" />
     <Content Include="Views\Employees\Index.cshtml" />
-    <Content Include="Views\RoleAdmin\NewUserRoleView.cshtml" />
     <Content Include="Views\Employees\Enroll.cshtml" />
     <Content Include="Views\Roles\NewUserRoleView.cshtml" />
     <Content Include="Views\Roles\Index.cshtml" />
@@ -420,6 +421,7 @@
     <Content Include="Views\AccessDetails\Details.cshtml" />
     <Content Include="Views\AccessDetails\Edit.cshtml" />
     <Content Include="Views\AccessDetails\Index.cshtml" />
+    <Content Include="Views\Folder\CreateFolder.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
