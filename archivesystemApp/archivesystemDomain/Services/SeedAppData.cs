@@ -9,44 +9,27 @@ namespace archivesystemDomain.Services
 {
     public static class SeedAppData
     {
-        private static HttpContext Context => HttpContext.Current;
-        private static ApplicationDbContext DbContext
-            => Context.GetOwinContext().Get<ApplicationDbContext>();
+       
+       
         public static void EnsurePopulated()
         {
+            var dbContext = new ApplicationDbContext();
 
-            if (!DbContext.Faculties.Any())
+            if (!dbContext.Departments.Any())
             {
-                DbContext.Faculties.AddRange(
-
-                    new List<Faculty>()
-                    {
-                        new Faculty()
-                        {
-                            Name = "Engineering",
-                            CreatedAt = DateTime.Now,
-                            UpdatedAt = DateTime.Now
-                        },
-                        new Faculty()
-                        {
-                            Name = "Arts",
-                            CreatedAt = DateTime.Now,
-                            UpdatedAt = DateTime.Now
-                        },
-                    }
-                );
-            }
-
-            if (!DbContext.Departments.Any())
-            {
-                DbContext.Departments.AddRange(
+                dbContext.Departments.AddRange(
 
                     new List<Department>()
                     {
                         new Department
                         {
                             Name = "Electronic Engineering",
-                            FacultyId = 1,
+                            Faculty =  new Faculty()
+                            {
+                                Name = "Engineering",
+                                CreatedAt = DateTime.Now,
+                                UpdatedAt = DateTime.Now
+                            },
                             CreatedAt = DateTime.Now,
                             UpdatedAt = DateTime.Now
                         },
@@ -54,7 +37,12 @@ namespace archivesystemDomain.Services
                         new Department
                         {
                             Name = "People and Culture",
-                            FacultyId = 2,
+                            Faculty =  new Faculty()
+                            {
+                                Name = "Arts",
+                                CreatedAt = DateTime.Now,
+                                UpdatedAt = DateTime.Now
+                            },
                             CreatedAt = DateTime.Now,
                             UpdatedAt = DateTime.Now
                         },
@@ -62,7 +50,7 @@ namespace archivesystemDomain.Services
                 );
             }
 
-            DbContext.SaveChanges();
+            dbContext.SaveChanges();
 
         }
        

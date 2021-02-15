@@ -28,7 +28,7 @@ namespace archivesystemWebUI.Infrastructures
                return ("Staff Id Already Exists", true);
                
             }
-            if (unitOfWork.EmployeeRepo.StaffIdExists(uniqueProps.Phone))
+            if (unitOfWork.EmployeeRepo.PhoneExists(uniqueProps.Phone))
             {
                 return ("Phone Number Already Exists", true);
 

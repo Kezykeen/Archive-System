@@ -52,6 +52,12 @@ namespace archivesystemWebUI.Repository
            
         }
 
+        public bool PhoneExists(string phone)
+        {
+             return GetAll().Any(e => string.Equals(e.Phone, phone,
+                StringComparison.OrdinalIgnoreCase));
+        }
+
         public ApplicationDbContext ApplicationDbContext => Context as ApplicationDbContext;
     }
 }

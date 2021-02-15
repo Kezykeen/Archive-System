@@ -22,11 +22,10 @@ namespace archivesystemDomain.Services
 
             public static async void EnsurePopulated()
             {
-               var context = HttpContext.Current;
+              
 
-               var dbContext =  context.GetOwinContext().Get<ApplicationDbContext>();
-
-               var userManager = context.GetOwinContext().GetUserManager<ApplicationUserManager>();
+               var dbContext =  new ApplicationDbContext();
+               var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(dbContext));
                var user = await userManager.FindByNameAsync(AdminUser);
 
                if (user != null) return;

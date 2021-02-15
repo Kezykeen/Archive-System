@@ -13,5 +13,6 @@ namespace archivesystemDomain.Interfaces
         Employee GetEmployeeByMail(string email);
 
         void UpdateUserId(string email, string id);
+        bool PhoneExists(string phone);
     }
 }

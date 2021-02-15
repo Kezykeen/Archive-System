@@ -1,4 +1,5 @@
-﻿using Microsoft.Owin;
+﻿using archivesystemDomain.Services;
+using Microsoft.Owin;
 using Owin;
 
 [assembly: OwinStartup(typeof(archivesystemWebUI.Startup))]
@@ -9,6 +10,9 @@ namespace archivesystemWebUI
         public void Configuration(IAppBuilder app)
         {
             ConfigureAuth(app);
+            SeedRoles.EnsurePopulated();
+            SeedAdmin.EnsurePopulated();
+            SeedAppData.EnsurePopulated();
         }
     }
 }
