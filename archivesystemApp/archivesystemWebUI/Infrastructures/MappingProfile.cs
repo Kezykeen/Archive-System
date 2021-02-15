@@ -13,7 +13,8 @@ namespace archivesystemWebUI.Infrastructures
         public MappingProfile()
         {
             Mapper.CreateMap<EnrollViewModel, Employee>();
-
+            Mapper.CreateMap<DepartmentViewModel, Department>().ReverseMap();
+            Mapper.CreateMap<FacultyViewModel, Faculty>().ReverseMap();
         }
     }
 }
