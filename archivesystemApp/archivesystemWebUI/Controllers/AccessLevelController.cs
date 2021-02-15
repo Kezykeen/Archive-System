@@ -90,7 +90,7 @@ namespace archivesystemWebUI.Controllers
             {
                 try
                 {
-                    var employee = _unitOfWork.EmployeeRepo.GetEmployee(model.UserIdentification);
+                    var employee = _unitOfWork.EmployeeRepo.GetEmployeeByMail(model.UserIdentification);
                     if (employee != null)
                     {
                         var accessCode = employee.Name.Substring(0, 2) + DateTime.Now.Day.ToString() + DateTime.Now.Second.ToString() + DateTime.Now.Hour.ToString() + model.AccessLevel;
