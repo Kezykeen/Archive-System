@@ -107,9 +107,11 @@ namespace archivesystemWebUI.Controllers
                 catch (Exception e)
                 {
                     ModelState.AddModelError("", e.Message);
+                    model.AccessLevels = _unitOfWork.AccessLevelRepo.GetAll();
                     return View(model);
                 }
             }
+            model.AccessLevels = _unitOfWork.AccessLevelRepo.GetAll();
             return View(model);
 
         }
