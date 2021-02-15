@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 
 namespace archivesystemWebUI.Models
 {
@@ -62,6 +63,7 @@ namespace archivesystemWebUI.Models
         public bool RememberMe { get; set; }
     }
 
+
     public class RegisterViewModel
     {
         [Required]
@@ -69,10 +71,7 @@ namespace archivesystemWebUI.Models
         [Display(Name = "Email")]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "Please input your phone number")]        
-        [Display(Name = "Phone Number")]
-        [Phone]
-        public string PhoneNumber { get; set; }
+       
 
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
@@ -82,7 +81,7 @@ namespace archivesystemWebUI.Models
 
         [DataType(DataType.Password)]
         [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        [System.ComponentModel.DataAnnotations.Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
     }
 
@@ -101,7 +100,7 @@ namespace archivesystemWebUI.Models
 
         [DataType(DataType.Password)]
         [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        [System.ComponentModel.DataAnnotations.Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
 
         public string Code { get; set; }

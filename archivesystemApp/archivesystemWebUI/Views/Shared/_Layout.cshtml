@@ -144,7 +144,13 @@
     @Scripts.Render("~/bundles/charts/js")
     @Scripts.Render("~/bundles/jqueryval")
 
+<script>
+    jQuery.validator.methods["date"] = function (value, element) {
+        return true;
 
+    }
+</script>
+}
 <!-- Custom JS -->
     @Scripts.Render("~/bundles/custom/js")
     @RenderSection("scripts", required: false)

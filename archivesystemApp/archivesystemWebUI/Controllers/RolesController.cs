@@ -26,7 +26,7 @@ namespace archivesystemWebUI.Controllers
        
         public ActionResult Index()
         {
-            return View();
+            return View(_service.GetAllRoles());
         }
 
         //GET: /role/add 

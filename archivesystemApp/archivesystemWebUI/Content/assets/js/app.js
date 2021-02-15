@@ -334,6 +334,8 @@ $(document).ready(function() {
 		});
 	}
 
+    
+
 });
 
 // Loader
@@ -342,3 +344,7 @@ $(window).on ('load', function (){
 	$('#loader').delay(100).fadeOut('slow');
 	$('#loader-wrapper').delay(500).fadeOut('slow');
 });
+
+
+
+    
