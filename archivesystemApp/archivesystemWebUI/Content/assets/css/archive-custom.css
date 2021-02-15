@@ -1,3 +1,7 @@
 ﻿.validation-summary-errors{
     color:red;
 }
+
+#folder-thead th{
+    border:none;
+}

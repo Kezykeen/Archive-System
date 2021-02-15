@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace archivesystemDomain.Entities
 {
-    class Folder
+    public class Folder
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
