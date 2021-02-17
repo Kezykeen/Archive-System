@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace archivesystemDomain.Interfaces
 {
-    public interface IAccessDetailsRepository: IRepository<AccessDetails>
+    public interface IAccessDetailsRepository : IRepository<AccessDetails>
     {
+        void EditDetails(AccessDetails accessDetails);
     }
 }

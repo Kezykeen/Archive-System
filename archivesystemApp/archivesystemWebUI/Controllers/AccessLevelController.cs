@@ -115,9 +115,7 @@ namespace archivesystemWebUI.Controllers
             return View(model);
 
         }
-
-
-
+        
 
         public ActionResult ManageUserAccess()
         {
@@ -135,24 +133,53 @@ namespace archivesystemWebUI.Controllers
         // GET: AccessLevel/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            
+            var accessDetails = _unitOfWork.AccessDetailsRepo.Get(id);
+            if (accessDetails == null)
+                return HttpNotFound();
+            var accessLevels = _unitOfWork.AccessLevelRepo.GetAll();
+            var model = new EditUserviewModel
+            {
+                RegenerateCode = CodeStatus.No,
+                AccessDetails = accessDetails,
+                AccessLevels = accessLevels
+            };
+            return View(model);
         }
 
         // POST: AccessLevel/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, FormCollection collection)
+        public async Task<ActionResult> Edit(EditUserviewModel model)
         {
-            try
+            if (ModelState.IsValid)
             {
-                // TODO: Add update logic here
-
-                return RedirectToAction("Index");
+                try
+                {
+                    if (model.RegenerateCode == CodeStatus.Yes)
+                    {
+                        var accessCode = model.AccessDetails.EmployeeName.Substring(0, 2) + DateTime.Now.Day.ToString() + DateTime.Now.Second.ToString() + DateTime.Now.Hour.ToString() + model.AccessDetails.AccessLevel;
+                        model.AccessDetails.AccessCode = accessCode;
+                    }
+                    var details = _unitOfWork.AccessDetailsRepo.Get(model.AccessDetails.Id);
+                    details.AccessCode = model.AccessDetails.AccessCode;
+                    details.Status = model.AccessDetails.Status;
+                    details.AccessLevel = model.AccessDetails.AccessLevel;
+                    details.EmployeeName = model.AccessDetails.EmployeeName;
+                    details.EmployeeId = model.AccessDetails.EmployeeId;
+                    await _unitOfWork.SaveAsync();
+                    return RedirectToAction(nameof(ManageUserAccess));
+                }
+                catch (Exception e)
+                {
+                   ModelState.AddModelError("", e.Message +model.AccessDetails.AccessCode+ model.AccessDetails.Status + model.AccessDetails.Id + model.AccessDetails.EmployeeName +model.AccessDetails.Status);
+                   
+                    model.AccessLevels = _unitOfWork.AccessLevelRepo.GetAll();
+                    return View(model);
+                }
             }
-            catch
-            {
-                return View();
-            }
+            model.AccessLevels = _unitOfWork.AccessLevelRepo.GetAll();
+            return View(model);
         }
 
         
