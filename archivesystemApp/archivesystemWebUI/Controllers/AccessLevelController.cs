@@ -18,29 +18,34 @@ namespace archivesystemWebUI.Controllers
         private readonly IUnitOfWork _unitOfWork;
         #endregion
 
+
         #region CONSTRUCTOR
         public AccessLevelController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
         #endregion
-                
+
+
         #region ACTION METHODS
 
-        // GET: AccessLevel
+
+        #region AccessLevel
         public ActionResult Index() 
         {
-            var model = _unitOfWork.AccessLevelRepo.GetAll();
-            return View(model);
+            return View();
+        }
+        
+        public ActionResult ManageAccessLevel() 
+        {
+            return View(_unitOfWork.AccessLevelRepo.GetAll());
         }
 
-        // GET: AccessLevel/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: AccessLevel/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(CreateAccessLevelViewModel model)
@@ -49,36 +54,40 @@ namespace archivesystemWebUI.Controllers
             {
                 try
                 {
-                    var checkAccess = _unitOfWork.AccessLevelRepo.GetByLevel(model.Level);
-                    if (checkAccess == null)
+                    var checkLevel = _unitOfWork.AccessLevelRepo.GetByLevel(model.Level);
+                    if (checkLevel == null)
                     {
-                        //var newAccess = new AccessLevel { Level = model.Level, LevelDescription = model.LevelDescription, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now };
                         var newAccess = new AccessLevel();
                         Mapper.Map(model, newAccess);
                         _unitOfWork.AccessLevelRepo.Add(newAccess);
                         await _unitOfWork.SaveAsync();
-                        return RedirectToAction("Index");
+                        return RedirectToAction(nameof(Index));
                     }
-
                     ModelState.AddModelError("AccessLevelExists", $"Access Level \"{model.Level}\" already exists. Please enter a different Level");
-
                 }
                 catch (Exception e)
                 {
                     ModelState.AddModelError("", e.Message);
                     return View(model);
                 }
+                return View(model);
             }
             return View(model);
         }
-                
+        #endregion
+
+
+        #region UserAccess
+        public ActionResult ManageUserAccess()
+        {
+            var model = _unitOfWork.AccessDetailsRepo.GetAll();
+            return View(model);
+        }
+
         public ActionResult AddUserToAccess()
         {
             var accessLevels = _unitOfWork.AccessLevelRepo.GetAll();
-            var viewModel = new AddUserToAccessViewModel
-            {
-                AccessLevels = accessLevels
-            };
+            var viewModel = new AddUserToAccessViewModel{ AccessLevels = accessLevels };
             return View(viewModel);
         }
 
@@ -94,15 +103,13 @@ namespace archivesystemWebUI.Controllers
                     if (employee != null)
                     {
                         var accessCode = employee.Name.Substring(0, 2) + DateTime.Now.Day.ToString() + DateTime.Now.Second.ToString() + DateTime.Now.Hour.ToString() + model.AccessLevel;
-                        var newUserAccess = new AccessDetails { EmployeeId = employee.Id, EmployeeName = employee.Name, AccessLevel = model.AccessLevel, AccessCode = accessCode, Status = Status.Active };
-                        //Mapper.Map(model, newUserAccess);
-                        _unitOfWork.AccessDetailsRepo.Add(newUserAccess);
+                        var newAccessDetails = new AccessDetails { EmployeeId = employee.Id, EmployeeName = employee.Name, AccessLevel = model.AccessLevel, AccessCode = accessCode, Status = Status.Active };
+                        //Mapper.Map(model, newAccessDetails);
+                        _unitOfWork.AccessDetailsRepo.Add(newAccessDetails);
                         await _unitOfWork.SaveAsync();
                         return RedirectToAction(nameof(ManageUserAccess));
                     }
-
                     ModelState.AddModelError("EmployeeDoesNotExist", $"Employee with email \"{model.UserIdentification}\" does not exists. Please enter a different email");
-
                 }
                 catch (Exception e)
                 {
@@ -113,24 +120,8 @@ namespace archivesystemWebUI.Controllers
             }
             model.AccessLevels = _unitOfWork.AccessLevelRepo.GetAll();
             return View(model);
-
-        }
-        
-
-        public ActionResult ManageUserAccess()
-        {
-            var model = _unitOfWork.AccessDetailsRepo.GetAll();
-            return View(model);
         }
 
-        // GET: AccessLevel/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-
-        // GET: AccessLevel/Edit/5
         public ActionResult Edit(int id)
         {
             
@@ -147,7 +138,6 @@ namespace archivesystemWebUI.Controllers
             return View(model);
         }
 
-        // POST: AccessLevel/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(EditUserviewModel model)
@@ -161,18 +151,13 @@ namespace archivesystemWebUI.Controllers
                         var accessCode = model.AccessDetails.EmployeeName.Substring(0, 2) + DateTime.Now.Day.ToString() + DateTime.Now.Second.ToString() + DateTime.Now.Hour.ToString() + model.AccessDetails.AccessLevel;
                         model.AccessDetails.AccessCode = accessCode;
                     }
-                    var details = _unitOfWork.AccessDetailsRepo.Get(model.AccessDetails.Id);
-                    details.AccessCode = model.AccessDetails.AccessCode;
-                    details.Status = model.AccessDetails.Status;
-                    details.AccessLevel = model.AccessDetails.AccessLevel;
-                    details.EmployeeName = model.AccessDetails.EmployeeName;
-                    details.EmployeeId = model.AccessDetails.EmployeeId;
+                    _unitOfWork.AccessDetailsRepo.EditDetails(model.AccessDetails);
                     await _unitOfWork.SaveAsync();
                     return RedirectToAction(nameof(ManageUserAccess));
                 }
                 catch (Exception e)
                 {
-                   ModelState.AddModelError("", e.Message +model.AccessDetails.AccessCode+ model.AccessDetails.Status + model.AccessDetails.Id + model.AccessDetails.EmployeeName +model.AccessDetails.Status);
+                   ModelState.AddModelError("", e.Message);
                    
                     model.AccessLevels = _unitOfWork.AccessLevelRepo.GetAll();
                     return View(model);
@@ -182,8 +167,6 @@ namespace archivesystemWebUI.Controllers
             return View(model);
         }
 
-        
-        // GET: AccessDetails/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -198,7 +181,6 @@ namespace archivesystemWebUI.Controllers
             return View(model);
         }
 
-        // POST: AccessDetails/Delete/5
         [HttpPost, ActionName(nameof(Delete))]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
@@ -215,6 +197,9 @@ namespace archivesystemWebUI.Controllers
                 return View();
             }
         }
-    }
+        #endregion    
+
+       
         #endregion
+    }
 }

@@ -419,6 +419,7 @@
     <Content Include="Views\AccessLevel\AddUserToAccess.cshtml" />
     <Content Include="Views\AccessLevel\Delete.cshtml" />
     <Content Include="Views\AccessLevel\Edit.cshtml" />
+    <Content Include="Views\AccessLevel\ManageAccessLevel.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

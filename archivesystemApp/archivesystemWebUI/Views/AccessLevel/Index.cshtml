@@ -1,4 +1,4 @@
-﻿@model IEnumerable<archivesystemDomain.Entities.AccessLevel>
+﻿
 
 @{
     ViewBag.Title = "Index";
@@ -35,8 +35,7 @@
                                     <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                     <div class="dropdown-menu dropdown-menu-right">
                                         <a class="dropdown-item" href="@Url.Action("Create", "AccessLevel")"><i class="fa fa-plus-circle" aria-hidden="true"></i> Create Level</a>
-                                        @*<a class="dropdown-item" href="#" data-target="#approve_leave"><i class="fa fa-plus-circle" aria-hidden="true"></i> Create Levels</a>*@
-                                        <a class="dropdown-item" href="@Url.Action("Create", "AccessLevel")"><i class="fa fa-eye" aria-hidden="true"></i> View Levels</a>
+                                        <a class="dropdown-item" href="@Url.Action("ManageAccessLevel", "AccessLevel")"><i class="fa fa-eye" aria-hidden="true"></i> View Levels</a>
                                     </div>
                                 </div>
 
@@ -68,68 +67,7 @@
                 </div>
             </div>
 
-
-
-
-            <div class="modal custom-modal fade" id="approve_leave" role="dialog">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-body">
-                            <div class="form-header">
-                                <h3>Leave Approve</h3>
-                                <p>Are you sure want to approve for this leave?</p>
-                            </div>
-                            <div class="modal-btn delete-action">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <a href="javascript:void(0);" class="btn btn-primary continue-btn">Approve</a>
-                                    </div>
-                                    <div class="col-6">
-                                        <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Decline</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
 
       
-        <table class="table">
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Level)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.LevelDescription)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.CreatedAt)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.UpdatedAt)
-                </th>
-            </tr>
-
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Level)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.LevelDescription)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.CreatedAt)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.UpdatedAt)
-                    </td>
-                    
-                </tr>
-            }
-
-        </table>
     </div>

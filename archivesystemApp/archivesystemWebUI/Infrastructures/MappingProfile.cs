@@ -19,8 +19,8 @@ namespace archivesystemWebUI.Infrastructures
                 )
                 .ForMember(dest => dest.CreatedAt, opt => opt.UseValue(DateTime.Now))
                 .ForMember(dest => dest.UpdatedAt, opt => opt.UseValue(DateTime.Now));
-            Mapper.CreateMap<EnrollViewModel, Employee>();
-            Mapper.CreateMap<CreateAccessLevelViewModel, AccessLevel>()
+                Mapper.CreateMap<EnrollViewModel, Employee>();
+                Mapper.CreateMap<CreateAccessLevelViewModel, AccessLevel>()
                 .ForMember(dest => dest.CreatedAt, opt => opt.UseValue<DateTime>(DateTime.Now))
                 .ForMember(m => m.UpdatedAt, opt => opt.UseValue<DateTime>(DateTime.Now));
 
