@@ -9,11 +9,15 @@ namespace archivesystemDomain.Entities
 
         public string Name { get; set; }
 
-        [Display(Name = "Faculty")] public int FacultyId { get; set; }
+        [Display(Name = "Faculty")]
+        public int FacultyId { get; set; }
+
         public Faculty Faculty { get; set; }
 
-        [Display(Name = "Created At")] public DateTime CreatedAt { get; set; }
+        [Display(Name = "Created At")]
+        public DateTime CreatedAt { get; set; }
 
-        [Display(Name = "Updated At")] public DateTime UpdatedAt { get; set; }
+        [Display(Name = "Updated At")]
+        public DateTime UpdatedAt { get; set; }
     }
 }
