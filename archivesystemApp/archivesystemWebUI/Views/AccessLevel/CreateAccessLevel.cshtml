@@ -15,6 +15,7 @@
                 <div class="col-sm-12">
                     <ul class="breadcrumb">
                         <li class="breadcrumb-item"><a href="@Url.Action("Index", "AccessLevel")">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="@Url.Action("ManageAccessLevel", "AccessLevel")">Manage Access Level</a></li>
                         <li class="breadcrumb-item active">Create</li>
                     </ul>
                 </div>
@@ -26,10 +27,10 @@
             <div class="account-wrapper">
                 <h3 class="account-title">Create Access Level</h3>
                 <p class="account-subtitle">To access your Dashboard</p>
-
+                <hr />
                 @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 
-                @using (Html.BeginForm("Create", "AccessLevel", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                @using (Html.BeginForm("CreateAccessLevel", "AccessLevel", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
                 {
                     @Html.AntiForgeryToken()
 
@@ -57,7 +58,7 @@
         </div>
     </div>
 
-
+   
 
 </div>
 

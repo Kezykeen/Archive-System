@@ -1,14 +1,11 @@
 ﻿using archivesystemDomain.Entities;
 using archivesystemDomain.Interfaces;
 using archivesystemWebUI.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
-using System.Web.Mvc;
 using AutoMapper;
+using System;
 using System.Net;
+using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace archivesystemWebUI.Controllers
 {
@@ -31,24 +28,24 @@ namespace archivesystemWebUI.Controllers
 
 
         #region AccessLevel
-        public ActionResult Index() 
+        public ActionResult Index()
         {
             return View();
         }
-        
-        public ActionResult ManageAccessLevel() 
+
+        public ActionResult ManageAccessLevel()
         {
             return View(_unitOfWork.AccessLevelRepo.GetAll());
         }
 
-        public ActionResult Create()
+        public ActionResult CreateAccessLevel()
         {
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(CreateAccessLevelViewModel model)
+        public async Task<ActionResult> CreateAccessLevel(CreateAccessLevelViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -61,6 +58,7 @@ namespace archivesystemWebUI.Controllers
                         Mapper.Map(model, newAccess);
                         _unitOfWork.AccessLevelRepo.Add(newAccess);
                         await _unitOfWork.SaveAsync();
+                        ViewBag.Message = "Access Level was succesfully created!";
                         return RedirectToAction(nameof(Index));
                     }
                     ModelState.AddModelError("AccessLevelExists", $"Access Level \"{model.Level}\" already exists. Please enter a different Level");
@@ -73,6 +71,68 @@ namespace archivesystemWebUI.Controllers
                 return View(model);
             }
             return View(model);
+        }
+
+        public ActionResult EditAccessLevel(int id)
+        {
+
+            var accessLevel = _unitOfWork.AccessLevelRepo.Get(id);
+            if (accessLevel == null)
+                return HttpNotFound();
+            return View(accessLevel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> EditAccessLevel(AccessLevel accessLevel)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    accessLevel.UpdatedAt = DateTime.Now;
+                    _unitOfWork.AccessLevelRepo.EditDetails(accessLevel);
+                    await _unitOfWork.SaveAsync();
+                    return RedirectToAction(nameof(ManageAccessLevel));
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError("", e.Message);
+                    return View(accessLevel);
+                }
+            }
+            return View(accessLevel);
+        }
+
+        public ActionResult DeleteAccessLevel(int id)
+        {
+            if ((id == 1) || (id == 2) || (id == 3) || (id == 4) || (id == 5))
+            {
+                return RedirectToAction(nameof(ManageAccessLevel));
+            }
+            var model = _unitOfWork.AccessLevelRepo.Get(id);
+            if (model == null)
+            {
+                return HttpNotFound();
+            }
+            return View(model);
+        }
+
+        [HttpPost, ActionName(nameof(DeleteAccessLevel))]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeleteAccessLevelConfirmed(int id)
+        {
+            try
+            {
+                var accessLevel = _unitOfWork.AccessLevelRepo.Get(id);
+                _unitOfWork.AccessLevelRepo.Remove(accessLevel);
+                await _unitOfWork.SaveAsync();
+                return RedirectToAction(nameof(ManageAccessLevel));
+            }
+            catch
+            {
+                return View();
+            }
         }
         #endregion
 
@@ -87,7 +147,7 @@ namespace archivesystemWebUI.Controllers
         public ActionResult AddUserToAccess()
         {
             var accessLevels = _unitOfWork.AccessLevelRepo.GetAll();
-            var viewModel = new AddUserToAccessViewModel{ AccessLevels = accessLevels };
+            var viewModel = new AddUserToAccessViewModel { AccessLevels = accessLevels };
             return View(viewModel);
         }
 
@@ -122,9 +182,9 @@ namespace archivesystemWebUI.Controllers
             return View(model);
         }
 
-        public ActionResult Edit(int id)
+        public ActionResult EditUserAccess(int id)
         {
-            
+
             var accessDetails = _unitOfWork.AccessDetailsRepo.Get(id);
             if (accessDetails == null)
                 return HttpNotFound();
@@ -140,7 +200,7 @@ namespace archivesystemWebUI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(EditUserviewModel model)
+        public async Task<ActionResult> EditUserAccess(EditUserviewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -157,8 +217,8 @@ namespace archivesystemWebUI.Controllers
                 }
                 catch (Exception e)
                 {
-                   ModelState.AddModelError("", e.Message);
-                   
+                    ModelState.AddModelError("", e.Message);
+
                     model.AccessLevels = _unitOfWork.AccessLevelRepo.GetAll();
                     return View(model);
                 }
@@ -197,9 +257,9 @@ namespace archivesystemWebUI.Controllers
                 return View();
             }
         }
-        #endregion    
+        #endregion
 
-       
+
         #endregion
     }
 }

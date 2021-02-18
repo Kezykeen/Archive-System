@@ -4,6 +4,7 @@ using archivesystemWebUI.Infrastructures;
 using archivesystemWebUI.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 
@@ -17,6 +18,11 @@ namespace archivesystemWebUI.Repository
             :base(context)
         {
             _context = context;
+        }
+
+        public void EditDetails(AccessLevel accessLevel)
+        {
+            _context.Entry(accessLevel).State = EntityState.Modified;
         }
 
         public AccessLevel GetByLevel(string Level)

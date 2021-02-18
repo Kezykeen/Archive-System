@@ -29,7 +29,7 @@
                 <hr />
                 @*<p class="account-subtitle">To access your Dashboard</p>*@
 
-                @using (Html.BeginForm("Edit", "AccessLevel", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                @using (Html.BeginForm("EditUserAccess", "AccessLevel", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
                 {
                     @Html.AntiForgeryToken()
                     @Html.ValidationSummary(false, "", new { @class = "text-danger" })

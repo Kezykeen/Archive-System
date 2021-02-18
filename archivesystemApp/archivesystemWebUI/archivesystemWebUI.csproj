@@ -413,13 +413,15 @@
     <Content Include="Views\Roles\NewUserRoleView.cshtml" />
     <Content Include="Views\Roles\Index.cshtml" />
     <Content Include="Views\Roles\EditRoleView.cshtml" />
-    <Content Include="Views\AccessLevel\Create.cshtml" />
+    <Content Include="Views\AccessLevel\CreateAccessLevel.cshtml" />
     <Content Include="Views\AccessLevel\Index.cshtml" />
     <Content Include="Views\AccessLevel\ManageUserAccess.cshtml" />
     <Content Include="Views\AccessLevel\AddUserToAccess.cshtml" />
     <Content Include="Views\AccessLevel\Delete.cshtml" />
-    <Content Include="Views\AccessLevel\Edit.cshtml" />
+    <Content Include="Views\AccessLevel\EditUserAccess.cshtml" />
     <Content Include="Views\AccessLevel\ManageAccessLevel.cshtml" />
+    <Content Include="Views\AccessLevel\EditAccessLevel.cshtml" />
+    <Content Include="Views\AccessLevel\DeleteAccessLevel.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
