@@ -32,23 +32,25 @@
                 @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 
                 <div class="text-center">
+                    <dl>
 
-                    <dt>
-                        @Html.DisplayNameFor(model => model.Level)
-                    </dt>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Level)
+                        </dt>
 
-                    <dd>
-                        @Html.DisplayFor(model => model.Level)
-                    </dd>
+                        <dd>
+                            @Html.DisplayFor(model => model.Level)
+                        </dd>
 
-                    <dt>
-                        @Html.DisplayNameFor(model => model.LevelDescription)
-                    </dt>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.LevelDescription)
+                        </dt>
 
-                    <dd>
-                        @Html.DisplayFor(model => model.LevelDescription)
-                    </dd>
+                        <dd>
+                            @Html.DisplayFor(model => model.LevelDescription)
+                        </dd>
 
+                    </dl>
 
                 </div>
 
