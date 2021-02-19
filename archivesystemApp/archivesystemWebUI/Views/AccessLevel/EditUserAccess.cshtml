@@ -58,7 +58,7 @@
                     <div class="form-group">
                         @Html.LabelFor(model => model.AccessDetails.AccessLevel, htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
-                            @Html.DropDownListFor(model => model.AccessDetails.AccessLevel, new SelectList(Model.AccessLevels, "Id", "Level"), Model.AccessDetails.AccessLevel,  htmlAttributes : new { @class = "form-control" } )
+                            @Html.DropDownListFor(model => model.AccessDetails.AccessLevel, new SelectList(Model.AccessLevels, "Level", "Level"), Model.AccessDetails.AccessLevel,  htmlAttributes : new { @class = "form-control" } )
                             @Html.ValidationMessageFor(model => model.AccessDetails.AccessLevel, "", new { @class = "text-danger" })
                         </div>
                     </div>
