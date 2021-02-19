@@ -15,14 +15,12 @@ namespace archivesystemWebUI.Controllers
         private readonly IUnitOfWork _unitOfWork;
         #endregion
 
-
         #region CONSTRUCTOR
         public AccessLevelController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
         #endregion
-
 
         #region ACTION METHODS
 
@@ -54,12 +52,11 @@ namespace archivesystemWebUI.Controllers
                     var checkLevel = _unitOfWork.AccessLevelRepo.GetByLevel(model.Level);
                     if (checkLevel == null)
                     {
-                        var newAccess = new AccessLevel();
-                        Mapper.Map(model, newAccess);
+                        var newAccess = Mapper.Map<AccessLevel>(model);
                         _unitOfWork.AccessLevelRepo.Add(newAccess);
                         await _unitOfWork.SaveAsync();
-                        ViewBag.Message = "Access Level was succesfully created!";
-                        return RedirectToAction(nameof(Index));
+                        TempData["AccessMessage"] = "Access Level was succesfully created!";
+                        return RedirectToAction(nameof(ManageAccessLevel));
                     }
                     ModelState.AddModelError("AccessLevelExists", $"Access Level \"{model.Level}\" already exists. Please enter a different Level");
                 }
@@ -68,7 +65,6 @@ namespace archivesystemWebUI.Controllers
                     ModelState.AddModelError("", e.Message);
                     return View(model);
                 }
-                return View(model);
             }
             return View(model);
         }
