@@ -24,5 +24,9 @@ namespace archivesystemDomain.Entities
         public DbSet<AccessDetails> AccessDetails { get; set; }
 
         public DbSet<Folder> Folders { get; set; }
+
+        public DbSet<SubFolder> SubFolders { get; set; }
+
+
     }
 }
