@@ -8,7 +8,7 @@ namespace archivesystemWebUI.Models
     {
         [Required(ErrorMessage ="Enter a valid identification for the user.")]
         [Display(Name = "Email Address")]
-        public string UserIdentification { get; set; }
+        public string Email { get; set; }
 
         [Required(ErrorMessage = "Choose an access level.")]
         [Display(Name = "Access Level")]
