@@ -10,5 +10,6 @@ namespace archivesystemDomain.Interfaces
     public interface IAccessDetailsRepository : IRepository<AccessDetails>
     {
         void EditDetails(AccessDetails accessDetails);
+        AccessDetails GetByEmployeeId(int employeeId);
     }
 }

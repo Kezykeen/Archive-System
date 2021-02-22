@@ -5,6 +5,14 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@if (TempData["UserAccessMessage"] != null)
+{
+    <div class="alert-danger text-center" style="border-radius: 6px; padding: 10px; margin: 10px;">
+        @TempData["UserAccessMessage"]
+    </div>
+
+}
+
 <div class="account-content">
     <div class="container">
         <!-- Page Header -->
@@ -21,13 +29,13 @@
         <hr />
         <!-- /Page Header -->
         <div>
-        <div class="col-auto float-right">
-            <a href="@Url.Action("AddUserToAccess", "AccessLevel")" class="btn add-btn" ><i class="fa fa-plus"></i> Add User</a>
-        </div>
-        <h2 class="page-title">Manage User Access</h2>
+            <div class="col-auto float-right">
+                <a href="@Url.Action("AddUserToAccess", "AccessLevel")" class="btn add-btn"><i class="fa fa-plus"></i> Add User</a>
+            </div>
+            <h2 class="page-title">Manage User Access</h2>
 
         </div>
-        <br />  
+        <br />
         <table class="table-active table table-striped custom-table mb-0 datatable">
             <tr>
 

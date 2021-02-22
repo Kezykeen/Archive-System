@@ -20,11 +20,20 @@ namespace archivesystemWebUI.Repository
             _context = context;
         }
 
+        /// <summary>
+        /// This method accepts an "AccessLevel" object and modifies an existing data in the AccessLevels table.
+        /// </summary>
+        /// <param name="accessLevel">AccessLevel</param>
         public void EditDetails(AccessLevel accessLevel)
         {
             _context.Entry(accessLevel).State = EntityState.Modified;
         }
 
+        /// <summary>
+        /// This method retrieves an "AccessLevel" object using the "Level" parameter of the table
+        /// </summary>
+        /// <param name="Level">string</param>
+        /// <returns>AccessLevel</returns>
         public AccessLevel GetByLevel(string Level)
         {
             var access = _context.AccessLevels.FirstOrDefault(m => m.Level == Level);
