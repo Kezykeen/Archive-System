@@ -54,6 +54,9 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.EntityFramework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.3\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=2.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
@@ -64,7 +67,12 @@
     <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=4.1.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.4.1.1\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Owin.Security, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
+    <Reference Include="Microsoft.Owin.Security, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.4.0.1\lib\net45\Microsoft.Owin.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Cookies, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.Cookies.4.0.1\lib\net45\Microsoft.Owin.Security.Cookies.dll</HintPath>
+    </Reference>
     <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <HintPath>..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
     </Reference>
@@ -156,12 +164,6 @@
     <Reference Include="Microsoft.AspNet.Identity.Owin">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Owin.2.2.3\lib\net45\Microsoft.AspNet.Identity.Owin.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.AspNet.Identity.EntityFramework">
-      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.3\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security.Cookies">
-      <HintPath>..\packages\Microsoft.Owin.Security.Cookies.4.0.1\lib\net45\Microsoft.Owin.Security.Cookies.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
@@ -169,12 +171,11 @@
     <Compile Include="App_Start\NinjectWebCommon.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
-    <Compile Include="Controllers\AccessDetailsController.cs" />
     <Compile Include="Controllers\AccessLevelController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\DepartmentController.cs" />
-    <Compile Include="Controllers\FacultyController.cs" />
     <Compile Include="Controllers\EmployeesController.cs" />
+    <Compile Include="Controllers\FacultyController.cs" />
     <Compile Include="Controllers\FolderController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -218,10 +219,25 @@
     <Compile Include="Migrations\202102151020112_unknown.Designer.cs">
       <DependentUpon>202102151020112_unknown.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202102191549415_AddFoldersTable.cs" />
+    <Compile Include="Migrations\202102191549415_AddFoldersTable.Designer.cs">
+      <DependentUpon>202102191549415_AddFoldersTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202102192117574_AddSubFoldersTable.cs" />
+    <Compile Include="Migrations\202102192117574_AddSubFoldersTable.Designer.cs">
+      <DependentUpon>202102192117574_AddSubFoldersTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202102192119285_SeedRootFolder.cs" />
+    <Compile Include="Migrations\202102192119285_SeedRootFolder.Designer.cs">
+      <DependentUpon>202102192119285_SeedRootFolder.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\AccessLevelViewModel.cs" />
+    <Compile Include="Models\CodeStatus.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\AddUserToAccessViewModel.cs" />
+    <Compile Include="Models\CreateAccessLevelViewModel.cs" />
     <Compile Include="Models\DepartmentViewModel.cs" />
+    <Compile Include="Models\EditUserviewModel.cs" />
     <Compile Include="Models\EnrollViewModel.cs" />
     <Compile Include="Models\FacultyViewModel.cs" />
     <Compile Include="Models\FolderViewModels.cs" />
@@ -232,6 +248,7 @@
     <Compile Include="Repository\DeptRepository.cs" />
     <Compile Include="Repository\EmployeeRepository.cs" />
     <Compile Include="Repository\FacultyRepository.cs" />
+    <Compile Include="Repository\FolderRepo.cs" />
     <Compile Include="Repository\Repository.cs" />
     <Compile Include="Repository\AccessLevelRepository.cs" />
     <Compile Include="Repository\TokenRepository.cs" />
@@ -368,6 +385,7 @@
     <Content Include="Content\assets\plugins\summernote\dist\font\summernote.ttf" />
     <Content Include="Content\assets\plugins\summernote\dist\font\summernote.woff" />
     <Content Include="ApiKeys.config" />
+    <Content Include="libman.json" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
@@ -416,18 +434,18 @@
     <Content Include="Views\Shared\_SideBarPartial.cshtml" />
     <Content Include="Views\Shared\_AccountLayout.cshtml" />
     <Content Include="Views\Employees\Index.cshtml" />
+    <Content Include="Views\RoleAdmin\NewUserRoleView.cshtml" />
     <Content Include="Views\Employees\Enroll.cshtml" />
     <Content Include="Views\Roles\NewUserRoleView.cshtml" />
     <Content Include="Views\Roles\Index.cshtml" />
     <Content Include="Views\Roles\EditRoleView.cshtml" />
-    <Content Include="Views\AccessLevel\Create.cshtml" />
+    <Content Include="Views\AccessLevel\CreateAccessLevel.cshtml" />
     <Content Include="Views\AccessLevel\Index.cshtml" />
     <Content Include="Views\Faculty\Index.cshtml" />
     <Content Include="Views\Department\Index.cshtml" />
     <Content Include="Views\Shared\_AddOrEditDepartment.cshtml" />
     <Content Include="Views\AccessLevel\ManageUserAccess.cshtml" />
     <Content Include="Views\AccessLevel\AddUserToAccess.cshtml" />
-    <Content Include="Views\AccessLevel\Delete.cshtml" />
     <Content Include="Views\AccessDetails\Create.cshtml" />
     <Content Include="Views\AccessDetails\Delete.cshtml" />
     <Content Include="Views\AccessDetails\Details.cshtml" />
@@ -437,6 +455,12 @@
     <Content Include="Views\Shared\_DeleteDepartment.cshtml" />
     <Content Include="Views\Shared\_AddOrEditFaculty.cshtml" />
     <Content Include="Views\Shared\_DeleteFaculty.cshtml" />
+    <Content Include="Views\AccessLevel\Delete.cshtml" />
+    <Content Include="Views\AccessLevel\EditUserAccess.cshtml" />
+    <Content Include="Views\AccessLevel\ManageAccessLevel.cshtml" />
+    <Content Include="Views\AccessLevel\EditAccessLevel.cshtml" />
+    <Content Include="Views\AccessLevel\DeleteAccessLevel.cshtml" />
+    <Content Include="Views\Folder\FolderList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -484,6 +508,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202102151020112_unknown.resx">
       <DependentUpon>202102151020112_unknown.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102191549415_AddFoldersTable.resx">
+      <DependentUpon>202102191549415_AddFoldersTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102192117574_AddSubFoldersTable.resx">
+      <DependentUpon>202102192117574_AddSubFoldersTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102192119285_SeedRootFolder.resx">
+      <DependentUpon>202102192119285_SeedRootFolder.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

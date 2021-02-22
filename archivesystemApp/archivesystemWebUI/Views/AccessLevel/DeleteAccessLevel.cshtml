@@ -1,0 +1,82 @@
+﻿@model archivesystemDomain.Entities.AccessLevel
+
+@{
+    ViewBag.Title = "DeleteAccessLevel";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="account-content">
+
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row">
+                <div class="col-sm-12">
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="@Url.Action("Index", "AccessLevel")">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="@Url.Action("ManageAccessLevel", "AccessLevel")">Manage Access Level</a></li>
+                        <li class="breadcrumb-item active">Delete Access Level</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- /Page Header -->
+
+        <div class="account-box">
+            <div class="account-wrapper">
+                <h3 class="account-title">Delete Access Level?</h3>
+                @*<p class="account-subtitle">To access your Dashboard</p>*@
+                <hr />
+                @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+                <div class="text-center">
+                    <dl>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Level)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.Level)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.LevelDescription)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.LevelDescription)
+                        </dd>
+
+                    </dl>
+
+                </div>
+
+
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+
+
+                    <div class="form-group text-center">
+                        <button class="btn btn-primary account-btn" type="submit">Delete</button>
+                    </div>
+                }
+
+
+
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
