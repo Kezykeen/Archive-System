@@ -231,6 +231,10 @@
     <Compile Include="Migrations\202102192119285_SeedRootFolder.Designer.cs">
       <DependentUpon>202102192119285_SeedRootFolder.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202102221824083_AddColumnsToSubFoldersTable.cs" />
+    <Compile Include="Migrations\202102221824083_AddColumnsToSubFoldersTable.Designer.cs">
+      <DependentUpon>202102221824083_AddColumnsToSubFoldersTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CodeStatus.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -518,6 +522,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202102192119285_SeedRootFolder.resx">
       <DependentUpon>202102192119285_SeedRootFolder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102221824083_AddColumnsToSubFoldersTable.resx">
+      <DependentUpon>202102221824083_AddColumnsToSubFoldersTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

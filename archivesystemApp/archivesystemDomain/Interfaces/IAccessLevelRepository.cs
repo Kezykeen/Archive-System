@@ -7,5 +7,6 @@ namespace archivesystemDomain.Interfaces
     {
         AccessLevel GetByLevel(string Level);
         void EditDetails(AccessLevel accessLevel);
+        AccessLevel GetBaseLevel();
     }
 }

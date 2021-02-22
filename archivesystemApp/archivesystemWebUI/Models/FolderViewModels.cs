@@ -10,6 +10,8 @@ namespace archivesystemWebUI.Models
     {
         public string Name { get; set; }
         public int ParentId { get; set; }
+        public IEnumerable<AccessLevel> AccessLevels { get; set; }
+        public int AccessLevelId {get;set;}
 
        
     }

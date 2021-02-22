@@ -38,7 +38,8 @@ namespace archivesystemWebUI.Controllers
         [HttpGet]
         public ActionResult Create(int id)
         {
-            var data = new CreateFolderViewModel() { Name = "", ParentId = id };
+            var accessLevels = repo.AccessLevelRepo.GetAll();
+            var data = new CreateFolderViewModel() { Name = "", ParentId = id, AccessLevels=accessLevels };
             return View("CreateFolder",data);
         }
 
@@ -46,24 +47,20 @@ namespace archivesystemWebUI.Controllers
         [Route("folders/add")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(string name,int parentId)
+        public ActionResult Create(string name,int parentId,int accessLevelId)
         {
             Folder rootFolder = repo.FolderRepo.GetRootFolder();
             IEnumerable<string> folderNames = repo.SubFolderRepo.GetSubFolderNames(parentId);
             if(folderNames.Contains(name) || name == "Root")
             {
                 ModelState.AddModelError("", $"{name} folder already exist");
-                return View("CreateFolder", new CreateFolderViewModel() { Name = name, ParentId = parentId });
+                return View("CreateFolder", new CreateFolderViewModel() { Name = name, ParentId = parentId, AccessLevelId=accessLevelId  });
             }
 
-            var folder = new Folder()
-            {
-                Name = name,
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now,
-            };
+            var folder = new Folder{Name = name,CreatedAt = DateTime.Now,UpdatedAt = DateTime.Now };
             repo.FolderRepo.Add(folder);
-            repo.SubFolderRepo.AddToParentFolder(parentId, folder.Id);
+            var subFolder = new SubFolder { AccessLevelId = accessLevelId, FolderId = folder.Id, ParentId = parentId };
+            repo.SubFolderRepo.Add(subFolder);
             repo.Save();
 
             if (parentId == rootFolder.Id)

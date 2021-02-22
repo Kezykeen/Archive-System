@@ -67,6 +67,7 @@ namespace archivesystemWebUI.Controllers
                 department.UpdatedAt = DateTime.Now;
 
                 _unitOfWork.DeptRepo.Add(department);
+                CreateDepartmentFolder(department);
             }
             else
             {
@@ -110,6 +111,23 @@ namespace archivesystemWebUI.Controllers
             {
                 return Json("failure", JsonRequestBehavior.AllowGet);
             }
+        }
+
+        private void CreateDepartmentFolder(Department department)
+        {
+           
+            var faculty = _unitOfWork.FacultyRepo.Get(department.FacultyId);
+            var facultyFolder = _unitOfWork.FolderRepo.GetFolderByName(faculty.Name);
+            var folder = new Folder { Name = department.Name, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now };
+            _unitOfWork.FolderRepo.Add(folder);
+            var subFolder = new SubFolder
+            {
+                FolderId = folder.Id,
+                ParentId = facultyFolder.Id,
+                AccessLevelId = _unitOfWork.AccessLevelRepo.GetBaseLevel().Id
+            };
+            _unitOfWork.SubFolderRepo.Add(subFolder);
+
         }
     }
 }

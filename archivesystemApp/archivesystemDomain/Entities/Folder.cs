@@ -16,10 +16,6 @@ namespace archivesystemDomain.Entities
         [Required]
         public string Name { get; set; }
 
-        //public AccessLevel AccessLevel { get; set; }
-
-        //public int AccessLevelId { get; set; }
-
         [Required]
         public DateTime CreatedAt {get;set;}
 

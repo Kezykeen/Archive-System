@@ -25,5 +25,10 @@ namespace archivesystemWebUI.Repository
             return folder;
         }  
 
+        public Folder GetFolderByName(string name)
+        {
+            return _context.Folders.SingleOrDefault(x => x.Name == name);
+        }
+
     }
 }

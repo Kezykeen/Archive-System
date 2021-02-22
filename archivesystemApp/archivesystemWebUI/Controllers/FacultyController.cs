@@ -63,8 +63,9 @@ namespace archivesystemWebUI.Controllers
             {
                 faculty.CreatedAt = DateTime.Now;
                 faculty.UpdatedAt = DateTime.Now;
-
                 _unitOfWork.FacultyRepo.Add(faculty);
+                
+                CreateFacultyFolder(faculty);
             }
             else
             {
@@ -107,6 +108,17 @@ namespace archivesystemWebUI.Controllers
             {
                 return Json("failure", JsonRequestBehavior.AllowGet);
             }
+        }
+
+        private  void CreateFacultyFolder(Faculty faculty)
+        {
+            var folder = new Folder { Name = faculty.Name, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now };
+            var rootFolder = _unitOfWork.FolderRepo.GetRootFolder();
+            _unitOfWork.FolderRepo.Add(folder);
+            var subFolder = new SubFolder { FolderId = folder.Id, ParentId = rootFolder.Id,
+                AccessLevelId = _unitOfWork.AccessLevelRepo.GetBaseLevel().Id };
+            _unitOfWork.SubFolderRepo.Add(subFolder);
+
         }
     }
 }

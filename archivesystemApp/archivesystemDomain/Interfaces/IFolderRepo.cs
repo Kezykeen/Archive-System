@@ -10,7 +10,7 @@ namespace archivesystemDomain.Interfaces
     public interface IFolderRepo : IRepository<Folder>
     {
         Folder GetRootFolder();
-       
+        Folder GetFolderByName(string name);
 
     }
 }
