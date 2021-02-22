@@ -4,15 +4,14 @@ Template Name: SmartHR - Bootstrap Admin Template
 Version      : 3.6
 */
 
+// Variables declarations
+
+var $wrapper = $('.main-wrapper');
+var $pageWrapper = $('.page-wrapper');
+var $slimScrolls = $('.slimscroll');
+
 $(document).ready(function() {
-	
-	// Variables declarations
-	
-	var $wrapper = $('.main-wrapper');
-	var $pageWrapper = $('.page-wrapper');
-	var $slimScrolls = $('.slimscroll');
-	
-	// Sidebar
+    // Sidebar
 	
 	var Sidemenu = function() {
 		this.$menuItem = $('#sidebar-menu a');
@@ -333,9 +332,6 @@ $(document).ready(function() {
 			placeholder: "drag-placeholder"
 		});
 	}
-
-    
-
 });
 
 // Loader
@@ -344,7 +340,6 @@ $(window).on ('load', function (){
 	$('#loader').delay(100).fadeOut('slow');
 	$('#loader-wrapper').delay(500).fadeOut('slow');
 });
-
 
 
     

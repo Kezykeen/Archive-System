@@ -16,11 +16,6 @@ namespace archivesystemWebUI.Repository
             _context = context;
         }
 
-        public IEnumerable<Department> GetDeptWithFaculty()
-        {
-            return _context.Departments.Include(f => f.Faculty).ToList();
-        }
-
         public void Update(Department department)
         { 
             _context.Entry(department).State = EntityState.Modified;

@@ -20,7 +20,8 @@ namespace archivesystemWebUI.Infrastructures
                 .ForMember(dest => dest.CreatedAt, opt => opt.UseValue(DateTime.Now))
                 .ForMember(dest => dest.UpdatedAt, opt => opt.UseValue(DateTime.Now));
             Mapper.CreateMap<EnrollViewModel, Employee>();
-
+            Mapper.CreateMap<Department, DepartmentViewModel>().ReverseMap();
+            Mapper.CreateMap<Faculty, FacultyViewModel>().ReverseMap();
         }
     }
 }

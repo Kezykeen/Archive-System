@@ -298,6 +298,7 @@
     <Content Include="Content\assets\js\bootstrap.min.js" />
     <Content Include="Content\assets\js\chart.js" />
     <Content Include="Content\assets\js\dataTables.bootstrap4.min.js" />
+    <Content Include="Content\assets\js\departmentAndFacultyCRUD.js" />
     <Content Include="Content\assets\js\dropfiles.js" />
     <Content Include="Content\assets\js\fullcalendar.min.js" />
     <Content Include="Content\assets\js\jquery-3.5.1.min.js" />
@@ -421,18 +422,9 @@
     <Content Include="Views\Roles\EditRoleView.cshtml" />
     <Content Include="Views\AccessLevel\Create.cshtml" />
     <Content Include="Views\AccessLevel\Index.cshtml" />
-    <Content Include="Views\Faculty\Create.cshtml" />
-    <Content Include="Views\Faculty\Delete.cshtml" />
-    <Content Include="Views\Faculty\Details.cshtml" />
-    <Content Include="Views\Faculty\Edit.cshtml" />
     <Content Include="Views\Faculty\Index.cshtml" />
-    <Content Include="Views\Department\Create.cshtml" />
-    <Content Include="Views\Department\Delete.cshtml" />
-    <Content Include="Views\Department\Details.cshtml" />
-    <Content Include="Views\Department\Edit.cshtml" />
     <Content Include="Views\Department\Index.cshtml" />
-    <Content Include="Views\Shared\_DepartmentTable.cshtml" />
-    <Content Include="Views\Shared\_Create.cshtml" />
+    <Content Include="Views\Shared\_AddOrEditDepartment.cshtml" />
     <Content Include="Views\AccessLevel\ManageUserAccess.cshtml" />
     <Content Include="Views\AccessLevel\AddUserToAccess.cshtml" />
     <Content Include="Views\AccessLevel\Delete.cshtml" />
@@ -442,6 +434,9 @@
     <Content Include="Views\AccessDetails\Edit.cshtml" />
     <Content Include="Views\AccessDetails\Index.cshtml" />
     <Content Include="Views\Folder\CreateFolder.cshtml" />
+    <Content Include="Views\Shared\_DeleteDepartment.cshtml" />
+    <Content Include="Views\Shared\_AddOrEditFaculty.cshtml" />
+    <Content Include="Views\Shared\_DeleteFaculty.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

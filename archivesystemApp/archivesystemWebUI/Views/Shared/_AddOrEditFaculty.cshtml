@@ -1,0 +1,36 @@
+﻿@model archivesystemWebUI.Models.FacultyViewModel
+
+<div class="modal-header">
+    <h5 class="modal-title">@(Model.Id == 0? "Add Faculty" :"Edit Faculty")</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <form name="AddOrUpdateFacultyForm">
+        @* @Html.AntiForgeryToken() *@
+
+        <div class="form-horizontal">
+            @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.Id, new { Id = "editTxtId" })
+
+            <div class="form-group">
+                <label for="@Model.Name" class="control-label col-md-6">Name <span class="text-danger">*</span></label>
+                <div class="col-md-12">
+                    @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", Id = "editTxtName", required = true } })
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                    <label for="@Model.Name" id="validationMsg" class="field-validation-error"></label>
+                </div>
+            </div>
+
+            <div class="form-group submit-section">
+                <input type="button" value="Save" onclick="addOrEdit('AddOrUpdateFacultyForm', '@Url.Action("AddOrEdit", "Faculty")')" class="btn btn-primary submit-btn" />
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
