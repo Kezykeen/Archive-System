@@ -17,12 +17,12 @@ namespace archivesystemWebUI.Controllers
             this.repo = repo;
         }
 
-        // GET: /folder
+        // GET: /folders
         [Route("folders")]
         public ActionResult Index()
         {
             var rootFolder = repo.FolderRepo.GetRootFolder();
-            var folders = repo.FolderRepo.GetSubFolders(rootFolder.Id);
+            var folders = repo.SubFolderRepo.GetSubFolders(rootFolder.Id);
             
             FolderListViewModel model = new FolderListViewModel
             {
@@ -33,7 +33,7 @@ namespace archivesystemWebUI.Controllers
             return View("FolderList",model);
         }
 
-        // GET: /folder/add
+        // GET: /folders/add
         [Route("folders/add")]
         [HttpGet]
         public ActionResult Create(int id)
@@ -42,14 +42,14 @@ namespace archivesystemWebUI.Controllers
             return View("CreateFolder",data);
         }
 
-        //POST: /folder/create
+        //POST: /folders/create
         [Route("folders/add")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(string name,int parentId)
         {
             Folder rootFolder = repo.FolderRepo.GetRootFolder();
-            IEnumerable<string> folderNames = repo.FolderRepo.GetSubFolderNames(parentId);
+            IEnumerable<string> folderNames = repo.SubFolderRepo.GetSubFolderNames(parentId);
             if(folderNames.Contains(name) || name == "Root")
             {
                 ModelState.AddModelError("", $"{name} folder already exist");
@@ -63,7 +63,7 @@ namespace archivesystemWebUI.Controllers
                 UpdatedAt = DateTime.Now,
             };
             repo.FolderRepo.Add(folder);
-            repo.FolderRepo.AddToParentFolder(parentId, folder.Id);
+            repo.SubFolderRepo.AddToParentFolder(parentId, folder.Id);
             repo.Save();
 
             if (parentId == rootFolder.Id)
@@ -71,29 +71,31 @@ namespace archivesystemWebUI.Controllers
             return RedirectToAction(nameof(GetSubFolders), new { id=parentId });
         }
 
-       
+        //POST: /folders/create
         [Route("folders/delete")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id)
+        public ActionResult Delete(int id,int parentId)
         {
             var folderToDelete=repo.FolderRepo.Get(id);
-            repo.FolderRepo.RecursiveDelete(folderToDelete);
+            repo.SubFolderRepo.RecursiveDelete(folderToDelete);
             repo.Save();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(GetSubFolders),new { id=parentId});
         }
 
+        //GET: /folders/{id}
         [Route("folders/{id}")]
         [HttpGet]
         public ActionResult GetSubFolders(int id)
         {
-            var folders = repo.FolderRepo.GetSubFolders(id);
+            var folders = repo.SubFolderRepo.GetSubFolders(id);
             var folder = repo.FolderRepo.Get(id);
-            var parentId = repo.FolderRepo.GetParentId(id);
+            var parentId = repo.SubFolderRepo.GetParentId(id);
             var model = new FolderListViewModel { FolderName=folder.Name,Id=folder.Id,SubFolders=folders , ParentId=parentId};
             return View("FolderList", model);
         }
 
+        //POST: /folders/{id}
         [HttpPost]
         [Route("folders/{id}")]
         public ActionResult BackToParent(int parentId)
@@ -101,18 +103,9 @@ namespace archivesystemWebUI.Controllers
             var folder = repo.FolderRepo.Get(parentId);
             if (folder.Name == "Root")
                 return RedirectToAction(nameof(Index));
-
+            Session["Name"] = "boy";
             return RedirectToAction(nameof(GetSubFolders), new { id = folder.Id });
         }
     }
 }
 
-//public override void Up()
-//{
-//    Sql("INSERT INTO [dbo].[Folders] ( [Name], [CreatedAt], [UpdatedAt]) VALUES ( N'Root', N'2021-02-19 00:00:00', N'2021-02-19 00:00:00')");
-//}
-
-//public override void Down()
-//{
-//    Sql("DELETE FROM [dbo].[Folders] Where [Name]= 'Root'");
-//}

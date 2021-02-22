@@ -43,6 +43,7 @@ namespace archivesystemWebUI.Infrastructures
             kernel.Bind<ITokenGenerator>().To<TokenGenerator>();
             kernel.Bind<IEmailSender>().To<EmailSender>();
             kernel.Bind<IFolderRepo>().To<FolderRepo>();
+            kernel.Bind<ISubFolderRepo>().To<SubFolderRepo>();
             kernel.Bind<IUnitOfWork>().To<UnitOfWork>();
             kernel.Bind<IFacultyRepository>().To<FacultyRepository>();
         }

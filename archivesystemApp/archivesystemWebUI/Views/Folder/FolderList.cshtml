@@ -35,20 +35,23 @@
                                         foreach (Folder folder in Model.SubFolders)
                                         {
                                             <li style="display:flex;justify-content:space-between;align-items: center;" class="folderlist-folder">
-                                                @Html.ActionLink(@folder.Name, $"/{folder.Id}","folders")
+                                                @Html.ActionLink(@folder.Name, $"/{@folder.Id}","folders")
 
                                                 <a href="" class="dropdown-link" data-toggle="dropdown" style="padding:0;width: 5px;margin:0;"><i class="fa fa-ellipsis-v"></i></a>
                                                 <div class="dropdown-menu dropdown-menu-right">
-                              
-                             
+
+
                                                     <a href="#" class="dropdown-item">Rename</a>
-                                                    @using(Html.BeginForm("Delete", "Folder", FormMethod.Post)){
+                                                    @using (Html.BeginForm("Delete", "Folder", FormMethod.Post))
+                                                    {
                                                         @Html.AntiForgeryToken();
-                                                        @Html.Hidden("id",folder.Id)
-                                                        <input class = "dropdpwn-item" type="submit" value="Delete" 
+                                                        <input value="@folder.Id" type="number" hidden  name="id" />
+                                                        <input value="@Model.Id" type="number" hidden  name="parentId" />
+                                                        <input class="dropdpwn-item" type="submit" value="Delete"
                                                                style="margin-left:1em;background-color:red; color:white; border-radius:5px ;border:1px gray solid" />
+                                                        
                                                     }
-                                                   @* @Html.ActionLink("Delete", "Delete", "Folder", new { id = folder.Id }, new { @class = "dropdpwn-item" })*@
+
 
                                                 </div>
                                             </li>

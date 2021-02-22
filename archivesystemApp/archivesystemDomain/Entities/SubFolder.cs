@@ -17,3 +17,4 @@ namespace archivesystemDomain.Entities
         public Folder Folder {get;set;}
     }
 }
+ 
