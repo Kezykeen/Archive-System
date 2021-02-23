@@ -480,6 +480,7 @@
     <Content Include="Views\Shared\_DeleteFaculty.cshtml" />
     <Content Include="Views\Folder\FolderList.cshtml" />
     <Content Include="Views\Folder\EditFolder.cshtml" />
+    <Content Include="Views\Shared\_EditFolder.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

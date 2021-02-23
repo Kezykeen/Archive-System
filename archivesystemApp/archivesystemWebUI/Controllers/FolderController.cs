@@ -105,6 +105,7 @@ namespace archivesystemWebUI.Controllers
             return RedirectToAction(nameof(GetSubFolders), new { id = folder.Id });
         }
     
+        //GET: /folders/edit/{id}
         [Route("folders/edit/{id}")]
         public ActionResult Edit(int id)
         {
@@ -122,7 +123,8 @@ namespace archivesystemWebUI.Controllers
             return View("EditFolder",model);
         }
 
-        [Route("folders/edit/{id}")]
+
+        //POST: /folders/edit/{id}
         [HttpPost]
         public ActionResult Edit(CreateFolderViewModel model)
         {
@@ -132,6 +134,24 @@ namespace archivesystemWebUI.Controllers
             repo.SubFolderRepo.Update(subFoleder);
             repo.Save();
             return RedirectToAction(nameof(GetSubFolders),new { id=model.Id });
+        }
+
+
+        //GET: /Folder/GetEditPartialView
+        public ActionResult GetEditFolderPartialView(int id)
+        {
+            var subFolder = repo.SubFolderRepo.GetByFolderId(id);
+            if (subFolder == null)
+                return RedirectToAction("Index");
+
+            var model = new CreateFolderViewModel
+            {
+                Id = id,
+                AccessLevelId = subFolder.AccessLevelId,
+                AccessLevels = repo.AccessLevelRepo.GetAll(),
+                Name = subFolder.Folder.Name,
+            };
+            return PartialView("_EditFolder", model);
         }
     }
 }

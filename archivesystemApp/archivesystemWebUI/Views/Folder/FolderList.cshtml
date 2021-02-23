@@ -8,101 +8,101 @@
 
 
 
-    <!-- Page Content -->
-    <div class="content container-fluid">
+<!-- Page Content -->
+<div class="content container-fluid">
 
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="file-wrap">
-                    <div class="file-sidebar">
-                        <div class="file-header justify-content-center">
-                            <span>@Model.FolderName Folder</span>
-                            <a href="javascript:void(0);" class="file-side-close"><i class="fa fa-times"></i></a>
-                        </div>
-                        <form class="file-search">
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <i class="fa fa-search"></i>
-                                </div>
-                                <input type="text" class="form-control" placeholder="Search">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="file-wrap">
+                <div class="file-sidebar">
+                    <div class="file-header justify-content-center">
+                        <span>@Model.FolderName Folder</span>
+                        <a href="javascript:void(0);" class="file-side-close"><i class="fa fa-times"></i></a>
+                    </div>
+                    <form class="file-search">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <i class="fa fa-search"></i>
                             </div>
-                        </form>
-                        <div class="file-pro-list">
-                            <div class="file-scroll">
-                                <ul class="file-menu">
-                                    @if (Model.SubFolders.Count() > 0)
-                                    {
-                                        foreach (Folder folder in Model.SubFolders)
-                                        {
-                                            <li style="display:flex;justify-content:space-between;align-items: center;" class="folderlist-folder">
-                                                @Html.ActionLink(@folder.Name, $"/{@folder.Id}","folders")
-
-                                                <a href="" class="dropdown-link" data-toggle="dropdown" style="padding:0;width: 5px;margin:0;"><i class="fa fa-ellipsis-v"></i></a>
-                                                <div class="dropdown-menu dropdown-menu-right">
-
-                                                    @Html.ActionLink("Edit","/edit", "folders", new {id=folder.Id }, new { @class = "dropdown-item" })
-                                                    
-                                                    @using (Html.BeginForm("Delete", "Folder", FormMethod.Post))
-                                                    {
-                                                        @Html.AntiForgeryToken();
-                                                        <input value="@folder.Id" type="number" hidden name="id" />
-                                                        <input value="@Model.Id" type="number" hidden name="parentId" />
-                                                        <input class="dropdpwn-item" type="submit" value="Delete"
-                                                               style="margin-left:1em;background-color:red; color:white; border-radius:5px ;border:1px gray solid" />
-
-                                                    }
-
-
-                                                </div>
-                                            </li>
-                                        }
-                                    }
-
-                                </ul>
-                                @if (Model.FolderName != "Root")
+                            <input type="text" class="form-control" placeholder="Search">
+                        </div>
+                    </form>
+                    <div class="file-pro-list">
+                        <div class="file-scroll">
+                            <ul class="file-menu">
+                                @if (Model.SubFolders.Count() > 0)
                                 {
-                                    using(Html.BeginForm("BackToParent","Folder",FormMethod.Post))
+                                    foreach (Folder folder in Model.SubFolders)
                                     {
-                                        <input hidden name="parentId" value="@Model.ParentId"/>
-                                        <div class="btn">
-                                            <button type="submit">Back</button>
-                                        </div>
-                                    }
+                                        <li style="display:flex;justify-content:space-between;align-items: center;" class="folderlist-folder">
+                                            @Html.ActionLink(@folder.Name, $"/{@folder.Id}", "folders")
 
+                                            <a href="" class="dropdown-link" data-toggle="dropdown" style="padding:0;width: 5px;margin:0;"><i class="fa fa-ellipsis-v"></i></a>
+                                            <div class="dropdown-menu dropdown-menu-right">
+
+                                                <a href="#" class = "dropdown-item"  onclick="getEditFolderPartialView('@Url.Action("GetEditFolderPartialView", "Folder")', @folder.Id)"> Edit Folder</a>
+                    
+
+                                                @using (Html.BeginForm("Delete", "Folder", FormMethod.Post))
+                                                {
+                                                    @Html.AntiForgeryToken();
+                                                    <input value="@folder.Id" type="number" hidden name="id" />
+                                                    <input value="@Model.Id" type="number" hidden name="parentId" />
+                                                    <input class="dropdpwn-item" type="submit" value="Delete"
+                                                           style="margin-left:1em;background-color:red; color:white; border-radius:5px ;border:1px gray solid" />
+
+                                                }
+
+
+                                            </div>
+                                        </li>
+                                    }
                                 }
 
-                            </div>
+                            </ul>
+                            @if (Model.FolderName != "Root")
+                            {
+                                using (Html.BeginForm("BackToParent", "Folder", FormMethod.Post))
+                                {
+                                    <input hidden name="parentId" value="@Model.ParentId" />
+                                   
+                                        <button type="submit" class="btn btn-primary" >Back</button>
+                                    
+                                }
+
+                            }
+
                         </div>
                     </div>
-                    <div class="file-cont-wrap" style="width:100%">
-                        <div class="file-cont-inner">
-                            <div class="file-cont-header">
-                                <div class="file-options">
-                                    <a href="javascript:void(0)" id="file_sidebar_toggle" class="file-sidebar-toggle">
-                                        <i class="fa fa-bars"></i>
-                                    </a>
-                                </div>
-                                <span>File Manager</span>
-                                <div class="file-options">
-                                    @Html.ActionLink("Add Folder","Create","Folder",new { id=Model.Id} ,null)
-                                   
-                                    <span class="btn-file"><input type="file" class="upload"><i class="fa fa-upload"></i></span>
-                                </div>
+                </div>
+                <div class="file-cont-wrap" style="width:100%">
+                    <div class="file-cont-inner">
+                        <div class="file-cont-header">
+                            <div class="file-options">
+                                <a href="javascript:void(0)" id="file_sidebar_toggle" class="file-sidebar-toggle">
+                                    <i class="fa fa-bars"></i>
+                                </a>
                             </div>
-                            <div class="file-content">
-                                <form class="file-search">
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <i class="fa fa-search"></i>
-                                        </div>
-                                        <input type="text" class="form-control" placeholder="Search">
+                            <span>File Manager</span>
+                            <div class="file-options">
+                                @Html.ActionLink("Add Folder", "Create", "Folder", new { id = Model.Id }, null)
+
+                                <span class="btn-file"><input type="file" class="upload"><i class="fa fa-upload"></i></span>
+                            </div>
+                        </div>
+                        <div class="file-content">
+                            <form class="file-search">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <i class="fa fa-search"></i>
                                     </div>
-                                </form>
-                                <div class="file-body">
-                                    <div class="file-scroll">
-                                        <div class="file-content-inner">
-                                            
-                                        </div>
+                                    <input type="text" class="form-control" placeholder="Search">
+                                </div>
+                            </form>
+                            <div class="file-body">
+                                <div class="file-scroll">
+                                    <div class="file-content-inner">
+
                                     </div>
                                 </div>
                             </div>
@@ -111,6 +111,19 @@
                 </div>
             </div>
         </div>
-
     </div>
-    <!-- /Page Content --
+
+</div>
+
+<!-- Folder Modal -->
+<div class="modal custom-modal fade" role="dialog" id="modal">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" id="modalBody">
+        </div>
+    </div>
+</div>
+<!-- / Folder Modal -->
+
+@section scripts{
+    <script src="~/Content/assets/js/archive-system.js"></script>
+}
