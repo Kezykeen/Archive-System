@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -19,126 +18,116 @@ namespace archivesystemWebUI.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        // GET: Department
         public ActionResult Index()
         {
-            var departments = _unitOfWork.DeptRepo.GetDeptWithFaculty();
-            List<DepartmentViewModel> departmentViewModel = departments.Select(x=>new DepartmentViewModel
-            {
-                FacultyId = x.FacultyId,
-                Name =  x.Name,
-                Id =  x.Id
-            }).ToList();
-
-            ViewBag.DepartmentViewModel = departmentViewModel;
-            return View(departments);
-        }
-
-        // GET: Department/Details/5
-        public ActionResult Details(int id)
-        {
-            Department department = _unitOfWork.DeptRepo.Get(id);
-            if (department == null)
-            {
-                return HttpNotFound();
-            }
-            return View(department);
-        }
-
-        // GET: Department/Create
-        public ActionResult Create()
-        {
-            ViewBag.FacultyId = new SelectList(_unitOfWork.FacultyRepo.GetAll(), "Id", "Name");
             return View();
         }
 
-        // POST: Department/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(DepartmentViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                Department department = Mapper.Map<Department>(model);
-                department.CreatedAt = DateTime.Now;
-                department.UpdatedAt = DateTime.Now;
-
-                _unitOfWork.DeptRepo.Add(department);
-                await _unitOfWork.SaveAsync();
-                
-                return View("Index");
-            }
-
-            ViewBag.FacultyId = new SelectList(_unitOfWork.FacultyRepo.GetAll(), "Id", "Name", model.FacultyId);
-            return View(model);
-        }
-
-        // GET: Department/Edit/5
-        public ActionResult Edit(int id)
-        {
-            Department department = _unitOfWork.DeptRepo.Get(id);
-            if (department == null)
-            {
-                return HttpNotFound();
-            }
-            ViewBag.FacultyId = new SelectList(_unitOfWork.FacultyRepo.GetAll(), "Id", "Name", department.FacultyId);
-
-            DepartmentViewModel model = Mapper.Map<DepartmentViewModel>(department);
-
-            return View(model);
-        }
-
-        // POST: Department/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(DepartmentViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                Department getDepartment = _unitOfWork.DeptRepo.Get(model.Id);
-                var department = Mapper.Map(model, getDepartment);
-                department.UpdatedAt = DateTime.Now;
-
-                _unitOfWork.DeptRepo.Update(department);
-                await _unitOfWork.SaveAsync();
-
-                return RedirectToAction("Index");
-            }
-            ViewBag.FacultyId = new SelectList(_unitOfWork.FacultyRepo.GetAll(), "Id", "Name", model.FacultyId);
-            return View(model);
-        }
-
+        // GET json data for DataTable
         public ActionResult GetDepartmentData()
         {
-            var departments = _unitOfWork.DeptRepo.GetAllToList();
-            var viewModel = departments.Select(x => new {Name = x.Name, Faculty = x.Faculty.Name, Id = x.Id});
+            var department = _unitOfWork.DeptRepo.GetAllToList();
+            var viewModel = department.Select(x => new {x.Name, Faculty = x.Faculty.Name, x.Id});
 
             return Json(new {data = viewModel}, JsonRequestBehavior.AllowGet);
         }
 
-        // GET: Department/Delete/5
-        public ActionResult Delete(int id)
+        //GET: Department/AddOrEdit/5?
+        public ActionResult GetDepartmentPartialView(int? id)
+        {
+            var department = id != null ? _unitOfWork.DeptRepo.Get(id.Value) : new Department();
+            var model = Mapper.Map<DepartmentViewModel>(department);
+
+            ViewBag.FacultyId = new SelectList(_unitOfWork.FacultyRepo.GetAll(), "Id", "Name", model.FacultyId);
+            return PartialView("_AddOrEditDepartment", model);
+        }
+
+        [HttpPost]
+        // POST: Department/AddOrEdit
+        // [ValidateAntiForgeryToken]
+        public async Task<ActionResult> AddOrEdit(DepartmentViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.FacultyId = new SelectList(_unitOfWork.FacultyRepo.GetAll(), "Id", "Name", model.FacultyId);
+                return Json("failure", JsonRequestBehavior.AllowGet);
+            }
+
+            var allDepartments = _unitOfWork.DeptRepo.GetAllToList();
+            if (allDepartments.Any(x=> x.Name == model.Name && x.Id != model.Id))
+            {
+                var message = "Name already exist";
+                return Json(message, JsonRequestBehavior.AllowGet);
+            }
+
+            var department = Mapper.Map<Department>(model);
+            if (model.Id == 0)
+            {
+                department.CreatedAt = DateTime.Now;
+                department.UpdatedAt = DateTime.Now;
+
+                _unitOfWork.DeptRepo.Add(department);
+                CreateDepartmentFolder(department);
+            }
+            else
+            {
+                var getDepartment = _unitOfWork.DeptRepo.Get(model.Id);
+                Mapper.Map(model, getDepartment);
+                getDepartment.UpdatedAt = DateTime.Now;
+
+                _unitOfWork.DeptRepo.Update(getDepartment);
+            }
+            await _unitOfWork.SaveAsync();
+
+            ViewBag.FacultyId = new SelectList(_unitOfWork.FacultyRepo.GetAll(), "Id", "Name", model.FacultyId);
+            return Json("success", JsonRequestBehavior.AllowGet);
+        }
+
+        //GET: Department/Delete/5
+        public ActionResult GetDeletePartialView(int id)
         {
             Department department = _unitOfWork.DeptRepo.Get(id);
             if (department == null)
             {
                 return HttpNotFound();
             }
-            return View(department);
+
+            return PartialView("_DeleteDepartment", department);
         }
 
         // POST: Department/Delete/5
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            Department department = _unitOfWork.DeptRepo.Get(id);
-            _unitOfWork.DeptRepo.Remove(department);
-            await _unitOfWork.SaveAsync();
-            
-            return RedirectToAction("Index");
+            try
+            {
+                Department department = _unitOfWork.DeptRepo.Get(id);
+                _unitOfWork.DeptRepo.Remove(department);
+                await _unitOfWork.SaveAsync();
+
+                return Json("success", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception)
+            {
+                return Json("failure", JsonRequestBehavior.AllowGet);
+            }
         }
 
+        private void CreateDepartmentFolder(Department department)
+        {
+           
+            var faculty = _unitOfWork.FacultyRepo.Get(department.FacultyId);
+            var facultyFolder = _unitOfWork.FolderRepo.GetFolderByName(faculty.Name);
+            var folder = new Folder { Name = department.Name, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now };
+            _unitOfWork.FolderRepo.Add(folder);
+            var subFolder = new SubFolder
+            {
+                FolderId = folder.Id,
+                ParentId = facultyFolder.Id,
+                AccessLevelId = _unitOfWork.AccessLevelRepo.GetBaseLevel().Id
+            };
+            _unitOfWork.SubFolderRepo.Add(subFolder);
 
+        }
     }
 }

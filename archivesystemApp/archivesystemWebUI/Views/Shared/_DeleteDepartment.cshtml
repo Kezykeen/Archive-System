@@ -1,0 +1,23 @@
+﻿@model archivesystemDomain.Entities.Department
+
+<div class="modal-body">
+    @using (Html.BeginForm("Delete", "Department", FormMethod.Post, new {Id = "deleteForm"}))
+    {
+        @Html.AntiForgeryToken()
+        <div class="form-header">
+            <input type="hidden" value=@Model.Id id="txtDeleteId" name="Id"/>
+            <h3>Delete <span id="txtDeleteName">@Model.Name</span></h3>
+            <p>Are you sure want to delete?</p>
+        </div>
+        <div class="modal-btn">
+            <div class="row">
+                <div class="col-6">
+                    <a href="#" class="btn btn-primary continue-btn" onclick="confirmDelete('@Url.Action("Delete", "Department")')" id="deleteBtn">Delete</a>
+                </div>
+                <div class="col-6">
+                    <a href="#" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

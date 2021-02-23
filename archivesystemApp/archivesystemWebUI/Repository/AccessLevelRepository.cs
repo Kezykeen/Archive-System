@@ -1,5 +1,6 @@
 ﻿using archivesystemDomain.Entities;
 using archivesystemDomain.Interfaces;
+using archivesystemDomain.Services;
 using archivesystemWebUI.Infrastructures;
 using archivesystemWebUI.Models;
 using System;
@@ -38,6 +39,10 @@ namespace archivesystemWebUI.Repository
         {
             var access = _context.AccessLevels.FirstOrDefault(m => m.Level == Level);
             return access;
+        }
+        public AccessLevel GetBaseLevel()
+        {
+            return _context.AccessLevels.SingleOrDefault(x => x.Level == AccessLevelNames.BaseLevel);
         }
     }
 }

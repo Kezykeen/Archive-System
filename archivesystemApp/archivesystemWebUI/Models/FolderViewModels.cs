@@ -8,8 +8,11 @@ namespace archivesystemWebUI.Models
 {
     public class CreateFolderViewModel
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public int ParentId { get; set; }
+        public IEnumerable<AccessLevel> AccessLevels { get; set; }
+        public int AccessLevelId {get;set;}
 
        
     }

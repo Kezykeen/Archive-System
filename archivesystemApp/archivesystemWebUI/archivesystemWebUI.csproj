@@ -216,10 +216,6 @@
     <Compile Include="Migrations\202102131002350_AddedAccessDetailsEntity.Designer.cs">
       <DependentUpon>202102131002350_AddedAccessDetailsEntity.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202102151020112_unknown.cs" />
-    <Compile Include="Migrations\202102151020112_unknown.Designer.cs">
-      <DependentUpon>202102151020112_unknown.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\202102191549415_AddFoldersTable.cs" />
     <Compile Include="Migrations\202102191549415_AddFoldersTable.Designer.cs">
       <DependentUpon>202102191549415_AddFoldersTable.cs</DependentUpon>
@@ -239,6 +235,14 @@
     <Compile Include="Migrations\202102231001046_AddedAccessDetailsEntity1.cs" />
     <Compile Include="Migrations\202102231001046_AddedAccessDetailsEntity1.Designer.cs">
       <DependentUpon>202102231001046_AddedAccessDetailsEntity1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202102221824083_AddColumnsToSubFoldersTable.cs" />
+    <Compile Include="Migrations\202102221824083_AddColumnsToSubFoldersTable.Designer.cs">
+      <DependentUpon>202102221824083_AddColumnsToSubFoldersTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202102231138051_Unknown.cs" />
+    <Compile Include="Migrations\202102231138051_Unknown.Designer.cs">
+      <DependentUpon>202102231138051_Unknown.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CodeStatus.cs" />
@@ -260,6 +264,7 @@
     <Compile Include="Repository\FolderRepo.cs" />
     <Compile Include="Repository\Repository.cs" />
     <Compile Include="Repository\AccessLevelRepository.cs" />
+    <Compile Include="Repository\SubFolderRepo.cs" />
     <Compile Include="Repository\TokenRepository.cs" />
     <Compile Include="Repository\UnitOfWork.cs" />
     <Compile Include="Startup.cs" />
@@ -324,6 +329,7 @@
     <Content Include="Content\assets\js\bootstrap.min.js" />
     <Content Include="Content\assets\js\chart.js" />
     <Content Include="Content\assets\js\dataTables.bootstrap4.min.js" />
+    <Content Include="Content\assets\js\departmentAndFacultyCRUD.js" />
     <Content Include="Content\assets\js\dropfiles.js" />
     <Content Include="Content\assets\js\fullcalendar.min.js" />
     <Content Include="Content\assets\js\jquery-3.5.1.min.js" />
@@ -442,7 +448,6 @@
     <Content Include="Views\Shared\_SideBarPartial.cshtml" />
     <Content Include="Views\Shared\_AccountLayout.cshtml" />
     <Content Include="Views\Employees\Index.cshtml" />
-    <Content Include="Views\RoleAdmin\NewUserRoleView.cshtml" />
     <Content Include="Views\Employees\Enroll.cshtml" />
     <Content Include="Views\Roles\NewUserRoleView.cshtml" />
     <Content Include="Views\Roles\Index.cshtml" />
@@ -462,11 +467,19 @@
     <Content Include="Views\Faculty\Edit.cshtml" />
     <Content Include="Views\Faculty\Index.cshtml" />
     <Content Include="Views\Folder\CreateFolder.cshtml" />
-    <Content Include="Views\Folder\FolderList.cshtml" />
     <Content Include="Views\UserAccess\ManageUserAccess.cshtml" />
     <Content Include="Views\UserAccess\AddUser.cshtml" />
     <Content Include="Views\UserAccess\EditUser.cshtml" />
     <Content Include="Views\UserAccess\DeleteUser.cshtml" />
+    <Content Include="Views\Shared\_AddOrEditDepartment.cshtml" />
+    <Content Include="Views\AccessLevel\ManageUserAccess.cshtml" />
+    <Content Include="Views\AccessLevel\AddUserToAccess.cshtml" />
+    <Content Include="Views\Folder\CreateFolder.cshtml" />
+    <Content Include="Views\Shared\_DeleteDepartment.cshtml" />
+    <Content Include="Views\Shared\_AddOrEditFaculty.cshtml" />
+    <Content Include="Views\Shared\_DeleteFaculty.cshtml" />
+    <Content Include="Views\Folder\FolderList.cshtml" />
+    <Content Include="Views\Folder\EditFolder.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -512,9 +525,6 @@
     <EmbeddedResource Include="Migrations\202102131002350_AddedAccessDetailsEntity.resx">
       <DependentUpon>202102131002350_AddedAccessDetailsEntity.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202102151020112_unknown.resx">
-      <DependentUpon>202102151020112_unknown.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202102191549415_AddFoldersTable.resx">
       <DependentUpon>202102191549415_AddFoldersTable.cs</DependentUpon>
     </EmbeddedResource>
@@ -529,6 +539,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202102231001046_AddedAccessDetailsEntity1.resx">
       <DependentUpon>202102231001046_AddedAccessDetailsEntity1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102221824083_AddColumnsToSubFoldersTable.resx">
+      <DependentUpon>202102221824083_AddColumnsToSubFoldersTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102231138051_Unknown.resx">
+      <DependentUpon>202102231138051_Unknown.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
