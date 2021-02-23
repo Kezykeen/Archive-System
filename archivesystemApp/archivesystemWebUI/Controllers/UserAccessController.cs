@@ -69,8 +69,8 @@ namespace archivesystemWebUI.Controllers
                 var newAccessDetails = new AccessDetails
                 {
                     EmployeeId = employee.Id,
-                    EmployeeName = employee.Name,
-                    AccessLevel = model.AccessLevel,
+                   // EmployeeName = employee.Name,
+                    AccessLevelName = model.AccessLevel,
                     AccessCode = AccessCodeGenerator.NewCode(employee.StaffId),
                     Status = Status.Active
                 };

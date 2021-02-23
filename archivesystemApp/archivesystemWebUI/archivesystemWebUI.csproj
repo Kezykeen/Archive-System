@@ -236,9 +236,9 @@
     <Compile Include="Migrations\202102230847171_LinkedEmployeeToAccessDetails.Designer.cs">
       <DependentUpon>202102230847171_LinkedEmployeeToAccessDetails.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202102230918378_AddedEmployeeNameToAccessDetails.cs" />
-    <Compile Include="Migrations\202102230918378_AddedEmployeeNameToAccessDetails.Designer.cs">
-      <DependentUpon>202102230918378_AddedEmployeeNameToAccessDetails.cs</DependentUpon>
+    <Compile Include="Migrations\202102231001046_AddedAccessDetailsEntity1.cs" />
+    <Compile Include="Migrations\202102231001046_AddedAccessDetailsEntity1.Designer.cs">
+      <DependentUpon>202102231001046_AddedAccessDetailsEntity1.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CodeStatus.cs" />
@@ -527,8 +527,8 @@
     <EmbeddedResource Include="Migrations\202102230847171_LinkedEmployeeToAccessDetails.resx">
       <DependentUpon>202102230847171_LinkedEmployeeToAccessDetails.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202102230918378_AddedEmployeeNameToAccessDetails.resx">
-      <DependentUpon>202102230918378_AddedEmployeeNameToAccessDetails.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202102231001046_AddedAccessDetailsEntity1.resx">
+      <DependentUpon>202102231001046_AddedAccessDetailsEntity1.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
