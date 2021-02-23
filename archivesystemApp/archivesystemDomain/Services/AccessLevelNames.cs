@@ -7,6 +7,6 @@ namespace archivesystemDomain.Services
 {
     public class AccessLevelNames
     {
-        public const string BaseLevel= "Level 1";
+        public const string BaseLevel = "1";
     }
 }
