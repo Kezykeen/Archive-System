@@ -171,6 +171,7 @@
     <Compile Include="App_Start\NinjectWebCommon.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="Controllers\UserAccessController.cs" />
     <Compile Include="Controllers\AccessLevelController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\DepartmentController.cs" />
@@ -230,6 +231,14 @@
     <Compile Include="Migrations\202102192119285_SeedRootFolder.cs" />
     <Compile Include="Migrations\202102192119285_SeedRootFolder.Designer.cs">
       <DependentUpon>202102192119285_SeedRootFolder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202102230847171_LinkedEmployeeToAccessDetails.cs" />
+    <Compile Include="Migrations\202102230847171_LinkedEmployeeToAccessDetails.Designer.cs">
+      <DependentUpon>202102230847171_LinkedEmployeeToAccessDetails.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202102230918378_AddedEmployeeNameToAccessDetails.cs" />
+    <Compile Include="Migrations\202102230918378_AddedEmployeeNameToAccessDetails.Designer.cs">
+      <DependentUpon>202102230918378_AddedEmployeeNameToAccessDetails.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CodeStatus.cs" />
@@ -440,13 +449,8 @@
     <Content Include="Views\Roles\EditRoleView.cshtml" />
     <Content Include="Views\AccessLevel\CreateAccessLevel.cshtml" />
     <Content Include="Views\AccessLevel\Index.cshtml" />
-    <Content Include="Views\AccessLevel\ManageUserAccess.cshtml" />
-    <Content Include="Views\AccessLevel\AddUserToAccess.cshtml" />
-    <Content Include="Views\AccessLevel\Delete.cshtml" />
-    <Content Include="Views\AccessLevel\EditUserAccess.cshtml" />
     <Content Include="Views\AccessLevel\ManageAccessLevel.cshtml" />
     <Content Include="Views\AccessLevel\EditAccessLevel.cshtml" />
-    <Content Include="Views\AccessLevel\DeleteAccessLevel.cshtml" />
     <Content Include="Views\Department\Create.cshtml" />
     <Content Include="Views\Department\Delete.cshtml" />
     <Content Include="Views\Department\Details.cshtml" />
@@ -459,6 +463,10 @@
     <Content Include="Views\Faculty\Index.cshtml" />
     <Content Include="Views\Folder\CreateFolder.cshtml" />
     <Content Include="Views\Folder\FolderList.cshtml" />
+    <Content Include="Views\UserAccess\ManageUserAccess.cshtml" />
+    <Content Include="Views\UserAccess\AddUser.cshtml" />
+    <Content Include="Views\UserAccess\EditUser.cshtml" />
+    <Content Include="Views\UserAccess\DeleteUser.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -515,6 +523,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202102192119285_SeedRootFolder.resx">
       <DependentUpon>202102192119285_SeedRootFolder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102230847171_LinkedEmployeeToAccessDetails.resx">
+      <DependentUpon>202102230847171_LinkedEmployeeToAccessDetails.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102230918378_AddedEmployeeNameToAccessDetails.resx">
+      <DependentUpon>202102230918378_AddedEmployeeNameToAccessDetails.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

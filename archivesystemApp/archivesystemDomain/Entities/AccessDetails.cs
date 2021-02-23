@@ -12,6 +12,7 @@ namespace archivesystemDomain.Entities
     {
         public int Id { get; set; }   
         public int EmployeeId { get; set; }
+        public Employee Employee { get; set; }
         public string EmployeeName { get; set; }
         public string AccessLevel { get; set; }
         public string AccessCode { get; set; }

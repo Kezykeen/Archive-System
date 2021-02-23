@@ -1,6 +1,7 @@
-﻿@model archivesystemWebUI.Models.EditUserViewModel
+﻿
+@model archivesystemWebUI.Models.EditUserViewModel
 
-  @{  ViewBag.Title = "Edit";
+@{ ViewBag.Title = "EditUser";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -15,7 +16,7 @@
                 <div class="col-sm-12">
                     <ul class="breadcrumb">
                         <li class="breadcrumb-item"><a href="@Url.Action("Index", "AccessLevel")">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="@Url.Action("ManageUserAccess", "AccessLevel")">Manage User Access</a></li>
+                        <li class="breadcrumb-item"><a href="@Url.Action("ManageUserAccess", "UserAccess")">Manage User Access</a></li>
                         <li class="breadcrumb-item active">Edit User</li>
                     </ul>
                 </div>
@@ -29,14 +30,13 @@
                 <hr />
                 @*<p class="account-subtitle">To access your Dashboard</p>*@
 
-                @using (Html.BeginForm("EditUserAccess", "AccessLevel", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                @using (Html.BeginForm("EditUser", "UserAccess", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
                 {
                     @Html.AntiForgeryToken()
                     @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 
                     @Html.HiddenFor(model => model.AccessDetails.Id)
                     @Html.HiddenFor(model => model.AccessDetails.EmployeeId)
-                    @Html.HiddenFor(model => model.AccessDetails.EmployeeName)
                     @Html.HiddenFor(model => model.AccessDetails.AccessCode)
 
                     <div class="form-group">
@@ -58,7 +58,7 @@
                     <div class="form-group">
                         @Html.LabelFor(model => model.AccessDetails.AccessLevel, htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
-                            @Html.DropDownListFor(model => model.AccessDetails.AccessLevel, new SelectList(Model.AccessLevels, "Level", "Level"), Model.AccessDetails.AccessLevel,  htmlAttributes : new { @class = "form-control" } )
+                            @Html.DropDownListFor(model => model.AccessDetails.AccessLevel, new SelectList(Model.AccessLevels, "Level", "Level"), Model.AccessDetails.AccessLevel, htmlAttributes: new { @class = "form-control" })
                             @Html.ValidationMessageFor(model => model.AccessDetails.AccessLevel, "", new { @class = "text-danger" })
                         </div>
                     </div>
