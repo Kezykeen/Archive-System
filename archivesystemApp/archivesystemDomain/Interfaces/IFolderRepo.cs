@@ -11,6 +11,8 @@ namespace archivesystemDomain.Interfaces
     {
         Folder GetRootFolder();
         Folder GetFolderByName(string name);
+        void UpdateFolder(Folder folder);
+        void DeleteFolders(List<Folder> folders);
 
     }
 }

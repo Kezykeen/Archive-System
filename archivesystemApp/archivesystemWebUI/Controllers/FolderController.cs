@@ -75,7 +75,8 @@ namespace archivesystemWebUI.Controllers
         public ActionResult Delete(int id,int parentId)
         {
             var folderToDelete=repo.FolderRepo.Get(id);
-            repo.SubFolderRepo.RecursiveDelete(folderToDelete);
+            List<Folder> foldersToDelete=repo.SubFolderRepo.RecursiveGetSubFolders(folderToDelete);
+            repo.FolderRepo.DeleteFolders(foldersToDelete);
             repo.Save();
             return RedirectToAction(nameof(GetSubFolders),new { id=parentId});
         }
@@ -102,6 +103,35 @@ namespace archivesystemWebUI.Controllers
                 return RedirectToAction(nameof(Index));
             Session["Name"] = "boy";
             return RedirectToAction(nameof(GetSubFolders), new { id = folder.Id });
+        }
+    
+        [Route("folders/edit/{id}")]
+        public ActionResult Edit(int id)
+        {
+            var subFolder = repo.SubFolderRepo.GetByFolderId(id);
+            if (subFolder == null)
+                return RedirectToAction("Index");
+
+            var model = new CreateFolderViewModel
+            {
+                Id = id,
+                AccessLevelId = subFolder.AccessLevelId,
+                AccessLevels = repo.AccessLevelRepo.GetAll(),
+                Name = subFolder.Folder.Name,
+            };
+            return View("EditFolder",model);
+        }
+
+        [Route("folders/edit/{id}")]
+        [HttpPost]
+        public ActionResult Edit(CreateFolderViewModel model)
+        {
+            var folder = new Folder {Name=model.Name, Id=model.Id };
+            repo.FolderRepo.UpdateFolder(folder);
+            var subFoleder = new SubFolder { FolderId = model.Id, AccessLevelId = model.AccessLevelId };
+            repo.SubFolderRepo.Update(subFoleder);
+            repo.Save();
+            return RedirectToAction(nameof(GetSubFolders),new { id=model.Id });
         }
     }
 }

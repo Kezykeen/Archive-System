@@ -30,5 +30,19 @@ namespace archivesystemWebUI.Repository
             return _context.Folders.SingleOrDefault(x => x.Name == name);
         }
 
+        public void UpdateFolder(Folder folder)
+        {
+            var folderInDb = _context.Folders.Find(folder.Id);
+            if (folderInDb == null)
+                return;
+            folderInDb.Name = folder.Name;
+            folder.UpdatedAt = DateTime.Now;
+        }
+
+        public void DeleteFolders(List<Folder> folders)
+        {
+            _context.Folders.RemoveRange(folders);
+        }
+
     }
 }

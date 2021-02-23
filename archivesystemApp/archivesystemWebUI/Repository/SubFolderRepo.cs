@@ -18,13 +18,13 @@ namespace archivesystemWebUI.Repository
             _context = context;
         }
 
-        public void RecursiveDelete(Folder folder)
+        public List<Folder> RecursiveGetSubFolders(Folder folder)
         {
-            RecursiveGetSubFolders(folder);
-            _context.Folders.RemoveRange(SubFolders);
+            GetSubFolders(folder);
+            return SubFolders;
         }
 
-        public void RecursiveGetSubFolders(Folder folder)
+        private void GetSubFolders(Folder folder)
         {
             var subFolders = _context.SubFolders.Include("Folder").Where(x => x.ParentId == folder.Id).Select(x => x.Folder).ToList();
             foreach (Folder _folder in subFolders)
@@ -58,6 +58,17 @@ namespace archivesystemWebUI.Repository
             return _context.SubFolders.Include("Folder").Where(x => x.ParentId == folderId).Select(x => x.Folder.Name).ToList();
         }
 
+        public SubFolder GetByFolderId(int folderId)
+        {
+            return _context.SubFolders.Include("Folder").SingleOrDefault(x => x.FolderId == folderId);
+        }
 
+        public void Update(SubFolder subFolder)
+        {
+            var subFolderInDb = _context.SubFolders.SingleOrDefault(x=> x.FolderId== subFolder.FolderId);
+            if(subFolderInDb !=null)
+                subFolderInDb.AccessLevelId = subFolder.AccessLevelId;
+            return;
+        }
     }
 }

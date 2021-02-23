@@ -466,6 +466,7 @@
     <Content Include="Views\AccessLevel\EditAccessLevel.cshtml" />
     <Content Include="Views\AccessLevel\DeleteAccessLevel.cshtml" />
     <Content Include="Views\Folder\FolderList.cshtml" />
+    <Content Include="Views\Folder\EditFolder.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
