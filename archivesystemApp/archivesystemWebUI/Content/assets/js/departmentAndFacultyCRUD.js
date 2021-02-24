@@ -1,15 +1,22 @@
-﻿var dataTable;
+﻿var facultyDataTable, departmentDataTable;
 
 $(document).ready(function() {
 // BEGIN DATATABLES
     // Begin Faculty DataTable
-    dataTable = $("#facultyDataTable").DataTable({
+    facultyDataTable = $("#facultyDataTable").DataTable({
         "ajax": {
             "url": "/Faculty/GetFacultyData",
             "type": "GET",
             "datatype": "json"
         },
+        "order": [[1, 'asc']],
         "columns": [
+            {
+                "data": null,
+                "searchable": false,
+                "orderable": false,
+                "width": "30px"
+            },
             { "data": "Name" },
             {
                 "data": "Id",
@@ -23,16 +30,34 @@ $(document).ready(function() {
             }
         ]
     });
+
+    //maintain column ordering on sorting and ordering
+    facultyDataTable.on('order.dt search.dt',
+        function() {
+            facultyDataTable.column(0, { search: 'applied', order: 'applied' }).nodes().each(function(cell, i) {
+                cell.innerHTML = i + 1;
+            });
+        }).draw();
     // End Faculty DataTable
 
     // Begin Department DataTable
-    dataTable = $("#departmentDataTable").DataTable({
+    departmentDataTable = $("#departmentDataTable").DataTable({
         "ajax": {
             "url": "/Department/GetDepartmentData",
             "type": "GET",
             "datatype": "json"
         },
+        "columnDefs": [
+            {
+                "searchable": false,
+                "orderable": false,
+                "width": "30px",
+                "targets": 0
+            }
+        ],
+        "order": [[1, 'asc']],
         "columns": [
+            { "data": null },
             { "data": "Name" },
             { "data": "Faculty" },
             {
@@ -47,6 +72,15 @@ $(document).ready(function() {
             }
         ]
     });
+
+    //maintain column ordering on sorting and ordering
+    departmentDataTable.on('order.dt search.dt',
+        function() {
+            departmentDataTable.column(0, { search: 'applied', order: 'applied' }).nodes().each(function(cell, i) {
+                cell.innerHTML = i + 1;
+            });
+        }).draw();
+   
     // End Department DataTable
 // END DATATABLES
 });
@@ -57,6 +91,7 @@ function getAddOrEditPartialView(url, id) {
         { id: id },
         function (res) {
             $("#modalBody").html(res);
+            $('#modal').modal({ backdrop: 'static', keyboard: true });
             $("#modal").modal("show");
         });
 }
@@ -79,7 +114,10 @@ function addOrEdit(name, url) {
             function (response) {
                 if (response === "success") {
 					$("#modal").modal("hide");
-					dataTable.ajax.reload();
+                    //insert alert service
+                    //reload both dataTables as both use the same ajax calls
+                    facultyDataTable.ajax.reload();
+                    departmentDataTable.ajax.reload();
 				} else if (response === "Name already exist") {
                     $("#validationMsg").html(response);
                     $("#editTxtName").keydown(function() {
@@ -111,8 +149,10 @@ function confirmDelete(url) {
         dataType: "json",
         success: function () {
             $("#modal").modal("hide");
-            //insert alert function
-            dataTable.ajax.reload();
+            //insert alert service
+            //reload both as since both use the same ajax calls
+            facultyDataTable.ajax.reload();
+            departmentDataTable.ajax.reload();
         },
         failure: function (response) {
             alert(response.responseText);
