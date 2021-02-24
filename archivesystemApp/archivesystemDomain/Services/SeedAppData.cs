@@ -49,42 +49,45 @@ namespace archivesystemDomain.Services
                     },
                 };
                 dbContext.Faculties.AddRange(faculties);
-                dbContext.SaveChanges();
+                //dbContext.SaveChanges();
 
                 //Seed faculty folders
                 var facultyFolders = new List<Folder>
                     {
                         new Folder
                         {
+                            Id=30,
                             Name=faculties[0].Name,
                             CreatedAt=DateTime.Now,
                             UpdatedAt=DateTime.Now
                         },
                         new Folder
                         {
-                            Name=faculties[1
-                            ].Name,
+                            Id=31,
+                            Name=faculties[1].Name,
                             CreatedAt=DateTime.Now,
                             UpdatedAt=DateTime.Now
                         },
                     };
                 dbContext.Folders.AddRange(facultyFolders);
-                dbContext.SaveChanges();
+                //dbContext.SaveChanges();
 
                 //Seed faculty folders as root subfolders
                 dbContext.SubFolders.Add(new SubFolder
                 {
+                    Id=15,
                     FolderId = facultyFolders[0].Id,
                     ParentId = rootFolder.Id,
                     AccessLevelId = baseAccess.Id
                 });
                 dbContext.SubFolders.Add(new SubFolder
                 {
+                    Id=16,
                     FolderId = facultyFolders[1].Id,
                     ParentId = rootFolder.Id,
                     AccessLevelId = baseAccess.Id
-                });
-                dbContext.SaveChanges();
+                });;
+                //dbContext.SaveChanges();
 
                 //Seed departments
                 var departments = new List<Department>()
@@ -106,37 +109,41 @@ namespace archivesystemDomain.Services
                         },
                     };
                 dbContext.Departments.AddRange(departments);
-                dbContext.SaveChanges();
+                //dbContext.SaveChanges();
 
                 //Seed department folders
                 var departmentFolders = new List<Folder>
                     {
                         new Folder
                         {
+                            Id=20,
                             Name=departments[0].Name,
                             CreatedAt=DateTime.Now,
                             UpdatedAt=DateTime.Now
                         },
                         new Folder
                         {
+                            Id=21,
                             Name=departments[1].Name,
                             CreatedAt=DateTime.Now,
                             UpdatedAt=DateTime.Now
                         },
                     };
                 dbContext.Folders.AddRange(departmentFolders);
-                dbContext.SaveChanges();
+                //dbContext.SaveChanges();
 
 
                 //Seed department folders as faculty sub folder
                 dbContext.SubFolders.Add(new SubFolder
                 {
+                    Id=50,
                     FolderId = departmentFolders[0].Id,
                     ParentId = facultyFolders[0].Id,
                     AccessLevelId = baseAccess.Id
                 });
                 dbContext.SubFolders.Add(new SubFolder
                 {
+                    Id=51,
                     FolderId = departmentFolders[1].Id,
                     ParentId = facultyFolders[1].Id,
                     AccessLevelId = baseAccess.Id
