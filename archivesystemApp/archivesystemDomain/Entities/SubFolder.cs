@@ -15,5 +15,8 @@ namespace archivesystemDomain.Entities
         public int ParentId { get; set; }
         public int FolderId { get; set; }
         public Folder Folder {get;set;}
+        public AccessLevel AccessLevel { get; set; }
+        public int AccessLevelId { get; set; }
     }
 }
+ 

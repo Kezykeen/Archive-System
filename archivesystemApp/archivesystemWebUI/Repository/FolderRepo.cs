@@ -23,49 +23,26 @@ namespace archivesystemWebUI.Repository
         {
             var folder = _context.Folders.SingleOrDefault(x => x.Name=="Root");
             return folder;
-        }
+        }  
 
-        public IEnumerable<Folder> GetSubFolders(int rootFolderId)
+        public Folder GetFolderByName(string name)
         {
-            IQueryable<Folder> subFolders=_context.SubFolders.Include("Folder").Where(x => x.ParentId == rootFolderId).Select(x => x.Folder);
-            return subFolders;
+            return _context.Folders.SingleOrDefault(x => x.Name == name);
         }
 
-        public void RecursiveDelete(Folder folder)
+        public void UpdateFolder(Folder folder)
         {
-            RecursiveGetSubFolders(folder);
-            _context.Folders.RemoveRange(Folders);
+            var folderInDb = _context.Folders.Find(folder.Id);
+            if (folderInDb == null)
+                return;
+            folderInDb.Name = folder.Name;
+            folder.UpdatedAt = DateTime.Now;
         }
 
-        public void  RecursiveGetSubFolders (Folder folder)
+        public void DeleteFolders(List<Folder> folders)
         {
-            var subFolders = _context.SubFolders.Include("Folder").Where(x => x.ParentId == folder.Id).Select(x=> x.Folder).ToList();
-            foreach(Folder _folder in subFolders)
-            {
-                RecursiveGetSubFolders(_folder);
-            }
-            Folders.Add(folder);
+            _context.Folders.RemoveRange(folders);
         }
-
-        public void AddToParentFolder(int parentId,int folderId)
-        {
-            _context.SubFolders.Add(new SubFolder { ParentId = parentId, FolderId =folderId});
-
-        }
-
-        public int GetParentId(int folderId)
-        {
-
-            return _context.SubFolders.SingleOrDefault(x => x.FolderId == folderId).ParentId;
-           
-        }
-
-        public IEnumerable<string> GetSubFolderNames(int folderId)
-        {
-           return  _context.SubFolders.Include("Folder").Where(x => x.ParentId == folderId).Select(x => x.Folder.Name).ToList();
-        }
-
-   
 
     }
 }
