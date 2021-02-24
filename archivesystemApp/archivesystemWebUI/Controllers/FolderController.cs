@@ -30,6 +30,8 @@ namespace archivesystemWebUI.Controllers
                 FolderName = rootFolder.Name,
                 SubFolders = folders
             };
+
+            Session["folderPath"] =repo.SubFolderRepo.GetFolderPath(rootFolder.Id);
             return View("FolderList",model);
         }
 
@@ -88,8 +90,13 @@ namespace archivesystemWebUI.Controllers
         {
             var folders = repo.SubFolderRepo.GetSubFolders(id);
             var folder = repo.FolderRepo.Get(id);
-            var parentId = repo.SubFolderRepo.GetParentId(id);
+            int parentId;
+            if (folder.Name == "Root")
+                parentId = 0;
+            else 
+                parentId = repo.SubFolderRepo.GetParentId(id);
             var model = new FolderListViewModel { FolderName=folder.Name,Id=folder.Id,SubFolders=folders , ParentId=parentId};
+            Session["folderPath"] = repo.SubFolderRepo.GetFolderPath(id);
             return View("FolderList", model);
         }
 
@@ -101,7 +108,7 @@ namespace archivesystemWebUI.Controllers
             var folder = repo.FolderRepo.Get(parentId);
             if (folder.Name == "Root")
                 return RedirectToAction(nameof(Index));
-            Session["Name"] = "boy";
+            Session["folderPath"] = repo.SubFolderRepo.GetFolderPath(parentId);
             return RedirectToAction(nameof(GetSubFolders), new { id = folder.Id });
         }
     
@@ -152,6 +159,13 @@ namespace archivesystemWebUI.Controllers
                 Name = subFolder.Folder.Name,
             };
             return PartialView("_EditFolder", model);
+        }
+
+        //GET: /Folder/GetDeleteFolderPartialView
+        public ActionResult GetDeleteFolderPartialView(int id, string name)
+        {
+            var parentId = repo.SubFolderRepo.GetParentId(id);
+            return View("_DeleteFolder", new DeleteFolderViewModel { Name=name, Id=id,ParentId=parentId});
         }
     }
 }

@@ -48,8 +48,8 @@ namespace archivesystemWebUI.Repository
 
         public int GetParentId(int folderId)
         {
-
-            return _context.SubFolders.SingleOrDefault(x => x.FolderId == folderId).ParentId;
+            var subFolder = _context.SubFolders.SingleOrDefault(x => x.FolderId == folderId);
+            return subFolder.ParentId;
 
         }
 
@@ -69,6 +69,27 @@ namespace archivesystemWebUI.Repository
             if(subFolderInDb !=null)
                 subFolderInDb.AccessLevelId = subFolder.AccessLevelId;
             return;
+        }
+
+        public Stack<Folder> GetFolderPath(int  id)
+        {
+            var folders = new Stack<Folder>();
+            var isNotRootFolder = true;
+            while (isNotRootFolder)
+            {
+                var subFolder = _context.SubFolders.Include("Folder").SingleOrDefault(x => x.FolderId == id);
+                if (subFolder ==null)
+                    isNotRootFolder = false;
+                else
+                {
+                    folders.Push(subFolder.Folder);
+                    id = subFolder.ParentId;
+                }
+                   
+
+            }
+            folders.Push(_context.Folders.SingleOrDefault(x=> x.Name=="Root"));
+            return folders;
         }
     }
 }
