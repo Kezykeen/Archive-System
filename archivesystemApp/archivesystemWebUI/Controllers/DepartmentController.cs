@@ -44,7 +44,7 @@ namespace archivesystemWebUI.Controllers
 
         [HttpPost]
         // POST: Department/AddOrEdit
-        // [ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> AddOrEdit(DepartmentViewModel model)
         {
             if (!ModelState.IsValid)
@@ -53,6 +53,7 @@ namespace archivesystemWebUI.Controllers
                 return Json("failure", JsonRequestBehavior.AllowGet);
             }
 
+            // Check if the entry name exists & change is from a different entry and return custom message
             var allDepartments = _unitOfWork.DeptRepo.GetAllToList();
             if (allDepartments.Any(x=> x.Name == model.Name && x.Id != model.Id))
             {

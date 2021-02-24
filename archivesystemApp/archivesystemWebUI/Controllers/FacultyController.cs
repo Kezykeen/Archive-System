@@ -43,7 +43,7 @@ namespace archivesystemWebUI.Controllers
 
         [HttpPost]
         // POST: Faculty/AddOrEdit
-        // [ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> AddOrEdit(FacultyViewModel model)
         {
             if (!ModelState.IsValid)
@@ -51,8 +51,9 @@ namespace archivesystemWebUI.Controllers
                 return Json("failure", JsonRequestBehavior.AllowGet);
             }
 
-            var Facultiess = _unitOfWork.FacultyRepo.GetAllToList();
-            if (Facultiess.Any(x => x.Name == model.Name))
+            // Check if the entry name exists & change is from a different entry and return custom message
+            var faculties = _unitOfWork.FacultyRepo.GetAllToList();
+            if (faculties.Any(x => x.Name == model.Name && x.Id != model.Id))
             {
                 var message = "Name already exist";
                 return Json(message, JsonRequestBehavior.AllowGet);
