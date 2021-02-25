@@ -1,0 +1,53 @@
+﻿@using archivesystemWebUI.Models
+@using archivesystemDomain.Entities
+@model CreateFolderViewModel
+@{
+    var currentAccesslevel = Model.AccessLevels.SingleOrDefault(x => x.Id == Model.AccessLevelId);
+}
+<div class="modal-header">
+    <h5 class="modal-title">@(Model.Id == 0? "Add Folder" :"Edit Folder")</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+
+    @using (Html.BeginForm("Edit", "Folder", FormMethod.Post))
+    {
+
+        @Html.AntiForgeryToken();
+        @Html.ValidationSummary();
+
+        <input name="id" value="@Model.Id" hidden />
+        <div class="form-group">
+
+            <input name="name"  class="form-control" rows="2" placeholder="Enter Folder Name" value="@Model.Name" />
+        </div>
+        <div class="form-group">
+
+            <select name="accessLevelId"  class="form-control" rows="2" typeof="number" value="">
+                <option value="@currentAccesslevel.Id">@currentAccesslevel.Level</option>
+                @foreach (AccessLevel level in Model.AccessLevels)
+                {
+                    if (level.Id != currentAccesslevel.Id)
+                    {
+                        <option value="@level.Id">@level.Level</option>
+                    }
+
+                }
+            </select>
+        </div>
+        <div class="submit-section">
+            <button style=" margin:auto" class="btn btn-primary submit-btn" type="submit">Update</button>
+        </div>
+    }
+
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+
+
+

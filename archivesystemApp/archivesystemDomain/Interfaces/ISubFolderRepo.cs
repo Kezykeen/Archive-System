@@ -16,5 +16,6 @@ namespace archivesystemDomain.Interfaces
         IEnumerable<string> GetSubFolderNames(int folderId);
         SubFolder GetByFolderId(int folderId);
         void Update(SubFolder subFolder);
+        Stack<Folder> GetFolderPath(int id);
     }
 }

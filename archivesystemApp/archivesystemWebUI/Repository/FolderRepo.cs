@@ -44,5 +44,11 @@ namespace archivesystemWebUI.Repository
             _context.Folders.RemoveRange(folders);
         }
 
+    
+        public List<Folder> GetMatchingFolders(string name)
+        {
+            return _context.Folders.Where(x => x.Name.Contains(name)).ToList();
+        }
+    
     }
 }

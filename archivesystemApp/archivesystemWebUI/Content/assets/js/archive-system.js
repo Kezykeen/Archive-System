@@ -1,36 +1,37 @@
-﻿console.log("ghdkhkjldhyjkpdhykjl")
+﻿
 
-document.addEventListener("click", (e) => {
-    console.log(e.target.id)
-    if (e.target.id.includes("roleId")) {
-        
-       let  id = e.target.id;
-        let divId = id.split( "//")[1];
-        divId = "divRole-" + divId;
-        document.getElementById(divId).style.display = "block";
-    }
-    
+async function getEditFolderPartialView(url, id) {
+    var modalBody = document.getElementById("modalBody")
+    url = `${url}?id=${id}`;
+    let resp =
+        await fetch(url)
+        .then(
+            resp => {
+                return resp.text()
+            }
+        );
+   
+    modalBody.innerHTML = resp;
+    $("#modal").modal("show");
+    console.log(modalBody);
+   
 }
-)
 
-let tableBody=document.getElementById("userRoles-body")
-tableBody.addEventListener("click", (e) => {
-    let id = e.target.id;
-    let divId = id.split("//")[1];
-    divId = "divRole-" + divId;
-    if (e.target.id.includes("btnDelYes")) {
-        fetch("https://localhost:44322/roles/delete", {
-            method="POST",
-            body: JSON.stringify({
-                "roleId": id.split("//")[1],
-
-            })
-        })
-    }
-
-    if (e.target.id.includes("btnDel")) {
-        document.getElementById(divId).style.display = "none";
-    }
-})
-
-
+async function getDeleteFolderPartialView(url, id, name) {
+    var modalBody = document.getElementById("modalBody")
+    url = `${url}?id=${id}&name=${name}`;
+    let resp =
+        await fetch(url)
+            .then(
+                resp => {
+                    return resp.text()
+                }
+        );
+    console.log("resp:",resp)
+    modalBody.innerHTML = resp;
+    $("#modal").modal("show");
+    console.log(modalBody);
+}
+function closeModal() {
+    $("#modal").modal("hide");
+}

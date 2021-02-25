@@ -244,6 +244,7 @@
     <Compile Include="Models\FolderViewModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\RoleViewModels.cs" />
+    <Compile Include="Models\SessionData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\AccessDetailsRepository.cs" />
     <Compile Include="Repository\DeptRepository.cs" />
@@ -449,18 +450,15 @@
     <Content Include="Views\Department\Details.cshtml" />
     <Content Include="Views\Department\Edit.cshtml" />
     <Content Include="Views\Department\Index.cshtml" />
-    <Content Include="Views\Faculty\Create.cshtml" />
-    <Content Include="Views\Faculty\Delete.cshtml" />
-    <Content Include="Views\Faculty\Details.cshtml" />
-    <Content Include="Views\Faculty\Edit.cshtml" />
     <Content Include="Views\Faculty\Index.cshtml" />
-    <Content Include="Views\Folder\CreateFolder.cshtml" />
     <Content Include="Views\UserAccess\ManageUserAccess.cshtml" />
     <Content Include="Views\UserAccess\AddUser.cshtml" />
     <Content Include="Views\UserAccess\EditUser.cshtml" />
     <Content Include="Views\UserAccess\DeleteUser.cshtml" />
     <Content Include="Views\Shared\_AddOrEditDepartment.cshtml" />
     <Content Include="Views\Folder\CreateFolder.cshtml" />
+    <Content Include="Views\AccessLevel\ManageUserAccess.cshtml" />
+    <Content Include="Views\AccessLevel\AddUserToAccess.cshtml" />
     <Content Include="Views\Shared\_DeleteDepartment.cshtml" />
     <Content Include="Views\Shared\_AddOrEditFaculty.cshtml" />
     <Content Include="Views\Shared\_DeleteFaculty.cshtml" />
@@ -469,6 +467,9 @@
     <Content Include="Views\Shared\_EditUserAccess.cshtml" />
     <Content Include="Views\Shared\_DeleteUserAccess.cshtml" />
     <Content Include="Views\Shared\_AddUserAccess.cshtml" />
+    <Content Include="Views\Shared\_EditFolder.cshtml" />
+    <Content Include="Views\Shared\_DeleteFolder.cshtml" />
+    <Content Include="Views\Folder\AddFolder.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

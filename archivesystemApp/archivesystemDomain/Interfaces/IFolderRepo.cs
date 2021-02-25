@@ -13,6 +13,7 @@ namespace archivesystemDomain.Interfaces
         Folder GetFolderByName(string name);
         void UpdateFolder(Folder folder);
         void DeleteFolders(List<Folder> folders);
+        List<Folder> GetMatchingFolders(string name);
 
     }
 }

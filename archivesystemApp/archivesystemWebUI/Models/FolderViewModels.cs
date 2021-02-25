@@ -26,4 +26,12 @@ namespace archivesystemWebUI.Models
 
         public IEnumerable<Folder> SubFolders { get; set; }
     }
+
+    public class DeleteFolderViewModel
+    {
+        public string Name { get; set; }
+        public int Id { get; set; }
+
+        public int ParentId { get; set; }
+    }
 }
