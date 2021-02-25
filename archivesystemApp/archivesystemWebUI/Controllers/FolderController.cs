@@ -31,9 +31,11 @@ namespace archivesystemWebUI.Controllers
             }
             else
             {
-                model.SubFolders = repo.FolderRepo.GetMatchingFolders(Request.QueryString["search"]);
+                var searchParam = Request.QueryString["search"];
+                model.SubFolders = repo.FolderRepo.GetMatchingFolders(searchParam);
                 Session[SessionData.FolderPath] = null;
                 Session[SessionData.IsSearchRequest] = true;
+                
             }
             return View("FolderList",model);
         }

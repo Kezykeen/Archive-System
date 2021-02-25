@@ -9,5 +9,7 @@ namespace archivesystemWebUI.Models
     {
         public const string IsSearchRequest = "isSearchRequest";
         public const string FolderPath = "folderPath";
+        public const string PrevSearch = "prevSearch";
+        public const string Page = "currentPageNumber";
     }
 }

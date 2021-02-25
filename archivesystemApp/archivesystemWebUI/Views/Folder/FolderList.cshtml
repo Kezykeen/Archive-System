@@ -6,7 +6,7 @@
     var folderNavigationLinks = (Stack<Folder>)Session["folderPath"];
     var lenght = folderNavigationLinks==null ? 0 : folderNavigationLinks.Count();
     var subFolderLenght= Model.SubFolders==null? 0 : Model.SubFolders.Count();
-    var headerTitle = (bool)Session[SessionData.IsSearchRequest] ?  "Your Search Result." : $"{Model.FolderName} Folder";
+    var headerTitle = (bool)Session[SessionData.IsSearchRequest] ?  "Your Search Result" : $"{Model.FolderName} Folder";
 }
 
 <div style="width:calc(100% - 4em); margin:0 2em;margin-top:2em; overflow:hidden;direction:ltr">
@@ -50,9 +50,10 @@
                             <div class="input-group-prepend">
                                 <i class="fa fa-search"></i>
                             </div>
-                            @using (Html.BeginForm("Index", "Folder", FormMethod.Get))
+                            @using (Html.BeginForm("Index", "Folder", FormMethod.Get) )
                             {
                                 <input type="text" class="form-control" placeholder="Search For Folder" name="search" value="@Request.QueryString["search"]">
+                                
                             }
 
                         </div>
@@ -67,7 +68,7 @@
                                         <li style="display:flex;justify-content:space-between;align-items: center;" class="folderlist-folder">
                                             @Html.ActionLink(@folder.Name, $"/{@folder.Id}", "folders")
 
-                                            <a href="" class="dropdown-link" data-toggle="dropdown" style="padding:0;width: 5px;margin:0;">
+                                            <a href="" class="dropdown-link" data-toggle="dropdown" style="padding:0;width: 3em;margin:0; display:flex;justify-content:center">
                                                 <i class="fa fa-ellipsis-v"></i>
                                             </a>
                                             <div class="dropdown-menu dropdown-menu-right">

@@ -6,6 +6,6 @@
     border:none;
 }
 
-.folderlist-folder:hover {
+.folderlist-folder:hover ,.file-menu li a:hover {
     background-color: #edeeef;
 }
