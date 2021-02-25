@@ -3,6 +3,7 @@ using archivesystemDomain.Interfaces;
 using archivesystemDomain.Services;
 using archivesystemWebUI.Models;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 
@@ -30,7 +31,7 @@ namespace archivesystemWebUI.Controllers
         /// </summary>
         public ActionResult ManageUserAccess()
         {
-            var model = _unitOfWork.AccessDetailsRepo.GetAll();
+            var model = _unitOfWork.AccessDetailsRepo.GetAccessDetails();
             return View(model);
         }
 
@@ -60,17 +61,16 @@ namespace archivesystemWebUI.Controllers
                     model.AccessLevels = _unitOfWork.AccessLevelRepo.GetAll();
                     return View(model);
                 }
-                var checkAccess = _unitOfWork.AccessDetailsRepo.GetByEmployeeId(employee.Id);
-                if (checkAccess != null)
+                var userAccessDetail = _unitOfWork.AccessDetailsRepo.GetByEmployeeId(employee.Id);
+                if (userAccessDetail != null)
                 {
                     TempData["UserAccessMessage"] = "User already has an access level!";
                     return RedirectToAction(nameof(ManageUserAccess));
                 }
-                var newAccessDetails = new AccessDetails
+                var newAccessDetails = new AccessDetail
                 {
                     EmployeeId = employee.Id,
-                   // EmployeeName = employee.Name,
-                    AccessLevelName = model.AccessLevel,
+                    AccessLevelId = model.AccessLevel,
                     AccessCode = AccessCodeGenerator.NewCode(employee.StaffId),
                     Status = Status.Active
                 };
@@ -95,11 +95,11 @@ namespace archivesystemWebUI.Controllers
             var accessLevels = _unitOfWork.AccessLevelRepo.GetAll();
             var model = new EditUserViewModel
             {
-                RegenerateCode = CodeStatus.No,
+                RegenerateCode = CodeStatus.Yes,
                 AccessDetails = accessDetails,
                 AccessLevels = accessLevels
             };
-            return View(model);
+            return PartialView("_EditUserAccess", model);
         }
 
         [HttpPost]
@@ -136,12 +136,12 @@ namespace archivesystemWebUI.Controllers
             {
                 return RedirectToAction(nameof(ManageUserAccess));
             }
-            var model = _unitOfWork.AccessDetailsRepo.Get(id.Value);
+            var model = _unitOfWork.AccessDetailsRepo.GetAccessDetails().SingleOrDefault(m => m.Id == id.Value);
             if (model == null)
             {
                 return HttpNotFound();
             }
-            return View(model);
+            return PartialView("_DeleteUserAccess", model);
         }
 
         [HttpPost, ActionName(nameof(DeleteUser))]
@@ -162,6 +162,9 @@ namespace archivesystemWebUI.Controllers
                 return View();
             }
         }
+
         #endregion
+     
+
     }
 }

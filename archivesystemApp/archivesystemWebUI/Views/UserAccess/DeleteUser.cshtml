@@ -1,4 +1,4 @@
-﻿@model archivesystemDomain.Entities.AccessDetails
+﻿@model archivesystemDomain.Entities.AccessDetail
 
 @{
     ViewBag.Title = "DeleteUser";
@@ -36,19 +36,19 @@
                 <div class="text-center">
 
                     <dt>
-                        @Html.DisplayNameFor(model => model.EmployeeName)
+                        @Html.DisplayNameFor(model => model.Employee.Name)
                     </dt>
 
                     <dd>
-                        @Html.DisplayFor(model => model.EmployeeName)
+                        @Html.DisplayFor(model => model.Employee.Name)
                     </dd>
 
                     <dt>
-                        @Html.DisplayNameFor(model => model.AccessLevel)
+                        @Html.DisplayNameFor(model => model.AccessLevel.Level)
                     </dt>
 
                     <dd>
-                        @Html.DisplayFor(model => model.AccessLevel)
+                        @Html.DisplayFor(model => model.AccessLevel.Level)
                     </dd>
 
 

@@ -23,49 +23,33 @@
 
         <div class="row">
             <div class="col-md-6 col-sm-6 col-lg-6 col-xl-6">
-                <div class="card dash-widget">
-                    <div class="card-body">
-                        <span class="dash-widget-icon"><i class="fa fa-cubes"></i></span>
-                        <div class="dash-widget-info">
-                            <h3>Manage Access Level</h3>
-                                <div class="dropdown dropdown-action">
-                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="@Url.Action("CreateAccessLevel", "AccessLevel")"><i class="fa fa-plus-circle" aria-hidden="true"></i> Create Level</a>
-                                        <a class="dropdown-item" href="@Url.Action("ManageAccessLevel", "AccessLevel")"><i class="fa fa-eye" aria-hidden="true"></i> View Levels</a>
-                                    </div>
-                                </div> 
+                <a href="@Url.Action("ManageAccessLevel", "AccessLevel")">
+
+                    <div class="card dash-widget">
+                        <div class="card-body btn shadow">
+                            <span class="dash-widget-icon"><i class="fa fa-cubes"></i></span>
+                            <div class="dash-widget-info">
+                                <h3>Manage Access Level</h3>
+
+                            </div>
                         </div>
                     </div>
-                </div>
             </div>
 
-            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-6">
-                <div class="card dash-widget">
-                    <div class="card-body">
-                        <span class="dash-widget-icon"><i class="fa fa-cubes"></i></span>
-                        <div class="dash-widget-info">
-                            <h3>Manage User Access</h3>
-                            <span>
-                                <div class="dropdown dropdown-action">
-                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="@Url.Action("AddUser", "UserAccess")"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add User</a>
-                                        <a class="dropdown-item" href="@Url.Action("ManageUserAccess", "UserAccess")"><i class="fa fa-eye" aria-hidden="true"></i> View Users</a>
-
-                                    </div>
-                                </div>
-
-                            </span>
+                
+          <div class="col-md-6 col-sm-6 col-lg-6 col-xl-6" >
+            <a href="@Url.Action("ManageUserAccess", "UserAccess")">
+                    <div class="card dash-widget" >
+                        <div class="card-body btn shadow">
+                            <span class="dash-widget-icon"><i class="fa fa-users"></i></span>
+                            <div class="dash-widget-info">
+                                <h3 >Manage User Access</h3>       
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-
+            </a>
+          </div>
         </div>
 
-        <div class="alert-success">
-            @ViewBag.Message
-        </div>
 
     </div>

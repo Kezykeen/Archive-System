@@ -1,9 +1,12 @@
-﻿@model IEnumerable<archivesystemDomain.Entities.AccessDetails>
+﻿@model IEnumerable<archivesystemDomain.Entities.AccessDetail>
 
 @{
     ViewBag.Title = "ManageUserAccess";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<!-- Datatable CSS -->
+<link href="~/Content/assets/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
 
 @if (TempData["UserAccessMessage"] != null)
 {
@@ -13,7 +16,7 @@
 }
 @if (TempData["UserAddedMessage"] != null)
 {
-    <div class="alert-success text-center" style="border-radius: 6px; padding: 10px; margin: 10px;">
+    <div class="alert-success text-center   " style="border-radius: 6px; padding: 10px; margin: 10px;">
         @TempData["UserAddedMessage"]
     </div>
 }
@@ -25,32 +28,32 @@
 }
 
 
-    <div class="account-content">
-        <div class="container">
-            <!-- Page Header -->
-            <div class="page-header">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <ul class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="@Url.Action("Index", "AccessLevel")">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Manage User Access</li>
-                        </ul>
-                    </div>
+<div class="account-content">
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row">
+                <div class="col-sm-12">
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="@Url.Action("Index", "AccessLevel")">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Manage User Access</li>
+                    </ul>
                 </div>
             </div>
-            <hr />
-            <!-- /Page Header -->
+        </div>
+        <hr />
+        <!-- /Page Header -->
 
 
 
-            @if (Model.Count() == 0)
-            {
-                <div class="" style="display: flex; justify-content: center; align-items: center; height:200px; ">
-                    <a href="@Url.Action("AddUser", "UserAccess")" class="btn add-btn shadow"><i class="fa fa-plus"></i> Add User to an Access Level</a>
-                </div>
-            }
-            else
-            {
+        @if (Model.Count() == 0)
+        {
+            <div class="" style="display: flex; justify-content: center; align-items: center; height:200px; ">
+                <a href="@Url.Action("AddUser", "UserAccess")" class="btn add-btn shadow"><i class="fa fa-plus"></i> Add User to an Access Level</a>
+            </div>
+        }
+        else
+        {
 
             <div>
                 <div class="col-auto float-right">
@@ -61,54 +64,121 @@
             </div>
             <br />
             <table class="table-active table table-striped custom-table mb-0 datatable">
-                <tr>
+                <thead>
 
-                    <th>
-                        @Html.DisplayNameFor(model => model.EmployeeName)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.AccessLevel)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.AccessCode)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Status)
-                    </th>
-                    <th>Actions</th>
-                </tr>
-
-                @foreach (var item in Model)
-                {
                     <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.EmployeeName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.AccessLevel)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.AccessCode)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Status)
-                        </td>
-                        <td>
-                            <div class="dropdown dropdown-action">
-                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <a class="dropdown-item" href="@Url.Action("EditUser", "UserAccess", new {id = item.Id })"><i class="fa fa-edit" aria-hidden="true"></i> Edit</a>
-                                    <a class="dropdown-item" href="@Url.Action("DeleteUser", "UserAccess", new {id = item.Id })"><i class="fa fa-trash" aria-hidden="true"></i> Remove</a>
 
-                                </div>
-                            </div>
-                        </td>
+                        <th>
+                            Employee Name
+                        </th>
+                        <th>
+                            Access Level
+                        </th>
+                        <th>
+                            Access Code
+                        </th>
+                        <th>
+                            Status
+                        </th>
+                        <th>Actions</th>
                     </tr>
-                }
+                </thead>
+                <tbody>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Employee.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.AccessLevel.Level)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.AccessCode)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Status)
+                            </td>
+                            <td>
+                                <div class="dropdown dropdown-action">
+                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item" href="#" onclick="userForm('/UserAccess/EditUser/', @item.Id)"><i class="fa fa-edit" aria-hidden="true"></i> Edit</a>
+                                        <a class="dropdown-item" href="#" onclick="userForm('/UserAccess/DeleteUser/', @item.Id)"><i class="fa fa-trash" aria-hidden="true"></i> Remove</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
 
             </table>
-            }
-        </div>
+        }
+    </div>
 </div>
 
 
+<!-- User Access Modal -->
+<div class="modal custom-modal fade" role="dialog" id="modal">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" id="modalBody">
+        </div>
+    </div>
+</div>
+<!-- / User Access Modal  -->
+
+@section Scripts{
+    
+    @Scripts.Render("~/Content/datatables/js")
+    <script>
+        var dataTable;
+        $(document).ready(function () {
+            dataTable = $(".datatable").DataTable();
+        });
+
+        function editUserAccess(id) {
+            debugger;
+            $.ajax({
+                url: "EditUserAccess" + "/" + id,
+                type: "GET",
+                contentType: "application/html;charset=UTF-8",
+                // dataType: "html",
+                success: function (response) {
+                    debugger;
+                    //console.log(response);
+                    $("#modalBody").html(response);
+                    $("#modal").modal("show");
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                }
+            });
+            return false;
+        }
+
+        function userForm(url, id) {
+            $.get(url,
+                { id: id },
+                function (response) {
+                    $("#modalBody").html(response);
+                    $("#modal").modal("show");
+                }
+            )
+        }
+
+        function editPost(url) {
+            var data = $("#EditUserAccessForm").serialize();
+            $.post(url,
+                data,
+                function (response) {
+                    if (response == "success") {
+                        $("#modal").modal("hide");
+                        dataTable.ajax.reload();
+                        //window.location.reload();
+                    }
+                })
+        }
+    </script>
+}

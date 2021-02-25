@@ -12,7 +12,7 @@ namespace archivesystemWebUI.Models
 
         [Required(ErrorMessage = "Choose an access level.")]
         [Display(Name = "Access Level")]
-        public string AccessLevel { get; set; }
+        public int AccessLevel { get; set; }
 
         public IEnumerable<AccessLevel> AccessLevels { get; set; }
     }
