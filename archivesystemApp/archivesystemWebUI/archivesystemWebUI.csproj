@@ -470,13 +470,13 @@
     <Content Include="Views\Shared\_AddOrEditDepartment.cshtml" />
     <Content Include="Views\AccessLevel\ManageUserAccess.cshtml" />
     <Content Include="Views\AccessLevel\AddUserToAccess.cshtml" />
-    <Content Include="Views\Folder\CreateFolder.cshtml" />
     <Content Include="Views\Shared\_DeleteDepartment.cshtml" />
     <Content Include="Views\Shared\_AddOrEditFaculty.cshtml" />
     <Content Include="Views\Shared\_DeleteFaculty.cshtml" />
     <Content Include="Views\Folder\FolderList.cshtml" />
     <Content Include="Views\Shared\_EditFolder.cshtml" />
     <Content Include="Views\Shared\_DeleteFolder.cshtml" />
+    <Content Include="Views\Folder\AddFolder.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

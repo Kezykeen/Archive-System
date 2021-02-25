@@ -22,6 +22,9 @@ namespace archivesystemWebUI.Controllers
         public ActionResult Index()
         {
             FolderListViewModel model = new FolderListViewModel();
+            
+            
+            
             if (string.IsNullOrEmpty(Request.QueryString["search"]))
             {
                 var rootFolder = repo.FolderRepo.GetRootFolder();
@@ -47,7 +50,7 @@ namespace archivesystemWebUI.Controllers
         {
             var accessLevels = repo.AccessLevelRepo.GetAll();
             var data = new CreateFolderViewModel() { Name = "", ParentId = id, AccessLevels=accessLevels };
-            return View("CreateFolder",data);
+            return View("AddFolder",data);
         }
 
         //POST: /folders/create
@@ -101,7 +104,34 @@ namespace archivesystemWebUI.Controllers
             else 
                 parentId = repo.SubFolderRepo.GetParentId(id);
             var model = new FolderListViewModel { FolderName=folder.Name,Id=folder.Id,SubFolders=folders , ParentId=parentId};
-            Session[SessionData.FolderPath] = repo.SubFolderRepo.GetFolderPath(id);
+
+            var currentPath = (Stack<Folder>)Session[SessionData.FolderPath];
+
+            if (currentPath == null)
+            {
+                Session[SessionData.FolderPath] = repo.SubFolderRepo.GetFolderPath(id);
+            }
+            else
+            {
+                if (currentPath.Peek().Id == folder.Id) { }
+                else if (currentPath.Peek().Id != parentId && currentPath.Count() > 0)
+                {
+                    while (currentPath.Peek().Id != id)
+                    {
+                        currentPath.Pop();
+                    }
+                    Session[SessionData.FolderPath] = currentPath;
+                }
+
+                else
+                {
+                    currentPath.Push(folder);
+                    Session[SessionData.FolderPath] = currentPath;
+                }
+
+            }
+
+
             Session[SessionData.IsSearchRequest] = false;
             return View("FolderList", model);
         }
@@ -114,7 +144,9 @@ namespace archivesystemWebUI.Controllers
             var folder = repo.FolderRepo.Get(parentId);
             if (folder.Name == "Root")
                 return RedirectToAction(nameof(Index));
-            Session["folderPath"] = repo.SubFolderRepo.GetFolderPath(parentId);
+            var currentPath = (Stack<Folder>)Session[SessionData.FolderPath];
+            currentPath.Pop(); 
+            Session[SessionData.FolderPath] = currentPath;
             return RedirectToAction(nameof(GetSubFolders), new { id = folder.Id });
         }
 
