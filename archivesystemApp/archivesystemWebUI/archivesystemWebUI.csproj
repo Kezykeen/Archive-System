@@ -184,7 +184,6 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Controllers\AccessDetailsController.cs" />
     <Compile Include="Controllers\AccessLevelController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Api\UsersController.cs" />
@@ -259,6 +258,10 @@
     <Compile Include="Migrations\202102260027414_chngesToEmp.Designer.cs">
       <DependentUpon>202102260027414_chngesToEmp.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202102260233439_newModelsFromTeam.cs" />
+    <Compile Include="Migrations\202102260233439_newModelsFromTeam.Designer.cs">
+      <DependentUpon>202102260233439_newModelsFromTeam.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CodeStatus.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -271,7 +274,6 @@
     <Compile Include="Models\FacultyViewModel.cs" />
     <Compile Include="Models\FolderViewModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
-    <Compile Include="Models\RoleAdminViewModels.cs" />
     <Compile Include="Models\UpdateEmployeeVM.cs" />
     <Compile Include="Models\RoleViewModels.cs" />
     <Compile Include="Models\SessionData.cs" />
@@ -471,7 +473,6 @@
     <Content Include="Views\Shared\_SideBarPartial.cshtml" />
     <Content Include="Views\Shared\_AccountLayout.cshtml" />
     <Content Include="Views\Employees\Index.cshtml" />
-    <Content Include="Views\Employees\Enroll.cshtml" />
     <Content Include="Views\Roles\NewUserRoleView.cshtml" />
     <Content Include="Views\Roles\Index.cshtml" />
     <Content Include="Views\Roles\EditRoleView.cshtml" />
@@ -501,7 +502,6 @@
     <Content Include="Views\AccessDetails\Index.cshtml" />
     <Content Include="Views\Employees\DelPrompt.cshtml" />
     <Content Include="Views\Employees\Details.cshtml" />
-    <Content Include="Views\Employees\Edit.cshtml" />
     <Content Include="Views\Home\EmployeeDashboard.cshtml" />
     <Content Include="Views\Home\Profile.cshtml" />
     <Content Include="Views\Employees\EditModal.cshtml" />
@@ -583,6 +583,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202102260027414_chngesToEmp.resx">
       <DependentUpon>202102260027414_chngesToEmp.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102260233439_newModelsFromTeam.resx">
+      <DependentUpon>202102260233439_newModelsFromTeam.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
