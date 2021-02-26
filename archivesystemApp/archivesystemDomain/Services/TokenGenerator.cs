@@ -18,6 +18,14 @@ namespace archivesystemDomain.Services
         }
         public  string Code(int userId)
         {
+
+            var existingTokens = _unitOfWork.TokenRepo.Find(t => t.EmployeeId == userId);
+            if (existingTokens != null)
+            {
+                _unitOfWork.TokenRepo.RemoveRange(existingTokens);
+
+            }
+
             var token = new Token
             {
                 Code = Guid.NewGuid().ToString("N"),

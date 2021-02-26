@@ -71,6 +71,9 @@
     <Reference Include="Ninject.Web.Mvc, Version=3.3.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <HintPath>..\packages\Ninject.MVC5.3.3.0\lib\net45\Ninject.Web.Mvc.dll</HintPath>
     </Reference>
+    <Reference Include="Ninject.WebApi.DependencyResolver, Version=0.1.4758.24814, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.WebApi.DependencyResolver.0.1.4758.24814\lib\net45\Ninject.WebApi.DependencyResolver.dll</HintPath>
+    </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
@@ -78,12 +81,21 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.7\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Http, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.7\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.7\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
@@ -169,9 +181,11 @@
     <Compile Include="App_Start\NinjectWebCommon.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccessDetailsController.cs" />
     <Compile Include="Controllers\AccessLevelController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\Api\UsersController.cs" />
     <Compile Include="Controllers\EmployeesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -215,12 +229,26 @@
     <Compile Include="Migrations\202102151020112_unknown.Designer.cs">
       <DependentUpon>202102151020112_unknown.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202102160828000_AddCheckedToEmployee.cs" />
+    <Compile Include="Migrations\202102160828000_AddCheckedToEmployee.Designer.cs">
+      <DependentUpon>202102160828000_AddCheckedToEmployee.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202102160853551_AddIndexesToEmployee.cs" />
+    <Compile Include="Migrations\202102160853551_AddIndexesToEmployee.Designer.cs">
+      <DependentUpon>202102160853551_AddIndexesToEmployee.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202102260027414_chngesToEmp.cs" />
+    <Compile Include="Migrations\202102260027414_chngesToEmp.Designer.cs">
+      <DependentUpon>202102260027414_chngesToEmp.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccessLevelViewModel.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\DataLayers\UserDataView.cs" />
     <Compile Include="Models\EnrollViewModel.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\RoleAdminViewModels.cs" />
+    <Compile Include="Models\UpdateEmployeeVM.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\AccessDetailsRepository.cs" />
     <Compile Include="Repository\DeptRepository.cs" />
@@ -233,6 +261,7 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Readme\readme.txt" />
     <Content Include="Content\assets\css\archive-custom.css" />
     <Content Include="Content\assets\css\bootstrap-datetimepicker.min.css" />
     <Content Include="Content\assets\css\bootstrap.min.css" />
@@ -288,6 +317,8 @@
     <Content Include="Content\assets\img\video-call.jpg" />
     <Content Include="Content\assets\js\app.js" />
     <Content Include="Content\assets\js\archive-system.js" />
+    <Content Include="Content\assets\js\bootbox.js" />
+    <Content Include="Content\assets\js\bootbox.min.js" />
     <Content Include="Content\assets\js\bootstrap-datetimepicker.min.js" />
     <Content Include="Content\assets\js\bootstrap.min.js" />
     <Content Include="Content\assets\js\chart.js" />
@@ -306,6 +337,7 @@
     <Content Include="Content\assets\js\multiselect.min.js" />
     <Content Include="Content\assets\js\popper.min.js" />
     <Content Include="Content\assets\js\select2.min.js" />
+    <Content Include="Content\assets\js\sweetalert2.all.min.js" />
     <Content Include="Content\assets\js\task.js" />
     <Content Include="Content\assets\plugins\bootstrap-tagsinput\bootstrap-tagsinput.css" />
     <Content Include="Content\assets\plugins\bootstrap-tagsinput\bootstrap-tagsinput.min.js" />
@@ -424,6 +456,14 @@
     <Content Include="Views\AccessDetails\Details.cshtml" />
     <Content Include="Views\AccessDetails\Edit.cshtml" />
     <Content Include="Views\AccessDetails\Index.cshtml" />
+    <Content Include="Views\Employees\DelPrompt.cshtml" />
+    <Content Include="Views\Employees\Details.cshtml" />
+    <Content Include="Views\Employees\Edit.cshtml" />
+    <Content Include="Views\Home\EmployeeDashboard.cshtml" />
+    <Content Include="Views\Home\Profile.cshtml" />
+    <Content Include="Views\Employees\EditModal.cshtml" />
+    <Content Include="Views\Shared\_EnrollPartial.cshtml" />
+    <Content Include="Views\Employees\EnrollModal.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -471,6 +511,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202102151020112_unknown.resx">
       <DependentUpon>202102151020112_unknown.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102160828000_AddCheckedToEmployee.resx">
+      <DependentUpon>202102160828000_AddCheckedToEmployee.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102160853551_AddIndexesToEmployee.resx">
+      <DependentUpon>202102160853551_AddIndexesToEmployee.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102260027414_chngesToEmp.resx">
+      <DependentUpon>202102260027414_chngesToEmp.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -1,16 +1,18 @@
-﻿using archivesystemDomain.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using archivesystemDomain.Entities;
 
 namespace archivesystemWebUI.Models
 {
-    public class EnrollViewModel
+    public class UpdateEmployeeVM
     {
 
+        public int Id { get; set; }
+       
         [Required]
         [MinLength(2)]
         [Display(Name = "First Name")]
@@ -19,19 +21,19 @@ namespace archivesystemWebUI.Models
         [Required]
         [MinLength(2)]
         [Display(Name = "Last Name")]
-        [Remote("IsNameTaken", "Employees", AdditionalFields = "LastName", ErrorMessage = "Name Already taken!")]
+        [Remote("IsNameTaken", "Employees", AdditionalFields = "FirstName, Id", ErrorMessage = "Name Already taken!")]
         public string LastName { get; set; }
 
         [Required]
         [EmailAddress]
         [Display(Name = "Email Address")]
-        [Remote("IsEmailTaken", "Employees", ErrorMessage = "Email Already taken!")]
+        [Remote("IsEmailTaken", "Employees", AdditionalFields = "Id", ErrorMessage = "Email Already taken!")]
         public string Email { get; set; }
 
         [Required]
         [Phone]
         [Display(Name = "Phone Number")]
-        [Remote("IsPhoneTaken", "Employees", ErrorMessage = "Phone Number Already taken!")]
+        [Remote("IsPhoneTaken", "Employees", AdditionalFields = "Id", ErrorMessage = "Phone Number Already taken!")]
         public string Phone { get; set; }
 
 
@@ -50,7 +52,8 @@ namespace archivesystemWebUI.Models
         public DateTime? Appointed { get; set; }
         [Required]
         [Display(Name = "Staff Id")]
-        [Remote("IsStaffIdTaken", "Employees", ErrorMessage = "Staff Id Already taken!")]
+        [Remote("IsStaffIdTaken", "Employees", AdditionalFields = "Id", ErrorMessage = "Staff Id Already taken!")]
+        
         public string StaffId { get; set; }
 
         [Required]
@@ -60,6 +63,8 @@ namespace archivesystemWebUI.Models
 
 
         
-
+        [Display(Name = "Roles")]
+        public string RoleId { get; set; }
+        public IEnumerable<ApplicationRole> Roles { get; set; }
     }
 }

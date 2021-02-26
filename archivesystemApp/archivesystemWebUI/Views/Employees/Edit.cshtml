@@ -1,0 +1,172 @@
+﻿@{
+
+}
+@model archivesystemWebUI.Models.UpdateEmployeeVM
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+    <div class="content container-fluid">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row">
+                <div class="col">
+                    <h3 class="page-title">Employee Enrollment</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                        <li class="breadcrumb-item active">@ViewBag.Title</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Header -->
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title mb-0 text-center">Edit @Model.FirstName</h4>
+                    </div>
+
+
+                    <div class="card-body">
+                        @using (Html.BeginForm("Edit", "Employees", FormMethod.Post))
+                        {
+                            @Html.ValidationSummary(true, "", new { @class = "" })
+                            @Html.AntiForgeryToken()
+                            <div class="row">
+                                <div class="col-xl-6">
+                                    <div class="form-group row">
+                                        @Html.LabelFor(e => e.FirstName, new { @class = "col-lg-3 col-form-label" })
+                                        <div class="col-lg-9">
+                                            @Html.TextBoxFor(e => e.FirstName, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(e => e.FirstName)
+                                        </div>
+
+                                    </div>
+
+                                    <div class="form-group row">
+                                        @Html.LabelFor(e => e.Gender, new { @class = "col-lg-3 col-form-label" })
+                                        <div class="col-lg-9">
+                                            @Html.EnumDropDownListFor(e => e.Gender, "Select Gender", new { @class = "select" })
+                                            @Html.ValidationMessageFor(e => e.Gender)
+                                        </div>
+
+                                    </div>
+
+                                    <div class="form-group row">
+                                        @Html.LabelFor(e => e.DOB, new { @class = "col-lg-3 col-form-label" })
+                                        <div class="col-lg-9">
+                                            <div class="cal-icon">@Html.TextBoxFor(e => e.DOB, new { @class = "form-control datetimepicker" })</div>
+                                            @Html.ValidationMessageFor(e => e.DOB)
+                                        </div>
+
+                                    </div>
+
+                                    <div class="form-group row">
+                                        @Html.LabelFor(e => e.Phone, new { @class = "col-lg-3 col-form-label" })
+                                        <div class="col-lg-9">
+                                            @Html.TextBoxFor(e => e.Phone, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(e => e.Phone)
+                                        </div>
+
+                                    </div>
+
+                                    <div class="form-group row">
+                                        @Html.LabelFor(e => e.Appointed, new { @class = "col-lg-3 col-form-label" })
+                                        <div class="col-lg-9">
+                                            <div class="cal-icon">@Html.TextBoxFor(e => e.Appointed, new { @class = "form-control datetimepicker" })</div>
+                                            @Html.ValidationMessageFor(e => e.Appointed)
+                                        </div>
+
+                                    </div>
+
+
+
+
+
+                                </div>
+                                <div class="col-xl-6">
+                                    <div class="form-group row">
+                                        @Html.LabelFor(e => e.LastName, new { @class = "col-lg-3 col-form-label" })
+                                        <div class="col-lg-9">
+                                            @Html.TextBoxFor(e => e.LastName, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(e => e.LastName)
+                                        </div>
+
+                                    </div>
+
+                                    <div class="form-group row">
+                                        @Html.LabelFor(e => e.Email, new { @class = "col-lg-3 col-form-label" })
+                                        <div class="col-lg-9">
+                                            @Html.TextBoxFor(e => e.Email, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(e => e.Email)
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group row">
+                                        @Html.LabelFor(e => e.MaritalStatus, new { @class = "col-lg-3 col-form-label" })
+                                        <div class="col-lg-9">
+                                            @Html.EnumDropDownListFor(e => e.MaritalStatus, "Select Marital Status", new { @class = "select" })
+                                            @Html.ValidationMessageFor(e => e.MaritalStatus)
+                                        </div>
+
+                                    </div>
+
+                                    <div class="form-group row">
+                                        @Html.LabelFor(e => e.StaffId, new { @class = "col-lg-3 col-form-label" })
+                                        <div class="col-lg-9">
+                                            @Html.TextBoxFor(e => e.StaffId, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(e => e.StaffId)
+                                        </div>
+
+                                    </div>
+
+                                    <div class="form-group row">
+
+                                        @Html.LabelFor(e => e.DepartmentId, new { @class = "col-lg-3 col-form-label" })
+
+                                        <div class="col-lg-9">
+                                            @Html.DropDownListFor(m => m.DepartmentId, new SelectList(Model.Departments, "Id", "Name"), "Select Department", new { @class = "select" })
+                                            @Html.ValidationMessageFor(e => e.DepartmentId)
+                                        </div>
+
+                                    </div>
+                                    
+                                 
+                                    
+                                    <div class="form-group row">
+
+                                        @Html.LabelFor(e => e.RoleId, new { @class = "col-lg-3 col-form-label" })
+
+                                        <div class="col-lg-9">
+
+                                            @(
+                                                string.IsNullOrWhiteSpace(Model.RoleId)
+                                                    ? Html.DropDownListFor(m => m.RoleId, new SelectList(Model.Roles, "Id", "Name"), "Select Role", new {@class = "select", disabled="disabled"})
+                                                    : Html.DropDownListFor(m => m.RoleId, new SelectList(Model.Roles, "Id", "Name"), "Select Role", new {@class = "select"})
+                                                  
+                                                    )
+                                            @Html.ValidationMessageFor(e => e.RoleId)
+                                        </div>
+
+                                    </div>
+                                    
+                                    
+
+                                </div>
+                            </div>
+
+                            <div class="text-right">
+                                <button type="submit" class="btn btn-primary">Update</button>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
