@@ -321,6 +321,7 @@
     <Content Include="Content\assets\img\profiles\avatar-26.jpg" />
     <Content Include="Content\assets\img\profiles\avatar-28.jpg" />
     <Content Include="Content\assets\img\profiles\avatar-29.jpg" />
+    <Content Include="Content\assets\img\spinningwheel.gif" />
     <Content Include="Content\assets\img\user.jpg" />
     <Content Include="Content\assets\img\video-call.jpg" />
     <Content Include="Content\assets\js\app.js" />
