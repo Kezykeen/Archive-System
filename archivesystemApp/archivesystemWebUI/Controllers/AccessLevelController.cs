@@ -27,10 +27,6 @@ namespace archivesystemWebUI.Controllers
         /// 
         /// These actions make use of "AccessLevel" table
         /// </summary>
-        public ActionResult Index()
-        {
-            return View();
-        }
 
         public ActionResult ManageAccessLevel()
         {

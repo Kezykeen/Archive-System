@@ -99,7 +99,7 @@ namespace archivesystemWebUI.Controllers
                 AccessDetails = accessDetails,
                 AccessLevels = accessLevels
             };
-            return PartialView("_EditUserAccess", model);
+            return View(model);
         }
 
         [HttpPost]

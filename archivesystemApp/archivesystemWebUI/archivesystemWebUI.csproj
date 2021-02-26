@@ -477,7 +477,6 @@
     <Content Include="Views\Roles\Index.cshtml" />
     <Content Include="Views\Roles\EditRoleView.cshtml" />
     <Content Include="Views\AccessLevel\CreateAccessLevel.cshtml" />
-    <Content Include="Views\AccessLevel\Index.cshtml" />
     <Content Include="Views\AccessLevel\ManageAccessLevel.cshtml" />
     <Content Include="Views\AccessLevel\EditAccessLevel.cshtml" />
     <Content Include="Views\Department\Create.cshtml" />
@@ -492,7 +491,6 @@
     <Content Include="Views\UserAccess\DeleteUser.cshtml" />
     <Content Include="Views\Shared\_AddOrEditDepartment.cshtml" />
     <Content Include="Views\Folder\CreateFolder.cshtml" />
-    <Content Include="Views\AccessLevel\ManageUserAccess.cshtml" />
     <Content Include="Views\AccessLevel\AddUserToAccess.cshtml" />
     <Content Include="Views\AccessLevel\Delete.cshtml" />
     <Content Include="Views\AccessDetails\Create.cshtml" />
