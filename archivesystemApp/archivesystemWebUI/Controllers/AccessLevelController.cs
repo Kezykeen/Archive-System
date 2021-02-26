@@ -27,10 +27,6 @@ namespace archivesystemWebUI.Controllers
         /// 
         /// These actions make use of "AccessLevel" table
         /// </summary>
-        public ActionResult Index()
-        {
-            return View();
-        }
 
         public ActionResult ManageAccessLevel()
         {
@@ -51,8 +47,8 @@ namespace archivesystemWebUI.Controllers
             {
                 return View(model);
             }
-            try
-            {
+            //try
+            //{
                 var checkLevel = _unitOfWork.AccessLevelRepo.GetByLevel(model.Level);
                 if (checkLevel == null)
                 {
@@ -63,12 +59,12 @@ namespace archivesystemWebUI.Controllers
                     return RedirectToAction(nameof(ManageAccessLevel));
                 }
                 ModelState.AddModelError("AccessLevelExists", $"Access Level \"{model.Level}\" already exists. Please enter a different Level");
-            }
-            catch (Exception e)
-            {
-                ModelState.AddModelError("", e.Message);
-                return View(model);
-            }
+            //}
+            //catch (Exception e)
+            //{
+            //ModelState.AddModelError("", e.Message);
+            //return View(model);
+            //}
             return View(model);
         }
 

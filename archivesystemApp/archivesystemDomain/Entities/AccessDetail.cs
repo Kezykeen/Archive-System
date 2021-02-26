@@ -8,15 +8,13 @@ using System.Threading.Tasks;
 
 namespace archivesystemDomain.Entities
 {
-    public class AccessDetails
+    public class AccessDetail
     {
         public int Id { get; set; }   
         public int EmployeeId { get; set; }
         public Employee Employee { get; set; }
-        public string EmployeeName { get; set; }
         public int AccessLevelId { get; set; }
         public AccessLevel AccessLevel { get; set; }
-        public string AccessLevelName { get; set; }
         public string AccessCode { get; set; }
         public Status Status { get; set; }
     }

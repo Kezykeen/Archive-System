@@ -75,6 +75,8 @@ namespace archivesystemWebUI.Repository
         {
             var folders = new Stack<Folder>();
             var isNotRootFolder = true;
+            folders.Push(_context.Folders.SingleOrDefault(x => x.Name == "Root"));
+            var stack = new Stack<Folder>();
             while (isNotRootFolder)
             {
                 var subFolder = _context.SubFolders.Include("Folder").SingleOrDefault(x => x.FolderId == id);
@@ -82,13 +84,15 @@ namespace archivesystemWebUI.Repository
                     isNotRootFolder = false;
                 else
                 {
-                    folders.Push(subFolder.Folder);
+                    stack.Push(subFolder.Folder);
                     id = subFolder.ParentId;
                 }
-                   
-
             }
-            folders.Push(_context.Folders.SingleOrDefault(x=> x.Name=="Root"));
+            while (stack.Count() > 0)
+            {
+                folders.Push(stack.Pop());
+            }
+            
             return folders;
         }
     }

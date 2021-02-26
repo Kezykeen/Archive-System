@@ -15,7 +15,6 @@
             <div class="row">
                 <div class="col-sm-12">
                     <ul class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="@Url.Action("Index", "AccessLevel")">Dashboard</a></li>
                         <li class="breadcrumb-item"><a href="@Url.Action("ManageUserAccess", "UserAccess")">Manage User Access</a></li>
                         <li class="breadcrumb-item active">Edit User</li>
                     </ul>
@@ -58,7 +57,7 @@
                     <div class="form-group">
                         @Html.LabelFor(model => model.AccessDetails.AccessLevel, htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
-                            @Html.DropDownListFor(model => model.AccessDetails.AccessLevel, new SelectList(Model.AccessLevels, "Level", "Level"), Model.AccessDetails.AccessLevel, htmlAttributes: new { @class = "form-control" })
+                            @Html.DropDownListFor(model => model.AccessDetails.AccessLevelId, new SelectList(Model.AccessLevels, "Id", "Level"), "Select Access Level", htmlAttributes: new { @class = "form-control" })
                             @Html.ValidationMessageFor(model => model.AccessDetails.AccessLevel, "", new { @class = "text-danger" })
                         </div>
                     </div>

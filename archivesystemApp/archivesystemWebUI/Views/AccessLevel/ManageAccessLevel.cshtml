@@ -13,9 +13,9 @@
 }
 @if (TempData["AccessMessage"] != null)
 {
-<div class="alert-success text-center" style="border-radius: 6px; padding: 10px; margin: 10px;">
-    @TempData["AccessMessage"]
-</div>
+    <div class="alert-success text-center" style="border-radius: 6px; padding: 10px; margin: 10px;">
+        @TempData["AccessMessage"]
+    </div>
 
 }
 
@@ -24,8 +24,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="@Url.Action("Index", "AccessLevel")">Dashboard</a></li>
-                    <li class="breadcrumb-item active">Access Level</li>
+                    <li class="breadcrumb-item active">Access Levels</li>
                 </ul>
             </div>
         </div>
@@ -98,4 +97,5 @@
         </table>
 
     }
-    </div>
+</div>
+

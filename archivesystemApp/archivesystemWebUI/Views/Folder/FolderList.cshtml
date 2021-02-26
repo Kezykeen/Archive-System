@@ -3,25 +3,35 @@
 @model FolderListViewModel
 @{
     ViewBag.Title = $"{Model.FolderName} Folder";
-    var folders = (Stack<Folder>)Session["folderPath"];
-    var lenght = folders.Count();
+    var folderNavigationLinks = (Stack<Folder>)Session["folderPath"];
+    var lenght = folderNavigationLinks==null ? 0 : folderNavigationLinks.Count();
+    var subFolderLenght= Model.SubFolders==null? 0 : Model.SubFolders.Count();
+    var headerTitle = (bool)Session[SessionData.IsSearchRequest] ?  "Your Search Result" : $"{Model.FolderName} Folder";
 }
 
-<div style="width:calc(100% - 4em); margin:0 2em;margin-top:2em; overflow:hidden;direction:ltr">
-    @foreach (Folder folder in folders)
+<div style="width:calc(100% - 4em); margin:0 2em;margin-top:2em; overflow:hidden;direction:rtl">
+    @if (folderNavigationLinks != null)
     {
-        if (folder.Name != "Root")
+        foreach (Folder folder in folderNavigationLinks)
         {
-            <p style="display:inline-block;font-size:1.5em">@Html.ActionLink(@folder.Name, $"/{@folder.Id}", "folders")/</p>
-        }
+            if (folder.Name != "Root")
+            {
+                <p style="display:inline-block;font-size:1.5em">@Html.ActionLink(@folder.Name, $"/{@folder.Id}", "folders")/</p>
+            }
 
-        else
-        {
-            <p style="display:inline-block;font-size:1.5em">@Html.ActionLink(@folder.Name, "Index", "Folder")/</p>
-        }
+            else
+            {
+                <p style="display:inline-block;font-size:1.5em">@Html.ActionLink(@folder.Name, "Index", "Folder")/</p>
+            }
 
+        }
     }
-</div>
+    else if(subFolderLenght==0)
+    {
+        <h3>No Folder Matches your search</h3>
+    }
+
+    </div>
 
 
 <!-- Page Content -->
@@ -32,20 +42,32 @@
             <div class="file-wrap">
                 <div class="file-sidebar">
                     <div class="file-header justify-content-center">
-                        <span>@Model.FolderName Folder</span>
+                        <span>@headerTitle </span>
                         <a href="javascript:void(0);" class="file-side-close"><i class="fa fa-times"></i></a>
                     </div>
-                    <form class="file-search">
+
+                    @using (Html.BeginForm("Index","Folder",null,FormMethod.Get, new { @class="file-search"}))
+                    {
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <i class="fa fa-search"></i>
                             </div>
-                            <input type="text" class="form-control" placeholder="Search">
+                            <input type="text" class="form-control" placeholder="Search For Folder"
+                                   name="search" value="@Request.QueryString["search"]" />
                         </div>
-                    </form>
+                    }
+          
                     <div class="file-pro-list">
                         <div class="file-scroll">
+                            <div class="btn add-btn float-left" style="margin:1em 0;color:white">
+                                <i class="fa fa-plus"></i>
+                                @Html.ActionLink("Add Folder", "Create", "Folder", new { id = Model.Id },
+                           htmlAttributes: new{ @style= "color:white" })
+                                @*<a href="#" class="btn add-btn" onclick="@Url.Action( "Create", "Folder", new { id = Model.Id }, null)"><i class="fa fa-plus"></i> Add Folder</a>*@
+                            </div>
+                            
                             <ul class="file-menu">
+
                                 @if (Model.SubFolders.Count() > 0)
                                 {
                                     foreach (Folder folder in Model.SubFolders)
@@ -53,28 +75,30 @@
                                         <li style="display:flex;justify-content:space-between;align-items: center;" class="folderlist-folder">
                                             @Html.ActionLink(@folder.Name, $"/{@folder.Id}", "folders")
 
-                                            <a href="" class="dropdown-link" data-toggle="dropdown" style="padding:0;width: 5px;margin:0;">
-                                                <i class="fa fa-ellipsis-v"></i></a>
+                                            <a href="" class="dropdown-link" data-toggle="dropdown" style="padding:0;width: 3em;margin:0; display:flex;justify-content:center">
+                                                <i class="fa fa-ellipsis-v"></i>
+                                            </a>
                                             <div class="dropdown-menu dropdown-menu-right">
 
                                                 <a href="#" class="dropdown-item" onclick="getEditFolderPartialView
                                                     ('@Url.Action("GetEditFolderPartialView", "Folder")', @folder.Id)"> Edit Folder</a>
                                                 <a href="#" class="dropdown-item" onclick="getDeleteFolderPartialView
-                                                    ('@Url.Action("GetDeleteFolderPartialView", "Folder")',@folder.Id,'@folder.Name')"> Delete Folder</a
+                                                    ('@Url.Action("GetDeleteFolderPartialView", "Folder")',@folder.Id,'@folder.Name')"> Delete Folder</a>
                                             </div>
                                         </li>
                                     }
                                 }
 
+
                             </ul>
-                            @if (Model.FolderName != "Root")
+                            @if (Model.FolderName != "Root" && Model.Id != 0)
                             {
                                 using (Html.BeginForm("BackToParent", "Folder", FormMethod.Post))
                                 {
                                     <input hidden name="parentId" value="@Model.ParentId" />
-                                   
-                                        <button type="submit" class="btn btn-primary" >Back</button>
-                                    
+
+                                    <button type="submit" class="btn btn-primary">Back</button>
+
                                 }
 
                             }
@@ -92,7 +116,7 @@
                             </div>
                             <span>File Manager</span>
                             <div class="file-options">
-                                @Html.ActionLink("Add Folder", "Create", "Folder", new { id = Model.Id }, null)
+                                
 
                                 <span class="btn-file"><input type="file" class="upload"><i class="fa fa-upload"></i></span>
                             </div>
@@ -130,6 +154,8 @@
     </div>
 </div>
 <!-- / Folder Modal -->
+
+
 
 @section scripts{
     <script src="~/Content/assets/js/archive-system.js"></script>

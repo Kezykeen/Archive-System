@@ -6,14 +6,14 @@ namespace archivesystemWebUI.Migrations
     using System.Data.Entity.Migrations.Infrastructure;
     using System.Resources;
     
-    [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class AddedAccessDetailsEntity1 : IMigrationMetadata
+    [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
+    public sealed partial class AddIndexesToEmployee : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(AddedAccessDetailsEntity1));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(AddIndexesToEmployee));
         
         string IMigrationMetadata.Id
         {
-            get { return "202102231001046_AddedAccessDetailsEntity1"; }
+            get { return "202102160853551_AddIndexesToEmployee"; }
         }
         
         string IMigrationMetadata.Source

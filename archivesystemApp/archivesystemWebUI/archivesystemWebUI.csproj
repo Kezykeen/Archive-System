@@ -85,6 +85,9 @@
     <Reference Include="Ninject.Web.Mvc, Version=3.3.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <HintPath>..\packages\Ninject.MVC5.3.3.0\lib\net45\Ninject.Web.Mvc.dll</HintPath>
     </Reference>
+    <Reference Include="Ninject.WebApi.DependencyResolver, Version=0.1.4758.24814, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.WebApi.DependencyResolver.0.1.4758.24814\lib\net45\Ninject.WebApi.DependencyResolver.dll</HintPath>
+    </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
@@ -92,12 +95,21 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.7\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Http, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.7\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.7\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
@@ -171,9 +183,11 @@
     <Compile Include="App_Start\NinjectWebCommon.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
-    <Compile Include="Controllers\UserAccessController.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccessLevelController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\Api\UsersController.cs" />
+    <Compile Include="Controllers\UserAccessController.cs" />
     <Compile Include="Controllers\DepartmentController.cs" />
     <Compile Include="Controllers\EmployeesController.cs" />
     <Compile Include="Controllers\FacultyController.cs" />
@@ -212,10 +226,6 @@
     <Compile Include="Migrations\202102130649017_ModifiedAccessLevelEntity.Designer.cs">
       <DependentUpon>202102130649017_ModifiedAccessLevelEntity.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202102131002350_AddedAccessDetailsEntity.cs" />
-    <Compile Include="Migrations\202102131002350_AddedAccessDetailsEntity.Designer.cs">
-      <DependentUpon>202102131002350_AddedAccessDetailsEntity.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\202102191549415_AddFoldersTable.cs" />
     <Compile Include="Migrations\202102191549415_AddFoldersTable.Designer.cs">
       <DependentUpon>202102191549415_AddFoldersTable.cs</DependentUpon>
@@ -228,25 +238,34 @@
     <Compile Include="Migrations\202102192119285_SeedRootFolder.Designer.cs">
       <DependentUpon>202102192119285_SeedRootFolder.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202102230847171_LinkedEmployeeToAccessDetails.cs" />
-    <Compile Include="Migrations\202102230847171_LinkedEmployeeToAccessDetails.Designer.cs">
-      <DependentUpon>202102230847171_LinkedEmployeeToAccessDetails.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202102231001046_AddedAccessDetailsEntity1.cs" />
-    <Compile Include="Migrations\202102231001046_AddedAccessDetailsEntity1.Designer.cs">
-      <DependentUpon>202102231001046_AddedAccessDetailsEntity1.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\202102221824083_AddColumnsToSubFoldersTable.cs" />
     <Compile Include="Migrations\202102221824083_AddColumnsToSubFoldersTable.Designer.cs">
       <DependentUpon>202102221824083_AddColumnsToSubFoldersTable.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202102231138051_Unknown.cs" />
-    <Compile Include="Migrations\202102231138051_Unknown.Designer.cs">
-      <DependentUpon>202102231138051_Unknown.cs</DependentUpon>
+    <Compile Include="Migrations\202102251107030_AddedAccessDetails.cs" />
+    <Compile Include="Migrations\202102251107030_AddedAccessDetails.Designer.cs">
+      <DependentUpon>202102251107030_AddedAccessDetails.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202102160828000_AddCheckedToEmployee.cs" />
+    <Compile Include="Migrations\202102160828000_AddCheckedToEmployee.Designer.cs">
+      <DependentUpon>202102160828000_AddCheckedToEmployee.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202102160853551_AddIndexesToEmployee.cs" />
+    <Compile Include="Migrations\202102160853551_AddIndexesToEmployee.Designer.cs">
+      <DependentUpon>202102160853551_AddIndexesToEmployee.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202102260027414_chngesToEmp.cs" />
+    <Compile Include="Migrations\202102260027414_chngesToEmp.Designer.cs">
+      <DependentUpon>202102260027414_chngesToEmp.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202102260233439_newModelsFromTeam.cs" />
+    <Compile Include="Migrations\202102260233439_newModelsFromTeam.Designer.cs">
+      <DependentUpon>202102260233439_newModelsFromTeam.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CodeStatus.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\DataLayers\UserDataView.cs" />
     <Compile Include="Models\AddUserToAccessViewModel.cs" />
     <Compile Include="Models\CreateAccessLevelViewModel.cs" />
     <Compile Include="Models\DepartmentViewModel.cs" />
@@ -255,7 +274,9 @@
     <Compile Include="Models\FacultyViewModel.cs" />
     <Compile Include="Models\FolderViewModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\UpdateEmployeeVM.cs" />
     <Compile Include="Models\RoleViewModels.cs" />
+    <Compile Include="Models\SessionData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\AccessDetailsRepository.cs" />
     <Compile Include="Repository\DeptRepository.cs" />
@@ -270,6 +291,7 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Readme\readme.txt" />
     <Content Include="Content\assets\css\archive-custom.css" />
     <Content Include="Content\assets\css\bootstrap-datetimepicker.min.css" />
     <Content Include="Content\assets\css\bootstrap.min.css" />
@@ -326,6 +348,8 @@
     <Content Include="Content\assets\img\video-call.jpg" />
     <Content Include="Content\assets\js\app.js" />
     <Content Include="Content\assets\js\archive-system.js" />
+    <Content Include="Content\assets\js\bootbox.js" />
+    <Content Include="Content\assets\js\bootbox.min.js" />
     <Content Include="Content\assets\js\bootstrap-datetimepicker.min.js" />
     <Content Include="Content\assets\js\bootstrap.min.js" />
     <Content Include="Content\assets\js\chart.js" />
@@ -345,6 +369,7 @@
     <Content Include="Content\assets\js\multiselect.min.js" />
     <Content Include="Content\assets\js\popper.min.js" />
     <Content Include="Content\assets\js\select2.min.js" />
+    <Content Include="Content\assets\js\sweetalert2.all.min.js" />
     <Content Include="Content\assets\js\task.js" />
     <Content Include="Content\assets\plugins\bootstrap-tagsinput\bootstrap-tagsinput.css" />
     <Content Include="Content\assets\plugins\bootstrap-tagsinput\bootstrap-tagsinput.min.js" />
@@ -449,12 +474,10 @@
     <Content Include="Views\Shared\_SideBarPartial.cshtml" />
     <Content Include="Views\Shared\_AccountLayout.cshtml" />
     <Content Include="Views\Employees\Index.cshtml" />
-    <Content Include="Views\Employees\Enroll.cshtml" />
     <Content Include="Views\Roles\NewUserRoleView.cshtml" />
     <Content Include="Views\Roles\Index.cshtml" />
     <Content Include="Views\Roles\EditRoleView.cshtml" />
     <Content Include="Views\AccessLevel\CreateAccessLevel.cshtml" />
-    <Content Include="Views\AccessLevel\Index.cshtml" />
     <Content Include="Views\AccessLevel\ManageAccessLevel.cshtml" />
     <Content Include="Views\AccessLevel\EditAccessLevel.cshtml" />
     <Content Include="Views\Department\Create.cshtml" />
@@ -463,22 +486,37 @@
     <Content Include="Views\Department\Edit.cshtml" />
     <Content Include="Views\Department\Index.cshtml" />
     <Content Include="Views\Faculty\Index.cshtml" />
-    <Content Include="Views\Folder\CreateFolder.cshtml" />
     <Content Include="Views\UserAccess\ManageUserAccess.cshtml" />
     <Content Include="Views\UserAccess\AddUser.cshtml" />
     <Content Include="Views\UserAccess\EditUser.cshtml" />
     <Content Include="Views\UserAccess\DeleteUser.cshtml" />
     <Content Include="Views\Shared\_AddOrEditDepartment.cshtml" />
-    <Content Include="Views\AccessLevel\ManageUserAccess.cshtml" />
-    <Content Include="Views\AccessLevel\AddUserToAccess.cshtml" />
     <Content Include="Views\Folder\CreateFolder.cshtml" />
+    <Content Include="Views\AccessLevel\AddUserToAccess.cshtml" />
+    <Content Include="Views\AccessLevel\Delete.cshtml" />
+    <Content Include="Views\AccessDetails\Create.cshtml" />
+    <Content Include="Views\AccessDetails\Delete.cshtml" />
+    <Content Include="Views\AccessDetails\Details.cshtml" />
+    <Content Include="Views\AccessDetails\Edit.cshtml" />
+    <Content Include="Views\AccessDetails\Index.cshtml" />
+    <Content Include="Views\Employees\DelPrompt.cshtml" />
+    <Content Include="Views\Employees\Details.cshtml" />
+    <Content Include="Views\Home\EmployeeDashboard.cshtml" />
+    <Content Include="Views\Home\Profile.cshtml" />
+    <Content Include="Views\Employees\EditModal.cshtml" />
+    <Content Include="Views\Shared\_EnrollPartial.cshtml" />
+    <Content Include="Views\Employees\EnrollModal.cshtml" />
     <Content Include="Views\Shared\_DeleteDepartment.cshtml" />
     <Content Include="Views\Shared\_AddOrEditFaculty.cshtml" />
     <Content Include="Views\Shared\_DeleteFaculty.cshtml" />
     <Content Include="Views\Folder\FolderList.cshtml" />
     <Content Include="Views\Folder\EditFolder.cshtml" />
+    <Content Include="Views\Shared\_EditUserAccess.cshtml" />
+    <Content Include="Views\Shared\_DeleteUserAccess.cshtml" />
+    <Content Include="Views\Shared\_AddUserAccess.cshtml" />
     <Content Include="Views\Shared\_EditFolder.cshtml" />
-    <Content Include="Views\Folder\_DeleteFolder.cshtml" />
+    <Content Include="Views\Shared\_DeleteFolder.cshtml" />
+    <Content Include="Views\Folder\AddFolder.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -521,9 +559,6 @@
     <EmbeddedResource Include="Migrations\202102130649017_ModifiedAccessLevelEntity.resx">
       <DependentUpon>202102130649017_ModifiedAccessLevelEntity.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202102131002350_AddedAccessDetailsEntity.resx">
-      <DependentUpon>202102131002350_AddedAccessDetailsEntity.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202102191549415_AddFoldersTable.resx">
       <DependentUpon>202102191549415_AddFoldersTable.cs</DependentUpon>
     </EmbeddedResource>
@@ -533,17 +568,23 @@
     <EmbeddedResource Include="Migrations\202102192119285_SeedRootFolder.resx">
       <DependentUpon>202102192119285_SeedRootFolder.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202102230847171_LinkedEmployeeToAccessDetails.resx">
-      <DependentUpon>202102230847171_LinkedEmployeeToAccessDetails.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202102231001046_AddedAccessDetailsEntity1.resx">
-      <DependentUpon>202102231001046_AddedAccessDetailsEntity1.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202102221824083_AddColumnsToSubFoldersTable.resx">
       <DependentUpon>202102221824083_AddColumnsToSubFoldersTable.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202102231138051_Unknown.resx">
-      <DependentUpon>202102231138051_Unknown.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202102251107030_AddedAccessDetails.resx">
+      <DependentUpon>202102251107030_AddedAccessDetails.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102160828000_AddCheckedToEmployee.resx">
+      <DependentUpon>202102160828000_AddCheckedToEmployee.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102160853551_AddIndexesToEmployee.resx">
+      <DependentUpon>202102160853551_AddIndexesToEmployee.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102260027414_chngesToEmp.resx">
+      <DependentUpon>202102260027414_chngesToEmp.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102260233439_newModelsFromTeam.resx">
+      <DependentUpon>202102260233439_newModelsFromTeam.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

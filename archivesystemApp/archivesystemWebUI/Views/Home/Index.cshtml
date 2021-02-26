@@ -6,16 +6,19 @@
 <div class="content container-fluid">
 
     <!-- Page Header -->
-    <div class="page-header">
-        <div class="row">
-            <div class="col-sm-12">
-                <h3 class="page-title">Welcome Admin!</h3>
-                <ul class="breadcrumb">
-                    <li class="breadcrumb-item active">Dashboard</li>
-                </ul>
+<div class="row">
+    <div class="col-md-12">
+        <div class="welcome-box">
+            <div class="welcome-img">
+                <img alt="" src="/Content/assets/img/profiles/avatar-02.jpg">
+            </div>
+            <div class="welcome-det">
+                <h3>Welcome, @User.Identity.Name</h3>
+                <p>@DateTime.Now.ToString("D")</p>
             </div>
         </div>
     </div>
+</div>
     <!-- /Page Header -->
 
     <div class="row">

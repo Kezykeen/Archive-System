@@ -1,6 +1,7 @@
-﻿@using archivesystemWebUI.Models
+﻿
+@using archivesystemWebUI.Models
 @model DeleteFolderViewModel
-@{ 
+@{
     Layout = null;
 }
 
@@ -11,7 +12,7 @@
     </button>
 </div>
 
- <div class="modal-body">
+<div class="modal-body">
     <div style="margin:auto;display:flex;justify-content:center">
         @using (Html.BeginForm("Delete", "Folder", FormMethod.Post))
         {

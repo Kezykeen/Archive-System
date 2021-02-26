@@ -15,7 +15,6 @@
             <div class="row">
                 <div class="col-sm-12">
                     <ul class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="@Url.Action("Index", "AccessLevel")">Dashboard</a></li>
                         <li class="breadcrumb-item"><a href="@Url.Action("ManageUserAccess", "UserAccess")">Manage User Access</a></li>
                         <li class="breadcrumb-item active">Add User</li>
                     </ul>
@@ -30,10 +29,11 @@
                 <hr />
                 @*<p class="account-subtitle">To access your Dashboard</p>*@
 
+                @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
                 @using (Html.BeginForm("AddUser", "UserAccess", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
                 {
                     @Html.AntiForgeryToken()
-                    @Html.ValidationSummary(true)
 
                     <div class="form-group">
                         @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label " })
@@ -46,7 +46,7 @@
                     <div class="form-group">
                         @Html.LabelFor(model => model.AccessLevel, htmlAttributes: new { @class = "control-label " })
                         <div class="col-md-10">
-                            @Html.DropDownListFor(model => model.AccessLevel, new SelectList(Model.AccessLevels, "Level", "Level"), "Select Access Level", htmlAttributes: new { @class = "form-control" })
+                            @Html.DropDownListFor(model => model.AccessLevel, new SelectList(Model.AccessLevels, "Id", "Level"), "Select Access Level", htmlAttributes: new { @class = "form-control" })
                             @Html.ValidationMessageFor(model => model.AccessLevel, "", new { @class = "text-danger" })
                         </div>
                     </div>

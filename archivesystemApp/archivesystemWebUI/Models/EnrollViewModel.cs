@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 
 namespace archivesystemWebUI.Models
 {
@@ -18,16 +19,19 @@ namespace archivesystemWebUI.Models
         [Required]
         [MinLength(2)]
         [Display(Name = "Last Name")]
+        [Remote("IsNameTaken", "Employees", AdditionalFields = "LastName", ErrorMessage = "Name Already taken!")]
         public string LastName { get; set; }
 
         [Required]
         [EmailAddress]
         [Display(Name = "Email Address")]
+        [Remote("IsEmailTaken", "Employees", ErrorMessage = "Email Already taken!")]
         public string Email { get; set; }
 
         [Required]
         [Phone]
         [Display(Name = "Phone Number")]
+        [Remote("IsPhoneTaken", "Employees", ErrorMessage = "Phone Number Already taken!")]
         public string Phone { get; set; }
 
 
@@ -42,15 +46,11 @@ namespace archivesystemWebUI.Models
 
 
         [Required]
-        [Display(Name = "Marital Status")]
-        public MaritalStatus? MaritalStatus { get; set; }
-
-
-        [Required]
         [Display(Name = "Date Appointed")]
         public DateTime? Appointed { get; set; }
         [Required]
         [Display(Name = "Staff Id")]
+        [Remote("IsStaffIdTaken", "Employees", ErrorMessage = "Staff Id Already taken!")]
         public string StaffId { get; set; }
 
         [Required]

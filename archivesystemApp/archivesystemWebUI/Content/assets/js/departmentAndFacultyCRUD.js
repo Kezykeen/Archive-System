@@ -90,7 +90,7 @@ $(document).ready(function() {
 // END DATATABLES
 });
 
-    //Get Add or Edit View
+	//Get Add or Edit View
 function getAddOrEditPartialView(url, id) {
     $.get(url,
         { id: id },
@@ -101,50 +101,50 @@ function getAddOrEditPartialView(url, id) {
         });
 }
 
-    //Post to Add or Edit Action
+	//Post to Add or Edit Action
 function addOrEdit(name, url) {
-    var form = $('form[name=' + name + ']');
-    form.validate();
-    if (!form.valid()) {
-        $("#editTxtName-error").addClass("field-validation-error");
-        $("#editTxtName").addClass("input-validation-error");
-        $("#editTxtName").keyup(function () {
-            $(this).removeClass("input-validation-error");
-        });
-        return;
-    } else {
-        var data = form.serialize();
-        $.post(url,
-            data,
-            function (response) {
-                if (response === "success") {
+	var form = $('form[name=' + name + ']');
+	form.validate();
+	if (!form.valid()) {
+		$("#editTxtName-error").addClass("field-validation-error");
+		$("#editTxtName").addClass("input-validation-error");
+		$("#editTxtName").keyup(function () {
+			$(this).removeClass("input-validation-error");
+		});
+		return;
+	} else {
+		var data = form.serialize();
+		$.post(url,
+			data,
+			function (response) {
+				if (response === "success") {
 					$("#modal").modal("hide");
                     //insert alert service
                     //reload both dataTables as both use the same ajax calls
                     facultyDataTable.ajax.reload();
                     departmentDataTable.ajax.reload();
 				} else if (response === "Name already exist") {
-                    $("#validationMsg").html(response);
-                    $("#editTxtName").keydown(function() {
-                        $("#validationMsg").html("");
-                    });
-                } else {
-                    alert(response.responseText);
-                }
-            });
-    }
+					$("#validationMsg").html(response);
+					$("#editTxtName").keydown(function() {
+						$("#validationMsg").html("");
+					});
+				} else {
+					alert(response.responseText);
+				}
+			});
+	}
 }
 
-    //Get Delete View
+	//Get Delete View
 function getDeletePartialView(url, id) {
-    $.get(url + "/" + id,
-        { id: id },
-        function (res) {
-            $("#modalBody").html(res);
-            $("#modal").modal("show");
-        });
+	$.get(url + "/" + id,
+		{ id: id },
+		function (res) {
+			$("#modalBody").html(res);
+			$("#modal").modal("show");
+		});
 }
-    //Post to Delete Action
+	//Post to Delete Action
 function confirmDelete(url) {
     var id = $("#txtDeleteId").val();
     $.ajax({

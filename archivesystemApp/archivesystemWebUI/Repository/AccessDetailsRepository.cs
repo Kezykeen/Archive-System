@@ -8,7 +8,7 @@ using System.Web;
 
 namespace archivesystemWebUI.Repository
 {
-    public class AccessDetailsRepository: Repository<AccessDetails>, IAccessDetailsRepository
+    public class AccessDetailsRepository: Repository<AccessDetail>, IAccessDetailsRepository
     {
         private readonly ApplicationDbContext _context;
 
@@ -23,7 +23,7 @@ namespace archivesystemWebUI.Repository
         /// This method accepts an "AcceptDetails" object and modifies an existing data in the AccessDetails table.
         /// </summary>
         /// <param name="accessDetails"> AccessDetails</param>
-        public void EditDetails(AccessDetails accessDetails)
+        public void EditDetails(AccessDetail accessDetails)
         {
             _context.Entry(accessDetails).State = EntityState.Modified;
         }
@@ -33,9 +33,14 @@ namespace archivesystemWebUI.Repository
         /// </summary>
         /// <param name="employeeId">Integer</param>
         /// <returns>AccessDetails</returns>
-        public AccessDetails GetByEmployeeId(int employeeId)
+        public AccessDetail GetByEmployeeId(int employeeId)
         {
             return _context.AccessDetails.Where(m => m.EmployeeId == employeeId).FirstOrDefault();
+        }
+
+        public IEnumerable<AccessDetail> GetAccessDetails()
+        {
+            return _context.AccessDetails.Include(m => m.Employee).Include(m => m.AccessLevel).ToList();
         }
     }
 

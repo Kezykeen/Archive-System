@@ -3,6 +3,7 @@ using archivesystemDomain.Interfaces;
 using archivesystemWebUI.Infrastructures;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -19,10 +20,14 @@ namespace archivesystemWebUI.Repository
             _context = context;
         }
 
-        public bool NameExists(string name)
+        public bool NameExists(string name, int? userId)
         {
-            return GetAll().Any(e => string.Equals(e.Name, name,
+            if(userId == null)
+                return GetAll().Any(e => string.Equals(e.Name, name,
                 StringComparison.OrdinalIgnoreCase));
+            return GetAll().Any(e => string.Equals(e.Name, name,
+                StringComparison.OrdinalIgnoreCase) && e.Id != userId.Value);
+
         }
 
         public Employee GetEmployeeByMail(string email)
@@ -31,17 +36,41 @@ namespace archivesystemWebUI.Repository
             return employee;
         }
 
-        public bool EmailExists(string email)
+        public IEnumerable<Employee> GetEmployeesWithDept()
         {
-            return GetAll().Any(e => string.Equals(e.Email, email,
+            return _context.Employees.Include(e => e.Department).ToList();
+        }
+
+        public Employee GetEmployeeWithDept(int? id , string appId =null)
+        {
+            if (!string.IsNullOrWhiteSpace(appId))
+            {
+                return _context.Employees.Include(e => e.Department).SingleOrDefault(e => e.UserId == appId);
+            }
+            
+            return _context.Employees.Include(e => e.Department).SingleOrDefault(e => e.Id == id);
+        }
+
+        public bool EmailExists(string email, int? userId)
+        {
+            
+            if(userId == null)
+                return GetAll().Any(e => string.Equals(e.Email, email,
                 StringComparison.OrdinalIgnoreCase));
+            return GetAll().Any(e => string.Equals(e.Email, email,
+                StringComparison.OrdinalIgnoreCase) && e.Id != userId.Value);
         }
 
 
-        public bool StaffIdExists(string staffId)
+        public bool StaffIdExists(string staffId, int? userId)
         {
-            return GetAll().Any(e => string.Equals(e.StaffId, staffId,
+            
+            if(userId == null)
+                return GetAll().Any(e => string.Equals(e.StaffId, staffId,
                 StringComparison.OrdinalIgnoreCase));
+
+            return GetAll().Any(e => string.Equals(e.StaffId, staffId,
+                StringComparison.OrdinalIgnoreCase) && e.Id != userId.Value);
         }
 
 
@@ -52,10 +81,13 @@ namespace archivesystemWebUI.Repository
            
         }
 
-        public bool PhoneExists(string phone)
+        public bool PhoneExists(string phone, int? userId)
         {
-             return GetAll().Any(e => string.Equals(e.Phone, phone,
+             if(userId == null)
+                return GetAll().Any(e => string.Equals(e.Phone, phone,
                 StringComparison.OrdinalIgnoreCase));
+             return GetAll().Any(e => string.Equals(e.Phone, phone,
+                 StringComparison.OrdinalIgnoreCase) && e.Id != userId.Value);
         }
 
         public ApplicationDbContext ApplicationDbContext => Context as ApplicationDbContext;

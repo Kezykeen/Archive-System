@@ -24,7 +24,6 @@ namespace archivesystemDomain.Services
 
             Create("Admin");
             Create("Manager");
-            Create("HR"); 
             Create("Employee"); 
 
             void Create(string name)
