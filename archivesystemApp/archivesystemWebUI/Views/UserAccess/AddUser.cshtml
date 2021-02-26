@@ -30,7 +30,7 @@
                 <hr />
                 @*<p class="account-subtitle">To access your Dashboard</p>*@
 
-                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 
                 @using (Html.BeginForm("AddUser", "UserAccess", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
                 {
