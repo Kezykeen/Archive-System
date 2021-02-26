@@ -21,6 +21,12 @@ namespace archivesystemDomain.Entities
         public DbSet<Faculty> Faculties { get; set; }
         public DbSet<AccessLevel> AccessLevels { get; set; }
         public DbSet<Token> Tokens { get; set; }
-        public DbSet<AccessDetails> AccessDetails { get; set; }
+        public DbSet<AccessDetail> AccessDetails { get; set; }
+
+        public DbSet<Folder> Folders { get; set; }
+
+        public DbSet<SubFolder> SubFolders { get; set; }
+
+
     }
 }

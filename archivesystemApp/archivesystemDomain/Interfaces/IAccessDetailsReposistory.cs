@@ -7,7 +7,10 @@ using System.Threading.Tasks;
 
 namespace archivesystemDomain.Interfaces
 {
-    public interface IAccessDetailsRepository: IRepository<AccessDetails>
+    public interface IAccessDetailsRepository : IRepository<AccessDetail>
     {
+        void EditDetails(AccessDetail accessDetails);
+        IEnumerable<AccessDetail> GetAccessDetails();
+        AccessDetail GetByEmployeeId(int employeeId);
     }
 }

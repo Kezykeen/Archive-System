@@ -1,6 +1,8 @@
-﻿using archivesystemDomain.Entities;
+﻿using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
+using archivesystemDomain.Entities;
 using archivesystemDomain.Interfaces;
-using archivesystemWebUI.Infrastructures;
 
 namespace archivesystemWebUI.Repository
 {
@@ -14,7 +16,15 @@ namespace archivesystemWebUI.Repository
             _context = context;
         }
 
-       
+        public void Update(Department department)
+        { 
+            _context.Entry(department).State = EntityState.Modified;
+        }
+
+        public List<Department> GetAllToList()
+        {
+            return _context.Departments.Include(x => x.Faculty).ToList();
+        }
 
         public ApplicationDbContext ApplicationDbContext => Context as ApplicationDbContext;
     }

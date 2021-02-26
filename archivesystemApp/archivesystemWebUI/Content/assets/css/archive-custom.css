@@ -1,3 +1,11 @@
 ﻿.validation-summary-errors{
     color:red;
 }
+
+#folder-thead th{
+    border:none;
+}
+
+.folderlist-folder:hover ,.file-menu li a:hover {
+    background-color: #edeeef;
+}

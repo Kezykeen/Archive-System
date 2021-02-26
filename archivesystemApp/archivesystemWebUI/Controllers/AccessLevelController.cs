@@ -1,14 +1,10 @@
 ﻿using archivesystemDomain.Entities;
 using archivesystemDomain.Interfaces;
 using archivesystemWebUI.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
-using System.Web.Mvc;
 using AutoMapper;
-using System.Net;
+using System;
+using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace archivesystemWebUI.Controllers
 {
@@ -24,170 +20,88 @@ namespace archivesystemWebUI.Controllers
             _unitOfWork = unitOfWork;
         }
         #endregion
-                
-        #region ACTION METHODS
 
-        // GET: AccessLevel
-        public ActionResult Index() 
+        #region ACTION METHODS
+        /// <summary>
+        /// This region contains all the actions to manage creation and manipulation of Access Level
+        /// 
+        /// These actions make use of "AccessLevel" table
+        /// </summary>
+        public ActionResult Index()
+        {
+            return View();
+        }
+
+        public ActionResult ManageAccessLevel()
         {
             var model = _unitOfWork.AccessLevelRepo.GetAll();
             return View(model);
         }
 
-        // GET: AccessLevel/Create
-        public ActionResult Create()
+        public ActionResult CreateAccessLevel()
         {
             return View();
         }
 
-        // POST: AccessLevel/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(CreateAccessLevelViewModel model)
+        public async Task<ActionResult> CreateAccessLevel(CreateAccessLevelViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    var checkAccess = _unitOfWork.AccessLevelRepo.GetByLevel(model.Level);
-                    if (checkAccess == null)
-                    {
-                        //var newAccess = new AccessLevel { Level = model.Level, LevelDescription = model.LevelDescription, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now };
-                        var newAccess = new AccessLevel();
-                        Mapper.Map(model, newAccess);
-                        _unitOfWork.AccessLevelRepo.Add(newAccess);
-                        await _unitOfWork.SaveAsync();
-                        return RedirectToAction("Index");
-                    }
-
-                    ModelState.AddModelError("AccessLevelExists", $"Access Level \"{model.Level}\" already exists. Please enter a different Level");
-
-                }
-                catch (Exception e)
-                {
-                    ModelState.AddModelError("", e.Message);
-                    return View(model);
-                }
+                return View(model);
             }
-            return View(model);
-        }
-                
-        public ActionResult AddUserToAccess()
-        {
-            var accessLevels = _unitOfWork.AccessLevelRepo.GetAll();
-            var viewModel = new AddUserToAccessViewModel
-            {
-                AccessLevels = accessLevels
-            };
-            return View(viewModel);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> AddUserToAccess(AddUserToAccessViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                try
+            //try
+            //{
+                var checkLevel = _unitOfWork.AccessLevelRepo.GetByLevel(model.Level);
+                if (checkLevel == null)
                 {
-                    var employee = _unitOfWork.EmployeeRepo.GetEmployeeByMail(model.UserIdentification);
-                    if (employee != null)
-                    {
-                        var accessCode = employee.Name.Substring(0, 2) + DateTime.Now.Day.ToString() + DateTime.Now.Second.ToString() + DateTime.Now.Hour.ToString() + model.AccessLevel;
-                        var newUserAccess = new AccessDetails { EmployeeId = employee.Id, EmployeeName = employee.Name, AccessLevel = model.AccessLevel, AccessCode = accessCode, Status = Status.Active };
-                        //Mapper.Map(model, newUserAccess);
-                        _unitOfWork.AccessDetailsRepo.Add(newUserAccess);
-                        await _unitOfWork.SaveAsync();
-                        return RedirectToAction(nameof(ManageUserAccess));
-                    }
-
-                    ModelState.AddModelError("EmployeeDoesNotExist", $"Employee with email \"{model.UserIdentification}\" does not exists. Please enter a different email");
-
+                    var newAccess = Mapper.Map<AccessLevel>(model);
+                    _unitOfWork.AccessLevelRepo.Add(newAccess);
+                    await _unitOfWork.SaveAsync();
+                    TempData["AccessMessage"] = $"Access Level was succesfully created!";
+                    return RedirectToAction(nameof(ManageAccessLevel));
                 }
-                catch (Exception e)
-                {
-                    ModelState.AddModelError("", e.Message);
-                    model.AccessLevels = _unitOfWork.AccessLevelRepo.GetAll();
-                    return View(model);
-                }
-            }
-            model.AccessLevels = _unitOfWork.AccessLevelRepo.GetAll();
-            return View(model);
-
-        }
-
-
-
-
-        public ActionResult ManageUserAccess()
-        {
-            var model = _unitOfWork.AccessDetailsRepo.GetAll();
+                ModelState.AddModelError("AccessLevelExists", $"Access Level \"{model.Level}\" already exists. Please enter a different Level");
+            //}
+            //catch (Exception e)
+            //{
+            //ModelState.AddModelError("", e.Message);
+            //return View(model);
+            //}
             return View(model);
         }
 
-        // GET: AccessLevel/Details/5
-        public ActionResult Details(int id)
+        public ActionResult EditAccessLevel(int id)
         {
-            return View();
-        }
-
-
-        // GET: AccessLevel/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: AccessLevel/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        
-        // GET: AccessDetails/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            var model = _unitOfWork.AccessDetailsRepo.Get(id.Value);
-            if (model == null)
-            {
+            var accessLevel = _unitOfWork.AccessLevelRepo.Get(id);
+            if (accessLevel == null)
                 return HttpNotFound();
-            }
-            return View(model);
+            return View(accessLevel);
         }
 
-        // POST: AccessDetails/Delete/5
-        [HttpPost, ActionName(nameof(Delete))]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteConfirmed(int id)
+        public async Task<ActionResult> EditAccessLevel(AccessLevel accessLevel)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(accessLevel);
+            }
             try
             {
-                var accessDetails = _unitOfWork.AccessDetailsRepo.Get(id);
-                _unitOfWork.AccessDetailsRepo.Remove(accessDetails);
+                accessLevel.UpdatedAt = DateTime.Now;
+                _unitOfWork.AccessLevelRepo.EditDetails(accessLevel);
                 await _unitOfWork.SaveAsync();
-                return RedirectToAction(nameof(ManageUserAccess));
+                return RedirectToAction(nameof(ManageAccessLevel));
             }
-            catch
+            catch (Exception e)
             {
-                return View();
+                ModelState.AddModelError("", e.Message);
+                return View(accessLevel);
             }
         }
-    }
+
         #endregion
+    }
 }

@@ -9,6 +9,8 @@ using archivesystemWebUI.Models;
 using archivesystemWebUI.Models.DataLayers;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using archivesystemWebUI.Models; 
+
 
 namespace archivesystemWebUI.Infrastructures
 {
@@ -74,6 +76,11 @@ namespace archivesystemWebUI.Infrastructures
             Mapper.CreateMap<CreateAccessLevelViewModel, AccessLevel>().ForMember(dest => dest.CreatedAt, opt => opt.UseValue<DateTime>(DateTime.Now)).ForMember(m => m.UpdatedAt, opt => opt.UseValue<DateTime>(DateTime.Now));
 
            
+            Mapper.CreateMap<EnrollViewModel, Employee>();
+            Mapper.CreateMap<Department, DepartmentViewModel>().ReverseMap();
+            Mapper.CreateMap<Faculty, FacultyViewModel>().ReverseMap();
+            Mapper.CreateMap<CreateAccessLevelViewModel, AccessLevel>().ForMember(dest => dest.CreatedAt, opt => opt.UseValue<DateTime>(DateTime.Now)).ForMember(m => m.UpdatedAt, opt => opt.UseValue<DateTime>(DateTime.Now));
+
         }
     }
 }

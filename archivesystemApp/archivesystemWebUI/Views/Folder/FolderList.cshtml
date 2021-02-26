@@ -1,0 +1,162 @@
+﻿@using archivesystemWebUI.Models
+@using archivesystemDomain.Entities
+@model FolderListViewModel
+@{
+    ViewBag.Title = $"{Model.FolderName} Folder";
+    var folderNavigationLinks = (Stack<Folder>)Session["folderPath"];
+    var lenght = folderNavigationLinks==null ? 0 : folderNavigationLinks.Count();
+    var subFolderLenght= Model.SubFolders==null? 0 : Model.SubFolders.Count();
+    var headerTitle = (bool)Session[SessionData.IsSearchRequest] ?  "Your Search Result" : $"{Model.FolderName} Folder";
+}
+
+<div style="width:calc(100% - 4em); margin:0 2em;margin-top:2em; overflow:hidden;direction:rtl">
+    @if (folderNavigationLinks != null)
+    {
+        foreach (Folder folder in folderNavigationLinks)
+        {
+            if (folder.Name != "Root")
+            {
+                <p style="display:inline-block;font-size:1.5em">@Html.ActionLink(@folder.Name, $"/{@folder.Id}", "folders")/</p>
+            }
+
+            else
+            {
+                <p style="display:inline-block;font-size:1.5em">@Html.ActionLink(@folder.Name, "Index", "Folder")/</p>
+            }
+
+        }
+    }
+    else if(subFolderLenght==0)
+    {
+        <h3>No Folder Matches your search</h3>
+    }
+
+    </div>
+
+
+<!-- Page Content -->
+<div class="content container-fluid">
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="file-wrap">
+                <div class="file-sidebar">
+                    <div class="file-header justify-content-center">
+                        <span>@headerTitle </span>
+                        <a href="javascript:void(0);" class="file-side-close"><i class="fa fa-times"></i></a>
+                    </div>
+
+                    @using (Html.BeginForm("Index","Folder",null,FormMethod.Get, new { @class="file-search"}))
+                    {
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <i class="fa fa-search"></i>
+                            </div>
+                            <input type="text" class="form-control" placeholder="Search For Folder"
+                                   name="search" value="@Request.QueryString["search"]" />
+                        </div>
+                    }
+          
+                    <div class="file-pro-list">
+                        <div class="file-scroll">
+                            <div class="btn add-btn float-left" style="margin:1em 0;color:white">
+                                <i class="fa fa-plus"></i>
+                                @Html.ActionLink("Add Folder", "Create", "Folder", new { id = Model.Id },
+                           htmlAttributes: new{ @style= "color:white" })
+                                @*<a href="#" class="btn add-btn" onclick="@Url.Action( "Create", "Folder", new { id = Model.Id }, null)"><i class="fa fa-plus"></i> Add Folder</a>*@
+                            </div>
+                            
+                            <ul class="file-menu">
+
+                                @if (Model.SubFolders.Count() > 0)
+                                {
+                                    foreach (Folder folder in Model.SubFolders)
+                                    {
+                                        <li style="display:flex;justify-content:space-between;align-items: center;" class="folderlist-folder">
+                                            @Html.ActionLink(@folder.Name, $"/{@folder.Id}", "folders")
+
+                                            <a href="" class="dropdown-link" data-toggle="dropdown" style="padding:0;width: 3em;margin:0; display:flex;justify-content:center">
+                                                <i class="fa fa-ellipsis-v"></i>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-right">
+
+                                                <a href="#" class="dropdown-item" onclick="getEditFolderPartialView
+                                                    ('@Url.Action("GetEditFolderPartialView", "Folder")', @folder.Id)"> Edit Folder</a>
+                                                <a href="#" class="dropdown-item" onclick="getDeleteFolderPartialView
+                                                    ('@Url.Action("GetDeleteFolderPartialView", "Folder")',@folder.Id,'@folder.Name')"> Delete Folder</a>
+                                            </div>
+                                        </li>
+                                    }
+                                }
+
+
+                            </ul>
+                            @if (Model.FolderName != "Root" && Model.Id != 0)
+                            {
+                                using (Html.BeginForm("BackToParent", "Folder", FormMethod.Post))
+                                {
+                                    <input hidden name="parentId" value="@Model.ParentId" />
+
+                                    <button type="submit" class="btn btn-primary">Back</button>
+
+                                }
+
+                            }
+
+                        </div>
+                    </div>
+                </div>
+                <div class="file-cont-wrap" style="width:100%">
+                    <div class="file-cont-inner">
+                        <div class="file-cont-header">
+                            <div class="file-options">
+                                <a href="javascript:void(0)" id="file_sidebar_toggle" class="file-sidebar-toggle">
+                                    <i class="fa fa-bars"></i>
+                                </a>
+                            </div>
+                            <span>File Manager</span>
+                            <div class="file-options">
+                                
+
+                                <span class="btn-file"><input type="file" class="upload"><i class="fa fa-upload"></i></span>
+                            </div>
+                        </div>
+                        <div class="file-content">
+                            <form class="file-search">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <i class="fa fa-search"></i>
+                                    </div>
+                                    <input type="text" class="form-control" placeholder="Search">
+                                </div>
+                            </form>
+                            <div class="file-body">
+                                <div class="file-scroll">
+                                    <div class="file-content-inner">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Folder Modal -->
+<div class="modal custom-modal fade" role="dialog" id="modal">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" id="modalBody">
+        </div>
+    </div>
+</div>
+<!-- / Folder Modal -->
+
+
+
+@section scripts{
+    <script src="~/Content/assets/js/archive-system.js"></script>
+}
