@@ -478,7 +478,6 @@
     <Content Include="Views\Roles\EditRoleView.cshtml" />
     <Content Include="Views\AccessLevel\CreateAccessLevel.cshtml" />
     <Content Include="Views\AccessLevel\ManageAccessLevel.cshtml" />
-    <Content Include="Views\AccessLevel\EditAccessLevel.cshtml" />
     <Content Include="Views\Department\Create.cshtml" />
     <Content Include="Views\Department\Delete.cshtml" />
     <Content Include="Views\Department\Details.cshtml" />
