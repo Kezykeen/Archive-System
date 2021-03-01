@@ -15,7 +15,7 @@ namespace archivesystemDomain.Interfaces
         IAccessDetailsRepository AccessDetailsRepo { get; }
         IFolderRepo FolderRepo { get; }
 
-        ISubFolderRepo SubFolderRepo { get; }
+      
 
         int Save();
         Task<int> SaveAsync();

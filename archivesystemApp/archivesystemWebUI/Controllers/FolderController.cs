@@ -30,6 +30,7 @@ namespace archivesystemWebUI.Controllers
                 Session[SessionData.FolderPath] = folderPath;
                 model.Id = rootFolder.Id;
                 model.SubFolders = rootFolder.Subfolders;
+                model.FolderName = "Root";
                 Session[SessionData.IsSearchRequest] = false;
             }
             else
@@ -83,8 +84,7 @@ namespace archivesystemWebUI.Controllers
         public ActionResult Delete(int id,int parentId)
         {
             var folderToDelete=repo.FolderRepo.Get(id);
-            List<Folder> foldersToDelete=repo.SubFolderRepo.RecursiveGetSubFolders(folderToDelete);
-            repo.FolderRepo.DeleteFolders(foldersToDelete);
+            repo.FolderRepo.Remove(folderToDelete);
             repo.Save();
             return RedirectToAction(nameof(GetSubFolders),new { id=parentId});
         }
@@ -94,16 +94,12 @@ namespace archivesystemWebUI.Controllers
         [HttpGet]
         public ActionResult GetSubFolders(int id)
         {
-            var folders = repo.SubFolderRepo.GetSubFolders(id);
-            var folder = repo.FolderRepo.Get(id);
-            int parentId;
-            if (folder.Name == "Root")
-                parentId = 0;
-            else 
-                parentId = repo.SubFolderRepo.GetParentId(id);
-            var model = new FolderListViewModel { FolderName=folder.Name,Id=folder.Id,SubFolders=folders , ParentId=parentId};
+            var folder = repo.FolderRepo.GetFolder(id);
+            if (folder.ParentId == null)
+                RedirectToAction(nameof(Index));
 
-            AddCurrentFolderPath(folder, parentId);
+            var model = new FolderListViewModel { FolderName=folder.Name,Id=folder.Id,SubFolders=folder.Subfolders , ParentId=(int)folder.ParentId};
+            AddCurrentFolderPath(folder);
             Session[SessionData.IsSearchRequest] = false;
             return View("FolderList", model);
         }
@@ -128,10 +124,8 @@ namespace archivesystemWebUI.Controllers
         public ActionResult Edit(CreateFolderViewModel model)
         {
             
-            var folder = new Folder {Name=model.Name, Id=model.Id };
+            var folder = new Folder {Name=model.Name, Id=model.Id ,AccessLevelId=model.AccessLevelId};
             repo.FolderRepo.UpdateFolder(folder);
-            var subFolder = new SubFolder { FolderId = model.Id, AccessLevelId = model.AccessLevelId };
-            repo.SubFolderRepo.Update(subFolder);
             repo.Save();
             return new HttpStatusCodeResult(200);
         }
@@ -140,16 +134,16 @@ namespace archivesystemWebUI.Controllers
         //GET: /Folder/GetEditPartialView
         public ActionResult GetEditFolderPartialView(int id)
         {
-            var subFolder = repo.SubFolderRepo.GetByFolderId(id);
-            if (subFolder == null)
+            var folder = repo.FolderRepo.Get(id);
+            if (folder == null)
                 return RedirectToAction("Index");
 
             var model = new CreateFolderViewModel
             {
                 Id = id,
-                AccessLevelId = subFolder.AccessLevelId,
+                AccessLevelId = (int)folder.AccessLevelId,
                 AccessLevels = repo.AccessLevelRepo.GetAll(),
-                Name = subFolder.Folder.Name,
+                Name = folder.Name,
             };
             return PartialView("_EditFolder", model);
         }
@@ -157,24 +151,23 @@ namespace archivesystemWebUI.Controllers
         //GET: /Folder/GetDeleteFolderPartialView
         public ActionResult GetDeleteFolderPartialView(int id)
         {
-            var subfolder = repo.SubFolderRepo.GetByFolderId(id);
+            var folder = repo.FolderRepo.Get(id);
             return PartialView("_DeleteFolder", new DeleteFolderViewModel { 
-                Name = subfolder.Folder.Name, Id = id, ParentId = subfolder.ParentId });
+                Name = folder.Name, Id = id, ParentId =(int)folder.ParentId });
         }
     
        
-        private void AddCurrentFolderPath(Folder folder,int parentId)
+        private void AddCurrentFolderPath(Folder folder)
         {
             var currentPath = (Stack<Folder>)Session[SessionData.FolderPath];
-
             if (currentPath == null)
             {
-                Session[SessionData.FolderPath] = repo.SubFolderRepo.GetFolderPath(folder.Id);
+                Session[SessionData.FolderPath] = repo.FolderRepo.GetFolderPath(folder.Id);
             }
             else
             {
                 if (currentPath.Peek().Id == folder.Id) { }
-                else if (currentPath.Peek().Id != parentId && currentPath.Count() > 0)
+                else if (currentPath.Peek().Id != (int)folder.ParentId && currentPath.Count() > 0)
                 {
                     while (currentPath.Peek().Id != folder.Id)
                     {
@@ -192,25 +185,7 @@ namespace archivesystemWebUI.Controllers
             }
         }
     
-        private FolderListViewModel getViewModel(int id)
-        {
-            var folders = repo.SubFolderRepo.GetSubFolders(id);
-            var folder = repo.FolderRepo.Get(id);
-            int parentId;
-            if (folder.Name == "Root")
-                parentId = 0;
-            else
-            {
-                parentId = repo.SubFolderRepo.GetParentId(id);
-                AddCurrentFolderPath(folder, parentId);
-            }
-               
-            var model = new FolderListViewModel { FolderName=folder.Name,Id=folder.Id,SubFolders=folders , ParentId=parentId};
-
-           
-            Session[SessionData.IsSearchRequest] = false;
-            return model;
-        }
+        
     }
 }
 

@@ -274,6 +274,10 @@
     <Compile Include="Migrations\202103011038452_addFilesCollectionToFoldersTable.Designer.cs">
       <DependentUpon>202103011038452_addFilesCollectionToFoldersTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202103011133036_addAccessLevelFieldToFolderTable.cs" />
+    <Compile Include="Migrations\202103011133036_addAccessLevelFieldToFolderTable.Designer.cs">
+      <DependentUpon>202103011133036_addAccessLevelFieldToFolderTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CodeStatus.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -297,7 +301,6 @@
     <Compile Include="Repository\FolderRepo.cs" />
     <Compile Include="Repository\Repository.cs" />
     <Compile Include="Repository\AccessLevelRepository.cs" />
-    <Compile Include="Repository\SubFolderRepo.cs" />
     <Compile Include="Repository\TokenRepository.cs" />
     <Compile Include="Repository\UnitOfWork.cs" />
     <Compile Include="Startup.cs" />
@@ -502,7 +505,6 @@
     <Content Include="Views\UserAccess\DeleteUser.cshtml" />
     <Content Include="Views\Shared\_AddOrEditDepartment.cshtml" />
     <Content Include="Views\AccessLevel\ManageUserAccess.cshtml" />
-    <Content Include="Views\Folder\CreateFolder.cshtml" />
     <Content Include="Views\AccessLevel\AddUserToAccess.cshtml" />
     <Content Include="Views\Employees\DelPrompt.cshtml" />
     <Content Include="Views\Employees\Details.cshtml" />
@@ -598,6 +600,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202103011038452_addFilesCollectionToFoldersTable.resx">
       <DependentUpon>202103011038452_addFilesCollectionToFoldersTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202103011133036_addAccessLevelFieldToFolderTable.resx">
+      <DependentUpon>202103011133036_addAccessLevelFieldToFolderTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

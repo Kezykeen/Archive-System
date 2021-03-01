@@ -30,6 +30,7 @@ namespace archivesystemDomain.Services
                         UpdatedAt = DateTime.Now
                     };
                     dbContext.AccessLevels.Add(baseAccess);
+                    dbContext.SaveChanges();
                 }
 
                 //Seed faculties
@@ -79,6 +80,7 @@ namespace archivesystemDomain.Services
                             CreatedAt=DateTime.Now,
                             UpdatedAt=DateTime.Now,
                             ParentId=rootFolder.Id,
+                            AccessLevelId=baseAccess.Id,
                             Subfolders= new List<Folder>
                             {
                                 new Folder
@@ -86,6 +88,7 @@ namespace archivesystemDomain.Services
                                     Name=faculties[0].Departments[0].Name,
                                     CreatedAt=DateTime.Now,
                                     UpdatedAt=DateTime.Now,
+                                    AccessLevelId=baseAccess.Id,
                                 },
                             }
 
@@ -96,6 +99,7 @@ namespace archivesystemDomain.Services
                             CreatedAt=DateTime.Now,
                             UpdatedAt=DateTime.Now,
                             ParentId=rootFolder.Id,
+                            AccessLevelId=baseAccess.Id,
                             Subfolders= new List<Folder>
                             {
                                 new Folder
@@ -103,6 +107,7 @@ namespace archivesystemDomain.Services
                                     Name=faculties[1].Departments[0].Name,
                                     CreatedAt=DateTime.Now,
                                     UpdatedAt=DateTime.Now,
+                                    AccessLevelId=baseAccess.Id,
                                 },
                             }
                         },
