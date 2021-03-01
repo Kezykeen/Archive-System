@@ -113,12 +113,19 @@ namespace archivesystemWebUI.Controllers
 
         private  void CreateFacultyFolder(Faculty faculty)
         {
-            var folder = new Folder { Name = faculty.Name, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now };
+           
             var rootFolder = _unitOfWork.FolderRepo.GetRootFolder();
+            var folder = new Folder
+            {
+                Name = faculty.Name,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now,
+                AccessLevelId = _unitOfWork.AccessLevelRepo.GetBaseLevel().Id,
+                ParentId=rootFolder.Id            
+            };
             _unitOfWork.FolderRepo.Add(folder);
-            var subFolder = new SubFolder { FolderId = folder.Id, ParentId = rootFolder.Id,
-                AccessLevelId = _unitOfWork.AccessLevelRepo.GetBaseLevel().Id };
-            _unitOfWork.SubFolderRepo.Add(subFolder);
+            
+            
 
         }
     }

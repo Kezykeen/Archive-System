@@ -361,7 +361,7 @@
     <Content Include="Content\assets\img\user.jpg" />
     <Content Include="Content\assets\img\video-call.jpg" />
     <Content Include="Content\assets\js\app.js" />
-    <Content Include="Content\assets\js\archive-system.js" />
+    <Content Include="Content\assets\js\folderControllerScript.js" />
     <Content Include="Content\assets\js\bootbox.js" />
     <Content Include="Content\assets\js\bootbox.min.js" />
     <Content Include="Content\assets\js\bootstrap-datetimepicker.min.js" />
