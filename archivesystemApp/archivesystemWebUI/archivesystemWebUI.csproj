@@ -489,9 +489,7 @@
     <Content Include="Views\Roles\Index.cshtml" />
     <Content Include="Views\Roles\EditRoleView.cshtml" />
     <Content Include="Views\AccessLevel\CreateAccessLevel.cshtml" />
-    <Content Include="Views\AccessLevel\Index.cshtml" />
     <Content Include="Views\AccessLevel\ManageAccessLevel.cshtml" />
-    <Content Include="Views\AccessLevel\EditAccessLevel.cshtml" />
     <Content Include="Views\Department\Create.cshtml" />
     <Content Include="Views\Department\Delete.cshtml" />
     <Content Include="Views\Department\Details.cshtml" />
@@ -504,13 +502,8 @@
     <Content Include="Views\UserAccess\DeleteUser.cshtml" />
     <Content Include="Views\Shared\_AddOrEditDepartment.cshtml" />
     <Content Include="Views\AccessLevel\ManageUserAccess.cshtml" />
+    <Content Include="Views\Folder\CreateFolder.cshtml" />
     <Content Include="Views\AccessLevel\AddUserToAccess.cshtml" />
-    <Content Include="Views\AccessLevel\Delete.cshtml" />
-    <Content Include="Views\AccessDetails\Create.cshtml" />
-    <Content Include="Views\AccessDetails\Delete.cshtml" />
-    <Content Include="Views\AccessDetails\Details.cshtml" />
-    <Content Include="Views\AccessDetails\Edit.cshtml" />
-    <Content Include="Views\AccessDetails\Index.cshtml" />
     <Content Include="Views\Employees\DelPrompt.cshtml" />
     <Content Include="Views\Employees\Details.cshtml" />
     <Content Include="Views\Home\EmployeeDashboard.cshtml" />
