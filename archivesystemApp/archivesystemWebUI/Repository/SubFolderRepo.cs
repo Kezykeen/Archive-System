@@ -63,7 +63,7 @@ namespace archivesystemWebUI.Repository
             return _context.SubFolders.Include("Folder").SingleOrDefault(x => x.FolderId == folderId);
         }
 
-        public void Update(SubFolder subFolder)
+        public void  Update(SubFolder subFolder)
         {
             var subFolderInDb = _context.SubFolders.SingleOrDefault(x=> x.FolderId== subFolder.FolderId);
             if(subFolderInDb !=null)
