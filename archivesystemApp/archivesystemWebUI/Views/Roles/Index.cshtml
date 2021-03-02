@@ -78,7 +78,7 @@
                                                 }
                                             </td>
                                             <td>
-                                                @Html.ActionLink("Edit Role", "Update", new { oldName = role.Name }, new { @class = "btn btn-outline-dark" })
+                                                <a onclick="getPartialView('/roles/edit?id=@role.Id&&name=@role.Name')" class = "btn btn-outline-dark" >Edit Role</a>
                                             </td>
                                         </tr>
                                     }

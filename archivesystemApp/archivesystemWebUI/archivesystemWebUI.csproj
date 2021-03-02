@@ -279,6 +279,10 @@
     <Compile Include="Migrations\202103011133036_addAccessLevelFieldToFolderTable.Designer.cs">
       <DependentUpon>202103011133036_addAccessLevelFieldToFolderTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202103021054224_removeSubFoldersTable.cs" />
+    <Compile Include="Migrations\202103021054224_removeSubFoldersTable.Designer.cs">
+      <DependentUpon>202103021054224_removeSubFoldersTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CodeStatus.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -606,6 +610,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202103011133036_addAccessLevelFieldToFolderTable.resx">
       <DependentUpon>202103011133036_addAccessLevelFieldToFolderTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202103021054224_removeSubFoldersTable.resx">
+      <DependentUpon>202103021054224_removeSubFoldersTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
