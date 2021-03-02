@@ -262,6 +262,10 @@
     <Compile Include="Migrations\202102260233439_newModelsFromTeam.Designer.cs">
       <DependentUpon>202102260233439_newModelsFromTeam.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202102261150214_littlechange.cs" />
+    <Compile Include="Migrations\202102261150214_littlechange.Designer.cs">
+      <DependentUpon>202102261150214_littlechange.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CodeStatus.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -425,12 +429,15 @@
     <Content Include="Content\assets\plugins\summernote\dist\font\summernote.woff" />
     <Content Include="ApiKeys.config" />
     <Content Include="libman.json" />
+    <Content Include="bower.json" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
     <Content Include="Scripts\jquery-3.4.1.slim.js" />
     <Content Include="Scripts\jquery-3.4.1.slim.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
@@ -584,6 +591,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202102260233439_newModelsFromTeam.resx">
       <DependentUpon>202102260233439_newModelsFromTeam.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102261150214_littlechange.resx">
+      <DependentUpon>202102261150214_littlechange.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
