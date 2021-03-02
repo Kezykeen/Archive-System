@@ -16,18 +16,19 @@ namespace archivesystemDomain.Entities
         [Required]
         public string Name { get; set; }
 
-        [ForeignKey("Parent")]
+       
         public int? ParentId { get; set; }
 
-        public Folder Parent { get; set; }
-
+        [ForeignKey("ParentId")]
         public ICollection<Folder> Subfolders { get; set; }
 
-        public ICollection<File> Files { get; set; }
+        public int? FileId { get; set; }
+        public File File { get; set; }
 
         [ForeignKey("AccessLevel")]
         public int? AccessLevelId { get; set; }
 
+        public ICollection<File> Files { get; set; }
         public AccessLevel AccessLevel { get; set; }
  
         [Required]

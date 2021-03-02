@@ -283,6 +283,10 @@
     <Compile Include="Migrations\202103021054224_removeSubFoldersTable.Designer.cs">
       <DependentUpon>202103021054224_removeSubFoldersTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202103021307587_FileModelChange.cs" />
+    <Compile Include="Migrations\202103021307587_FileModelChange.Designer.cs">
+      <DependentUpon>202103021307587_FileModelChange.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CodeStatus.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -613,6 +617,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202103021054224_removeSubFoldersTable.resx">
       <DependentUpon>202103021054224_removeSubFoldersTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202103021307587_FileModelChange.resx">
+      <DependentUpon>202103021307587_FileModelChange.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
