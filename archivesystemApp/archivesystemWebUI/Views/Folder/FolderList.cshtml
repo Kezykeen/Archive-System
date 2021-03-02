@@ -3,33 +3,39 @@
 @model FolderListViewModel
 @{
     ViewBag.Title = $"{Model.FolderName} Folder";
-    var folderNavigationLinks = (Stack<Folder>)Session["folderPath"];
+    var _folderNavigationLinks = (Stack<Folder>)Session["folderPath"];
+    var folderNavigationLinks = _folderNavigationLinks.ToList();
     var lenght = folderNavigationLinks==null ? 0 : folderNavigationLinks.Count();
     var subFolderLenght= Model.SubFolders==null? 0 : Model.SubFolders.Count();
     var headerTitle = (bool)Session[SessionData.IsSearchRequest] ?  "Your Search Result" : $"{Model.FolderName} Folder";
 }
 
-<div style="width:calc(100% - 4em); margin:0 2em;margin-top:2em; overflow:hidden;direction:rtl">
-    @if (folderNavigationLinks != null)
-    {
-        foreach (Folder folder in folderNavigationLinks)
+<div style="width:calc(100% - 4em); margin:0 2em;margin-top:2em; ">
+    <ul class="breadcrumb">
+        @if (folderNavigationLinks != null)
         {
-            if (folder.Name != "Root")
+            var count = folderNavigationLinks.Count() -1;
+            foreach (Folder folder in folderNavigationLinks)
             {
-                <p style="display:inline-block;font-size:1.5em">@Html.ActionLink(@folder.Name, $"/{@folder.Id}", "folders")/</p>
-            }
+                if (folderNavigationLinks[count].Name != "Root")
+                {
+                    <li class=""> /@Html.ActionLink($" {@folderNavigationLinks[count].Name} ", $"/{@folderNavigationLinks[count].Id}", "folders")</li>
+                }
 
-            else
-            {
-                <p style="display:inline-block;font-size:1.5em">@Html.ActionLink(@folder.Name, "Index", "Folder")/</p>
-            }
+                else
+                {
+                    <li class="breadcrumb-item">@Html.ActionLink(@folderNavigationLinks[count].Name, "Index", "Folder")</li>
+                }
+                count--;
 
+            }
         }
-    }
-    else if(subFolderLenght==0)
-    {
-        <h3>No Folder Matches your search</h3>
-    }
+        else if (subFolderLenght == 0)
+        {
+            <h3>No Folder Matches your search</h3>
+        }
+    </ul>
+   
 
     </div>
 
@@ -59,14 +65,14 @@
           
                     <div class="file-pro-list">
                         <div class="file-scroll">
-                            <div class="btn add-btn float-left" style="margin:1em 0;color:white">
+                            <div class="btn add-btn float-left" style="margin:1em 0;color:white"  
+                                 onclick="getPartialView('@Url.Action("Create", "Folder")', @Model.Id)">
                                 <i class="fa fa-plus"></i>
-                                @Html.ActionLink("Add Folder", "Create", "Folder", new { id = Model.Id },
-                           htmlAttributes: new{ @style= "color:white" })
-                                @*<a href="#" class="btn add-btn" onclick="@Url.Action( "Create", "Folder", new { id = Model.Id }, null)"><i class="fa fa-plus"></i> Add Folder</a>*@
+                                <a href="#" style = "color:white" > Add Folder</a>
+                               
                             </div>
                             
-                            <ul class="file-menu">
+                            <ul class="file-menu" id="FL-folders">
 
                                 @if (Model.SubFolders.Count() > 0)
                                 {
@@ -80,10 +86,10 @@
                                             </a>
                                             <div class="dropdown-menu dropdown-menu-right">
 
-                                                <a href="#" class="dropdown-item" onclick="getEditFolderPartialView
+                                                <a href="#" class="dropdown-item" onclick="getPartialView
                                                     ('@Url.Action("GetEditFolderPartialView", "Folder")', @folder.Id)"> Edit Folder</a>
-                                                <a href="#" class="dropdown-item" onclick="getDeleteFolderPartialView
-                                                    ('@Url.Action("GetDeleteFolderPartialView", "Folder")',@folder.Id,'@folder.Name')"> Delete Folder</a>
+                                                <a href="#" class="dropdown-item" onclick="getPartialView
+                                                    ('@Url.Action("GetDeleteFolderPartialView", "Folder")',@folder.Id)"> Delete Folder</a>
                                             </div>
                                         </li>
                                     }
@@ -158,5 +164,5 @@
 
 
 @section scripts{
-    <script src="~/Content/assets/js/archive-system.js"></script>
+    <script src="~/Content/assets/js/folderControllerScript.js"></script>
 }

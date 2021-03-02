@@ -99,7 +99,7 @@ namespace archivesystemWebUI.Controllers
                 AccessDetails = accessDetails,
                 AccessLevels = accessLevels
             };
-            return View(model);
+            return PartialView("_EditUserAccess", model);
         }
 
         [HttpPost]
@@ -109,7 +109,7 @@ namespace archivesystemWebUI.Controllers
             if (!ModelState.IsValid)
             {
                 model.AccessLevels = _unitOfWork.AccessLevelRepo.GetAll();
-                return View(model);
+                return Json("failure", JsonRequestBehavior.AllowGet);
             }
             try
             {
@@ -120,7 +120,7 @@ namespace archivesystemWebUI.Controllers
                 }
                 _unitOfWork.AccessDetailsRepo.EditDetails(model.AccessDetails);
                 await _unitOfWork.SaveAsync();
-                return RedirectToAction(nameof(ManageUserAccess));
+                return Json("success", JsonRequestBehavior.AllowGet);
             }
             catch (Exception e)
             {

@@ -14,6 +14,8 @@ namespace archivesystemDomain.Interfaces
         void UpdateFolder(Folder folder);
         void DeleteFolders(List<Folder> folders);
         List<Folder> GetMatchingFolders(string name);
-
+        Folder GetRootWithSubfolder();
+        Folder GetFolder(int id);
+        Stack<Folder> GetFolderPath(int id);
     }
 }

@@ -187,6 +187,7 @@
     <Compile Include="Controllers\AccessLevelController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Api\UsersController.cs" />
+    <Compile Include="Controllers\CSRF.cs" />
     <Compile Include="Controllers\UserAccessController.cs" />
     <Compile Include="Controllers\DepartmentController.cs" />
     <Compile Include="Controllers\EmployeesController.cs" />
@@ -265,6 +266,25 @@
     <Compile Include="Migrations\202102261150214_littlechange.cs" />
     <Compile Include="Migrations\202102261150214_littlechange.Designer.cs">
       <DependentUpon>202102261150214_littlechange.cs</DependentUpon>
+    <Compile Include="Migrations\202103010916459_modifiedTheFolderEntity.cs" />
+    <Compile Include="Migrations\202103010916459_modifiedTheFolderEntity.Designer.cs">
+      <DependentUpon>202103010916459_modifiedTheFolderEntity.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202103011037427_addFilesTable.cs" />
+    <Compile Include="Migrations\202103011037427_addFilesTable.Designer.cs">
+      <DependentUpon>202103011037427_addFilesTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202103011038452_addFilesCollectionToFoldersTable.cs" />
+    <Compile Include="Migrations\202103011038452_addFilesCollectionToFoldersTable.Designer.cs">
+      <DependentUpon>202103011038452_addFilesCollectionToFoldersTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202103011133036_addAccessLevelFieldToFolderTable.cs" />
+    <Compile Include="Migrations\202103011133036_addAccessLevelFieldToFolderTable.Designer.cs">
+      <DependentUpon>202103011133036_addAccessLevelFieldToFolderTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202103021054224_removeSubFoldersTable.cs" />
+    <Compile Include="Migrations\202103021054224_removeSubFoldersTable.Designer.cs">
+      <DependentUpon>202103021054224_removeSubFoldersTable.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CodeStatus.cs" />
@@ -289,7 +309,6 @@
     <Compile Include="Repository\FolderRepo.cs" />
     <Compile Include="Repository\Repository.cs" />
     <Compile Include="Repository\AccessLevelRepository.cs" />
-    <Compile Include="Repository\SubFolderRepo.cs" />
     <Compile Include="Repository\TokenRepository.cs" />
     <Compile Include="Repository\UnitOfWork.cs" />
     <Compile Include="Startup.cs" />
@@ -350,7 +369,7 @@
     <Content Include="Content\assets\img\user.jpg" />
     <Content Include="Content\assets\img\video-call.jpg" />
     <Content Include="Content\assets\js\app.js" />
-    <Content Include="Content\assets\js\archive-system.js" />
+    <Content Include="Content\assets\js\folderControllerScript.js" />
     <Content Include="Content\assets\js\bootbox.js" />
     <Content Include="Content\assets\js\bootbox.min.js" />
     <Content Include="Content\assets\js\bootstrap-datetimepicker.min.js" />
@@ -371,6 +390,7 @@
     <Content Include="Content\assets\js\moment.min.js" />
     <Content Include="Content\assets\js\multiselect.min.js" />
     <Content Include="Content\assets\js\popper.min.js" />
+    <Content Include="Content\assets\js\rolesControllerScript.js" />
     <Content Include="Content\assets\js\select2.min.js" />
     <Content Include="Content\assets\js\sweetalert2.all.min.js" />
     <Content Include="Content\assets\js\task.js" />
@@ -485,7 +505,6 @@
     <Content Include="Views\Roles\EditRoleView.cshtml" />
     <Content Include="Views\AccessLevel\CreateAccessLevel.cshtml" />
     <Content Include="Views\AccessLevel\ManageAccessLevel.cshtml" />
-    <Content Include="Views\AccessLevel\EditAccessLevel.cshtml" />
     <Content Include="Views\Department\Create.cshtml" />
     <Content Include="Views\Department\Delete.cshtml" />
     <Content Include="Views\Department\Details.cshtml" />
@@ -497,14 +516,8 @@
     <Content Include="Views\UserAccess\EditUser.cshtml" />
     <Content Include="Views\UserAccess\DeleteUser.cshtml" />
     <Content Include="Views\Shared\_AddOrEditDepartment.cshtml" />
-    <Content Include="Views\Folder\CreateFolder.cshtml" />
+    <Content Include="Views\AccessLevel\ManageUserAccess.cshtml" />
     <Content Include="Views\AccessLevel\AddUserToAccess.cshtml" />
-    <Content Include="Views\AccessLevel\Delete.cshtml" />
-    <Content Include="Views\AccessDetails\Create.cshtml" />
-    <Content Include="Views\AccessDetails\Delete.cshtml" />
-    <Content Include="Views\AccessDetails\Details.cshtml" />
-    <Content Include="Views\AccessDetails\Edit.cshtml" />
-    <Content Include="Views\AccessDetails\Index.cshtml" />
     <Content Include="Views\Employees\DelPrompt.cshtml" />
     <Content Include="Views\Employees\Details.cshtml" />
     <Content Include="Views\Home\EmployeeDashboard.cshtml" />
@@ -516,13 +529,13 @@
     <Content Include="Views\Shared\_AddOrEditFaculty.cshtml" />
     <Content Include="Views\Shared\_DeleteFaculty.cshtml" />
     <Content Include="Views\Folder\FolderList.cshtml" />
-    <Content Include="Views\Folder\EditFolder.cshtml" />
     <Content Include="Views\Shared\_EditUserAccess.cshtml" />
     <Content Include="Views\Shared\_DeleteUserAccess.cshtml" />
     <Content Include="Views\Shared\_AddUserAccess.cshtml" />
     <Content Include="Views\Shared\_EditFolder.cshtml" />
     <Content Include="Views\Shared\_DeleteFolder.cshtml" />
-    <Content Include="Views\Folder\AddFolder.cshtml" />
+    <Content Include="Views\Shared\_CreateFolder.cshtml" />
+    <Content Include="Views\Shared\_AddEditRole.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -594,6 +607,20 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202102261150214_littlechange.resx">
       <DependentUpon>202102261150214_littlechange.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202103010916459_modifiedTheFolderEntity.resx">
+      <DependentUpon>202103010916459_modifiedTheFolderEntity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202103011037427_addFilesTable.resx">
+      <DependentUpon>202103011037427_addFilesTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202103011038452_addFilesCollectionToFoldersTable.resx">
+      <DependentUpon>202103011038452_addFilesCollectionToFoldersTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202103011133036_addAccessLevelFieldToFolderTable.resx">
+      <DependentUpon>202103011133036_addAccessLevelFieldToFolderTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202103021054224_removeSubFoldersTable.resx">
+      <DependentUpon>202103021054224_removeSubFoldersTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Data.Entity;
 
 namespace archivesystemWebUI.Repository
 {
@@ -23,7 +24,12 @@ namespace archivesystemWebUI.Repository
         {
             var folder = _context.Folders.SingleOrDefault(x => x.Name=="Root");
             return folder;
-        }  
+        }
+        public Folder GetRootWithSubfolder()
+        {
+            var folder = _context.Folders.Include(c=> c.Subfolders).SingleOrDefault(x => x.Name == "Root");
+            return folder;
+        }
 
         public Folder GetFolderByName(string name)
         {
@@ -49,6 +55,37 @@ namespace archivesystemWebUI.Repository
         {
             return _context.Folders.Where(x => x.Name.Contains(name)).ToList();
         }
-    
+
+        public Folder GetFolder(int id)
+        {
+            var folder = _context.Folders.Include(x=> x.Subfolders).Single(x=> x.Id==id);
+            return folder;
+        }
+
+        public Stack<Folder> GetFolderPath(int id)
+        {
+            var folders = new Stack<Folder>();
+            var isNotRootFolder = true;
+            folders.Push(_context.Folders.SingleOrDefault(x => x.Name == "Root"));
+            var stack = new Stack<Folder>();
+            while (isNotRootFolder)
+            {
+                var folder = _context.Folders.SingleOrDefault(x => x.Id == id);
+                if (folder.ParentId == null)
+                    isNotRootFolder = false;
+                else
+                {
+                    stack.Push(folder);
+                    id = (int)folder.ParentId;
+                }
+            }
+            while (stack.Count() > 0)
+            {
+                folders.Push(stack.Pop());
+            }
+
+            return folders;
+        }
+
     }
 }

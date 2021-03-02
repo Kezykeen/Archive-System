@@ -34,22 +34,25 @@ namespace archivesystemWebUI.Controllers
         [HttpGet()]
         public ActionResult Create()
         {
-            return View("NewUserRoleView");
+            return PartialView("_AddEditRole",new RoleViewModel());
         }
 
         //POST: /role/add
         [Route("roles/add")]
         [HttpPost]
-        public async Task<ActionResult> Create(NewRoleViewModel _role)
+        [ValidateHeaderAntiForgeryToken]
+        public async Task<ActionResult> Create(RoleViewModel _role)
         {
             var result=await _service.AddRole(_role.Name);
             if (!result.Succeeded)
             {
-                AddErrorsFromResult(result);
-                return View("NewUserRoleView", _role);
+                if (result.Errors.ToList()[0].Contains("is already taken"))
+                    return new HttpStatusCodeResult(400);
+                else
+                    return new HttpStatusCodeResult(500);
             }
                 
-            return RedirectToAction("Index");
+            return new HttpStatusCodeResult(200);
         }
 
         //POST: /role/delete
@@ -73,9 +76,14 @@ namespace archivesystemWebUI.Controllers
         //    }
         //}
 
-        public ActionResult Update(string oldName)
+        [Route("roles/edit")]
+        public ActionResult Update()
         {
-            return View("EditRoleView", new EditRoleViewModel() { OldName = oldName, NewName = "" });
+            string name=Request.QueryString["name"];
+
+            Guid id=Guid.Parse(Request.QueryString["id"]);
+
+            return PartialView("_AddEditRole", new RoleViewModel() { Name = name, Id=id }) ;
         }
 
         [HttpPost]

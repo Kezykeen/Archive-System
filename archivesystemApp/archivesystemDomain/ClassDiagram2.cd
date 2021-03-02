@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="archivesystemDomain.Entities.AccessDetail" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABACAAAEAAAAAAAAAAIAAAAACAEAAAAAAAAAAAACAAA=</HashCode>
+      <FileName>Entities\AccessDetail.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="archivesystemDomain.Entities.AccessLevel" Collapsed="true">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACAAQACAAAAAAAAAAAAABAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\AccessLevel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="archivesystemDomain.Entities.ApplicationDbContext" Collapsed="true">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ARAAAAAAAIAAAAAAACAAAAAACAAAAEAAAAAAAAABEIA=</HashCode>
+      <FileName>Entities\ApplicationDbContext.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="archivesystemDomain.Entities.Department" Collapsed="true">
+    <Position X="2.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAQAAAACIAAACAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Department.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="archivesystemDomain.Entities.Employee" Collapsed="true">
+    <Position X="4" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAACCAAiAKQACAAAAwAEAAAAAACAAAAIAAAAAA=</HashCode>
+      <FileName>Entities\Employee.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="archivesystemDomain.Entities.Faculty" Collapsed="true">
+    <Position X="5.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACAAAACAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Faculty.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="archivesystemDomain.Entities.File" Collapsed="true">
+    <Position X="0.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\File.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="archivesystemDomain.Entities.Folder" Collapsed="true">
+    <Position X="2.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABACAAAAAAAACAAAACAAQAQAAAEAAAAAAgAAAAACAIA=</HashCode>
+      <FileName>Entities\Folder.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="archivesystemDomain.Entities.ApplicationUser" Collapsed="true">
+    <Position X="0.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\IdentityModels.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="archivesystemDomain.Entities.ApplicationRole" Collapsed="true">
+    <Position X="5.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAAACAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\IdentityModels.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="archivesystemDomain.Entities.Token" Collapsed="true">
+    <Position X="5.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAwAAAACAAAAAAAAAAAAAACAAA=</HashCode>
+      <FileName>Entities\Token.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="archivesystemDomain.Entities.Gender" Collapsed="true">
+    <Position X="0.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAA=</HashCode>
+      <FileName>Entities\Gender.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="archivesystemDomain.Entities.MaritalStatus" Collapsed="true">
+    <Position X="2.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAAAAAAAACAA=</HashCode>
+      <FileName>Entities\MaritalStatus.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
