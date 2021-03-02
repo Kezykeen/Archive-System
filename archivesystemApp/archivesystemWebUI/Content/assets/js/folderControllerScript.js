@@ -12,13 +12,21 @@ async function getPartialView(url, id) {
         document.getElementById("createFolder").addEventListener("submit", async (e) => {
             e.preventDefault();
             await createFolder(url);
-            return})
+            return
+        })
     }
     else if (url.includes("/Folder/GetEditFolderPartialView")) {
         document.getElementById("editFolder").addEventListener("submit", async (e) => {
             e.preventDefault();
             await editFolder(id);
-            return})
+            return
+        })
+    }
+    else {
+        document.getElementById("delFolder-no").addEventListener("click", async (e) => {
+            closeModal();
+            return
+        })
     }
 }
 

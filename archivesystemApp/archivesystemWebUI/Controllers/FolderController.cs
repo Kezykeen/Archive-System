@@ -96,8 +96,8 @@ namespace archivesystemWebUI.Controllers
         {
             var folder = repo.FolderRepo.GetFolder(id);
             if (folder.ParentId == null)
-                RedirectToAction(nameof(Index));
-
+                return RedirectToAction(nameof(Index));
+           
             var model = new FolderListViewModel { FolderName=folder.Name,Id=folder.Id,SubFolders=folder.Subfolders , ParentId=(int)folder.ParentId};
             AddCurrentFolderPath(folder);
             Session[SessionData.IsSearchRequest] = false;
