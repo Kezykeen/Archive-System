@@ -16,6 +16,7 @@
         @Html.AntiForgeryToken()
         @Html.ValidationSummary()
 
+        <input hidden value="@Request.Cookies["ASP.NET_SessionId"].Value" id="EF-sessionId"/>
         <input name="id" value="@Model.Id" hidden  id="EF-id"/>
         <input name="id" value="@Model.ParentId" hidden  id="EF-parentId"/>
         <div class="form-group">

@@ -1,6 +1,6 @@
 ﻿
+
 async function getPartialView(url, id) {
-    console.log(url,id)
     url =  `${url}?id=${id}` 
     var modalBody = document.getElementById("modalBody")
     let resp = await fetch(url)
@@ -35,59 +35,38 @@ async function editFolder(id) {
         addValidationErrors("editFolder", name, accesslevelId)
     }
     else {
-        let resp = await postData("/Folder/Edit", name, accesslevelId, parentId, verificationToken, id = id)
+        await postData("/Folder/Edit", name, accesslevelId, parentId, verificationToken, id = id)
+        location.reload();
     }
-    location.reload();
-}
-
+    }
+   
 
 async function createFolder(url) {
+    let verificationToken = document.getElementsByName("__RequestVerificationToken")[0].value
     let parentId = document.getElementById("CF-parentId").value;
     let accesslevelId = document.getElementById("CF-accessLevel").value;
     let name = document.getElementById("CF-name").value;
-   
+    
     if (!name || !accesslevelId) {
         addValidationErrors("createFolder", name, accesslevelId)
     }
     else {
-        let resp = await postData(url, name, accesslevelId, parentId, id = 0)
-        console.log(resp);
-        if (resp.status === 200) {
-            location.reload()
+        let resp = await postData(url, name, accesslevelId, parentId, verificationToken, id = 0)
+        console.log(resp.status === 400)
+        console.log(resp)
+        if (resp.status === 400) {
+            addValidationErrors("createFolder", name, accesslevelId, isNameTaken = true)
         }
         else {
-            document.getElementById("modalBody").innerHTML = resp;
-            $("#modal").modal("show");
-        }
-        return;    
+            location.reload()
+        } 
         
     }
    
 }
 
-function updateFolderList(resp) {
-    let jsonResp = JSON.parse(resp);
-    let element = document.createElement("li")
-    element.style = 'display: flex; justify-content: space-between; align-items: center';
-    element.className = "folderlist-folder";
-    element.innerHTML =
-        `
-                    <a href="/folders/${jsonResp.data.Id}"> ${jsonResp.data.Name}</a>
-                    <a href="" class="dropdown-link" data-toggle="dropdown" style="padding:0;width: 3em;margin:0; display:flex;justify-content:center">
-                         <i class="fa fa-ellipsis-v"></i>
-                    </a>
-                    <div  class="dropdown-menu dropdown-menu-right">
-                        <a href="#" onclick="getPartialView('/Folder/GetEditPartialView',${jsonResp.data.Id})" class="dropdown-item" > Edit Folder</a>
-                        <a href="#" onclick="getPartialView('/Folder/GetDeletePartialView',${jsonResp.data.Id})" class="dropdown-item" > Delete Folder</a>
-                    </div>
 
-                `;
-    let folderContainer = document.getElementById("FL-folders");
-    folderContainer.appendChild(element);
-    closeModal();
-}
-
-function addValidationErrors(formId,name,accesslevelId) {
+function addValidationErrors(formId, name, accesslevelId, isNameTaken=false) {
     let form = document.getElementById(formId);
     let validationErrorMessage = document.createElement("div");
     if (form.childNodes.length > 11) {
@@ -98,27 +77,26 @@ function addValidationErrors(formId,name,accesslevelId) {
                 <ul>
                     ${!name ? '<li>Folder name field is required</li>' : ''}
                     ${!accesslevelId ? '<li>Access level field is required</li>' : ''}
+                    ${isNameTaken ? `<li>${name} already exist in folder</li>` : ''}
                 </ul>
             </div>`
     form.prepend(validationErrorMessage)
 }
 
 async function postData(url, name, accesslevelId, parentId, token, id = 0) {
-    console.log("about to post data",url,token)
     let resp = await fetch(url, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
+            __RequestVerificationToken: token,
         },
         body: JSON.stringify({
-            "__RequestVerificationToken": token,
             Name: name,
             AccessLevelId: parseInt(accesslevelId),
             ParentId: parseInt(parentId),
             Id: id
-            
-          
         })
     })
     return resp
 }
+

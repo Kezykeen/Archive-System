@@ -57,20 +57,20 @@ namespace archivesystemWebUI.Controllers
         //POST: /folders/create
         [Route("folders/add")]
         [HttpPost]
-        //[ValidateAntiForgeryToken]
+        [ValidateHeaderAntiForgeryToken]
         public ActionResult Create(string name,int parentId,int accessLevelId)
         {
             Folder rootFolder = repo.FolderRepo.GetRootFolder();
             var folderNames = repo.FolderRepo.GetFolder(parentId).Subfolders.Select(x => x.Name);
             if(folderNames.Contains(name) || name == "Root")
             {
-                ModelState.AddModelError("", $"{name} folder already exist");
-                var accessLevels = repo.AccessLevelRepo.GetAll();
-                return PartialView("_CreateFolder", new CreateFolderViewModel() 
-                    { Name = name, ParentId = parentId, AccessLevelId=accessLevelId,AccessLevels=accessLevels});
+                return new HttpStatusCodeResult(400);
             }
 
-            var folder = new Folder{Name = name,CreatedAt = DateTime.Now,UpdatedAt = DateTime.Now,ParentId=parentId };
+            var folder = new Folder{Name = name,CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now,ParentId=parentId,
+                AccessLevelId = accessLevelId
+            };
             repo.FolderRepo.Add(folder);
             repo.Save();
 
@@ -120,7 +120,7 @@ namespace archivesystemWebUI.Controllers
 
         //POST: /Folder/Edit
         [HttpPost]
-        //[ValidateAntiForgeryToken]
+        [ValidateHeaderAntiForgeryToken]
         public ActionResult Edit(CreateFolderViewModel model)
         {
             

@@ -34,13 +34,13 @@ namespace archivesystemWebUI.Controllers
         [HttpGet()]
         public ActionResult Create()
         {
-            return View("NewUserRoleView");
+            return PartialView("_AddEditRole",new RoleViewModel());
         }
 
         //POST: /role/add
         [Route("roles/add")]
         [HttpPost]
-        public async Task<ActionResult> Create(NewRoleViewModel _role)
+        public async Task<ActionResult> Create(RoleViewModel _role)
         {
             var result=await _service.AddRole(_role.Name);
             if (!result.Succeeded)
