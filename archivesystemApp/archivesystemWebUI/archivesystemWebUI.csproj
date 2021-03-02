@@ -266,6 +266,7 @@
     <Compile Include="Migrations\202102261150214_littlechange.cs" />
     <Compile Include="Migrations\202102261150214_littlechange.Designer.cs">
       <DependentUpon>202102261150214_littlechange.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\202103010916459_modifiedTheFolderEntity.cs" />
     <Compile Include="Migrations\202103010916459_modifiedTheFolderEntity.Designer.cs">
       <DependentUpon>202103010916459_modifiedTheFolderEntity.cs</DependentUpon>
@@ -607,6 +608,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202102261150214_littlechange.resx">
       <DependentUpon>202102261150214_littlechange.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202103010916459_modifiedTheFolderEntity.resx">
       <DependentUpon>202103010916459_modifiedTheFolderEntity.cs</DependentUpon>
     </EmbeddedResource>
