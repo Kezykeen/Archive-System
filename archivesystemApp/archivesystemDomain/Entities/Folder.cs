@@ -30,6 +30,12 @@ namespace archivesystemDomain.Entities
 
         public ICollection<File> Files { get; set; }
         public AccessLevel AccessLevel { get; set; }
+
+        public string Path { get; set; }
+
+        [Required]
+        public bool IsDeletable { get; set;
+        }
  
         [Required]
         public DateTime CreatedAt {get;set;}

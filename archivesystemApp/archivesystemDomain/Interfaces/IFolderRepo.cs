@@ -17,5 +17,6 @@ namespace archivesystemDomain.Interfaces
         Folder GetRootWithSubfolder();
         Folder GetFolder(int id);
         Stack<Folder> GetFolderPath(int id);
+        void AddFolderPath(int folderId);
     }
 }

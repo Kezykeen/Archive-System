@@ -13,7 +13,7 @@ namespace archivesystemWebUI.Controllers
     {
         private IUnitOfWork repo { get; set; }
         public FolderController(IUnitOfWork repo)
-        {
+        { 
             this.repo = repo;
         }
 
@@ -61,19 +61,26 @@ namespace archivesystemWebUI.Controllers
         public ActionResult Create(string name,int parentId,int accessLevelId)
         {
             Folder rootFolder = repo.FolderRepo.GetRootFolder();
-            var folderNames = repo.FolderRepo.GetFolder(parentId).Subfolders.Select(x => x.Name);
-            if(folderNames.Contains(name) || name == "Root")
+            var parentFolder = repo.FolderRepo.GetFolder(parentId);
+            var parentSubFolderNames = parentFolder.Subfolders.Select(x => x.Name);
+            if(parentSubFolderNames.Contains(name) || name == "Root")
             {
                 return new HttpStatusCodeResult(400);
             }
+            if (name.Contains(",") || name.Contains("#"))
+                return new HttpStatusCodeResult(403);
 
-            var folder = new Folder{Name = name,CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now,ParentId=parentId,
-                AccessLevelId = accessLevelId
+            var folder = new Folder { Name = name, CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now, ParentId = parentId,
+                AccessLevelId = accessLevelId,
+                IsDeletable = true
             };
             repo.FolderRepo.Add(folder);
+            folder.Path = parentFolder.Path + $",{name}#{folder.Id}";
             repo.Save();
 
+            repo.FolderRepo.AddFolderPath(folder.Id);
+            
             return new HttpStatusCodeResult(200); 
         }
 

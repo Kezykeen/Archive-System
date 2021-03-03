@@ -87,5 +87,13 @@ namespace archivesystemWebUI.Repository
             return folders;
         }
 
+        public void AddFolderPath(int folderId)
+        {
+            Folder currentFolder = _context.Folders.Find(folderId);
+            Folder currentFolderParent = _context.Folders.Find(currentFolder.ParentId);
+            currentFolder.Path = currentFolderParent.Path + $",{currentFolder.Id}#{currentFolder.Name}";
+            _context.SaveChanges();
+        }
+
     }
 }
