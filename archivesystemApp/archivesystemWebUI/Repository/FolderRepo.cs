@@ -36,6 +36,13 @@ namespace archivesystemWebUI.Repository
             return _context.Folders.SingleOrDefault(x => x.Name == name);
         }
 
+        public Folder GetFacultyFolder (string name)
+        {
+            var rootFolder = GetRootFolder();
+            var folder = _context.Folders.SingleOrDefault(x => x.Name == name && x.ParentId == rootFolder.Id);
+            return folder;
+        }
+
         public void UpdateFolder(Folder folder)
         {
             var folderInDb = _context.Folders.Find(folder.Id);

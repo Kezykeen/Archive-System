@@ -119,7 +119,7 @@ namespace archivesystemWebUI.Controllers
         {
            
             var faculty = _unitOfWork.FacultyRepo.Get(department.FacultyId);
-            var facultyFolder = _unitOfWork.FolderRepo.GetFolderByName(faculty.Name);
+            var facultyFolder = _unitOfWork.FolderRepo.GetFacultyFolder(faculty.Name);
             var folder = new Folder
             {
                 Name = department.Name,

@@ -18,5 +18,6 @@ namespace archivesystemDomain.Interfaces
         Folder GetFolder(int id);
         Stack<Folder> GetFolderPath(int id);
         void AddFolderPath(int folderId);
+        Folder GetFacultyFolder(string name);
     }
 }
