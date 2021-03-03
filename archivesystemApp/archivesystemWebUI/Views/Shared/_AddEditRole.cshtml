@@ -2,38 +2,56 @@
 
 @using archivesystemWebUI.Models
 @model RoleViewModel
+@{
+    string modalTitle;
+    string btnText;
+    if (Model.Id == new Guid())
+    {
+        modalTitle = "Create Role";
+        btnText = "Add Role";
+    }
+    else
+    {
+        modalTitle = "Edit Role";
+        btnText = "Update Role";
+    }
+}
 
 <div class="modal-header">
-    @{
-        if (Model.Id == new Guid())
-        {
-            <h5 class="modal-title">Create Role</h5>
-        }
-        else
-        {
-            <h5 class="modal-title">Edit Role</h5>
-        }
-
-    }
-
+     <h5 class="modal-title">@modalTitle</h5>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
 <div class="modal-body">
 
-    <form id="createRole" name="createRole">
+    <form id="manageRole" name="manageRole">
         @Html.ValidationSummary()
         @Html.AntiForgeryToken()
-        
-        <input hidden name="role-id" value="@Model.Id" id="role-id"/>
-        <div class="form-group">
-            <label for="name">Role Name</label>
-            <input name="name" class="form-control" rows="2" placeholder="Enter Role Name" value="@Model.Name" id="role-name" />
-        </div>
-        
+
+        <input hidden name="role-id" value="@Model.Id" id="role-id" />
+        <input hidden name="role-id" value="@Model.Name" id="role-name" />
+        @{
+            if (Model.Id == new Guid())
+            {
+                <div class="form-group">
+                    <label for="name" style="font-weight:bold">Role Name:</label>
+                    <input name="name" class="form-control" rows="2" placeholder="Enter Role Name" id="role-newName" />
+                </div>
+            }
+            else
+            {
+                <div class="form-group">
+                    <label for="name" style="font-weight:bold">Role Current Name: @Model.Name</label>
+                    <input name="newName" class="form-control" rows="2" placeholder="Enter Role New Name"
+                           value="@Model.Name" id="role-newName" />
+                </div>
+            }
+        }
+
+
         <div class="submit-section">
-            <button style=" margin:auto" class="btn btn-primary submit-btn">Add Role</button>
+            <button style=" margin:auto" class="btn btn-primary submit-btn">@btnText</button>
         </div>
     </form>
 

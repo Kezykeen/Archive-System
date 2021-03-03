@@ -22,28 +22,40 @@ namespace archivesystemWebUI.Controllers
         }
         
 
-        // GET: /role
-       
+        // GET: /roles
         public ActionResult Index()
         {
             return View(_service.GetAllRoles());
         }
 
-        //GET: /role/add 
-        [Route("roles/add")]
+        //GET: /roles/manage
+        [Route("roles/manage")]
         [HttpGet()]
-        public ActionResult Create()
+        public ActionResult Manage()
         {
-            return PartialView("_AddEditRole",new RoleViewModel());
+            string name = Request.QueryString["name"];
+            string id = Request.QueryString["id"];
+            string delete= Request.QueryString["delete"];
+            Guid _id = Guid.Parse( string.IsNullOrEmpty(id) ? new Guid().ToString() : id);
+            
+            if(_id== new Guid())
+                return PartialView("_AddEditRole", new RoleViewModel());
+            if (string.IsNullOrEmpty(delete))
+                return PartialView("_AddEditRole",new RoleViewModel() { Name = name, Id = _id });
+            return PartialView("_DeleteRole", new RoleViewModel() { Name = name, Id = _id });
         }
 
-        //POST: /role/add
-        [Route("roles/add")]
+        //POST: /roles/manage
+        [Route("roles/manage")]
         [HttpPost]
         [ValidateHeaderAntiForgeryToken]
-        public async Task<ActionResult> Create(RoleViewModel _role)
+        public async Task<ActionResult> AddOrEdit(RoleViewModel _role)
         {
-            var result=await _service.AddRole(_role.Name);
+            IdentityResult result;
+            if (string.IsNullOrEmpty(_role.Name))
+                result = await _service.AddRole(_role.NewName);
+            else
+                result = await _service.EditRole(_role.Name,_role.NewName);
             if (!result.Succeeded)
             {
                 if (result.Errors.ToList()[0].Contains("is already taken"))
@@ -57,6 +69,7 @@ namespace archivesystemWebUI.Controllers
 
         //POST: /role/delete
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Delete(string roleId)
         {
             _service.DeleteRole(roleId); 
@@ -76,34 +89,10 @@ namespace archivesystemWebUI.Controllers
         //    }
         //}
 
-        [Route("roles/edit")]
-        public ActionResult Update()
-        {
-            string name=Request.QueryString["name"];
+        
 
-            Guid id=Guid.Parse(Request.QueryString["id"]);
+        
 
-            return PartialView("_AddEditRole", new RoleViewModel() { Name = name, Id=id }) ;
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> Update(EditRoleViewModel model)
-        {
-            var result= await _service.EditRole(model.OldName, model.NewName);
-            if (result.Succeeded)
-                return RedirectToAction("Index");
-
-            AddErrorsFromResult(result);
-            return View("EditRoleView", model);
-        }
-
-        private void AddErrorsFromResult(IdentityResult result)
-        {
-            foreach (string error in result.Errors)
-            {
-                ModelState.AddModelError("", error);
-            }
-        }
 
 
         

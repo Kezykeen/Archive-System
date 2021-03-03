@@ -534,6 +534,7 @@
     <Content Include="Views\Shared\_DeleteFolder.cshtml" />
     <Content Include="Views\Shared\_CreateFolder.cshtml" />
     <Content Include="Views\Shared\_AddEditRole.cshtml" />
+    <Content Include="Views\Shared\_DeleteRole.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
