@@ -27,9 +27,50 @@ async function getPartialView(url, id) {
             closeModal();
             return
         })
+        document.getElementById("delFolder-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            await deleteFolder();
+            return;
+        })
+
     }
 }
-
+async function deleteFolder() {
+    let verificationToken = document.getElementsByName("__RequestVerificationToken")[0].value;
+    let folderId = document.getElementById("delFolder-id").value;
+    let parentId = document.getElementById("delFolder-parentId").value;
+    let resp = await fetch("folders/delete", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            __RequestVerificationToken: verificationToken,
+        },
+        body: JSON.stringify({
+            id: parseInt(folderId),
+            ParentId: parseInt(parentId)
+        })
+    })
+    console.log(resp)
+    if (resp.status === 204) {
+        location.reload();
+    }
+    else if (resp.status === 400) {
+        let form = document.getElementById("delFolder-form");
+        let validationErrorMessage = document.createElement("div");
+        console.log(form.childNodes.length)
+        //if (form.childNodes.length > 11) {
+        //    form.removeChild(form.childNodes[0])
+        //}
+        validationErrorMessage.innerHTML =
+            `<div class='validation-summary-errors'>
+                <ul>
+                    <li>Delete Action cannot be performed on this folder</li>'
+                </ul>
+            </div>`
+        form.prepend(validationErrorMessage)
+    }
+    return;
+}
 function closeModal() {
     $("#modal").modal("hide");
 }

@@ -14,11 +14,11 @@
 
 <div class="modal-body">
     <div style="margin:auto;display:flex;justify-content:center">
-        @using (Html.BeginForm("Delete", "Folder", FormMethod.Post))
+        @using (Html.BeginForm("", "", FormMethod.Post,htmlAttributes: new { id="delFolder-form"}))
         {
             @Html.AntiForgeryToken();
-            <input value="@Model.Id" type="number" hidden name="id" />
-            <input value="@Model.ParentId" type="number" hidden name="parentId" />
+            <input value="@Model.Id" type="number" hidden name="delFolder-id" id="delFolder-id" />
+            <input value="@Model.ParentId" type="number" hidden name="delFolder-parentId" id="delFolder-parentId" />
             <input class="btn btn-danger" type="submit" value="Yes" />
 
         }

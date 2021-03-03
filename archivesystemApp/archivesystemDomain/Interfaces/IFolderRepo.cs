@@ -12,7 +12,7 @@ namespace archivesystemDomain.Interfaces
         Folder GetRootFolder();
         Folder GetFolderByName(string name);
         void UpdateFolder(Folder folder);
-        void DeleteFolders(List<Folder> folders);
+        void DeleteFolder(int folderId);
         List<Folder> GetMatchingFolders(string name);
         Folder GetRootWithSubfolder();
         Folder GetFolder(int id);

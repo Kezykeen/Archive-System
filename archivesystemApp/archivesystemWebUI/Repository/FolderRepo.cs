@@ -45,9 +45,10 @@ namespace archivesystemWebUI.Repository
             folder.UpdatedAt = DateTime.Now;
         }
 
-        public void DeleteFolders(List<Folder> folders)
+        public void DeleteFolder(int folderId)
         {
-            _context.Folders.RemoveRange(folders);
+            RecursiveDelete(folderId);
+            _context.Folders.RemoveRange(Folders);
         }
 
     
@@ -58,7 +59,7 @@ namespace archivesystemWebUI.Repository
 
         public Folder GetFolder(int id)
         {
-            var folder = _context.Folders.Include(x=> x.Subfolders).Single(x=> x.Id==id);
+            var folder = _context.Folders.Include(x=> x.Subfolders).Include(x=>x.Files).Single(x=> x.Id==id);
             return folder;
         }
 
@@ -95,5 +96,21 @@ namespace archivesystemWebUI.Repository
             _context.SaveChanges();
         }
 
+       
+        private void RecursiveDelete (int folderId)
+        {
+            var folder =_context.Folders.Include(x=> x.Subfolders).Single(x=> x.Id== folderId);
+            var subFolderCount = folder.Subfolders ?? new List<Folder>();
+            if(subFolderCount.Count()>0)
+            {
+                foreach (Folder _folder in folder.Subfolders)
+                {
+                    RecursiveDelete(_folder.Id);
+                }
+            }
+
+            if(folder.IsDeletable)
+                Folders.Add(folder);
+        }
     }
 }

@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using archivesystemDomain.Entities;
 using archivesystemDomain.Interfaces;
 using archivesystemWebUI.Models;
+using AutoMapper;
 
 namespace archivesystemWebUI.Controllers
 {
@@ -21,23 +22,17 @@ namespace archivesystemWebUI.Controllers
         [Route("folders")]
         public ActionResult Index()
         {
-            FolderListViewModel model = new FolderListViewModel(); 
+            FolderViewModel model = new FolderViewModel(); 
             if (string.IsNullOrEmpty(Request.QueryString["search"]))
             {
                 var rootFolder = repo.FolderRepo.GetRootWithSubfolder();
-                var folderPath= new Stack<Folder>();
-                folderPath.Push(rootFolder);
-                Session[SessionData.FolderPath] = folderPath;
-                model.Id = rootFolder.Id;
-                model.SubFolders = rootFolder.Subfolders;
-                model.FolderName = "Root";
+                model = Mapper.Map<FolderViewModel>(rootFolder);
                 Session[SessionData.IsSearchRequest] = false;
             }
             else
             {
                 var searchParam = Request.QueryString["search"];
-                model.SubFolders = repo.FolderRepo.GetMatchingFolders(searchParam);
-                Session[SessionData.FolderPath] = null;
+                model.Subfolders = repo.FolderRepo.GetMatchingFolders(searchParam);
                 Session[SessionData.IsSearchRequest] = true;
                 
             }
@@ -87,42 +82,47 @@ namespace archivesystemWebUI.Controllers
         //POST: /folders/create
         [Route("folders/delete")]
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateHeaderAntiForgeryToken]
         public ActionResult Delete(int id,int parentId)
         {
             var folderToDelete=repo.FolderRepo.Get(id);
-            repo.FolderRepo.Remove(folderToDelete);
-            repo.Save();
-            return RedirectToAction(nameof(GetSubFolders),new { id=parentId});
+            if (folderToDelete.IsDeletable)
+            {
+                repo.FolderRepo.DeleteFolder(folderToDelete.Id);
+                repo.Save();
+                return new  HttpStatusCodeResult(204);
+            }
+
+            return new HttpStatusCodeResult(400);
+           
         }
 
         //GET: /folders/{id}
-        [Route("folders/{id}")]
+        [Route("folders/{folderId}")]
         [HttpGet]
-        public ActionResult GetSubFolders(int id)
+        public ActionResult GetFolderSubFolders(int folderId)
         {
-            var folder = repo.FolderRepo.GetFolder(id);
+            var folder = repo.FolderRepo.GetFolder(folderId);
             if (folder.ParentId == null)
                 return RedirectToAction(nameof(Index));
-           
-            var model = new FolderListViewModel { FolderName=folder.Name,Id=folder.Id,SubFolders=folder.Subfolders , ParentId=(int)folder.ParentId};
-            AddCurrentFolderPath(folder);
+
+            var model = Mapper.Map<FolderViewModel>(folder);
             Session[SessionData.IsSearchRequest] = false;
             return View("FolderList", model);
         }
 
-        //POST: /folders/{id}
+        //POST: /folders/{parentId}
         [HttpPost]
-        [Route("folders/{id}")]
+        [Route("folders/{parentId}")]
         public ActionResult BackToParent(int parentId)
         {
-            var folder = repo.FolderRepo.Get(parentId);
+            var folder = repo.FolderRepo.GetFolder(parentId);
             if (folder.Name == "Root")
                 return RedirectToAction(nameof(Index));
-            var currentPath = (Stack<Folder>)Session[SessionData.FolderPath];
-            currentPath.Pop(); 
-            Session[SessionData.FolderPath] = currentPath;
-            return RedirectToAction(nameof(GetSubFolders), new { id = folder.Id });
+
+            var model = Mapper.Map<FolderViewModel>(folder);
+            Session[SessionData.IsSearchRequest] = false;
+            return View("FolderList", model);
         }
 
         //POST: /Folder/Edit
