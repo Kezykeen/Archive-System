@@ -1,11 +1,14 @@
 ﻿@using archivesystemWebUI.Models
 @using archivesystemDomain.Entities
+@using archivesystemDomain.Services
 @model FolderViewModel
 @{
     ViewBag.Title = $"{Model.Name} Folder";
-    var subFolderLenght= Model.Subfolders==null? 0 : Model.Subfolders.Count();
-    var headerTitle = (bool)Session[SessionData.IsSearchRequest] ?  "Your Search Result" : $"{Model.Name} Folder";
     var currentPath = Model.Path;
+    var currentFolderDepth = Model.Path.Split(',').Count();
+    var subFolderLenght= Model.Subfolders==null? 0 : Model.Subfolders.Count();
+    var headerTitle = (bool)Session[SessionData.IsSearchRequest] ?  "Your Search Result" : $"{Model.Name} Folder {currentFolderDepth}";
+
 }
 
 <div style="width:calc(100% - 4em); margin:0 2em;margin-top:2em; ">
@@ -63,13 +66,21 @@
           
                     <div class="file-pro-list">
                         <div class="file-scroll">
-                            <div class="btn add-btn float-left" style="margin:1em 0;color:white"  
-                                 onclick="getPartialView('@Url.Action("Create", "Folder")', @Model.Id)">
-                                <i class="fa fa-plus"></i>
-                                <a href="#" style = "color:white" > Add Folder</a>
-                               
-                            </div>
-                            
+                            @{
+                                if (currentFolderDepth < (int)AllowableFolderDepth.Max)
+                                {
+                                    <div class="btn add-btn float-left" style="margin:1em 0;color:white"
+                                         onclick="getPartialView('@Url.Action("Create", "Folder")', @Model.Id)">
+                                        <i class="fa fa-plus"></i>
+                                        <a href="#" style="color:white"> Add Folder</a>
+
+                                    </div>
+
+                                }
+
+                            }
+
+
                             <ul class="file-menu" id="FL-folders">
 
                                 @if (subFolderLenght > 0)
