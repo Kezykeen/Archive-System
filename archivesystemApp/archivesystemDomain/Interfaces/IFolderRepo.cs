@@ -13,11 +13,11 @@ namespace archivesystemDomain.Interfaces
         Folder GetFolderByName(string name);
         void UpdateFolder(Folder folder);
         void DeleteFolder(int folderId);
-        List<Folder> GetMatchingFolders(string name);
+        List<Folder> GetFoldersThatMatchName(string name);
         Folder GetRootWithSubfolder();
         Folder GetFolder(int id);
         Stack<Folder> GetFolderPath(int id);
-        void AddFolderPath(int folderId);
+        void SaveFolderPath(int folderId);
         Folder GetFacultyFolder(string name);
     }
 }

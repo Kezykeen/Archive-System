@@ -39,6 +39,7 @@ async function deleteFolder() {
     let verificationToken = document.getElementsByName("__RequestVerificationToken")[0].value;
     let folderId = document.getElementById("delFolder-id").value;
     let parentId = document.getElementById("delFolder-parentId").value;
+    console.log("reached here", folderId, parentId, "folders/delete")
     let resp = await fetch("folders/delete", {
         method: "POST",
         headers: {
@@ -55,19 +56,15 @@ async function deleteFolder() {
         location.reload();
     }
     else if (resp.status === 400) {
-        let form = document.getElementById("delFolder-form");
-        let validationErrorMessage = document.createElement("div");
-        console.log(form.childNodes.length)
-        //if (form.childNodes.length > 11) {
-        //    form.removeChild(form.childNodes[0])
-        //}
-        validationErrorMessage.innerHTML =
+        let div = document.getElementById("delfolder-con");
+        div.innerHTML =
             `<div class='validation-summary-errors'>
                 <ul>
-                    <li>Delete Action cannot be performed on this folder</li>'
+                    <li>Delete Action cannot be performed on this folder</li>
                 </ul>
             </div>`
-        form.prepend(validationErrorMessage)
+        document.getElementsByClassName("modal-title")[0].innerHTML = "";
+        
     }
     return;
 }
