@@ -9,4 +9,9 @@ namespace archivesystemDomain.Services
     {
         public const string BaseLevel = "1";
     }
+
+    public enum AllowableFolderDepth
+    {
+        Max=7
+    }
 }

@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using archivesystemDomain.Entities;
 using archivesystemDomain.Interfaces;
+using archivesystemDomain.Services;
 using archivesystemWebUI.Models;
 using AutoMapper;
 
@@ -13,6 +14,7 @@ namespace archivesystemWebUI.Controllers
     public class FolderController : Controller
     {
         private IUnitOfWork repo { get; set; }
+
         public FolderController(IUnitOfWork repo)
         { 
             this.repo = repo;
@@ -48,7 +50,7 @@ namespace archivesystemWebUI.Controllers
             return PartialView("_CreateFolder",data);
         }
 
-        //POST: /folders/create
+        //POST: /folders/add
         [Route("folders/add")]
         [HttpPost]
         [ValidateHeaderAntiForgeryToken]
@@ -63,7 +65,11 @@ namespace archivesystemWebUI.Controllers
             }
             if (name.Contains(",") || name.Contains("#"))
                 return new HttpStatusCodeResult(403);
-
+            var parentFolderCurrentFolderDepth = parentFolder.Path.Split(',').Count();
+            if (parentFolderCurrentFolderDepth >= (int) AllowableFolderDepth.Max)
+            {
+                return new HttpStatusCodeResult(404);
+            }
             var folder = new Folder { Name = name, CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now, ParentId = parentId,
                 AccessLevelId = accessLevelId,
