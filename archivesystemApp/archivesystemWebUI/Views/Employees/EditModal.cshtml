@@ -115,7 +115,7 @@
 
                                     @(
                                     string.IsNullOrWhiteSpace(Model.RoleId)
-                                        ? Html.DropDownListFor(m => m.RoleId, new SelectList(Model.Roles, "Id", "Name"), "Select Role", new {@class="Select" ,disabled="disabled"})
+                                        ? Html.DropDownListFor(m => m.RoleId, new SelectList(Model.Roles, "Id", "Name"), "Select Role", new {@class="select" ,disabled="disabled"})
                                         : Html.DropDownListFor(m => m.RoleId, new SelectList(Model.Roles, "Id", "Name"), "Select Role", new { @class = "select" })
 
                                         )
