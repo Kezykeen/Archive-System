@@ -290,6 +290,7 @@
     <Compile Include="Migrations\202103031156514_folderChng.cs" />
     <Compile Include="Migrations\202103031156514_folderChng.Designer.cs">
       <DependentUpon>202103031156514_folderChng.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\202103031421375_addPathToFolder.cs" />
     <Compile Include="Migrations\202103031421375_addPathToFolder.Designer.cs">
       <DependentUpon>202103031421375_addPathToFolder.cs</DependentUpon>
@@ -638,6 +639,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202103031156514_folderChng.resx">
       <DependentUpon>202103031156514_folderChng.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202103031421375_addPathToFolder.resx">
       <DependentUpon>202103031421375_addPathToFolder.cs</DependentUpon>
     </EmbeddedResource>
