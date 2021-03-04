@@ -9,7 +9,7 @@ namespace archivesystemWebUI.Migrations
         {
             AddColumn("dbo.Folders", "ParentId", c => c.Int());
             CreateIndex("dbo.Folders", "ParentId");
-            AddForeignKey("dbo.Folders", "ParentId", "dbo.Folders", "Id");
+            AddForeignKey("dbo.Folders", "ParentId", "dbo.Folders", "Id",cascadeDelete:false);
         }
         
         public override void Down()

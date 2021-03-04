@@ -66,7 +66,8 @@ namespace archivesystemWebUI.Controllers
                 faculty.UpdatedAt = DateTime.Now;
                 _unitOfWork.FacultyRepo.Add(faculty);
                 
-                CreateFacultyFolder(faculty);
+               int folderId= CreateFacultyFolder(faculty);
+               _unitOfWork.FolderRepo.AddFolderPath(folderId);
             }
             else
             {
@@ -111,7 +112,7 @@ namespace archivesystemWebUI.Controllers
             }
         }
 
-        private  void CreateFacultyFolder(Faculty faculty)
+        private  int CreateFacultyFolder(Faculty faculty)
         {
            
             var rootFolder = _unitOfWork.FolderRepo.GetRootFolder();
@@ -124,9 +125,9 @@ namespace archivesystemWebUI.Controllers
                 ParentId=rootFolder.Id            
             };
             _unitOfWork.FolderRepo.Add(folder);
-            
-            
+            _unitOfWork.Save();
 
+            return folder.Id;
         }
     }
 }

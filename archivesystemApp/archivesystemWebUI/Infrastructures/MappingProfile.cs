@@ -73,13 +73,18 @@ namespace archivesystemWebUI.Infrastructures
                 .ForMember(dest => dest.RoleId, opt => opt.MapFrom( src => UserManager.FindById(src.UserId).Roles.SingleOrDefault().RoleId))
                 .ForMember(dest => dest.Roles, opt => opt.MapFrom( src => RoleManager.Roles.ToList()))
                 ;
-            Mapper.CreateMap<CreateAccessLevelViewModel, AccessLevel>().ForMember(dest => dest.CreatedAt, opt => opt.UseValue<DateTime>(DateTime.Now)).ForMember(m => m.UpdatedAt, opt => opt.UseValue<DateTime>(DateTime.Now));
+            Mapper.CreateMap<CreateAccessLevelViewModel, AccessLevel>()
+                .ForMember(dest => dest.CreatedAt, opt => opt.UseValue<DateTime>(DateTime.Now))
+                .ForMember(m => m.UpdatedAt, opt => opt.UseValue<DateTime>(DateTime.Now));
 
            
             Mapper.CreateMap<EnrollViewModel, Employee>();
             Mapper.CreateMap<Department, DepartmentViewModel>().ReverseMap();
             Mapper.CreateMap<Faculty, FacultyViewModel>().ReverseMap();
-            Mapper.CreateMap<CreateAccessLevelViewModel, AccessLevel>().ForMember(dest => dest.CreatedAt, opt => opt.UseValue<DateTime>(DateTime.Now)).ForMember(m => m.UpdatedAt, opt => opt.UseValue<DateTime>(DateTime.Now));
+            Mapper.CreateMap<CreateAccessLevelViewModel, AccessLevel>()
+                .ForMember(dest => dest.CreatedAt, opt => opt.UseValue<DateTime>(DateTime.Now))
+                .ForMember(m => m.UpdatedAt, opt => opt.UseValue<DateTime>(DateTime.Now));
+            Mapper.CreateMap<FolderViewModel, Folder>().ReverseMap();
 
         }
     }

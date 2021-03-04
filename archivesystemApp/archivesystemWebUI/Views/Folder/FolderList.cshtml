@@ -1,43 +1,28 @@
 ﻿@using archivesystemWebUI.Models
 @using archivesystemDomain.Entities
-@model FolderListViewModel
+@model FolderViewModel
 @{
-    ViewBag.Title = $"{Model.FolderName} Folder";
-    var _folderNavigationLinks = (Stack<Folder>)Session["folderPath"];
-    var folderNavigationLinks = _folderNavigationLinks.ToList();
-    var lenght = folderNavigationLinks==null ? 0 : folderNavigationLinks.Count();
-    var subFolderLenght= Model.SubFolders==null? 0 : Model.SubFolders.Count();
-    var headerTitle = (bool)Session[SessionData.IsSearchRequest] ?  "Your Search Result" : $"{Model.FolderName} Folder";
+    ViewBag.Title = $"{Model.Name} Folder";
+    var subFolderLenght= Model.Subfolders==null? 0 : Model.Subfolders.Count();
+    var headerTitle = (bool)Session[SessionData.IsSearchRequest] ?  "Your Search Result" : $"{Model.Name} Folder";
+    var currentPath = Model.Path;
 }
 
 <div style="width:calc(100% - 4em); margin:0 2em;margin-top:2em; ">
     <ul class="breadcrumb">
-        @if (folderNavigationLinks != null)
-        {
-            var count = folderNavigationLinks.Count() -1;
-            foreach (Folder folder in folderNavigationLinks)
+        @{
+            foreach (string folderInfo in Model.Path.Split(','))
             {
-                if (folderNavigationLinks[count].Name != "Root")
-                {
-                    <li class=""> /@Html.ActionLink($" {@folderNavigationLinks[count].Name} ", $"/{@folderNavigationLinks[count].Id}", "folders")</li>
-                }
-
-                else
-                {
-                    <li class="breadcrumb-item">@Html.ActionLink(@folderNavigationLinks[count].Name, "Index", "Folder")</li>
-                }
-                count--;
-
+                <li class="breadcrumb-item">@Html.ActionLink(@folderInfo.Split('#')[1], $"/{@folderInfo.Split('#')[0]}", "folders")</li>
             }
         }
-        else if (subFolderLenght == 0)
-        {
-            <h3>No Folder Matches your search</h3>
-        }
     </ul>
-   
+    @if ((bool)Session[SessionData.IsSearchRequest] && subFolderLenght==0)
+    {
+        <h3>No Folder Matches your search</h3>
+    }
 
-    </div>
+</div>
 
 
 <!-- Page Content -->
@@ -74,9 +59,9 @@
                             
                             <ul class="file-menu" id="FL-folders">
 
-                                @if (Model.SubFolders.Count() > 0)
+                                @if (subFolderLenght > 0)
                                 {
-                                    foreach (Folder folder in Model.SubFolders)
+                                    foreach (Folder folder in Model.Subfolders)
                                     {
                                         <li style="display:flex;justify-content:space-between;align-items: center;" class="folderlist-folder">
                                             @Html.ActionLink(@folder.Name, $"/{@folder.Id}", "folders")
@@ -97,9 +82,9 @@
 
 
                             </ul>
-                            @if (Model.FolderName != "Root" && Model.Id != 0)
+                            @if (Model.Name != "Root" && Model.Id != 0)
                             {
-                                using (Html.BeginForm("BackToParent", "Folder", FormMethod.Post))
+                                using (Html.BeginForm($"/{Model.ParentId}", "folders", FormMethod.Post))
                                 {
                                     <input hidden name="parentId" value="@Model.ParentId" />
 

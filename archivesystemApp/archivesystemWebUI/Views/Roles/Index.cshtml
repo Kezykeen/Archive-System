@@ -22,7 +22,7 @@
             <div class="card mb-0" style="margin:auto">
                 <div class="card-header" style="display:flex;justify-content:space-between;align-items:center">
                     <h4 class="card-title mb-0" style="display:inline-block"> Application Roles</h4>
-                    <div class="btn add-btn " style="margin:1em 0;color:white;display:inline-block" onclick="getPartialView('/roles/add')">
+                    <div class="btn add-btn " style="margin:1em 0;color:white;display:inline-block" onclick="getPartialView('/roles/manage')">
                         <i class="fa fa-plus"></i>
                         <a href="#" style="color:white"> Add Role</a>
 
@@ -60,27 +60,24 @@
                                 <tbody>
                                     @foreach (ApplicationRole role in Model)
                                     {
-                                        <tr>
-                                            <td>@role.Id</td>
-                                            <td>@role.Name</td>
-                                            <td>
-                                                @using (Html.BeginForm())
-                                                {
+                                    <tr>
+                                        <td>@role.Id</td>
+                                        <td>@role.Name</td>
+                                        <td>
+                                            @using (Html.BeginForm())
+                                            {
 
-                                                    <button class="btn btn-outline-dark"> View Users</button>
-                                                }
-                                            </td>
-                                            <td>
-                                                @using (Html.BeginForm("Delete", "Roles", FormMethod.Post, new { roleId = @role.Id }))
-                                                {
-                                                    @Html.Hidden("roleId", role.Id)
-                                                    <button class="btn btn-danger" type="submit">Delete</button>
-                                                }
-                                            </td>
-                                            <td>
-                                                <a onclick="getPartialView('/roles/edit?id=@role.Id&&name=@role.Name')" class = "btn btn-outline-dark" >Edit Role</a>
-                                            </td>
-                                        </tr>
+                                                <button class="btn  btn-file"> View Users</button>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a onclick="getPartialView('/roles/manage?id=@role.Id&&name=@role.Name')" class="btn btn-outline-dark">Edit </a>
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-outline-dark btn-danger" 
+                                               onclick="getPartialView('/roles/manage?id=@role.Id&&name=@role.Name&&delete=true')" >Delete </a>
+                                        </td>
+                                    </tr>
                                     }
 
 

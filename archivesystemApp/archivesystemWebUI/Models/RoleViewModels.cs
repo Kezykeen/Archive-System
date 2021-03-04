@@ -9,6 +9,8 @@ namespace archivesystemWebUI.Models
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
+
+        public string NewName { get; set; }
     }
 
     public class EditRoleViewModel

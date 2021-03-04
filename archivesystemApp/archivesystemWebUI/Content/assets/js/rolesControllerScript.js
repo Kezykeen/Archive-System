@@ -1,17 +1,16 @@
 ﻿
 async function getPartialView(url) {
     var modalBody = document.getElementById("modalBody")
-    console.log(url)
     let resp = await fetch(url)
-    console.log(resp)
     let textResp = resp.status === 200 ? await resp.text() : "Some error occured"
     modalBody.innerHTML = textResp;
     $("#modal").modal("show");
 
-    if (url.includes("roles/add")) {
-        document.getElementById("createRole").addEventListener("submit", async (e) => {
+    if (!url.includes("&&delete=true")) {
+        console.log("yesjl;j;")
+        document.getElementById("manageRole").addEventListener("submit", async (e) => {
             e.preventDefault();
-            createRole(url);
+            manageRole(url);
             return
         })
     }
@@ -21,31 +20,33 @@ async function getPartialView(url) {
     
 }
 
-async function createRole(url) {
+async function manageRole(url) {
     let verificationToken = document.getElementsByName("__RequestVerificationToken")[0].value
     let name = document.getElementById("role-name").value;
-    
-    if (!name) {
-        addErrors("createRole", isnullNamError = true)
+    let newName = document.getElementById("role-newName").value;
+    console.log("name:",name,"new Name:",newName)
+    if (!newName) {
+        addErrors("manageRole", isnullNamError = true)
     }
     else {
-        let resp = await postData(url, name, verificationToken)
-        
+        let resp = await postData(url, name, newName, verificationToken)
+        console.log(resp);
         if (resp.status === 200) {
             location.reload()
         }
         else if (resp.status === 400) {
-            addErrors("createRole", isnullNamError = false, isnameAlreadyExist = true, isUnknown = false)
+            addErrors("manageRole", isnullNamError = false, isnameAlreadyExist = true, isUnknown = false)
         }
         else {
-            addErrors("createRole", isnullNamError = false, isnameAlreadyExist = false, isUnknown = true)
+            addErrors("manageRole", isnullNamError = false, isnameAlreadyExist = false, isUnknown = true)
         }
 
     }
 
 }
 
-async function postData(url, name , token) {
+async function postData(url, name, newName, token) {
+    console.log(url, name, newName, token)
     let resp = await fetch(url, {
         method: "POST",
         headers: {
@@ -53,11 +54,13 @@ async function postData(url, name , token) {
             __RequestVerificationToken: token,
         },
         body: JSON.stringify({
-            Name: name,
+            Name: name ? name: "" ,
+            NewName:newName
         })
     })
     return resp
 }
+
 function addErrors(formId, isnullNamError=false,isnameAlreadyExist=false,isUnknown=false) {
     let form = document.getElementById(formId);
     let errorMessage = document.createElement("div");

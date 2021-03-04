@@ -7,13 +7,13 @@ namespace archivesystemWebUI.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class SeedRootFolder : IMigrationMetadata
+    public sealed partial class addDeleteableFlagToFoldersTable : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(SeedRootFolder));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(addDeleteableFlagToFoldersTable));
         
         string IMigrationMetadata.Id
         {
-            get { return "202102192119285_SeedRootFolder"; }
+            get { return "202103031507084_addDeleteableFlagToFoldersTable"; }
         }
         
         string IMigrationMetadata.Source

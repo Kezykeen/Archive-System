@@ -36,6 +36,13 @@ namespace archivesystemWebUI.Repository
             return _context.Folders.SingleOrDefault(x => x.Name == name);
         }
 
+        public Folder GetFacultyFolder (string name)
+        {
+            var rootFolder = GetRootFolder();
+            var folder = _context.Folders.SingleOrDefault(x => x.Name == name && x.ParentId == rootFolder.Id);
+            return folder;
+        }
+
         public void UpdateFolder(Folder folder)
         {
             var folderInDb = _context.Folders.Find(folder.Id);
@@ -45,9 +52,10 @@ namespace archivesystemWebUI.Repository
             folder.UpdatedAt = DateTime.Now;
         }
 
-        public void DeleteFolders(List<Folder> folders)
+        public void DeleteFolder(int folderId)
         {
-            _context.Folders.RemoveRange(folders);
+            RecursiveDelete(folderId);
+            _context.Folders.RemoveRange(Folders);
         }
 
     
@@ -58,7 +66,7 @@ namespace archivesystemWebUI.Repository
 
         public Folder GetFolder(int id)
         {
-            var folder = _context.Folders.Include(x=> x.Subfolders).Single(x=> x.Id==id);
+            var folder = _context.Folders.Include(x=> x.Subfolders).Include(x=>x.Files).Single(x=> x.Id==id);
             return folder;
         }
 
@@ -87,5 +95,29 @@ namespace archivesystemWebUI.Repository
             return folders;
         }
 
+        public void AddFolderPath(int folderId)
+        {
+            Folder currentFolder = _context.Folders.Find(folderId);
+            Folder currentFolderParent = _context.Folders.Find(currentFolder.ParentId);
+            currentFolder.Path = currentFolderParent.Path + $",{currentFolder.Id}#{currentFolder.Name}";
+            _context.SaveChanges();
+        }
+
+       
+        private void RecursiveDelete (int folderId)
+        {
+            var folder =_context.Folders.Include(x=> x.Subfolders).Single(x=> x.Id== folderId);
+            var subFolderCount = folder.Subfolders ?? new List<Folder>();
+            if(subFolderCount.Count()>0)
+            {
+                foreach (Folder _folder in folder.Subfolders)
+                {
+                    RecursiveDelete(_folder.Id);
+                }
+            }
+
+            if(folder.IsDeletable)
+                Folders.Add(folder);
+        }
     }
 }

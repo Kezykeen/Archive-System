@@ -1,12 +1,13 @@
 ﻿
+
 @using archivesystemWebUI.Models
-@model DeleteFolderViewModel
+@model RoleViewModel
 @{
     Layout = null;
 }
 
 <div class="modal-header">
-    <h5 class="modal-title" style="text-align:center">Do you want to delete @Model.Name folder?</h5>
+    <h5 class="modal-title" style="text-align:center">Do you want to delete @Model.Name role?</h5>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
@@ -14,11 +15,10 @@
 
 <div class="modal-body">
     <div style="margin:auto;display:flex;justify-content:center">
-        @using (Html.BeginForm("", "", FormMethod.Post,htmlAttributes: new { id="delFolder-form"}))
+        @using (Html.BeginForm("Delete", "Roles", FormMethod.Post))
         {
             @Html.AntiForgeryToken();
-            <input value="@Model.Id" type="number" hidden name="delFolder-id" id="delFolder-id" />
-            <input value="@Model.ParentId" type="number" hidden name="delFolder-parentId" id="delFolder-parentId" />
+            <input value="@Model.Id" type="text" hidden name="roleId" />
             <input class="btn btn-danger" type="submit" value="Yes" />
 
         }

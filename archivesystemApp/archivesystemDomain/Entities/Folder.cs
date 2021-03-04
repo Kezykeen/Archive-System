@@ -13,9 +13,7 @@ namespace archivesystemDomain.Entities
         [Key]
         public int Id { get; set; }
 
-        [Required]
         public string Name { get; set; }
-
        
         public int? ParentId { get; set; }
 
@@ -31,6 +29,10 @@ namespace archivesystemDomain.Entities
 
         public ICollection<File> Files { get; set; }
        
+        public string Path { get; set; }
+      
+        public bool IsDeletable { get; set;}
+ 
         public DateTime CreatedAt {get;set;}
 
         public DateTime UpdatedAt {get;set;}
