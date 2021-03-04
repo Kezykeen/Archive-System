@@ -69,7 +69,7 @@ namespace archivesystemWebUI.Controllers
 
                 _unitOfWork.DeptRepo.Add(department);
                 var departmentFolder=CreateDepartmentFolder(department);
-                _unitOfWork.FolderRepo.AddFolderPath(departmentFolder.Id);
+                _unitOfWork.FolderRepo.SaveFolderPath(departmentFolder.Id);
             }
             else
             {

@@ -67,7 +67,7 @@ namespace archivesystemWebUI.Controllers
                 _unitOfWork.FacultyRepo.Add(faculty);
                 
                int folderId= CreateFacultyFolder(faculty);
-               _unitOfWork.FolderRepo.AddFolderPath(folderId);
+               _unitOfWork.FolderRepo.SaveFolderPath(folderId);
             }
             else
             {

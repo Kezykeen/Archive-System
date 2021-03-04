@@ -9,15 +9,28 @@
 }
 
 <div style="width:calc(100% - 4em); margin:0 2em;margin-top:2em; ">
-    <ul class="breadcrumb">
-        @{
-            foreach (string folderInfo in Model.Path.Split(','))
-            {
-                <li class="breadcrumb-item">@Html.ActionLink(@folderInfo.Split('#')[1], $"/{@folderInfo.Split('#')[0]}", "folders")</li>
+    @if (!String.IsNullOrEmpty(Model.Name))
+    {
+        <ul class="breadcrumb">
+            @{
+                foreach (string folderInfo in Model.Path.Split(','))
+                {
+                    if (folderInfo.Split('#')[1] == Model.Name)
+                    {
+                        <li class="breadcrumb-item" style="color:red !important">@Html.ActionLink(@folderInfo.Split('#')[1], $"/{@folderInfo.Split('#')[0]}", "folders")</li>
+                    }
+                    else
+                    {
+                        <li class="breadcrumb-item">@Html.ActionLink(@folderInfo.Split('#')[1], $"/{@folderInfo.Split('#')[0]}", "folders")</li>
+                    }
+
+                }
             }
-        }
-    </ul>
-    @if ((bool)Session[SessionData.IsSearchRequest] && subFolderLenght==0)
+        </ul>
+    }
+   
+
+    @if ((bool)Session[SessionData.IsSearchRequest] && subFolderLenght == 0)
     {
         <h3>No Folder Matches your search</h3>
     }
@@ -44,7 +57,7 @@
                                 <i class="fa fa-search"></i>
                             </div>
                             <input type="text" class="form-control" placeholder="Search For Folder"
-                                   name="search" value="@Request.QueryString["search"]" />
+                                   name="search" value="" />
                         </div>
                     }
           

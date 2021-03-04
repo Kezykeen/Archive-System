@@ -20,10 +20,10 @@ namespace archivesystemWebUI.Controllers
 
         // GET: /folders
         [Route("folders")]
-        public ActionResult Index()
+        public ActionResult Index(string search=null)
         {
             FolderViewModel model = new FolderViewModel(); 
-            if (string.IsNullOrEmpty(Request.QueryString["search"]))
+            if (string.IsNullOrEmpty(search))
             {
                 var rootFolder = repo.FolderRepo.GetRootWithSubfolder();
                 model = Mapper.Map<FolderViewModel>(rootFolder);
@@ -31,8 +31,7 @@ namespace archivesystemWebUI.Controllers
             }
             else
             {
-                var searchParam = Request.QueryString["search"];
-                model.Subfolders = repo.FolderRepo.GetMatchingFolders(searchParam);
+                model.Subfolders = repo.FolderRepo.GetFoldersThatMatchName(search);
                 Session[SessionData.IsSearchRequest] = true;
                 
             }
@@ -71,10 +70,10 @@ namespace archivesystemWebUI.Controllers
                 IsDeletable = true
             };
             repo.FolderRepo.Add(folder);
-            folder.Path = parentFolder.Path + $",{name}#{folder.Id}";
+            folder.Path = parentFolder.Path + $",{folder.Id}#{name}";
             repo.Save();
 
-            repo.FolderRepo.AddFolderPath(folder.Id);
+            repo.FolderRepo.SaveFolderPath(folder.Id);
             
             return new HttpStatusCodeResult(200); 
         }

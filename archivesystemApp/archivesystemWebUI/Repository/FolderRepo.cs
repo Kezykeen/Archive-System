@@ -59,7 +59,7 @@ namespace archivesystemWebUI.Repository
         }
 
     
-        public List<Folder> GetMatchingFolders(string name)
+        public List<Folder> GetFoldersThatMatchName(string name)
         {
             return _context.Folders.Where(x => x.Name.Contains(name)).ToList();
         }
@@ -95,7 +95,7 @@ namespace archivesystemWebUI.Repository
             return folders;
         }
 
-        public void AddFolderPath(int folderId)
+        public void SaveFolderPath(int folderId)
         {
             Folder currentFolder = _context.Folders.Find(folderId);
             Folder currentFolderParent = _context.Folders.Find(currentFolder.ParentId);
