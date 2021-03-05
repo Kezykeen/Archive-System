@@ -30,7 +30,7 @@
 <body>
     <!-- Main Wrapper -->
     <div class="main-wrapper">
-        
+
         <!-- Loader -->
         <div id="loader-wrapper">
             <div id="loader">
@@ -43,6 +43,8 @@
             </div>
         </div>
         <!-- /Loader -->
+
+     
         <!-- Header -->
         <div class="header">
 
@@ -86,13 +88,12 @@
                     </div>
                 </li>
                 <!-- /Search -->
-               
                 <!-- Notifications -->
                 <li class="nav-item dropdown">
                     <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
                         <i class="fa fa-bell-o"></i> <span class="badge badge-pill">3</span>
                     </a>
-                    
+
                 </li>
                 <!-- /Notifications -->
                 <!-- Message Notifications -->
@@ -100,7 +101,7 @@
                     <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
                         <i class="fa fa-comment-o"></i> <span class="badge badge-pill">8</span>
                     </a>
-                    
+
                 </li>
                 <!-- /Message Notifications -->
 
@@ -134,14 +135,14 @@
         </div>
         <!-- /Header -->
         <!-- Sidebar -->
-       @Html.Partial("_SideBarPartial")
+        @Html.Partial("_SideBarPartial")
         <!-- /Sidebar -->
         <!-- Page Wrapper -->
         <div class="page-wrapper">
-            
-            
+
+
             @RenderBody()
-           
+
 
         </div>
         <!-- /Page Wrapper -->
@@ -154,21 +155,23 @@
 
     <!-- Bootstrap Core JS -->
     @Scripts.Render("~/bundles/custom/bootstrap")
-    
+
     @Scripts.Render("~/bundles/charts/js")
     @Scripts.Render("~/bundles/jqueryval")
+    
 
-<script>
-    jQuery.validator.methods["date"] = function (value, element) {
-        return true;
+    <script>
+        jQuery.validator.methods["date"] = function (value, element) {
+            return true;
 
-    }
-</script>
+        }
+    </script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
 
-<!-- Custom JS -->
+    <!-- Custom JS -->
     @Scripts.Render("~/bundles/custom/js")
     @RenderSection("scripts", required: false)
-    
+
 
 </body>
 </html>

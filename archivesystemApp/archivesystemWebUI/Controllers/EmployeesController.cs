@@ -120,7 +120,18 @@ namespace archivesystemWebUI.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                model.Departments = _unitOfWork.DeptRepo.GetAll();
+                return PartialView("EnrollModal", model);
+            }
+
+            var uniqueProps = Mapper.Map<EnrollViewModel, EmpUniqueProps>(model);
+            var (msg, propExists) = EmployeeValidator.Validate(_unitOfWork, uniqueProps);
+
+            if (propExists)
+            {
+                ModelState.AddModelError("", msg);
+                model.Departments = _unitOfWork.DeptRepo.GetAll();
+                return PartialView("EnrollModal", model);
             }
 
             var employee = Mapper.Map<EnrollViewModel, Employee>(model);
@@ -140,12 +151,10 @@ namespace archivesystemWebUI.Controllers
             {
                ModelState.AddModelError("", e.Message);
                model.Departments = _unitOfWork.DeptRepo.GetAll();
-               return View(model);
+               return PartialView("EnrollModal",model);
             }
 
-            return RedirectToAction("Index", "Employees");
-
-          
+            return Json(new { status = "success"});
         }
 
      
@@ -158,7 +167,7 @@ namespace archivesystemWebUI.Controllers
             {
                 model.Departments = _unitOfWork.DeptRepo.GetAll();
                 model.Roles = _roleService.GetAllRoles();
-                return View(model);
+                return PartialView("EditModal", model);
             }
             var employeeDb = _unitOfWork.EmployeeRepo.GetEmployeeWithDept(model.Id);
             var Name = $"{model.FirstName} {model.LastName}";
@@ -196,11 +205,9 @@ namespace archivesystemWebUI.Controllers
             employeeDb.UpdatedAt = DateTime.Now;
             _unitOfWork.Save();
 
-            TempData["Success"] = $"{model.FirstName} Updated Successfully";
-            return RedirectToAction("Index", "Employees");
+            return Json(new { status = "success", msg = $"{model.FirstName}" });
 
         }
-
 
 
 

@@ -49,6 +49,11 @@ namespace archivesystemWebUI.Repository
             if (folderInDb == null)
                 return;
             folderInDb.Name = folder.Name;
+            folderInDb.AccessLevelId = folder.AccessLevelId;
+
+            var pathArray=folderInDb.Path.Split(',');
+            pathArray[pathArray.Length - 1]=$"{folderInDb.Id}#{folder.Name}";
+            folderInDb.Path = string.Join(",",pathArray);
             folder.UpdatedAt = DateTime.Now;
         }
 
