@@ -48,7 +48,7 @@ namespace archivesystemWebUI.Repository
         public void UpdateFolder(Folder folder)
         {
             var folderInDb = _context.Folders.Find(folder.Id);
-            if (folderInDb == null)
+            if (folderInDb == null || folderInDb.IsRestricted)
                 return;
             folderInDb.Name = folder.Name;
             folderInDb.AccessLevelId = folder.AccessLevelId;
@@ -72,41 +72,12 @@ namespace archivesystemWebUI.Repository
             return folder;
         }
 
-        //public Stack<Folder> GetFolderPath(int id)
-        //{
-        //    var folders = new Stack<Folder>();
-        //    var isNotRootFolder = true;
-        //    folders.Push(_context.Folders.SingleOrDefault(x => x.Name == "Root"));
-        //    var stack = new Stack<Folder>();
-        //    while (isNotRootFolder)
-        //    {
-        //        var folder = _context.Folders.SingleOrDefault(x => x.Id == id);
-        //        if (folder.ParentId == null)
-        //            isNotRootFolder = false;
-        //        else
-        //        {
-        //            stack.Push(folder);
-        //            id = (int)folder.ParentId;
-        //        }
-        //    }
-        //    while (stack.Count() > 0)
-        //    {
-        //        folders.Push(stack.Pop());
-        //    }
-
-        //    return folders;
-        //}
-
-        public void SaveFolderPath(int folderId)
-        {
-            Folder currentFolder = _context.Folders.Find(folderId);
-            Folder currentFolderParent = _context.Folders.Find(currentFolder.ParentId);
-            _context.SaveChanges();
-        }
 
         private void RecursiveDelete(int folderId)
         {
             var folder = _context.Folders.Include(x => x.Subfolders).Single(x => x.Id == folderId);
+            if (folder.IsRestricted || folder==null)
+                return;
             var subFolderCount = folder.Subfolders ?? new List<Folder>();
             if (subFolderCount.Count() > 0)
             {
@@ -116,13 +87,15 @@ namespace archivesystemWebUI.Repository
                 }
             }
 
-            if (folder.IsDeletable)
+            if (folder.IsRestricted)
                 Folders.Add(folder);
         }
 
         void IFolderRepo.MoveFolder(int id, int newParentFolderId)
         {
             var folder = _context.Folders.Find(id);
+            if (folder.IsRestricted || folder==null)
+                return;
             var currentSubfolderNames = _context.Folders.Include(x => x.Subfolders).Single(x => x.Id == newParentFolderId)
                 .Subfolders.Select(x => x.Name);
             if (currentSubfolderNames.Contains(folder.Name))

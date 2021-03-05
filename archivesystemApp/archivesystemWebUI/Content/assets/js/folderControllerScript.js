@@ -4,7 +4,22 @@ async function getPartialView(url, id) {
     url =  `${url}?id=${id}` 
     var modalBody = document.getElementById("modalBody")
     let resp = await fetch(url)
-    let textResp = resp.status === 200 ? await resp.text() : "Some error occured"
+    console.log("resp:",resp)
+    let textResp="";
+    var alertMessageBox = document.getElementById('copyFolder');
+    if (resp.status === 403) {
+        alertMessageBox.innerHTML = "Action Restricted: Action cannot be executed on folder";
+        alertMessageBox.className = 'showFolder task-failure';
+        setTimeout(() => { alertMessageBox.className = ''; return; }, 3000);
+        return;
+    }
+    else if (resp.status===500){
+        alertMessageBox.innerHTML = "Server error: Action failed";
+        alertMessageBox.className = 'showFolder task-failure';
+        setTimeout(() => { alertMessageBox.className = ''; return; }, 3000)
+        return;
+    }
+    textResp = await resp.text();
     modalBody.innerHTML = textResp;
     $("#modal").modal("show");
 
@@ -48,7 +63,6 @@ async function deleteFolder() {
             ParentId: parseInt(parentId)
         })
     })
-    console.log(resp)
     if (resp.status === 204) {
         location.reload();
     }

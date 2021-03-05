@@ -303,6 +303,14 @@
     <Compile Include="Migrations\202103051202252_removedPathFeildFromFoldersTable.Designer.cs">
       <DependentUpon>202103051202252_removedPathFeildFromFoldersTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202103051331018_dummyMigration.cs" />
+    <Compile Include="Migrations\202103051331018_dummyMigration.Designer.cs">
+      <DependentUpon>202103051331018_dummyMigration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202103051342124_modifiedFoldersEntity.cs" />
+    <Compile Include="Migrations\202103051342124_modifiedFoldersEntity.Designer.cs">
+      <DependentUpon>202103051342124_modifiedFoldersEntity.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CodeStatus.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -652,6 +660,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202103051202252_removedPathFeildFromFoldersTable.resx">
       <DependentUpon>202103051202252_removedPathFeildFromFoldersTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202103051331018_dummyMigration.resx">
+      <DependentUpon>202103051331018_dummyMigration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202103051342124_modifiedFoldersEntity.resx">
+      <DependentUpon>202103051342124_modifiedFoldersEntity.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

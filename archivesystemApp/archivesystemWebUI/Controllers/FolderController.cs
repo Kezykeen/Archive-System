@@ -78,12 +78,10 @@ namespace archivesystemWebUI.Controllers
             var folder = new Folder { Name = name, CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now, ParentId = parentId,
                 AccessLevelId = accessLevelId,
-                IsDeletable = true
+                IsRestricted = false
             };
             repo.FolderRepo.Add(folder);
             repo.Save();
-
-            repo.FolderRepo.SaveFolderPath(folder.Id);
             
             return new HttpStatusCodeResult(200); 
         }
@@ -119,7 +117,7 @@ namespace archivesystemWebUI.Controllers
         public ActionResult Delete(int id,int parentId)
         {
             var folderToDelete=repo.FolderRepo.Get(id);
-            if (folderToDelete.IsDeletable)
+            if (folderToDelete.IsRestricted)
             {
                 repo.FolderRepo.DeleteFolder(folderToDelete.Id);
                 repo.Save();
@@ -180,8 +178,11 @@ namespace archivesystemWebUI.Controllers
         public ActionResult GetEditFolderPartialView(int id)
         {
             var folder = repo.FolderRepo.Get(id);
+            if (folder.IsRestricted)
+                return new HttpStatusCodeResult(403);
+
             if (folder == null)
-                return RedirectToAction("Index");
+                return new HttpStatusCodeResult(400);
 
             var model = new CreateFolderViewModel
             {
@@ -197,6 +198,10 @@ namespace archivesystemWebUI.Controllers
         public ActionResult GetDeleteFolderPartialView(int id)
         {
             var folder = repo.FolderRepo.Get(id);
+            if (folder == null)
+                return new HttpStatusCodeResult(400);
+            if (folder.IsRestricted)
+                return new HttpStatusCodeResult(403);
             return PartialView("_DeleteFolder", new DeleteFolderViewModel { 
                 Name = folder.Name, Id = id, ParentId =(int)folder.ParentId });
         }

@@ -19,7 +19,7 @@ namespace archivesystemDomain.Interfaces
         Folder GetRootWithSubfolder();
         Folder GetFolder(int id);
         List<FolderPath> GetFolderPath(int id);
-        void SaveFolderPath(int folderId);
+        
         Folder GetFacultyFolder(string name);
         void MoveFolder(int id, int newParentFolderId);
     }
