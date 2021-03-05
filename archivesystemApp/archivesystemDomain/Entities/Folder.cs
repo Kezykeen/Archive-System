@@ -13,9 +13,7 @@ namespace archivesystemDomain.Entities
         [Key]
         public int Id { get; set; }
 
-        [Required]
         public string Name { get; set; }
-
        
         public int? ParentId { get; set; }
 
@@ -25,22 +23,16 @@ namespace archivesystemDomain.Entities
         public int? FileId { get; set; }
         public File File { get; set; }
 
-        [ForeignKey("AccessLevel")]
         public int? AccessLevelId { get; set; }
 
-        public ICollection<File> Files { get; set; }
         public AccessLevel AccessLevel { get; set; }
 
-       
-
-        [Required]
-        public bool IsDeletable { get; set;
-        }
+        public ICollection<File> Files { get; set; }
+      
+        public bool IsDeletable { get; set;}
  
-        [Required]
         public DateTime CreatedAt {get;set;}
 
-        [Required]
         public DateTime UpdatedAt {get;set;}
 
 
