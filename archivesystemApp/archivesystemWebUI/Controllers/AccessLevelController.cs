@@ -3,6 +3,7 @@ using archivesystemDomain.Interfaces;
 using archivesystemWebUI.Models;
 using AutoMapper;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 
@@ -19,6 +20,8 @@ namespace archivesystemWebUI.Controllers
         {
             _unitOfWork = unitOfWork;
         }
+
+       
         #endregion
 
         #region ACTION METHODS
@@ -33,7 +36,7 @@ namespace archivesystemWebUI.Controllers
             var model = _unitOfWork.AccessLevelRepo.GetAll();
             return View(model);
         }
-
+        
         public ActionResult CreateAccessLevel()
         {
             return View();
@@ -47,25 +50,20 @@ namespace archivesystemWebUI.Controllers
             {
                 return View(model);
             }
-            //try
-            //{
-                var checkLevel = _unitOfWork.AccessLevelRepo.GetByLevel(model.Level);
-                if (checkLevel == null)
-                {
-                    var newAccess = Mapper.Map<AccessLevel>(model);
-                    _unitOfWork.AccessLevelRepo.Add(newAccess);
-                    await _unitOfWork.SaveAsync();
-                    TempData["AccessMessage"] = $"Access Level was succesfully created!";
-                    return RedirectToAction(nameof(ManageAccessLevel));
-                }
-                ModelState.AddModelError("AccessLevelExists", $"Access Level \"{model.Level}\" already exists. Please enter a different Level");
-            //}
-            //catch (Exception e)
-            //{
-            //ModelState.AddModelError("", e.Message);
-            //return View(model);
-            //}
-            return View(model);
+            try
+            {
+                var newAccess = Mapper.Map<AccessLevel>(model);
+                _unitOfWork.AccessLevelRepo.Add(newAccess);
+                await _unitOfWork.SaveAsync();
+                TempData["AccessMessage"] = $"Access Level was succesfully created!";
+                return RedirectToAction(nameof(ManageAccessLevel));
+
+            }
+            catch (Exception e)
+            {
+                ModelState.AddModelError("", e.Message);
+                return View(model);
+            }
         }
 
         public ActionResult EditAccessLevel(int id)
@@ -99,5 +97,19 @@ namespace archivesystemWebUI.Controllers
         }
 
         #endregion
+
+        #region Validators
+
+        [HttpPost]
+        public JsonResult LevelAvailable(string Level)
+        {
+            var checkLevel = _unitOfWork.AccessLevelRepo.GetByLevel(Level);
+            bool status = checkLevel == null;
+            return Json(status);
+        }
+        #endregion
+      
+
+
     }
 }

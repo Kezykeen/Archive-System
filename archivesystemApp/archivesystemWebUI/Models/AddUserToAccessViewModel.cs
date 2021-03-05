@@ -1,6 +1,7 @@
 ﻿using archivesystemDomain.Entities;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 
 namespace archivesystemWebUI.Models
 {
@@ -8,6 +9,7 @@ namespace archivesystemWebUI.Models
     {
         [Required(ErrorMessage ="Enter a valid identification for the user.")]
         [Display(Name = "Email Address")]
+        [Remote(nameof(archivesystemWebUI.Controllers.UserAccessController.ValidateEmail), "UserAccess", HttpMethod = "POST")]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Choose an access level.")]
