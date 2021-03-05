@@ -9,3 +9,36 @@
 .folderlist-folder:hover ,.file-menu li a:hover {
     background-color: #edeeef;
 }
+
+#copyFolder {
+    opacity: 0;
+    transition: opacity 2s;
+    position: fixed;
+    top: 65px;
+    right: 10px;
+    z-index: 100000;
+    border-radius: 5px;
+    padding: 1.5em 2.5em;
+}
+
+#copyFolder.showFolder {
+    opacity: 1;
+    transition: opacity 1s;
+}
+
+#copyFolder.task-success {
+    background-image: linear-gradient(to right, #007bff,#6f42c1);
+    color: white;
+}
+
+    #copyFolder.task-failure {
+        background-image: linear-gradient(to right, #e83e8c,#dc3545);
+        color: white;
+    }
+.fa-file-import:hover{
+    cursor:pointer;
+}
+
+#focused-folder a {
+    color: #20c997;
+}

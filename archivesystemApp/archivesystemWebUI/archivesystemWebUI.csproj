@@ -291,6 +291,10 @@
     <Compile Include="Migrations\202103031507084_addDeleteableFlagToFoldersTable.Designer.cs">
       <DependentUpon>202103031507084_addDeleteableFlagToFoldersTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202103051202252_removedPathFeildFromFoldersTable.cs" />
+    <Compile Include="Migrations\202103051202252_removedPathFeildFromFoldersTable.Designer.cs">
+      <DependentUpon>202103051202252_removedPathFeildFromFoldersTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CodeStatus.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -628,6 +632,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202103031507084_addDeleteableFlagToFoldersTable.resx">
       <DependentUpon>202103031507084_addDeleteableFlagToFoldersTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202103051202252_removedPathFeildFromFoldersTable.resx">
+      <DependentUpon>202103051202252_removedPathFeildFromFoldersTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

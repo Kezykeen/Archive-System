@@ -4,34 +4,36 @@
 @model FolderViewModel
 @{
     ViewBag.Title = $"{Model.Name} Folder";
-    var currentPath = Model.Path;
-    var currentFolderDepth = Model.Path.Split(',').Count();
-    var subFolderLenght= Model.Subfolders==null? 0 : Model.Subfolders.Count();
-    var headerTitle = (bool)Session[SessionData.IsSearchRequest] ?  "Your Search Result" : $"{Model.Name} Folder {currentFolderDepth}";
+    var currentPath = Model.CurrentPath;
+    var currentFolderDepth = currentPath.Count();
+    var subFolderLenght = Model.DirectChildren == null ? 0 : Model.DirectChildren.Count();
+    var headerTitle = (bool)Session[SessionData.IsSearchRequest] ? "Your Search Result" : $"{Model.Name} Folder ";
 
 }
 
+
 <div style="width:calc(100% - 4em); margin:0 2em;margin-top:2em; ">
-    @if (!String.IsNullOrEmpty(Model.Name))
+    @if (currentPath.Count()>0)
     {
         <ul class="breadcrumb">
-            @{
-                foreach (string folderInfo in Model.Path.Split(','))
+            @{ 
+                var index=currentFolderDepth;
+                while(index >=1)
                 {
-                    if (folderInfo.Split('#')[1] == Model.Name)
+                    if (Model.CurrentPath[index - 1].Name == Model.Name)
                     {
-                        <li class="breadcrumb-item" style="color:red !important">@Html.ActionLink(@folderInfo.Split('#')[1], $"/{@folderInfo.Split('#')[0]}", "folders")</li>
+                        <li class="breadcrumb-item" id="focused-folder">@Html.ActionLink(Model.CurrentPath[index-1].Name, $"/{@Model.CurrentPath[index-1].Id}", "folders")</li>
                     }
                     else
                     {
-                        <li class="breadcrumb-item">@Html.ActionLink(@folderInfo.Split('#')[1], $"/{@folderInfo.Split('#')[0]}", "folders")</li>
+                    <li class="breadcrumb-item">@Html.ActionLink(Model.CurrentPath[index-1].Name, $"/{@Model.CurrentPath[index-1].Id}", "folders")</li>
                     }
-
+                    index--;
                 }
             }
         </ul>
     }
-   
+
 
     @if ((bool)Session[SessionData.IsSearchRequest] && subFolderLenght == 0)
     {
@@ -53,7 +55,7 @@
                         <a href="javascript:void(0);" class="file-side-close"><i class="fa fa-times"></i></a>
                     </div>
 
-                    @using (Html.BeginForm("Index","Folder",null,FormMethod.Get, new { @class="file-search"}))
+                    @using (Html.BeginForm("Index", "Folder", null, FormMethod.Get, new { @class = "file-search" }))
                     {
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -63,7 +65,7 @@
                                    name="search" value="" />
                         </div>
                     }
-          
+
                     <div class="file-pro-list">
                         <div class="file-scroll">
                             @{
@@ -85,7 +87,7 @@
 
                                 @if (subFolderLenght > 0)
                                 {
-                                    foreach (Folder folder in Model.Subfolders)
+                                    foreach (Folder folder in Model.DirectChildren)
                                     {
                                         <li style="display:flex;justify-content:space-between;align-items: center;" class="folderlist-folder">
                                             @Html.ActionLink(@folder.Name, $"/{@folder.Id}", "folders")
@@ -99,6 +101,7 @@
                                                     ('@Url.Action("GetEditFolderPartialView", "Folder")', @folder.Id)"> Edit Folder</a>
                                                 <a href="#" class="dropdown-item" onclick="getPartialView
                                                     ('@Url.Action("GetDeleteFolderPartialView", "Folder")',@folder.Id)"> Delete Folder</a>
+                                                <a href="#" class="dropdown-item" onclick="CtrlC(@folder.Id, '@folder.Name', 'folder')"> Copy Folder</a>
                                             </div>
                                         </li>
                                     }
@@ -131,9 +134,13 @@
                             </div>
                             <span>File Manager</span>
                             <div class="file-options">
-                                
+
 
                                 <span class="btn-file"><input type="file" class="upload"><i class="fa fa-upload"></i></span>
+                            </div>
+                            <div class="file-options">
+                                @Html.AntiForgeryToken()
+                                <span class="btn-file"><i class="fas fa-file-import" id="paste-here" onclick="CtrlV(@Model.Id)"></i></span>
                             </div>
                         </div>
                         <div class="file-content">
@@ -148,7 +155,10 @@
                             <div class="file-body">
                                 <div class="file-scroll">
                                     <div class="file-content-inner">
+                                        
+                                        <div id="copyFolder">
 
+                                        </div>
                                     </div>
                                 </div>
                             </div>

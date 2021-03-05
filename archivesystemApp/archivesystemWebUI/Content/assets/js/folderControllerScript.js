@@ -19,18 +19,15 @@ async function getPartialView(url, id) {
         document.getElementById("editFolder").addEventListener("submit", async (e) => {
             e.preventDefault();
             await editFolder(id);
-            return
         })
     }
     else {
         document.getElementById("delFolder-no").addEventListener("click", async (e) => {
-            closeModal();
-            return
+            closeModal
         })
         document.getElementById("delFolder-form").addEventListener("submit", async (e) => {
             e.preventDefault();
             await deleteFolder();
-            return;
         })
 
     }
@@ -40,7 +37,7 @@ async function deleteFolder() {
     let folderId = document.getElementById("delFolder-id").value;
     let parentId = document.getElementById("delFolder-parentId").value;
     console.log("reached here", folderId, parentId, "folders/delete")
-    let resp = await fetch("folders/delete", {
+    let resp = await fetch("/folders/delete", {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
@@ -145,4 +142,54 @@ async function postData(url, name, accesslevelId, parentId, token, id = 0) {
     })
     return resp
 }
+
+function CtrlC(itemId, itemName,itemType) {
+    var copyFolderAlert = document.getElementById('copyFolder');
+    copyFolderAlert.innerHTML = `${itemName} ${itemType=="folder"? "folder": "file"} copied`;
+    copyFolderAlert.className = 'showFolder task-success';
+    localStorage.setItem("copiedItem", JSON.stringify({ "id": itemId, "itemType":itemType  }))
+    setTimeout(() => { copyFolderAlert.className = ''; return; }, 2000)
+}
+
+async function CtrlV(newParentFolderId ) {
+    let copiedItem = JSON.parse(localStorage.getItem("copiedItem"));
+    let verificationToken = document.getElementsByName("__RequestVerificationToken")[0].value;
+    var copyFolderAlert = document.getElementById('copyFolder');
+    copyFolderAlert.className = 'showFolder task-failure';
+    if (!copiedItem) {
+        copyFolderAlert.innerHTML = "Error: No Item was copied";
+        setTimeout(() => { copyFolderAlert.className = ''; return; }, 2000)
+    }
+    else {
+        resp = await fetch("/folders/move", {
+            method: "POST",
+            headers: {
+                __RequestVerificationToken: verificationToken,
+                'content-type': "application/json"
+            },
+            body: JSON.stringify({
+                id: copiedItem.id,
+                fileType: copiedItem.itemType,
+                newParentFolder: newParentFolderId
+            })
+        })
+        console.log(resp)
+        if (resp.status === 200) {
+            localStorage.removeItem("copiedItem")
+            copyFolderAlert.innerHTML = `Item moved successfully`;
+            copyFolderAlert.className="showFolder task-success"
+            location.reload();
+        }
+        else {
+            copyFolderAlert.innerHTML = resp.status === 403 ? `Item with name already exist in Folder` : "Server Error: Action Failed."
+        }
+       
+
+    }
+   
+         
+       
+}
+    
+    
 

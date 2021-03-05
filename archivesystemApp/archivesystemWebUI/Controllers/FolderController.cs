@@ -28,12 +28,15 @@ namespace archivesystemWebUI.Controllers
             if (string.IsNullOrEmpty(search))
             {
                 var rootFolder = repo.FolderRepo.GetRootWithSubfolder();
-                model = Mapper.Map<FolderViewModel>(rootFolder);
+                model.Name="Root";
+                model.DirectChildren = rootFolder.Subfolders;
+                model.CurrentPath = new List<FolderPath> { new FolderPath { Id = rootFolder.Id, Name = "Root" } };
+                model.Id = rootFolder.Id;
                 Session[SessionData.IsSearchRequest] = false;
             }
             else
             {
-                model.Subfolders = repo.FolderRepo.GetFoldersThatMatchName(search);
+                model.DirectChildren = repo.FolderRepo.GetFoldersThatMatchName(search);
                 Session[SessionData.IsSearchRequest] = true;
                 
             }
@@ -65,7 +68,9 @@ namespace archivesystemWebUI.Controllers
             }
             if (name.Contains(",") || name.Contains("#"))
                 return new HttpStatusCodeResult(403);
-            var parentFolderCurrentFolderDepth = parentFolder.Path.Split(',').Count();
+
+            var parentFolderPath = repo.FolderRepo.GetFolderPath(parentId);
+            var parentFolderCurrentFolderDepth = parentFolderPath.Count();
             if (parentFolderCurrentFolderDepth >= (int) AllowableFolderDepth.Max)
             {
                 return new HttpStatusCodeResult(404);
@@ -76,12 +81,35 @@ namespace archivesystemWebUI.Controllers
                 IsDeletable = true
             };
             repo.FolderRepo.Add(folder);
-            folder.Path = parentFolder.Path + $",{folder.Id}#{name}";
             repo.Save();
 
             repo.FolderRepo.SaveFolderPath(folder.Id);
             
             return new HttpStatusCodeResult(200); 
+        }
+
+        [Route("folders/move")]
+        [HttpPost]
+        [ValidateHeaderAntiForgeryToken]
+        public ActionResult MoveItem(MoveItemViewModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return new HttpStatusCodeResult(400);
+
+                if (model.FileType == "folder")
+                    repo.FolderRepo.MoveFolder(model.Id, model.NewParentFolder);
+                repo.Save();
+                return new HttpStatusCodeResult(200);
+            }
+            catch (Exception e)
+            {
+                if (e.Message.Contains("folder already exist"))
+                    return new HttpStatusCodeResult(403);
+                return new HttpStatusCodeResult(500);
+            }
+            
         }
 
         //POST: /folders/create
@@ -108,10 +136,19 @@ namespace archivesystemWebUI.Controllers
         public ActionResult GetFolderSubFolders(int folderId)
         {
             var folder = repo.FolderRepo.GetFolder(folderId);
-            if (folder.ParentId == null)
+            if (folder.Name == "Root")
                 return RedirectToAction(nameof(Index));
+            var folderpath = repo.FolderRepo.GetFolderPath(folderId);
+            
 
-            var model = Mapper.Map<FolderViewModel>(folder);
+            var model = new FolderViewModel
+            {
+                Name = folder.Name,
+                ParentId = (int)folder.ParentId,
+                CurrentPath = folderpath,
+                DirectChildren = folder.Subfolders,
+                Id=folder.Id
+            };
             Session[SessionData.IsSearchRequest] = false;
             return View("FolderList", model);
         }
@@ -121,13 +158,9 @@ namespace archivesystemWebUI.Controllers
         [Route("folders/{parentId}")]
         public ActionResult BackToParent(int parentId)
         {
-            var folder = repo.FolderRepo.GetFolder(parentId);
-            if (folder.Name == "Root")
-                return RedirectToAction(nameof(Index));
 
-            var model = Mapper.Map<FolderViewModel>(folder);
             Session[SessionData.IsSearchRequest] = false;
-            return View("FolderList", model);
+            return RedirectToAction(nameof(GetFolderSubFolders), new { folderId = parentId });
         }
 
         //POST: /Folder/Edit
@@ -167,35 +200,8 @@ namespace archivesystemWebUI.Controllers
             return PartialView("_DeleteFolder", new DeleteFolderViewModel { 
                 Name = folder.Name, Id = id, ParentId =(int)folder.ParentId });
         }
-    
-       
-        private void AddCurrentFolderPath(Folder folder)
-        {
-            var currentPath = (Stack<Folder>)Session[SessionData.FolderPath];
-            if (currentPath == null)
-            {
-                Session[SessionData.FolderPath] = repo.FolderRepo.GetFolderPath(folder.Id);
-            }
-            else
-            {
-                if (currentPath.Peek().Id == folder.Id) { }
-                else if (currentPath.Peek().Id != (int)folder.ParentId && currentPath.Count() > 0)
-                {
-                    while (currentPath.Peek().Id != folder.Id)
-                    {
-                        currentPath.Pop();
-                    }
-                    Session[SessionData.FolderPath] = currentPath;
-                }
-
-                else
-                {
-                    currentPath.Push(folder);
-                    Session[SessionData.FolderPath] = currentPath;
-                }
-
-            }
-        }
+     
+        
     
         
     }

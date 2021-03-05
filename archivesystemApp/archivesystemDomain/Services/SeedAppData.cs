@@ -38,7 +38,6 @@ namespace archivesystemDomain.Services
 
                 //Add root folder path
                 var rootFolder = dbContext.Folders.SingleOrDefault(x => x.Name == "Root");
-                rootFolder.Path = $"{rootFolder.Id}#{rootFolder.Name}";
                 dbContext.SaveChanges();
                
             }
