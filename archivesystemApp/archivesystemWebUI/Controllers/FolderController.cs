@@ -32,13 +32,12 @@ namespace archivesystemWebUI.Controllers
                 model.DirectChildren = rootFolder.Subfolders;
                 model.CurrentPath = new List<FolderPath> { new FolderPath { Id = rootFolder.Id, Name = "Root" } };
                 model.Id = rootFolder.Id;
-                Session[SessionData.IsSearchRequest] = false;
             }
             else
             {
                 model.DirectChildren = repo.FolderRepo.GetFoldersThatMatchName(search);
-                Session[SessionData.IsSearchRequest] = true;
-                
+                model.CurrentPath = new List<FolderPath>();
+                model.Id = 0;
             }
             return View("FolderList",model);
         }
@@ -95,12 +94,14 @@ namespace archivesystemWebUI.Controllers
             {
                 if (!ModelState.IsValid)
                     return new HttpStatusCodeResult(400);
-
+                if (model.Id == model.NewParentFolder)
+                    return new HttpStatusCodeResult(405);
                 if (model.FileType == "folder")
                     repo.FolderRepo.MoveFolder(model.Id, model.NewParentFolder);
                 repo.Save();
                 return new HttpStatusCodeResult(200);
             }
+
             catch (Exception e)
             {
                 if (e.Message.Contains("folder already exist"))
@@ -147,7 +148,6 @@ namespace archivesystemWebUI.Controllers
                 DirectChildren = folder.Subfolders,
                 Id=folder.Id
             };
-            Session[SessionData.IsSearchRequest] = false;
             return View("FolderList", model);
         }
 
@@ -156,8 +156,6 @@ namespace archivesystemWebUI.Controllers
         [Route("folders/{parentId}")]
         public ActionResult BackToParent(int parentId)
         {
-
-            Session[SessionData.IsSearchRequest] = false;
             return RedirectToAction(nameof(GetFolderSubFolders), new { folderId = parentId });
         }
 
@@ -205,10 +203,19 @@ namespace archivesystemWebUI.Controllers
             return PartialView("_DeleteFolder", new DeleteFolderViewModel { 
                 Name = folder.Name, Id = id, ParentId =(int)folder.ParentId });
         }
-     
-        
-    
-        
+
+        //GET: /Folder/GetConfirmItemMovePartialView
+        public ActionResult GetConfirmItemMovePartialView()
+        {
+
+            ViewBag.ItemName = Request.QueryString["itemName"];
+            ViewBag.CurrentFolder=Request.QueryString["currentFolder"];
+            return PartialView("_ConfirmItemMove");
+        }
+
+
+
+
     }
 }
 
