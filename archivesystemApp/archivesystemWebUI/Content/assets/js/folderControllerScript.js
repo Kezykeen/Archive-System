@@ -40,7 +40,7 @@ async function deleteFolder() {
     let folderId = document.getElementById("delFolder-id").value;
     let parentId = document.getElementById("delFolder-parentId").value;
     console.log("reached here", folderId, parentId, "folders/delete")
-    let resp = await fetch("folders/delete", {
+    let resp = await fetch("/folders/delete", {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
