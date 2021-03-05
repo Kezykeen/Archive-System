@@ -8,12 +8,6 @@
 <!-- Datatable CSS -->
 <link href="~/Content/assets/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
 
-@if (TempData["UserAccessMessage"] != null)
-{
-    <div class="alert-danger text-center shadow" style="border-radius: 6px; padding: 10px; margin: 10px;">
-        @TempData["UserAccessMessage"]
-    </div>
-}
 @if (TempData["UserAddedMessage"] != null)
 {
     <div class="alert-success text-center  shadow " style="border-radius: 6px; padding: 10px; margin: 10px;">
@@ -103,7 +97,6 @@
                                 <div class="dropdown dropdown-action">
                                     <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                     <div class="dropdown-menu dropdown-menu-right">
-                                        @*<a href="@Url.Action("EditUser", "UserAccess", new { id = item.Id })" class="dropdown-item"> <i class="fa fa-edit" aria-hidden="true"></i> Edit</a>*@
                                         <a class="dropdown-item" href="#" onclick="getForm('/UserAccess/EditUser/', @item.Id)"><i class="fa fa-edit" aria-hidden="true"></i> Edit</a>
                                         <a class="dropdown-item" href="#" onclick="getForm('/UserAccess/DeleteUser/', @item.Id)"><i class="fa fa-trash" aria-hidden="true"></i> Remove</a>
                                     </div>
@@ -136,27 +129,7 @@
         var dataTable;
         $(document).ready(function () {
             dataTable = $(".datatable").DataTable();
-        });
-
-        function editUserAccess(id) {
-            debugger;
-            $.ajax({
-                url: "EditUserAccess" + "/" + id,
-                type: "GET",
-                contentType: "application/html;charset=UTF-8",
-                // dataType: "html",
-                success: function (response) {
-                    debugger;
-                    //console.log(response);
-                    $("#modalBody").html(response);
-                    $("#modal").modal("show");
-                },
-                failure: function (response) {
-                    alert(response.responseText);
-                }
-            });
-            return false;
-        }
+        });        
 
         function getForm(url, id) {
             $.get(url,
@@ -170,15 +143,6 @@
 
         function userPost(url) {
             var form = $("#EditUserAccessForm");
-            //form.validate();
-            //if (!form.valid()) {
-            //    $("#Email-error").addClass("field-validation-error");
-            //    $("#Email").addClass("input-validation-error");
-            //    $("#Email").keyup(function () {
-            //        $(this).removeClass("input-validation-error");
-            //    });
-            //    return;
-            //} else {
             var data = form.serialize();
             debugger;
             $.post(url,
@@ -188,14 +152,12 @@
                     if (response == "success") {
                         debugger;
                         $("#modal").modal("hide");
-                        //dataTable.ajax.reload();
                         window.location.reload();
                     }
                     else if (response == "failure") {
 
                     }
                 })
-            //}
         }
     </script>
 }

@@ -4,6 +4,9 @@
     ViewBag.Title = "ManageAccessLevel";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<link href="~/Content/assets/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
+
+
 @if (TempData["DeleteMessage"] != null)
 {
     <div class="alert-danger text-center" style="border-radius: 6px; padding: 10px; margin: 10px;">
@@ -42,13 +45,15 @@
     {
 
         <div class="col-auto float-right ml-auto">
-            <a href="@Url.Action("CreateAccessLevel", "AccessLevel")" class="btn add-btn shadow"><i class="fa fa-plus"></i> Create Access Level</a>
+            <a id="addBtn" href="@Url.Action("CreateAccessLevel", "AccessLevel")" class="btn add-btn shadow"><i class="fa fa-plus"></i> Create Access Level</a>
         </div>
 
         <h3 class="page-title">Manage Access Level</h3>
 
         <br />
-        <table class="table table-active  table-striped custom-table mb-0 datatable shadow">
+        <table id="table" class="table table-active  table-striped custom-table mb-0  shadow">
+            <thead>
+
             <tr>
                 <th>
                     @Html.DisplayNameFor(model => model.Level)
@@ -64,6 +69,8 @@
                 </th>
                 <th>Actions</th>
             </tr>
+            </thead>
+            <tbody>
 
             @foreach (var item in Model)
             {
@@ -93,9 +100,19 @@
                     </td>
                 </tr>
             }
+            </tbody>
 
         </table>
 
     }
 </div>
 
+@section scripts{
+    @Scripts.Render("~/Content/datatables/js")
+    @Styles.Render("~/Content/custom/css")
+    <script>
+        $("document").ready(function () {
+            $("#table").DataTable();
+        });
+    </script>
+}

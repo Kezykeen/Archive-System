@@ -55,18 +55,7 @@ namespace archivesystemWebUI.Controllers
             try
             {
                 var employee = _unitOfWork.EmployeeRepo.GetEmployeeByMail(model.Email);
-                if (employee == null)
-                {
-                    ModelState.AddModelError("EmployeeDoesNotExist", $"Employee with email \"{model.Email}\" does not exists. Please enter a different email");
-                    model.AccessLevels = _unitOfWork.AccessLevelRepo.GetAll();
-                    return View(model);
-                }
-                var userAccessDetail = _unitOfWork.AccessDetailsRepo.GetByEmployeeId(employee.Id);
-                if (userAccessDetail != null)
-                {
-                    TempData["UserAccessMessage"] = "User already has an access level!";
-                    return RedirectToAction(nameof(ManageUserAccess));
-                }
+               
                 var newAccessDetails = new AccessDetail
                 {
                     EmployeeId = employee.Id,
@@ -74,8 +63,10 @@ namespace archivesystemWebUI.Controllers
                     AccessCode = AccessCodeGenerator.NewCode(employee.StaffId),
                     Status = Status.Active
                 };
+
                 _unitOfWork.AccessDetailsRepo.Add(newAccessDetails);
                 await _unitOfWork.SaveAsync();
+
                 TempData["UserAddedMessage"] = "Successfully added user to an access level";
                 return RedirectToAction(nameof(ManageUserAccess));
             }
@@ -164,7 +155,23 @@ namespace archivesystemWebUI.Controllers
         }
 
         #endregion
-     
+
+
+        #region Validators
+
+       
+        [HttpPost]
+        public JsonResult ValidateEmail(string Email)
+        {
+            var employee = _unitOfWork.EmployeeRepo.GetEmployeeByMail(Email);
+            if (employee == null)
+            {
+                return Json("Employee with this email does not exists. Please enter a different email",  JsonRequestBehavior.AllowGet);
+            }
+            var accessDetails = _unitOfWork.AccessDetailsRepo.GetByEmployeeId(employee.Id);
+            return accessDetails == null? Json(true, JsonRequestBehavior.AllowGet) : Json("User already has an access level!", JsonRequestBehavior.AllowGet);
+        }
+        #endregion
 
     }
 }

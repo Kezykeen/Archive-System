@@ -518,8 +518,6 @@
     <Content Include="Views\UserAccess\EditUser.cshtml" />
     <Content Include="Views\UserAccess\DeleteUser.cshtml" />
     <Content Include="Views\Shared\_AddOrEditDepartment.cshtml" />
-    <Content Include="Views\AccessLevel\ManageUserAccess.cshtml" />
-    <Content Include="Views\AccessLevel\AddUserToAccess.cshtml" />
     <Content Include="Views\Employees\DelPrompt.cshtml" />
     <Content Include="Views\Employees\Details.cshtml" />
     <Content Include="Views\Home\EmployeeDashboard.cshtml" />
@@ -539,6 +537,7 @@
     <Content Include="Views\Shared\_CreateFolder.cshtml" />
     <Content Include="Views\Shared\_AddEditRole.cshtml" />
     <Content Include="Views\Shared\_DeleteRole.cshtml" />
+    <Content Include="Views\AccessLevel\EditAccessLevel.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
