@@ -1,4 +1,6 @@
-﻿.validation-summary-errors{
+﻿
+/*file manager page custom styles*/
+.validation-summary-errors{
     color:red;
 }
 
@@ -9,8 +11,16 @@
 .folderlist-folder:hover ,.file-menu li a:hover {
     background-color: #edeeef;
 }
+.fa-file-import:hover {
+    cursor: pointer;
+}
 
-#copyFolder {
+#focused-folder a {
+    color: #20c997;
+}
+
+/*custom alert message popup styles*/
+#alertMessageBox {
     opacity: 0;
     transition: opacity 2s;
     position: fixed;
@@ -21,24 +31,17 @@
     padding: 1.5em 2.5em;
 }
 
-#copyFolder.showFolder {
+#alertMessageBox.showMessage {
     opacity: 1;
     transition: opacity 1s;
 }
 
-#copyFolder.task-success {
+#alertMessageBox.task-success {
     background-image: linear-gradient(to right, #007bff,#6f42c1);
     color: white;
 }
 
-    #copyFolder.task-failure {
-        background-image: linear-gradient(to right, #e83e8c,#dc3545);
-        color: white;
-    }
-.fa-file-import:hover{
-    cursor:pointer;
-}
-
-#focused-folder a {
-    color: #20c997;
+#alertMessageBox.task-failure {
+    background-image: linear-gradient(to right, #e83e8c,#dc3545);
+    color: white;
 }

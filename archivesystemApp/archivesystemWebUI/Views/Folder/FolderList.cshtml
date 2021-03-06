@@ -7,40 +7,11 @@
     var currentPath = Model.CurrentPath;
     var currentFolderDepth = currentPath.Count();
     var subFolderLenght = Model.DirectChildren == null ? 0 : Model.DirectChildren.Count();
-    var headerTitle = (bool)Session[SessionData.IsSearchRequest] ? "Your Search Result" : $"{Model.Name} Folder ";
+    var headerTitle = Model.Id==0 ? "Your Search Result" : $"{Model.Name} Folder {Model.Id} ";
 
 }
 
-
-<div style="width:calc(100% - 4em); margin:0 2em;margin-top:2em; ">
-    @if (currentPath.Count()>0)
-    {
-        <ul class="breadcrumb">
-            @{ 
-                var index=currentFolderDepth;
-                while(index >=1)
-                {
-                    if (Model.CurrentPath[index - 1].Name == Model.Name)
-                    {
-                        <li class="breadcrumb-item" id="focused-folder">@Html.ActionLink(Model.CurrentPath[index-1].Name, $"/{@Model.CurrentPath[index-1].Id}", "folders")</li>
-                    }
-                    else
-                    {
-                    <li class="breadcrumb-item">@Html.ActionLink(Model.CurrentPath[index-1].Name, $"/{@Model.CurrentPath[index-1].Id}", "folders")</li>
-                    }
-                    index--;
-                }
-            }
-        </ul>
-    }
-
-
-    @if ((bool)Session[SessionData.IsSearchRequest] && subFolderLenght == 0)
-    {
-        <h3>No Folder Matches your search</h3>
-    }
-
-</div>
+@Html.Partial("_FolderPathPartial",Model)
 
 
 <!-- Page Content -->
@@ -101,7 +72,7 @@
                                                     ('@Url.Action("GetEditFolderPartialView", "Folder")', @folder.Id)"> Edit Folder</a>
                                                 <a href="#" class="dropdown-item" onclick="getPartialView
                                                     ('@Url.Action("GetDeleteFolderPartialView", "Folder")',@folder.Id)"> Delete Folder</a>
-                                                <a href="#" class="dropdown-item" onclick="CtrlC(@folder.Id, '@folder.Name', 'folder')"> Copy Folder</a>
+                                                <a href="#" class="dropdown-item" onclick="CtrlX(@folder.Id, '@folder.Name', 'folder')"> Cut Folder</a>
                                             </div>
                                         </li>
                                     }
@@ -133,15 +104,22 @@
                                 </a>
                             </div>
                             <span>File Manager</span>
-                            <div class="file-options">
 
+                            @{
+                                if (Model.Id!=0)
+                                {
+                                    <div class="file-options">
+                                        <span class="btn-file"><input type="file" class="upload"><i class="fa fa-upload"></i></span>
+                                    </div>
+                                    <div class="file-options">
+                                        @Html.AntiForgeryToken()
+                                        <span class="btn-file"><i class="fas fa-file-import" data-FolderId=@Model.Id id="paste-here" onclick="ConfirmMove('@Model.Name')"></i></span>
+                                    </div>
 
-                                <span class="btn-file"><input type="file" class="upload"><i class="fa fa-upload"></i></span>
-                            </div>
-                            <div class="file-options">
-                                @Html.AntiForgeryToken()
-                                <span class="btn-file"><i class="fa fa-paste" id="paste-here" onclick="CtrlV(@Model.Id)"></i></span>
-                            </div>
+                                }
+
+                            }
+
                         </div>
                         <div class="file-content">
                             <form class="file-search">
@@ -156,9 +134,7 @@
                                 <div class="file-scroll">
                                     <div class="file-content-inner">
                                         
-                                        <div id="copyFolder">
-
-                                        </div>
+                                        
                                     </div>
                                 </div>
                             </div>
