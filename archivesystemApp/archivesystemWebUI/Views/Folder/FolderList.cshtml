@@ -7,7 +7,7 @@
     var currentPath = Model.CurrentPath;
     var currentFolderDepth = currentPath.Count();
     var subFolderLenght = Model.DirectChildren == null ? 0 : Model.DirectChildren.Count();
-    var headerTitle = Model.Id==0 ? "Your Search Result" : $"{Model.Name} Folder {Model.Id} ";
+    var headerTitle = Model.Id==0 ? "Your Search Result" : $"{Model.Name} ";
 
 }
 
@@ -113,7 +113,7 @@
                                     </div>
                                     <div class="file-options">
                                         @Html.AntiForgeryToken()
-                                        <span class="btn-file"><i class="fas fa-file-import" data-FolderId=@Model.Id id="paste-here" onclick="ConfirmMove('@Model.Name')"></i></span>
+                                        <span class="btn-file"><i class="fa fa-paste" data-FolderId=@Model.Id id="paste-here" onclick="ConfirmMove('@Model.Name')"></i></span>
                                     </div>
 
                                 }

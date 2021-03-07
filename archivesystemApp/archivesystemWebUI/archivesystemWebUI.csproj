@@ -199,10 +199,12 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructures\MaxFileSizeMb.cs" />
     <Compile Include="Infrastructures\EmployeeValidator.cs" />
     <Compile Include="Infrastructures\NinjectDependenceResolver.cs" />
     <Compile Include="Infrastructures\MappingProfile.cs" />
     <Compile Include="Infrastructures\EmpUniqueProps.cs" />
+    <Compile Include="Infrastructures\UpsertFile.cs" />
     <Compile Include="Migrations\202102081444191_Initial.cs" />
     <Compile Include="Migrations\202102081444191_Initial.Designer.cs">
       <DependentUpon>202102081444191_Initial.cs</DependentUpon>
@@ -321,6 +323,7 @@
     <Compile Include="Models\EditUserviewModel.cs" />
     <Compile Include="Models\EnrollViewModel.cs" />
     <Compile Include="Models\FacultyViewModel.cs" />
+    <Compile Include="Models\FileMetaVm.cs" />
     <Compile Include="Models\FolderViewModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\UpdateEmployeeVM.cs" />
