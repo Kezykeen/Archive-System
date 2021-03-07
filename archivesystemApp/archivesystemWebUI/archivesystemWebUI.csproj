@@ -531,7 +531,6 @@
     <Content Include="Views\Roles\NewUserRoleView.cshtml" />
     <Content Include="Views\Roles\Index.cshtml" />
     <Content Include="Views\Roles\EditRoleView.cshtml" />
-    <Content Include="Views\AccessLevel\CreateAccessLevel.cshtml" />
     <Content Include="Views\AccessLevel\ManageAccessLevel.cshtml" />
     <Content Include="Views\Department\Create.cshtml" />
     <Content Include="Views\Department\Delete.cshtml" />
@@ -540,9 +539,6 @@
     <Content Include="Views\Department\Index.cshtml" />
     <Content Include="Views\Faculty\Index.cshtml" />
     <Content Include="Views\UserAccess\ManageUserAccess.cshtml" />
-    <Content Include="Views\UserAccess\AddUser.cshtml" />
-    <Content Include="Views\UserAccess\EditUser.cshtml" />
-    <Content Include="Views\UserAccess\DeleteUser.cshtml" />
     <Content Include="Views\Shared\_AddOrEditDepartment.cshtml" />
     <Content Include="Views\Employees\DelPrompt.cshtml" />
     <Content Include="Views\Employees\Details.cshtml" />
@@ -563,7 +559,8 @@
     <Content Include="Views\Shared\_CreateFolder.cshtml" />
     <Content Include="Views\Shared\_AddEditRole.cshtml" />
     <Content Include="Views\Shared\_DeleteRole.cshtml" />
-    <Content Include="Views\AccessLevel\EditAccessLevel.cshtml" />
+    <Content Include="Views\Shared\_AddAccessLevel.cshtml" />
+    <Content Include="Views\Shared\_EditAccessLevel.cshtml" />
     <Content Include="Views\Shared\_FolderPathPartial.cshtml" />
     <Content Include="Views\Shared\_ConfirmItemMove.cshtml" />
   </ItemGroup>

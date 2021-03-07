@@ -4,23 +4,7 @@
     ViewBag.Title = "ManageAccessLevel";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<link href="~/Content/assets/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
 
-
-@if (TempData["DeleteMessage"] != null)
-{
-    <div class="alert-danger text-center" style="border-radius: 6px; padding: 10px; margin: 10px;">
-        @TempData["DeleteMessage"]
-    </div>
-
-}
-@if (TempData["AccessMessage"] != null)
-{
-    <div class="alert-success text-center" style="border-radius: 6px; padding: 10px; margin: 10px;">
-        @TempData["AccessMessage"]
-    </div>
-
-}
 
 <div class="content container-fluid">
     <div class="page-header">
@@ -38,14 +22,15 @@
     @if (Model.Count() == 0)
     {
         <div class="" style="display: flex; justify-content: center; align-items: center; height:200px; ">
-            <a href="@Url.Action("CreateAccessLevel", "AccessLevel")" class="btn add-btn shadow"><i class="fa fa-plus"></i> Create an Access Level</a>
+            <a id="addBtn" href="#" class="btn add-btn shadow " onclick="GetForm('/AccessLevel/CreateAccessLevel/', null, '#CreateAccessLevelForm')"><i class="fa fa-plus"></i> Create an Access Level</a>
+
         </div>
     }
     else
     {
 
         <div class="col-auto float-right ml-auto">
-            <a id="addBtn" href="@Url.Action("CreateAccessLevel", "AccessLevel")" class="btn add-btn shadow"><i class="fa fa-plus"></i> Create Access Level</a>
+            <a id="addBtn" href="#" class="btn add-btn shadow " onclick="GetForm('/AccessLevel/CreateAccessLevel/', null, '#CreateAccessLevelForm')"><i class="fa fa-plus"></i> Create Access Level</a>
         </div>
 
         <h3 class="page-title">Manage Access Level</h3>
@@ -54,52 +39,46 @@
         <table id="table" class="table table-active  table-striped custom-table mb-0  shadow">
             <thead>
 
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Level)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.LevelDescription)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.CreatedAt)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.UpdatedAt)
-                </th>
-                <th>Actions</th>
-            </tr>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Level)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.LevelDescription)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.CreatedAt)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.UpdatedAt)
+                    </th>
+                    <th>Actions</th>
+                </tr>
             </thead>
             <tbody>
 
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Level)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.LevelDescription)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.CreatedAt)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.UpdatedAt)
-                    </td>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Level)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.LevelDescription)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CreatedAt)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UpdatedAt)
+                        </td>
 
-                    <td>
-                        <div class="dropdown dropdown-action">
-                            <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" href="@Url.Action("EditAccessLevel", "AccessLevel", new { id = item.Id })"><i class="fa fa-edit" aria-hidden="true"></i> Edit</a>
-                                @*<a class="dropdown-item" href="@Url.Action("DeleteAccessLevel", "AccessLevel", new {id = item.Id })"><i class="fa fa-trash" aria-hidden="true"></i> Delete</a>*@
+                        <td>
+                            <a class='btn btn-outline-primary m-l-5 m-r-5' onclick="GetForm('/AccessLevel/EditAccessLevel/',  @item.Id,  '#EditAccessLevelForm' )"><i class='fa fa-pencil m-r-5'></i> Edit</a>
 
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            }
+                        </td>
+                    </tr>
+                }
             </tbody>
 
         </table>
@@ -107,6 +86,17 @@
     }
 </div>
 
+<!-- BEGIN: Access Level Modal -->
+<div class="modal custom-modal fade" role="dialog" id="modal">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" id="modalContent">
+        </div>
+    </div>
+</div>
+<!-- END: Access Level Modal  -->
+
+
+<!-- BEGIN: Scripts -->
 @section scripts{
     @Scripts.Render("~/Content/datatables/js")
     @Styles.Render("~/Content/custom/css")
@@ -114,5 +104,19 @@
         $("document").ready(function () {
             $("#table").DataTable();
         });
+
+
+        function GetForm(url, id, formId) {
+            $.get(url,
+                { id: id },
+                function (response) {
+                    $("#modalContent").html(response);
+                    $("#modal").modal("show");
+                    $.validator.unobtrusive.parse(formId);
+                }
+            )
+        }
     </script>
 }
+
+<!-- END: Scripts -->
