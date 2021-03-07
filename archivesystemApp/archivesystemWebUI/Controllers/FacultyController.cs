@@ -67,7 +67,6 @@ namespace archivesystemWebUI.Controllers
                 _unitOfWork.FacultyRepo.Add(faculty);
                 
                int folderId= CreateFacultyFolder(faculty);
-               _unitOfWork.FolderRepo.SaveFolderPath(folderId);
             }
             else
             {
@@ -122,10 +121,10 @@ namespace archivesystemWebUI.Controllers
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
                 AccessLevelId = _unitOfWork.AccessLevelRepo.GetBaseLevel().Id,
-                ParentId=rootFolder.Id            
+                ParentId=rootFolder.Id,
+                IsRestricted=true
             };
             _unitOfWork.FolderRepo.Add(folder);
-            _unitOfWork.Save();
 
             return folder.Id;
         }

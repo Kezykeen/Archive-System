@@ -5,7 +5,7 @@ using System.Web;
 using archivesystemDomain.Entities;
 using Microsoft.AspNet.Identity.Owin;
 
-namespace archivesystemDomain.Services  
+namespace archivesystemDomain.Services
 {
     public static class SeedAppData
     {
@@ -16,7 +16,6 @@ namespace archivesystemDomain.Services
 
             if (!dbContext.Faculties.Any())
             {
-
                 // Seed faculties
                 List<Faculty> faculties = new List<Faculty>
                 {
@@ -60,35 +59,10 @@ namespace archivesystemDomain.Services
                 if (!dbContext.Folders.Any())
                 {
 
-                    //Seed Root folder
 
-                    var rootFolder = new Folder
-                    {
-                        Name = "Root",
-                        CreatedAt = DateTime.Now,
-                        UpdatedAt = DateTime.Now,
-                        IsDeletable = false,
-                        AccessLevel = new AccessLevel
-                        {
-                            Level = AccessLevelNames.BaseLevel,
-                            LevelDescription = "Base level",
-                            CreatedAt = DateTime.Now,
-                            UpdatedAt = DateTime.Now
-                        },
-                        Subfolders = new List<Folder>(),
-                        Path = "1#Root"
-
-                    };
-
-                    dbContext.Folders.Add(rootFolder);
-
-                    // rootFolder.Path = $"{rootFolder.Id}#{rootFolder.Name}";
-
-                    var facultyFolders = rootFolder.Subfolders;
-                    var facultyFolderId = 0;
+                    var facultyFolders = new List<Folder>();
                     foreach (var faculty in faculties)
                     {
-                        facultyFolderId++;
                         facultyFolders.Add(
 
                             new Folder
@@ -97,56 +71,50 @@ namespace archivesystemDomain.Services
                                 CreatedAt = DateTime.Now,
                                 UpdatedAt = DateTime.Now,
                                 AccessLevelId = 1,
-                                Subfolders = new List<Folder>(),
-                                ParentId = 1,
-                                Path = rootFolder.Path + $",{facultyFolderId}#{faculty.Name}"
-
-
+                                IsRestricted = true,
+                                Subfolders = new List<Folder>
+                                { 
+                                    new Folder
+                                    {
+                                        Name=faculty.Departments[0].Name,
+                                        CreatedAt = DateTime.Now,
+                                        UpdatedAt = DateTime.Now,
+                                        AccessLevelId = 1,
+                                        IsRestricted=true,
+                                    }
+                                }                           
                             });
                     }
 
-                    var deptFolderId = 0;
 
-                    foreach (var folder in facultyFolders)
+                    //Seed Root folder
+                    var rootFolder = new Folder
                     {
-                        foreach (var faculty in faculties)
+                        Name = "Root",
+                        CreatedAt = DateTime.Now,
+                        UpdatedAt = DateTime.Now,
+                        IsRestricted = true,
+                        AccessLevel = new AccessLevel
                         {
+                            Level = AccessLevelNames.BaseLevel,
+                            LevelDescription = "Base level",
+                            CreatedAt = DateTime.Now,
+                            UpdatedAt = DateTime.Now
+                        },
+                        Subfolders =facultyFolders
 
-                            if (folder.Name == faculty.Name)
-                            {
-                                foreach (var dept in faculty.Departments)
-                                {
-                                    deptFolderId++;
-                                    folder.Subfolders.Add(
-                                        new Folder
-                                        {
-                                            Name = dept.Name,
-                                            CreatedAt = DateTime.Now,
-                                            UpdatedAt = DateTime.Now,
-                                            AccessLevelId = 1,
-                                            ParentId = folder.Id,
-                                            Path = folder.Path + $",{deptFolderId}#{dept.Name}"
+                    };
+                    dbContext.Folders.Add(rootFolder);
+                };
+                dbContext.SaveChanges();
 
-                                        }
-                                    );
-                                }
-
-
-                            }
-                        }
-
-                    }
-                }
             }
 
-            // save changes
-            dbContext.SaveChanges();
-        }
-    }
-    }
 
         
-             
+        }
+    }
+}
           
 
            

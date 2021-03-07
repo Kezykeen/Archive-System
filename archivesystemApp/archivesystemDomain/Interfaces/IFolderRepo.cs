@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using archivesystemDomain.Services;
+
 
 namespace archivesystemDomain.Interfaces
 {
@@ -16,8 +18,9 @@ namespace archivesystemDomain.Interfaces
         List<Folder> GetFoldersThatMatchName(string name);
         Folder GetRootWithSubfolder();
         Folder GetFolder(int id);
-        Stack<Folder> GetFolderPath(int id);
-        void SaveFolderPath(int folderId);
+        List<FolderPath> GetFolderPath(int id);
+        
         Folder GetFacultyFolder(string name);
+        void MoveFolder(int id, int newParentFolderId);
     }
 }

@@ -14,4 +14,10 @@ namespace archivesystemDomain.Services
     {
         Max=7
     }
+
+    public class FolderPath
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
 }

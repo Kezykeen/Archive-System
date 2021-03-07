@@ -28,10 +28,8 @@ namespace archivesystemDomain.Entities
         public AccessLevel AccessLevel { get; set; }
 
         public ICollection<File> Files { get; set; }
-       
-        public string Path { get; set; }
       
-        public bool IsDeletable { get; set;}
+        public bool IsRestricted { get; set;}
  
         public DateTime CreatedAt {get;set;}
 
