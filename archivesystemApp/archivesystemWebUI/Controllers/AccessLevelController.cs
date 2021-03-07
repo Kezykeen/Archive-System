@@ -39,7 +39,7 @@ namespace archivesystemWebUI.Controllers
         
         public ActionResult CreateAccessLevel()
         {
-            return View();
+            return PartialView("_AddAccessLevel");
         }
 
         [HttpPost]
@@ -48,21 +48,22 @@ namespace archivesystemWebUI.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return PartialView("_AddAccessLevel", model);
             }
+
             try
             {
                 var newAccess = Mapper.Map<AccessLevel>(model);
                 _unitOfWork.AccessLevelRepo.Add(newAccess);
                 await _unitOfWork.SaveAsync();
-                TempData["AccessMessage"] = $"Access Level was succesfully created!";
-                return RedirectToAction(nameof(ManageAccessLevel));
+
+                return Json("success", JsonRequestBehavior.AllowGet);
 
             }
             catch (Exception e)
             {
                 ModelState.AddModelError("", e.Message);
-                return View(model);
+                return Json("failure", JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -71,7 +72,8 @@ namespace archivesystemWebUI.Controllers
             var accessLevel = _unitOfWork.AccessLevelRepo.Get(id);
             if (accessLevel == null)
                 return HttpNotFound();
-            return View(accessLevel);
+
+            return PartialView("_EditAccessLevel", accessLevel);
         }
 
         [HttpPost]
@@ -80,19 +82,21 @@ namespace archivesystemWebUI.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(accessLevel);
+                return PartialView("_EditAccessLevel", accessLevel);
             }
+
             try
             {
                 accessLevel.UpdatedAt = DateTime.Now;
                 _unitOfWork.AccessLevelRepo.EditDetails(accessLevel);
                 await _unitOfWork.SaveAsync();
-                return RedirectToAction(nameof(ManageAccessLevel));
+
+                return Json("success", JsonRequestBehavior.AllowGet);
             }
             catch (Exception e)
             {
                 ModelState.AddModelError("", e.Message);
-                return View(accessLevel);
+                return PartialView("_EditAccessLevel", accessLevel);
             }
         }
 

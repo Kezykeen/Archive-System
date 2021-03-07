@@ -1,50 +1,111 @@
-﻿@model archivesystemDomain.Entities.AccessDetail
+﻿@*@model archivesystemDomain.Entities.AccessDetail
 
 
-<div class="modal-header">
-    <h5 class="modal-title">Remove User from Access Level?</h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-    </button>
-</div>
+    <div class="modal-header">
+        <h5 class="modal-title">Remove User from Access Level?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
 
-<div class="modal-body">
-    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+    <div class="modal-body">
+        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 
-    <div class="text-center">
+        <div class="text-center">
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Employee.Name)
-        </dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.Employee.Name)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Employee.Name)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.Employee.Name)
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.AccessLevel.Level)
-        </dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.AccessLevel.Level)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.AccessLevel.Level)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.AccessLevel.Level)
+            </dd>
 
+
+        </div>
+
+
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+
+            <div class="form-group text-center">
+                <button class="btn btn-primary account-btn" type="submit">Remove</button>
+            </div>
+        }
 
     </div>
 
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+    }*@
 
-    @using (Html.BeginForm())
-    {
-        @Html.AntiForgeryToken()
+
+@model archivesystemDomain.Entities.AccessDetail
+
+    <div class="modal-body">
+        @using (Ajax.BeginForm("DeleteUser", "UserAccess", new AjaxOptions
+        {
+            OnSuccess = "OnSuccess",
+            OnFailure = "OnFailure"
 
 
-        <div class="form-group text-center">
-            <button class="btn btn-primary account-btn" type="submit">Remove</button>
-        </div>
-    }
+        }, new { Id = "DeleteUserAccessForm" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="form-header">
+                <input type="hidden" value=@Model.Id id="txtDeleteId" name="Id" />
+                <h3>Delete User</h3>
+                <p>Are you sure Remove User from Access Level?</p>
+            </div>
+            <div class="modal-btn">
+                <div class="row">
+                    <div class="col-6" >
+                        <button href="#" class="btn btn-primary continue-btn btn-block " type="submit">Delete</button>
 
-</div>
+                    </div>
+                    <div class="col-6">
+                        <button href="#" data-dismiss="modal" class="btn btn-primary cancel-btn btn-block ">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}
+
+    <script>
+        function OnSuccess(response) {
+            if (response == "success") {
+
+                $('#modal').modal('hide');
+
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'User has been removed!',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+
+                window.location.reload();
+
+            } else if (response == "failure") {
+
+                $("#modal").html(response);
+                $("#modal").modal("show");            }
+        }
+
+        function OnFailure(error) {
+            bootbox.alert("Internal server error. Please contact the Admin." + error);
+            $("#modal").modal("hide");
+        }
+    </script>

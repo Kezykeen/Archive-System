@@ -1,20 +1,27 @@
-﻿
-@model archivesystemWebUI.Models.EditUserViewModel
+﻿@model archivesystemWebUI.Models.EditUserViewModel
+
 
 
 <div class="modal-header">
-    <h5 class="modal-title">Update User Access Details</h5>
+    <h5 class="modal-title">Update User Access</h5>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
 
 <div class="modal-body">
-
-    @using (Html.BeginForm("EditUser", "UserAccess", FormMethod.Post, new { @class = "form-horizontal", role = "form", id = "EditUserAccessForm" }))
+    @using (Ajax.BeginForm("EditUser", "UserAccess", new AjaxOptions
     {
+        OnSuccess = "OnSuccess",
+        OnFailure = "OnFailure",
+        LoadingElementId = "saving",
+        LoadingElementDuration = 2000
+
+
+    }, new { id = "EditUserAccessForm" }))
+    {
+        @Html.ValidationSummary(true, "", new { @class = "" })
         @Html.AntiForgeryToken()
-        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 
         @Html.HiddenFor(model => model.AccessDetails.Id)
         @Html.HiddenFor(model => model.AccessDetails.EmployeeId)
@@ -48,17 +55,47 @@
             </div>
         </div>
 
+        <div class="submit-section">
+            <div id="saving" class="fa-2x" style="color: gray; display: none">
+                <i class="fa fa-cog fa-spin  fa-fw" aria-hidden="true"></i>
+            </div>
+            <button class="btn btn-primary submit-btn">Update</button>
 
-
-        <div class="form-group text-center">
-            <button class="btn btn-primary " onclick="userPost('/UserAccess/EditUser/')" type="button">Update</button>
         </div>
     }
-  
 </div>
-   
 
 
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}
+<script>
+    function OnSuccess(response) {
+        if (response == "success") {
+
+            $('#modal').modal('hide');
+
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: 'User Access Updated!',
+                showConfirmButton: false,
+                timer: 2000
+            });
+
+            window.location.reload();
+
+        } else if (response == "failure") {
+
+            $("#modal").html(response);
+            $("#modal").modal("show");
+            $.validator.unobtrusive.parse("#EditUserAccessForm");
+
+
+
+        }
+    }
+
+    function OnFailure(error) {
+        bootbox.alert("Internal server error. Please contact the Admin." + error);
+        $("#modal").modal("hide");
+    }
+</script>
+
