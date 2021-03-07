@@ -313,6 +313,10 @@
     <Compile Include="Migrations\202103051342124_modifiedFoldersEntity.Designer.cs">
       <DependentUpon>202103051342124_modifiedFoldersEntity.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202103071547416_FileMeta.cs" />
+    <Compile Include="Migrations\202103071547416_FileMeta.Designer.cs">
+      <DependentUpon>202103071547416_FileMeta.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CodeStatus.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -667,6 +671,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202103051342124_modifiedFoldersEntity.resx">
       <DependentUpon>202103051342124_modifiedFoldersEntity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202103071547416_FileMeta.resx">
+      <DependentUpon>202103071547416_FileMeta.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -109,12 +109,12 @@
         function GetForm(url, id, formId) {
             $.get(url,
                 { id: id },
-                function (response) {
+                function(response) {
                     $("#modalContent").html(response);
                     $("#modal").modal("show");
                     $.validator.unobtrusive.parse(formId);
                 }
-            )
+            );
         }
     </script>
 }
