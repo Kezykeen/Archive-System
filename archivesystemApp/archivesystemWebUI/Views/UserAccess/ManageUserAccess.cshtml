@@ -6,8 +6,7 @@
 }
 
 
-<div class="account-content">
-    <div class="container">
+    <div class="content container-fluid">
         <!-- Page Header -->
         <div class="page-header">
             <div class="row">
@@ -41,7 +40,7 @@
 
             </div>
             <br />
-            <table class="table-active table table-striped custom-table mb-0 datatable shadow">
+            <table id="table" class="table-active table table-striped custom-table mb-0 shadow">
                 <thead>
 
                     <tr>
@@ -95,7 +94,7 @@
             </table>
         }
     </div>
-</div>
+
 
 
 <!-- User Access Modal -->
@@ -115,7 +114,9 @@
     <script>
         var dataTable;
         $(document).ready(function () {
-            dataTable = $(".datatable").DataTable();
+            //dataTable = $(".datatable").DataTable();
+            $("#table").DataTable();
+        });
         });
 
         function GetForm(url, id, formId) {
