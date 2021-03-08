@@ -11,7 +11,7 @@
 <div class="modal-body">
     @using (Ajax.BeginForm("EditAccessLevel", "AccessLevel", new AjaxOptions
     {
-        OnSuccess = "OnSuccess",
+        OnSuccess = "OnEditAccessSuccess",
         OnFailure = "OnFailure",
         LoadingElementId = "saving",
         LoadingElementDuration = 2000
@@ -52,32 +52,3 @@
 </div>
 
 
-<script>
-    function OnSuccess(response) {
-        if (response == "success") {
-
-            $('#modal').modal('hide');
-
-            Swal.fire({
-                position: 'top-end',
-                icon: 'success',
-                title: 'Access Level was succesfully updated!',
-                showConfirmButton: false,
-                timer: 2000
-            });
-
-            window.location.reload();
-
-        } else if (response == "failure") {
-
-            $("#modal").html(response);
-            $("#modal").modal("show");
-            $.validator.unobtrusive.parse("#EditAccessLevelForm");
-        }
-    }
-
-    function OnFailure(error) {
-        bootbox.alert("Internal server error. Please contact the Admin." + error);
-        $("#modal").modal("hide");
-    }
-</script>

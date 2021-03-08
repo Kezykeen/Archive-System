@@ -396,6 +396,7 @@
     <Content Include="Content\assets\img\profiles\avatar-29.jpg" />
     <Content Include="Content\assets\img\user.jpg" />
     <Content Include="Content\assets\img\video-call.jpg" />
+    <Content Include="Content\assets\js\accesslevel.js" />
     <Content Include="Content\assets\js\app.js" />
     <Content Include="Content\assets\js\folderControllerScript.js" />
     <Content Include="Content\assets\js\bootbox.js" />
