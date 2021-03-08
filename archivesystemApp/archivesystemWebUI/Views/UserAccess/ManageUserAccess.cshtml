@@ -6,94 +6,94 @@
 }
 
 
-    <div class="content container-fluid">
-        <!-- Page Header -->
-        <div class="page-header">
-            <div class="row">
-                <div class="col-sm-12">
-                    <ul class="breadcrumb">
-                        <li class="breadcrumb-item active">Manage User Access</li>
-                    </ul>
-                </div>
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item active">Manage User Access</li>
+                </ul>
             </div>
         </div>
-        <hr />
-        <!-- /Page Header -->
-
-
-
-        @if (Model.Count() == 0)
-        {
-            <div class="" style="display: flex; justify-content: center; align-items: center; height:200px; ">
-                <a class="btn add-btn shadow" href="#" onclick="GetForm('/UserAccess/AddUser/',  null,  '#AddUserAccessForm' )"><i class="fa fa-plus"></i> Add User to an Access Level</a>
-
-            </div>
-        }
-        else
-        {
-
-            <div>
-                <div class="col-auto float-right">
-                    <a class="btn add-btn shadow" href="#" onclick="GetForm('/UserAccess/AddUser/',  null,  '#AddUserAccessForm' )"><i class="fa fa-plus"></i> Add User</a>
-                </div>
-                <h2 class="page-title">Manage User Access</h2>
-
-            </div>
-            <br />
-            <table id="table" class="table-active table table-striped custom-table mb-0 shadow">
-                <thead>
-
-                    <tr>
-
-                        <th>
-                            Employee Name
-                        </th>
-                        <th>
-                            Access Level
-                        </th>
-                        <th>
-                            Access Code
-                        </th>
-                        <th>
-                            Status
-                        </th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Employee.Name)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.AccessLevel.Level)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.AccessCode)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Status)
-                            </td>
-                            <td>
-                                <div class="dropdown dropdown-action">
-                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="#" onclick="GetForm('/UserAccess/EditUser/',  @item.Id,  '#EditUserAccessForm' )"><i class="fa fa-edit" aria-hidden="true"></i> Edit</a>
-                                        <a class="dropdown-item" href="#" onclick="GetForm('/UserAccess/DeleteUser/', @item.Id, null)"><i class="fa fa-trash" aria-hidden="true"></i> Remove</a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-
-                </tbody>
-
-            </table>
-        }
     </div>
+    <hr />
+    <!-- /Page Header -->
+
+
+
+    @if (Model.Count() == 0)
+    {
+        <div class="" style="display: flex; justify-content: center; align-items: center; height:200px; ">
+            <a class="btn add-btn shadow" href="#" onclick="GetForm('/UserAccess/AddUser/',  null,  '#AddUserAccessForm' )"><i class="fa fa-plus"></i> Add User to an Access Level</a>
+
+        </div>
+    }
+    else
+    {
+
+        <div>
+            <div class="col-auto float-right">
+                <a class="btn add-btn shadow" href="#" onclick="GetForm('/UserAccess/AddUser/',  null,  '#AddUserAccessForm' )"><i class="fa fa-plus"></i> Add User</a>
+            </div>
+            <h2 class="page-title">Manage User Access</h2>
+
+        </div>
+        <br />
+        <table id="table" class="table-active table table-striped custom-table mb-0 shadow">
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Employee Name
+                    </th>
+                    <th>
+                        Access Level
+                    </th>
+                    <th>
+                        Access Code
+                    </th>
+                    <th>
+                        Status
+                    </th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Employee.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AccessLevel.Level)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AccessCode)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Status)
+                        </td>
+                        <td>
+                            <div class="dropdown dropdown-action">
+                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="#" onclick="GetForm('/UserAccess/EditUser/',  @item.Id,  '#EditUserAccessForm' )"><i class="fa fa-edit" aria-hidden="true"></i> Edit</a>
+                                    <a class="dropdown-item" href="#" onclick="GetForm('/UserAccess/DeleteUser/', @item.Id, null)"><i class="fa fa-trash" aria-hidden="true"></i> Remove</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+    }
+</div>
 
 
 
@@ -106,27 +106,13 @@
 </div>
 <!-- /  User Access Modal  -->
 
+
+<!-- BEGIN: Scripts -->
 @section Scripts{
     @Scripts.Render("~/bundles/jqueryval")
 
     @Scripts.Render("~/Content/datatables/js")
     @Scripts.Render("~/Content/custom/css")
-    <script>
-        var dataTable;
-        $(document).ready(function () {
-            $("#table").DataTable();
-        });
-
-        function GetForm(url, id, formId) {
-            $.get(url,
-                { id: id },
-                function (response) {
-                    $("#modalContent").html(response);
-                    $("#modal").modal("show");
-                    $.validator.unobtrusive.parse(formId);
-                }
-            )
-        }
-                       
-    </script>
+    <script src="~/Content/assets/js/accesslevel.js"></script>
 }
+<!-- END: Scripts -->

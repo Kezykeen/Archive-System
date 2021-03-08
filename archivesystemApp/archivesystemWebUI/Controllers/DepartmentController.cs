@@ -9,6 +9,8 @@ using AutoMapper;
 
 namespace archivesystemWebUI.Controllers
 {
+
+    [Authorize(Roles = "Admin, Manager")]
     public class DepartmentController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

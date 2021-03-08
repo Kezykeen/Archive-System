@@ -16,9 +16,9 @@ namespace archivesystemWebUI.Models
         public int UploadedById  { get; set; }
         public int FolderId { get; set; }
         [Required]
+        [Display(Name = "Attach File")]
         [MaxFileSizeMb(250, ErrorMessage = "File Exceeds the Max Size (250Mb)")]
         public HttpPostedFileBase FileBase { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
+      
     }
 }

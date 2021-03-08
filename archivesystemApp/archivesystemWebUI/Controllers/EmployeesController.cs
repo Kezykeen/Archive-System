@@ -15,7 +15,8 @@ using Microsoft.AspNet.Identity.Owin;
 
 namespace archivesystemWebUI.Controllers
 {
-    
+
+    [Authorize(Roles = "Admin, Manager")]
     public class EmployeesController : Controller
     {
 

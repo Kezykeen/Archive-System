@@ -12,7 +12,7 @@
 <div class="modal-body">
     @using (Ajax.BeginForm("AddUser", "UserAccess", new AjaxOptions
     {
-        OnSuccess = "OnSuccess",
+        OnSuccess = "OnAddUserSuccess",
         OnFailure = "OnFailure",
         LoadingElementId = "saving",
         LoadingElementDuration = 2000
@@ -49,37 +49,4 @@
     }
 </div>
 
-
-<script>
-    function OnSuccess(response) {
-        if (response == "success") {
-
-            $('#modal').modal('hide');
-
-            Swal.fire({
-                position: 'top-end',
-                icon: 'success',
-                title: 'Success: User has been given an Access!',
-                showConfirmButton: false,
-                timer: 2000
-            });
-
-            window.location.reload();
-
-        } else if (response == "failure") {
-
-            $("#modal").html(response);
-            $("#modal").modal("show");
-            $.validator.unobtrusive.parse("#AddUserAccessForm");
-
-
-
-        }
-    }
-
-    function OnFailure(error) {
-        bootbox.alert("Internal server error. Please contact the Admin." + error);
-        $("#modal").modal("hide");
-    }
-</script>
 

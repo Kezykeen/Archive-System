@@ -9,6 +9,8 @@ using System.Web.Mvc;
 
 namespace archivesystemWebUI.Controllers
 {
+
+    [Authorize(Roles = "Admin, Manager")]
     public class UserAccessController : Controller
     {
         #region FIELD
