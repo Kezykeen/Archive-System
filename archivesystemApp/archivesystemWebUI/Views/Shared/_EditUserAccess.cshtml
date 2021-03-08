@@ -12,7 +12,7 @@
 <div class="modal-body">
     @using (Ajax.BeginForm("EditUser", "UserAccess", new AjaxOptions
     {
-        OnSuccess = "OnSuccess",
+        OnSuccess = "OnEditUserSuccess",
         OnFailure = "OnFailure",
         LoadingElementId = "saving",
         LoadingElementDuration = 2000
@@ -65,37 +65,4 @@
     }
 </div>
 
-
-<script>
-    function OnSuccess(response) {
-        if (response == "success") {
-
-            $('#modal').modal('hide');
-
-            Swal.fire({
-                position: 'top-end',
-                icon: 'success',
-                title: 'User Access Updated!',
-                showConfirmButton: false,
-                timer: 2000
-            });
-
-            window.location.reload();
-
-        } else if (response == "failure") {
-
-            $("#modal").html(response);
-            $("#modal").modal("show");
-            $.validator.unobtrusive.parse("#EditUserAccessForm");
-
-
-
-        }
-    }
-
-    function OnFailure(error) {
-        bootbox.alert("Internal server error. Please contact the Admin." + error);
-        $("#modal").modal("hide");
-    }
-</script>
 

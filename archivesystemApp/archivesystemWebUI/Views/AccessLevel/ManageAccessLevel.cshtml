@@ -95,28 +95,10 @@
 </div>
 <!-- END: Access Level Modal  -->
 
-
 <!-- BEGIN: Scripts -->
 @section scripts{
     @Scripts.Render("~/Content/datatables/js")
     @Styles.Render("~/Content/custom/css")
-    <script>
-        $("document").ready(function () {
-            $("#table").DataTable();
-        });
-
-
-        function GetForm(url, id, formId) {
-            $.get(url,
-                { id: id },
-                function(response) {
-                    $("#modalContent").html(response);
-                    $("#modal").modal("show");
-                    $.validator.unobtrusive.parse(formId);
-                }
-            );
-        }
-    </script>
+    <script src="~/Content/assets/js/accesslevel.js"></script>
 }
-
 <!-- END: Scripts -->
