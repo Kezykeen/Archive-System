@@ -11,6 +11,8 @@ using AutoMapper;
 
 namespace archivesystemWebUI.Controllers
 {
+
+    [Authorize]
     public class FolderController : Controller
     {
         private IUnitOfWork repo { get; set; }

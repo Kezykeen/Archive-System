@@ -1,0 +1,65 @@
+﻿@model archivesystemWebUI.Models.FileMetaVm
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Archive Item</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @using (Ajax.BeginForm("Enroll", "Employees", new AjaxOptions
+                {
+                    OnSuccess = "OnUploadSuccess",
+                    OnFailure = "OnUploadFailure",
+                    LoadingElementId = "saving",
+                    LoadingElementDuration = 2000
+
+                }, new { id = "upload" }))
+                {
+                    <div class="form-horizontal">
+                    @Html.ValidationSummary(true, "", new { @class = "" })
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(e => e.FolderId)
+                    @Html.HiddenFor(e => e.UploadedById)
+                   
+                       
+                            <div class="form-group">
+                                @Html.LabelFor(e => e.Title, new {@class= "control-label col-md-6" })
+                                
+                                <div class="col-md-12">
+                                    @Html.TextBoxFor(e => e.Title, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(e => e.Title)
+                                </div>
+
+                            </div>
+                      
+                  
+                            <div class="form-group">
+                                @Html.LabelFor(e => e.FileBase, new { @class = "control-label col-md-6" })
+                                <div class="col-md-12">
+                                    @Html.TextBoxFor(e => e.FileBase, new { @class = "form-control", type="file" })
+                                    @Html.ValidationMessageFor(e => e.FileBase)
+                                </div>
+                               
+
+                            </div>
+                       
+                      
+
+
+                  
+
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn">Upload</button>
+                        <div id="saving" class="fa-2x" style="color: gray; display: none">
+                            <i class="fa fa-cog fa-spin  fa-fw" aria-hidden="true"></i>
+                            <span class="sr-only">Uploading. Hang tight!</span>
+                        </div>
+                    </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+    </div>

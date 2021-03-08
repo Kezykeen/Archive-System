@@ -7,11 +7,11 @@
     var currentPath = Model.CurrentPath;
     var currentFolderDepth = currentPath.Count();
     var subFolderLenght = Model.DirectChildren == null ? 0 : Model.DirectChildren.Count();
-    var headerTitle = Model.Id==0 ? "Your Search Result" : $"{Model.Name} ";
+    var headerTitle = Model.Id == 0 ? "Your Search Result" : $"{Model.Name} ";
 
 }
 
-@Html.Partial("_FolderPathPartial",Model)
+@Html.Partial("_FolderPathPartial", Model)
 
 
 <!-- Page Content -->
@@ -69,9 +69,9 @@
                                             <div class="dropdown-menu dropdown-menu-right">
 
                                                 <a href="#" class="dropdown-item" onclick="getPartialView
-                                                    ('@Url.Action("GetEditFolderPartialView", "Folder")', @folder.Id)"> Edit Folder</a>
+    ('@Url.Action("GetEditFolderPartialView", "Folder")', @folder.Id)"> Edit Folder</a>
                                                 <a href="#" class="dropdown-item" onclick="getPartialView
-                                                    ('@Url.Action("GetDeleteFolderPartialView", "Folder")',@folder.Id)"> Delete Folder</a>
+    ('@Url.Action("GetDeleteFolderPartialView", "Folder")',@folder.Id)"> Delete Folder</a>
                                                 <a href="#" class="dropdown-item" onclick="CtrlX(@folder.Id, '@folder.Name', 'folder')"> Cut Folder</a>
                                             </div>
                                         </li>
@@ -106,10 +106,10 @@
                             <span>File Manager</span>
 
                             @{
-                                if (Model.Id!=0)
+                                if (Model.Id != 0)
                                 {
                                     <div class="file-options">
-                                        <span class="btn-file"><input type="file" class="upload"><i class="fa fa-upload"></i></span>
+                                <span class="btn-fil"><a href="#" class=" text-dark modal-upload" data-toggle="modal" data-target="@Url.Action("New", "FileMeta")"><i class="fa fa-upload"></i></a></span>
                                     </div>
                                     <div class="file-options">
                                         @Html.AntiForgeryToken()
@@ -119,7 +119,7 @@
                                 }
 
                             }
-
+                     
                         </div>
                         <div class="file-content">
                             <form class="file-search">
@@ -133,8 +133,8 @@
                             <div class="file-body">
                                 <div class="file-scroll">
                                     <div class="file-content-inner">
-                                        
-                                        
+
+
                                     </div>
                                 </div>
                             </div>
@@ -155,9 +155,39 @@
     </div>
 </div>
 <!-- / Folder Modal -->
+<!-- upload Modal -->
+<div id="new_upload" class="modal custom-modal fade" role="dialog">
 
+</div>
+<!-- / Upload Modal -->
+<!-- edit-upload Modal -->
+<div id="edit_upload" class="modal custom-modal fade" role="dialog">
 
+</div>
+<!-- / edit-Upload Modal -->
 
 @section scripts{
-    <script src="~/Content/assets/js/folderControllerScript.js"></script>
+    <script src="~/Content/assets/js/folderControllerScript.js">
+    </script>
+    
+    <script>
+        
+        $(".modal-upload").on("click", function (e) {
+            debugger;
+            e.preventDefault();
+            var  addButton = $(this);
+            $("#new_upload").remove;
+            $.get(addButton.data("target")).done(
+                function(data) {
+
+                    $("#new_upload").html(data);
+
+                    $("#new_upload").modal("show");
+                    $.validator.unobtrusive.parse("#upload");
+
+                });
+              
+
+        });
+    </script>
 }

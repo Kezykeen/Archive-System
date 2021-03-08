@@ -188,6 +188,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Api\UsersController.cs" />
     <Compile Include="Controllers\CSRF.cs" />
+    <Compile Include="Controllers\FileMetaController.cs" />
     <Compile Include="Controllers\UserAccessController.cs" />
     <Compile Include="Controllers\DepartmentController.cs" />
     <Compile Include="Controllers\EmployeesController.cs" />
@@ -338,6 +339,7 @@
     <Compile Include="Repository\DeptRepository.cs" />
     <Compile Include="Repository\EmployeeRepository.cs" />
     <Compile Include="Repository\FacultyRepository.cs" />
+    <Compile Include="Repository\FileMetaRepo.cs" />
     <Compile Include="Repository\FolderRepo.cs" />
     <Compile Include="Repository\Repository.cs" />
     <Compile Include="Repository\AccessLevelRepository.cs" />
@@ -567,6 +569,7 @@
     <Content Include="Views\Shared\_EditAccessLevel.cshtml" />
     <Content Include="Views\Shared\_FolderPathPartial.cshtml" />
     <Content Include="Views\Shared\_ConfirmItemMove.cshtml" />
+    <Content Include="Views\FileMeta\New.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

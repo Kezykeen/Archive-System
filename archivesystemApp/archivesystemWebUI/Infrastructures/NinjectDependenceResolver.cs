@@ -45,6 +45,7 @@ namespace archivesystemWebUI.Infrastructures
             kernel.Bind<IFolderRepo>().To<FolderRepo>();
             kernel.Bind<IUnitOfWork>().To<UnitOfWork>();
             kernel.Bind<IFacultyRepository>().To<FacultyRepository>();
+            kernel.Bind<IFileMetaRepo>().To<FileMetaRepo>();
         }
     }
 }
