@@ -8,6 +8,7 @@ using archivesystemDomain.Interfaces;
 using archivesystemDomain.Services;
 using archivesystemWebUI.Models;
 using AutoMapper;
+using Microsoft.AspNet.Identity;
 
 namespace archivesystemWebUI.Controllers
 {
@@ -24,21 +25,15 @@ namespace archivesystemWebUI.Controllers
         [Route("folders")]
         public ActionResult Index(string search=null)
         {
-            FolderViewModel model = new FolderViewModel(); 
-            if (string.IsNullOrEmpty(search))
-            {
-                var rootFolder = repo.FolderRepo.GetRootWithSubfolder();
-                model.Name="Root";
-                model.DirectChildren = rootFolder.Subfolders;
-                model.CurrentPath = new List<FolderPath> { new FolderPath { Id = rootFolder.Id, Name = "Root" } };
-                model.Id = rootFolder.Id;
-            }
+            if(Session["accessVerified"] != null)
+                Session["accessverified"] = "active";
+                
+            FolderViewModel model;
+            if (HttpContext.User.IsInRole("Admin"))
+                model = GetDepartmentFolder(search);
             else
-            {
-                model.DirectChildren = repo.FolderRepo.GetFoldersThatMatchName(search);
-                model.CurrentPath = new List<FolderPath>();
-                model.Id = 0;
-            }
+                model = GetAdminRootFolder(search);
+
             return View("FolderList",model);
         }
 
@@ -137,8 +132,14 @@ namespace archivesystemWebUI.Controllers
             var folder = repo.FolderRepo.GetFolder(folderId);
             if (folder.Name == "Root")
                 return RedirectToAction(nameof(Index));
+
+            var userId = User.Identity.GetUserId();
+            var user = repo.EmployeeRepo.GetEmployeeByUserId(userId);
             var folderpath = repo.FolderRepo.GetFolderPath(folderId);
-            
+            if(folderpath.Any(x => x.Name == user.Department.Name))
+            {
+
+            }
 
             var model = new FolderViewModel
             {
@@ -213,9 +214,32 @@ namespace archivesystemWebUI.Controllers
             return PartialView("_ConfirmItemMove");
         }
 
+        private FolderViewModel GetAdminRootFolder(string search=null)
+        {
+            FolderViewModel model = new FolderViewModel();
+            if (string.IsNullOrEmpty(search))
+            {
+                var rootFolder = repo.FolderRepo.GetRootWithSubfolder();
+                model.Name = "Root";
+                model.DirectChildren = rootFolder.Subfolders;
+                model.CurrentPath = new List<FolderPath> { new FolderPath { Id = rootFolder.Id, Name = "Root" } };
+                model.Id = rootFolder.Id;
+            }
+            else
+            {
+                model.DirectChildren = repo.FolderRepo.GetFoldersThatMatchName(search);
+                model.CurrentPath = new List<FolderPath>();
+                model.Id = 0;
+            }
+            return model;
+        }
 
+        private FolderViewModel GetDepartmentFolder (string search = null)
+        {
+            return new FolderViewModel();
+        }
 
-
+       
     }
 }
 

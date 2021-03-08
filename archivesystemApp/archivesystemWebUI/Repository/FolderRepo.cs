@@ -68,6 +68,7 @@ namespace archivesystemWebUI.Repository
 
         public Folder GetFolder(int id)
         {
+            
             var folder = _context.Folders.Include(x => x.Subfolders).Include(x => x.Files).Single(x => x.Id == id);
             return folder;
         }

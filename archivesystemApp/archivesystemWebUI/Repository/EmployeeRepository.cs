@@ -90,6 +90,11 @@ namespace archivesystemWebUI.Repository
                  StringComparison.OrdinalIgnoreCase) && e.Id != userId.Value);
         }
 
+        public Employee GetEmployeeByUserId(string id)
+        {
+            return _context.Employees.Include(x=> x.Department).Single(x=> x.UserId== id);
+        }
+
         public ApplicationDbContext ApplicationDbContext => Context as ApplicationDbContext;
     }
 }
