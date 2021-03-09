@@ -89,6 +89,10 @@ namespace archivesystemWebUI.Infrastructures
             Mapper.CreateMap<DepartmentViewModel,Folder>()
                 .ForMember(dest => dest.Id ,opt => opt.Ignore())
                 .ForMember(dest => dest.UpdatedAt, opt => opt.UseValue(DateTime.Now));
+            Mapper.CreateMap<FacultyViewModel, Folder>()
+               .ForMember(dest => dest.Id, opt => opt.Ignore())
+               .ForMember(dest => dest.UpdatedAt, opt => opt.UseValue(DateTime.Now))
+               .ForMember(dest => dest.FacultyId, opt => opt.MapFrom(src=> src.Id));
 
             Mapper.CreateMap<Folder, FolderViewModel>()
                 .ForMember(x=> x.DirectChildren,opt=> opt.MapFrom(src=> src.Subfolders));

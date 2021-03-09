@@ -59,13 +59,18 @@ namespace archivesystemWebUI.Repository
         {
             var folderInDb = _context.Folders.Include(x=> x.Department).SingleOrDefault(x => x.IsRestricted && x.DepartmentId == model.DepartmentId);
             folderInDb.Name = model.Name;
-            folderInDb.UpdatedAt = DateTime.Now;
             if(folderInDb.Department.FacultyId != model.FacultyId)
             {
                 var newParentFolder = _context.Folders.SingleOrDefault(x => x.IsRestricted && x.FacultyId == model.FacultyId);
                 folderInDb.ParentId = newParentFolder.Id;
             }
             
+        }
+
+        public void UpdateFacultyFolder(Folder model)
+        {
+            var folderInDb = _context.Folders.Include(x => x.Department).SingleOrDefault(x => x.IsRestricted && x.FacultyId == model.FacultyId);
+            folderInDb.Name = model.Name;
         }
 
         public void DeleteFolder(int folderId)

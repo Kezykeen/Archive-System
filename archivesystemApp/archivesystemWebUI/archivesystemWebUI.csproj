@@ -486,9 +486,9 @@
     <Content Include="Content\assets\plugins\summernote\dist\font\summernote.eot" />
     <Content Include="Content\assets\plugins\summernote\dist\font\summernote.ttf" />
     <Content Include="Content\assets\plugins\summernote\dist\font\summernote.woff" />
-    <Content Include="ApiKeys.config" />
     <Content Include="libman.json" />
     <Content Include="bower.json" />
+    <None Include="ApiKeys.config" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />

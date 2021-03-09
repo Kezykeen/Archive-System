@@ -22,5 +22,6 @@ namespace archivesystemDomain.Interfaces
         void UpdateDepartmentalFolder(Folder model);
         Folder GetFacultyFolder(string name);
         void MoveFolder(int id, int newParentFolderId);
+        void UpdateFacultyFolder(Folder model);
     }
 }

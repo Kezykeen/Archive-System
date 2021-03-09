@@ -74,6 +74,8 @@ namespace archivesystemWebUI.Controllers
                 getFaculty.UpdatedAt = DateTime.Now;
 
                 _unitOfWork.FacultyRepo.Update(getFaculty);
+                var folder = Mapper.Map<Folder>(model);
+                _unitOfWork.FolderRepo.UpdateFacultyFolder(folder);
             }
             await _unitOfWork.SaveAsync();
 
