@@ -5,7 +5,7 @@
     var currentPath = Model.CurrentPath;
     var currentFolderDepth = currentPath.Count();
     var subFolderLenght = Model.DirectChildren == null ? 0 : Model.DirectChildren.Count();
-    var headerTitle = Model.Id==0 ? "Your Search Result" : $"{Model.Name} Folder ";
+    var headerTitle = Model.Id == 0 ? "Your Search Result" : $"{Model.Name} Folder ";
 
 }
 
@@ -13,7 +13,19 @@
 
 </div>
 
+
 <div style="width:calc(100% - 4em); margin:0 2em;margin-top:2em; ">
+    @{
+        if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Error!</strong> @ViewBag.ErrorMessage
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+    }
     @if (currentPath.Count() > 0)
     {
         <ul class="breadcrumb">
@@ -36,7 +48,7 @@
     }
 
 
-    @if (Model.Id==0 && subFolderLenght == 0)
+    @if (Model.Id == 0 && subFolderLenght == 0)
     {
         <h3>No Folder Matches your search</h3>
     }

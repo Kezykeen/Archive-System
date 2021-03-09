@@ -26,7 +26,6 @@ namespace archivesystemWebUI.Controllers
         [Route("folders")]
         public ActionResult Index(string search = null)
         {
-
             FolderViewModel model = GetRootViewModel(search);
             if (!HttpContext.User.IsInRole("Admin") && search == null)
             {
@@ -35,7 +34,9 @@ namespace archivesystemWebUI.Controllers
                 var userFaculty = repo.FacultyRepo.Get(user.Department.FacultyId);
                 model.DirectChildren = model.DirectChildren.Where(x => x.Name == userFaculty.Name).ToList();
             }
+
             ViewBag.AllowCreateFolder=false;
+            ViewBag.ErrorMessage = TempData["errorMessage"];
             return View("FolderList", model);
         }
 
@@ -139,18 +140,11 @@ namespace archivesystemWebUI.Controllers
 
             if (!HttpContext.User.IsInRole("Admin"))
             {
-                var userId = HttpContext.User.Identity.GetUserId();
-                var user = repo.EmployeeRepo.GetEmployeeByUserId(userId);
-                var userAccessLevel = repo.AccessDetailsRepo.GetByEmployeeId(user.Id).AccessLevelId;
-
-                if (folder.FacultyId != null && user.Department.FacultyId != folder.FacultyId)
-                    return RedirectToAction("Login", "Account");
-                if(folder.FacultyId ==null)
+                if (AccessNotGranted(folder))
                 {
-                    if (folder.AccessLevelId > userAccessLevel || folder.DepartmentId != user.DepartmentId)
-                        return RedirectToAction("Login", "Account");
+                    TempData["errorMessage"] = $"You are not authorized to view {folder.Name} folder";
+                    return RedirectToAction(nameof(Index));
                 }
-                folder.Subfolders = folder.Subfolders.Where(x => x.AccessLevelId <= userAccessLevel).ToList();
             }
 
             var model = Mapper.Map<FolderViewModel>(folder);
@@ -251,9 +245,22 @@ namespace archivesystemWebUI.Controllers
             return new FolderViewModel();
         }
 
-        private void RestrictAccess(Folder folder, int userAccesslevel, Employee user )
+        private bool AccessNotGranted(Folder folder )
         {
-            folder.Subfolders = folder.Subfolders.Where(x => x.AccessLevelId <= userAccesslevel).ToList();
+            var userId = HttpContext.User.Identity.GetUserId();
+            var user = repo.EmployeeRepo.GetEmployeeByUserId(userId);
+            var userAccessLevel = repo.AccessDetailsRepo.GetByEmployeeId(user.Id).AccessLevelId;
+
+            if (folder.FacultyId != null && user.Department.FacultyId != folder.FacultyId)
+                return true;
+
+            if (folder.FacultyId == null)
+            {
+                if (folder.AccessLevelId > userAccessLevel || folder.DepartmentId != user.DepartmentId)
+                    return true;
+            }
+            folder.Subfolders = folder.Subfolders.Where(x => x.AccessLevelId <= userAccessLevel).ToList();
+            return false;
         }
     }
 }
