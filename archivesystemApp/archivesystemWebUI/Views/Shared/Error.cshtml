@@ -2,8 +2,28 @@
 
 @{
     ViewBag.Title = "Error";
+    Layout = "../Shared/_AccountLayout.cshtml";
+
 }
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
 
+<div class="account-content">
+    <div class="container">
+        @Html.ActionLink("Home", "Index", "Home", "", new { @class = "btn btn-primary apply-btn" })
+
+        <!-- Account Logo -->
+        <div class="account-logo">
+            <a href="#"><img src="/Content/assets/img/logo2.png" alt="Archive System"></a>
+        </div>
+        <!-- /Account Logo -->
+
+        <div class="account-box shadow">
+            <div class="account-wrapper">
+                <h3 class="account-title text-danger">Error.</h3>
+                <br />
+                <p class="account-subtitle text-danger">An error occurred while processing your request.</p>
+                <hr />
+            </div>
+        </div>
+    </div>
+</div>
