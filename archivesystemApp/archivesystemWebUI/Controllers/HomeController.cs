@@ -8,6 +8,7 @@ using Microsoft.AspNet.Identity;
 
 namespace archivesystemWebUI.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -23,8 +24,8 @@ namespace archivesystemWebUI.Controllers
         }
 
         public ActionResult EmployeeDashboard()
-        {
-           
+        {          
+
 
             return View();
         }

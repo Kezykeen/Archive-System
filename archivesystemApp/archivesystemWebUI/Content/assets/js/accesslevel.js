@@ -81,7 +81,7 @@ function OnAddUserSuccess(response) {
         window.location.reload();
 
     } else if (response == "failure") {
-
+ 
         $("#modal").html(response);
         $("#modal").modal("show");
         $.validator.unobtrusive.parse("#AddUserAccessForm");
@@ -137,6 +137,6 @@ function OnDeleteUserSuccess(response) {
 }
 
 function OnFailure(error) {
-    bootbox.alert("Internal server error. Please contact the Admin." + error);
+    bootbox.alert("Internal server error. Please contact the Admin.");
     $("#modal").modal("hide");
 }
