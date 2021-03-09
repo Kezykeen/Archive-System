@@ -39,30 +39,16 @@ namespace archivesystemWebUI.Controllers
         {
             var department = id != null ? _unitOfWork.DeptRepo.Get(id.Value) : new Department();
             var model = Mapper.Map<DepartmentViewModel>(department);
+            model.Faculties = _unitOfWork.FacultyRepo.GetAll();
 
-            ViewBag.FacultyId = new SelectList(_unitOfWork.FacultyRepo.GetAll(), "Id", "Name", model.FacultyId);
             return PartialView("_AddOrEditDepartment", model);
         }
 
         [HttpPost]
         // POST: Department/AddOrEdit
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> AddOrEdit(DepartmentViewModel model)
+        public ActionResult AddOrEdit(DepartmentViewModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                ViewBag.FacultyId = new SelectList(_unitOfWork.FacultyRepo.GetAll(), "Id", "Name", model.FacultyId);
-                return Json("failure", JsonRequestBehavior.AllowGet);
-            }
-
-            // Check if the entry name exists & change is from a different entry and return custom message
-            var allDepartments = _unitOfWork.DeptRepo.GetAllToList();
-            if (allDepartments.Any(x=> x.Name == model.Name && x.Id != model.Id))
-            {
-                var message = "Name already exist";
-                return Json(message, JsonRequestBehavior.AllowGet);
-            }
-
             var department = Mapper.Map<Department>(model);
             if (model.Id == 0)
             {
@@ -81,9 +67,10 @@ namespace archivesystemWebUI.Controllers
                 getDepartment.UpdatedAt = DateTime.Now;
                 _unitOfWork.DeptRepo.Update(getDepartment);
             }
-            await _unitOfWork.SaveAsync();
+            _unitOfWork.Save();
 
-            ViewBag.FacultyId = new SelectList(_unitOfWork.FacultyRepo.GetAll(), "Id", "Name", model.FacultyId);
+            model.Faculties = _unitOfWork.FacultyRepo.GetAll();
+           
             return Json("success", JsonRequestBehavior.AllowGet);
         }
 
@@ -137,6 +124,14 @@ namespace archivesystemWebUI.Controllers
             return;
         }
 
-        
+        [HttpPost]
+        public JsonResult DepartmentNameCheck(string name, int id)
+        {
+            var departments = _unitOfWork.DeptRepo.GetAllToList();
+
+            // Check if the entry name exists & change is from a different entry and return error message from viewModel
+            bool status = departments.Any(x => x.Name == name && x.Id != id);
+            return Json(!status, JsonRequestBehavior.AllowGet);
+        }
     }
 }
