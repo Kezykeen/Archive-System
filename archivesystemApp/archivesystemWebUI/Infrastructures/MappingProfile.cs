@@ -9,7 +9,7 @@ using archivesystemWebUI.Models;
 using archivesystemWebUI.Models.DataLayers;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
-using archivesystemWebUI.Models; 
+
 
 
 namespace archivesystemWebUI.Infrastructures
@@ -73,13 +73,30 @@ namespace archivesystemWebUI.Infrastructures
                 .ForMember(dest => dest.RoleId, opt => opt.MapFrom( src => UserManager.FindById(src.UserId).Roles.SingleOrDefault().RoleId))
                 .ForMember(dest => dest.Roles, opt => opt.MapFrom( src => RoleManager.Roles.ToList()))
                 ;
-            Mapper.CreateMap<CreateAccessLevelViewModel, AccessLevel>().ForMember(dest => dest.CreatedAt, opt => opt.UseValue<DateTime>(DateTime.Now)).ForMember(m => m.UpdatedAt, opt => opt.UseValue<DateTime>(DateTime.Now));
+            Mapper.CreateMap<CreateAccessLevelViewModel, AccessLevel>()
+                .ForMember(dest => dest.CreatedAt, opt => opt.UseValue<DateTime>(DateTime.Now))
+                .ForMember(m => m.UpdatedAt, opt => opt.UseValue<DateTime>(DateTime.Now));
 
            
             Mapper.CreateMap<EnrollViewModel, Employee>();
             Mapper.CreateMap<Department, DepartmentViewModel>().ReverseMap();
             Mapper.CreateMap<Faculty, FacultyViewModel>().ReverseMap();
-            Mapper.CreateMap<CreateAccessLevelViewModel, AccessLevel>().ForMember(dest => dest.CreatedAt, opt => opt.UseValue<DateTime>(DateTime.Now)).ForMember(m => m.UpdatedAt, opt => opt.UseValue<DateTime>(DateTime.Now));
+            Mapper.CreateMap<CreateAccessLevelViewModel, AccessLevel>()
+                .ForMember(dest => dest.CreatedAt, opt => opt.UseValue<DateTime>(DateTime.Now))
+                .ForMember(m => m.UpdatedAt, opt => opt.UseValue<DateTime>(DateTime.Now));
+            Mapper.CreateMap<FolderViewModel, Folder>().ReverseMap();
+
+            Mapper.CreateMap<DepartmentViewModel,Folder>()
+                .ForMember(dest => dest.Id ,opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedAt, opt => opt.UseValue(DateTime.Now));
+            Mapper.CreateMap<FacultyViewModel, Folder>()
+               .ForMember(dest => dest.Id, opt => opt.Ignore())
+               .ForMember(dest => dest.UpdatedAt, opt => opt.UseValue(DateTime.Now))
+               .ForMember(dest => dest.FacultyId, opt => opt.MapFrom(src=> src.Id));
+
+            Mapper.CreateMap<Folder, FolderViewModel>()
+                .ForMember(x=> x.DirectChildren,opt=> opt.MapFrom(src=> src.Subfolders));
+
 
         }
     }

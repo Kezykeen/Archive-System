@@ -9,142 +9,120 @@ namespace archivesystemDomain.Services
 {
     public static class SeedAppData
     {
-       
-       
+
         public static void EnsurePopulated()
         {
-            //var dbContext = new ApplicationDbContext();
-            //var rootFolder = dbContext.Folders.SingleOrDefault(x => x.Name == "Root");
-            ////var baseAccess = dbContext.AccessLevels.SingleOrDefault(x => x.Level == AccessLevelNames.BaseLevel);
+            var dbContext = new ApplicationDbContext();
 
-            //if (!dbContext.Faculties.Any())
-            //{
-            //    //if (baseAccess == null)
-            //    //{
-            //    //    //Seed base access level
-            //    //    baseAccess = new AccessLevel
-            //    //    {
-            //    //        Level = AccessLevelNames.BaseLevel,
-            //    //        LevelDescription = "Base level",
-            //    //        CreatedAt = DateTime.Now,
-            //    //        UpdatedAt = DateTime.Now
-            //    //    };
-            //    //    dbContext.AccessLevels.Add(baseAccess);
-            //    //}
+            if (!dbContext.Folders.Any())
+            {
+                // create faculties and departments
+                List<Faculty> faculties = new List<Faculty>
+                {
+                    new Faculty
+                    {
+                        Name = "Engineering",
+                        CreatedAt = DateTime.Now,
+                        UpdatedAt = DateTime.Now,
+                        Departments = new List<Department>()
+                        {
+                            new Department
+                            {
+                                Name = "Electronic Engineering",
+                                CreatedAt = DateTime.Now,
+                                UpdatedAt = DateTime.Now
+                            }
+                        }
 
-            //    //Seed faculties
-            //    List<Faculty> faculties = new List<Faculty>
-            //    {
-            //        new Faculty
-            //        {
-            //            Name = "Engineering",
-            //            CreatedAt = DateTime.Now,
-            //            UpdatedAt = DateTime.Now
-            //        },
-            //        new Faculty
-            //        {
-            //            Name = "Arts",
-            //            CreatedAt = DateTime.Now,
-            //            UpdatedAt = DateTime.Now
-            //        },
-            //    };
-            //    dbContext.Faculties.AddRange(faculties);
-              
+                    },
+                    new Faculty
+                    {
+                        Name = "Arts",
+                        CreatedAt = DateTime.Now,
+                        UpdatedAt = DateTime.Now,
+                        Departments = new List<Department>
+                        {
+                            new Department
+                            {
+                                Name = "People and Culture",
+                                CreatedAt = DateTime.Now,
+                                UpdatedAt = DateTime.Now
+                            }
+                        }
+                    },
+                };
 
-            //    //Seed faculty folders
-            //    var facultyFolders = new List<Folder>
-            //        {
-            //            new Folder
-            //            {
-            //                Name=faculties[0].Name,
-            //                CreatedAt=DateTime.Now,
-            //                UpdatedAt=DateTime.Now
-            //            },
-            //            new Folder
-            //            {
-            //                Name=faculties[1
-            //                ].Name,
-            //                CreatedAt=DateTime.Now,
-            //                UpdatedAt=DateTime.Now
-            //            },
-            //        };
-            //    dbContext.Folders.AddRange(facultyFolders);
-              
 
-            //    ////Seed faculty folders as root subfolders
-            //    //dbContext.SubFolders.Add(new SubFolder
-            //    //{
-            //    //    FolderId = facultyFolders[0].Id,
-            //    //    ParentId = rootFolder.Id,
-            //    //    AccessLevelId = baseAccess.Id
-            //    //});
-            //    //dbContext.SubFolders.Add(new SubFolder
-            //    //{
-            //    //    FolderId = facultyFolders[1].Id,
-            //    //    ParentId = rootFolder.Id,
-            //    //    AccessLevelId = baseAccess.Id
-            //    //});
-              
-            //    //Seed departments
-            //    var departments = new List<Department>()
-            //        {
-            //            new Department
-            //            {
-            //                Name = "Electronic Engineering",
-            //                CreatedAt = DateTime.Now,
-            //                UpdatedAt = DateTime.Now,
-            //                FacultyId=faculties[0].Id
-            //            },
+                //create faculty and departmental folders 
+                var facultyFolders = new List<Folder>();
+                foreach (var faculty in faculties)
+                {
+                    facultyFolders.Add(
 
-            //            new Department
-            //            {
-            //                Name = "People and Culture",
-            //                FacultyId=faculties[1].Id,
-            //                CreatedAt = DateTime.Now,
-            //                UpdatedAt = DateTime.Now
-            //            },
-            //        };
-            //    dbContext.Departments.AddRange(departments);
-              
-            //    ////Seed department folders
-            //    //var departmentFolders = new List<Folder>
-            //    //    {
-            //    //        new Folder
-            //    //        {
-            //    //            Name=departments[0].Name,
-            //    //            CreatedAt=DateTime.Now,
-            //    //            UpdatedAt=DateTime.Now
-            //    //        },
-            //    //        new Folder
-            //    //        {
-            //    //            Name=departments[1].Name,
-            //    //            CreatedAt=DateTime.Now,
-            //    //            UpdatedAt=DateTime.Now
-            //    //        },
-            //    //    };
-            //    //dbContext.Folders.AddRange(departmentFolders);
+                        new Folder
+                        {
+                            Name = faculty.Name,
+                            CreatedAt = DateTime.Now,
+                            UpdatedAt = DateTime.Now,
+                            AccessLevelId = 1,
+                            IsRestricted = true,
+                            Faculty=faculty,
+                            Subfolders = new List<Folder>
+                            { 
+                                new Folder
+                                {
+                                    Name=faculty.Departments[0].Name,
+                                    CreatedAt = DateTime.Now,
+                                    UpdatedAt = DateTime.Now,
+                                    AccessLevelId = 1,
+                                    IsRestricted=true,
+                                    Department=faculty.Departments[0]
+                                }
+                            }
+                                
+                        });
+                }
+
+
+                //create Root folder
+                var rootFolder = new Folder
+                {
+                    Name = "Root",
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now,
+                    IsRestricted = true,
+                    AccessLevel = new AccessLevel
+                    {
+                        Level = AccessLevelNames.BaseLevel,
+                        LevelDescription = "Base level",
+                        CreatedAt = DateTime.Now,
+                        UpdatedAt = DateTime.Now
+                    },
+                    Subfolders =facultyFolders
+                };
+
+                //seed the root folder,faculties , departments and their folders
+                dbContext.Folders.Add(rootFolder);
+
+                //save changes
+                dbContext.SaveChanges();
+            };
+                
+
             
 
 
-            //    ////Seed department folders as faculty sub folder
-            //    //dbContext.SubFolders.Add(new SubFolder
-            //    //{
-            //    //    FolderId = departmentFolders[0].Id,
-            //    //    ParentId = facultyFolders[0].Id,
-            //    //    AccessLevelId = baseAccess.Id
-            //    //});
-            //    //dbContext.SubFolders.Add(new SubFolder
-            //    //{
-            //    //    FolderId = departmentFolders[1].Id,
-            //    //    ParentId = facultyFolders[1].Id,
-            //    //    AccessLevelId = baseAccess.Id
-            //    //});
-            //    dbContext.SaveChanges();
-            //}
-
-           
+        
         }
-       
-
     }
 }
+          
+
+           
+
+
+        
+    
+       
+
+    

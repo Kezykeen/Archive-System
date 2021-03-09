@@ -9,6 +9,8 @@ using AutoMapper;
 
 namespace archivesystemWebUI.Controllers
 {
+
+    [Authorize(Roles = "Admin, Manager")]
     public class DepartmentController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -52,16 +54,17 @@ namespace archivesystemWebUI.Controllers
             {
                 department.CreatedAt = DateTime.Now;
                 department.UpdatedAt = DateTime.Now;
-
-                _unitOfWork.DeptRepo.Add(department);
-                CreateDepartmentFolder(department);
+                CreateDepartmentAndFolder(department);
             }
             else
             {
+                var folderModel = Mapper.Map<Folder>(model);
+                folderModel.DepartmentId = model.Id;
+                _unitOfWork.FolderRepo.UpdateDepartmentalFolder(folderModel);
+
                 var getDepartment = _unitOfWork.DeptRepo.Get(model.Id);
                 Mapper.Map(model, getDepartment);
                 getDepartment.UpdatedAt = DateTime.Now;
-
                 _unitOfWork.DeptRepo.Update(getDepartment);
             }
             _unitOfWork.Save();
@@ -101,21 +104,24 @@ namespace archivesystemWebUI.Controllers
             }
         }
 
-        private void CreateDepartmentFolder(Department department)
+        private void CreateDepartmentAndFolder(Department department)
         {
            
             var faculty = _unitOfWork.FacultyRepo.Get(department.FacultyId);
-            var facultyFolder = _unitOfWork.FolderRepo.GetFolderByName(faculty.Name);
-            var folder = new Folder { Name = department.Name, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now };
-            _unitOfWork.FolderRepo.Add(folder);
-            var subFolder = new SubFolder
+            var facultyFolder = _unitOfWork.FolderRepo.GetFacultyFolder(faculty.Name);
+            var folder = new Folder
             {
-                FolderId = folder.Id,
+                Name = department.Name,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now,
+                AccessLevelId = _unitOfWork.AccessLevelRepo.GetBaseLevel().Id,
                 ParentId = facultyFolder.Id,
-                AccessLevelId = _unitOfWork.AccessLevelRepo.GetBaseLevel().Id
+                IsRestricted=true,
+                Department=department
             };
-            _unitOfWork.SubFolderRepo.Add(subFolder);
 
+            _unitOfWork.FolderRepo.Add(folder);
+            return;
         }
 
         [HttpPost]

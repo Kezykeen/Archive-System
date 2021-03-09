@@ -7,6 +7,7 @@ namespace archivesystemWebUI.Repository
     public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationDbContext _context;
+   
         public ITokenRepo TokenRepo { get; }
         public IEmployeeRepository EmployeeRepo { get; }
         public IDeptRepository DeptRepo { get; }
@@ -14,7 +15,9 @@ namespace archivesystemWebUI.Repository
         public IFacultyRepository FacultyRepo { get; set; }
         public IAccessDetailsRepository AccessDetailsRepo { get; }
         public IFolderRepo FolderRepo { get; }
-        public ISubFolderRepo SubFolderRepo { get; }
+        public IFileMetaRepo FileMetaRepo { get; }
+        
+
 
         public UnitOfWork(
             ApplicationDbContext context,
@@ -25,10 +28,12 @@ namespace archivesystemWebUI.Repository
             ITokenRepo tokenRepo,
             IAccessDetailsRepository accessDetailsRepository,
             IFolderRepo folderRepo,
-            ISubFolderRepo subFolderRepo
+            IFileMetaRepo fileMetaRepo
+           
             )
         {
             _context = context;
+            FileMetaRepo = fileMetaRepo;
             TokenRepo = tokenRepo;
             DeptRepo = deptRepo;
             AccessLevelRepo = accessLevelRepo;
@@ -36,7 +41,7 @@ namespace archivesystemWebUI.Repository
             EmployeeRepo = employeeRepo;
             FolderRepo = folderRepo;
             FacultyRepo = facultyRepo;
-            SubFolderRepo = subFolderRepo;
+            
         }
 
 

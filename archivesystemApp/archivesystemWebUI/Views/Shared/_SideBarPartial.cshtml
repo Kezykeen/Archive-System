@@ -20,7 +20,6 @@
                     <a href="#" class="noti-dot"><i class="la la-tools"></i> <span> Roles</span> <span class="menu-arrow"></span></a>
                     <ul style="display: none;">
                         <li><a href="@Url.Action("Index", "Roles")">All Roles</a></li>
-                        <li><a href="@Url.Action("Create", "Roles")">Create</a></li>
 
                     </ul>
                 </li>
@@ -45,26 +44,15 @@
                     <span>Manage Access Level</span>
                 </li>
 
-                <li class="submenu">
-                    <a href="#" class="noti-dot"><i class="la la-tools"></i> <span> AccessLevels</span> <span class="menu-arrow"></span></a>
-                    <ul style="display: none;">
-                        <li><a href="@Url.Action("ManageAccessLevel", "AccessLevel")">All AccessLevels</a></li>
-                        <li><a href="@Url.Action("CreateAccessLevel", "AccessLevel")">Create</a></li>
-
-                    </ul>
+                <li>
+                <li>
+                    <a href="@Url.Action("ManageAccessLevel", "AccessLevel")"> <i class="la la-tools"></i> <span>Access Levels</span></a>
+                </li>
+                <li>
+                    <a href="@Url.Action("ManageUserAccess", "UserAccess")"> <i class="la la-user"></i> <span>User Access Levels</span></a>
                 </li>
 
 
-                <li class="submenu">
-                    <a href="#" class="noti-dot"><i class="la la-tools"></i> <span> User Access Levels</span> <span class="menu-arrow"></span></a>
-                    <ul style="display: none;">
-                        <li><a href="@Url.Action("ManageUserAccess", "UserAccess")">All AccessLevels</a></li>
-                        <li><a href="@Url.Action("AddUser", "UserAccess")">Assign User Access</a></li>
-
-                    </ul>
-                </li>
-                
-                
                 <li class="menu-title">
                     <span>Archive</span>
                 </li>

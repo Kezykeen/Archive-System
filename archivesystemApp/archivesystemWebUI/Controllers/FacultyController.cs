@@ -9,6 +9,7 @@ using AutoMapper;
 
 namespace archivesystemWebUI.Controllers
 {
+    //[Authorize(Roles = "Admin, Manager")]
     public class FacultyController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -51,9 +52,7 @@ namespace archivesystemWebUI.Controllers
             {
                 faculty.CreatedAt = DateTime.Now;
                 faculty.UpdatedAt = DateTime.Now;
-                _unitOfWork.FacultyRepo.Add(faculty);
-                
-                CreateFacultyFolder(faculty);
+                CreateFacultyAndFolder(faculty);
             }
             else
             {
@@ -62,6 +61,8 @@ namespace archivesystemWebUI.Controllers
                 getFaculty.UpdatedAt = DateTime.Now;
 
                 _unitOfWork.FacultyRepo.Update(getFaculty);
+                var folder = Mapper.Map<Folder>(model);
+                _unitOfWork.FolderRepo.UpdateFacultyFolder(folder);
             }
             await _unitOfWork.SaveAsync();
 
@@ -98,15 +99,23 @@ namespace archivesystemWebUI.Controllers
             }
         }
 
-        private  void CreateFacultyFolder(Faculty faculty)
+        private  void CreateFacultyAndFolder(Faculty faculty)
         {
-            var folder = new Folder { Name = faculty.Name, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now };
+           
             var rootFolder = _unitOfWork.FolderRepo.GetRootFolder();
+            var folder = new Folder
+            {
+                Name = faculty.Name,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now,
+                AccessLevelId = _unitOfWork.AccessLevelRepo.GetBaseLevel().Id,
+                ParentId=rootFolder.Id,
+                IsRestricted=true,
+                Faculty=faculty
+            };
             _unitOfWork.FolderRepo.Add(folder);
-            var subFolder = new SubFolder { FolderId = folder.Id, ParentId = rootFolder.Id,
-                AccessLevelId = _unitOfWork.AccessLevelRepo.GetBaseLevel().Id };
-            _unitOfWork.SubFolderRepo.Add(subFolder);
 
+            return;
         }
 
         [HttpPost]

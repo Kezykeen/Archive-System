@@ -1,17 +1,22 @@
-﻿using System;
+﻿using archivesystemDomain.Entities;
+using archivesystemDomain.Interfaces;
+using archivesystemDomain.Services;
+using archivesystemWebUI.Models;
+using AutoMapper;
+using Microsoft.AspNet.Identity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using archivesystemDomain.Entities;
-using archivesystemDomain.Interfaces;
-using archivesystemWebUI.Models;
 
 namespace archivesystemWebUI.Controllers
 {
+
+    [Authorize]
     public class FolderController : Controller
     {
         private IUnitOfWork repo { get; set; }
+
         public FolderController(IUnitOfWork repo)
         {
             this.repo = repo;
@@ -19,28 +24,19 @@ namespace archivesystemWebUI.Controllers
 
         // GET: /folders
         [Route("folders")]
-        public ActionResult Index()
+        public ActionResult Index(string search = null)
         {
-            FolderListViewModel model = new FolderListViewModel();
-            
-            
-            
-            if (string.IsNullOrEmpty(Request.QueryString["search"]))
+
+            FolderViewModel model = GetRootViewModel(search);
+            if (!HttpContext.User.IsInRole("Admin") && search == null)
             {
-                var rootFolder = repo.FolderRepo.GetRootFolder();
-                model.SubFolders = repo.SubFolderRepo.GetSubFolders(rootFolder.Id);
-                Session[SessionData.FolderPath] = repo.SubFolderRepo.GetFolderPath(rootFolder.Id);
-                Session[SessionData.IsSearchRequest] = false;
+                var userId = User.Identity.GetUserId();
+                var user = repo.EmployeeRepo.GetEmployeeByUserId(userId);
+                var userFaculty = repo.FacultyRepo.Get(user.Department.FacultyId);
+                model.DirectChildren = model.DirectChildren.Where(x => x.Name == userFaculty.Name).ToList();
             }
-            else
-            {
-                var searchParam = Request.QueryString["search"];
-                model.SubFolders = repo.FolderRepo.GetMatchingFolders(searchParam);
-                Session[SessionData.FolderPath] = null;
-                Session[SessionData.IsSearchRequest] = true;
-                
-            }
-            return View("FolderList",model);
+            ViewBag.AllowCreateFolder=false;
+            return View("FolderList", model);
         }
 
         // GET: /folders/add
@@ -49,148 +45,216 @@ namespace archivesystemWebUI.Controllers
         public ActionResult Create(int id)
         {
             var accessLevels = repo.AccessLevelRepo.GetAll();
-            var data = new CreateFolderViewModel() { Name = "", ParentId = id, AccessLevels=accessLevels };
-            return View("AddFolder",data);
+            var data = new CreateFolderViewModel() { Name = "", ParentId = id, AccessLevels = accessLevels };
+            return PartialView("_CreateFolder", data);
         }
 
-        //POST: /folders/create
+        //POST: /folders/add
         [Route("folders/add")]
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(string name,int parentId,int accessLevelId)
+        [ValidateHeaderAntiForgeryToken]
+        public ActionResult Create(string name, int parentId, int accessLevelId)
         {
             Folder rootFolder = repo.FolderRepo.GetRootFolder();
-            IEnumerable<string> folderNames = repo.SubFolderRepo.GetSubFolderNames(parentId);
-            if(folderNames.Contains(name) || name == "Root")
-            {
-                ModelState.AddModelError("", $"{name} folder already exist");
-                return View("CreateFolder", new CreateFolderViewModel() { Name = name, ParentId = parentId, AccessLevelId=accessLevelId  });
-            }
+            var parentFolder = repo.FolderRepo.GetFolderWithSubFolders(parentId);
+            var parentSubFolderNames = parentFolder.Subfolders.Select(x => x.Name);
+            if (parentSubFolderNames.Contains(name) || name == "Root")
+                return new HttpStatusCodeResult(400);
+            if (name.Contains(",") || name.Contains("#"))
+                return new HttpStatusCodeResult(403);
 
-            var folder = new Folder{Name = name,CreatedAt = DateTime.Now,UpdatedAt = DateTime.Now };
+            var parentFolderPath = repo.FolderRepo.GetFolderPath(parentId);
+            var parentFolderCurrentFolderDepth = parentFolderPath.Count();
+            if (parentFolderCurrentFolderDepth >= (int)AllowableFolderDepth.Max)
+                return new HttpStatusCodeResult(404);
+
+            var folder = new Folder
+            {
+                Name = name,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now,
+                ParentId = parentId,
+                AccessLevelId = accessLevelId,
+                IsRestricted = false,
+                DepartmentId = parentFolder.DepartmentId,
+            };
             repo.FolderRepo.Add(folder);
-            var subFolder = new SubFolder { AccessLevelId = accessLevelId, FolderId = folder.Id, ParentId = parentId };
-            repo.SubFolderRepo.Add(subFolder);
             repo.Save();
 
-            if (parentId == rootFolder.Id)
-                return RedirectToAction(nameof(Index));
-            return RedirectToAction(nameof(GetSubFolders), new { id=parentId });
+            return new HttpStatusCodeResult(200);
+        }
+
+        [Route("folders/move")]
+        [HttpPost]
+        [ValidateHeaderAntiForgeryToken]
+        public ActionResult MoveItem(MoveItemViewModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return new HttpStatusCodeResult(400);
+                if (model.Id == model.NewParentFolder)
+                    return new HttpStatusCodeResult(405);
+                if (model.FileType == "folder")
+                    repo.FolderRepo.MoveFolder(model.Id, model.NewParentFolder);
+                repo.Save();
+                return new HttpStatusCodeResult(200);
+            }
+
+            catch (Exception e)
+            {
+                if (e.Message.Contains("folder already exist"))
+                    return new HttpStatusCodeResult(403);
+                return new HttpStatusCodeResult(500);
+            }
+
         }
 
         //POST: /folders/create
         [Route("folders/delete")]
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id,int parentId)
+        [ValidateHeaderAntiForgeryToken]
+        public ActionResult Delete(int id, int parentId)
         {
-            var folderToDelete=repo.FolderRepo.Get(id);
-            List<Folder> foldersToDelete=repo.SubFolderRepo.RecursiveGetSubFolders(folderToDelete);
-            repo.FolderRepo.DeleteFolders(foldersToDelete);
-            repo.Save();
-            return RedirectToAction(nameof(GetSubFolders),new { id=parentId});
+            var folderToDelete = repo.FolderRepo.Get(id);
+            if (folderToDelete.IsRestricted)
+            {
+                repo.FolderRepo.DeleteFolder(folderToDelete.Id);
+                repo.Save();
+                return new HttpStatusCodeResult(204);
+            }
+
+            return new HttpStatusCodeResult(400);
+
         }
 
         //GET: /folders/{id}
-        [Route("folders/{id}")]
+        [Route("folders/{folderId}")]
         [HttpGet]
-        public ActionResult GetSubFolders(int id)
+        public ActionResult GetFolderSubFolders(int folderId, string accessKey = "")
         {
-            var folders = repo.SubFolderRepo.GetSubFolders(id);
-            var folder = repo.FolderRepo.Get(id);
-            int parentId;
+            var folder = repo.FolderRepo.GetFolderWithSubFolders(folderId);
             if (folder.Name == "Root")
-                parentId = 0;
-            else 
-                parentId = repo.SubFolderRepo.GetParentId(id);
-            var model = new FolderListViewModel { FolderName=folder.Name,Id=folder.Id,SubFolders=folders , ParentId=parentId};
+                return RedirectToAction(nameof(Index));
 
-            var currentPath = (Stack<Folder>)Session[SessionData.FolderPath];
-
-            if (currentPath == null)
+            if (!HttpContext.User.IsInRole("Admin"))
             {
-                Session[SessionData.FolderPath] = repo.SubFolderRepo.GetFolderPath(id);
-            }
-            else
-            {
-                if (currentPath.Peek().Id == folder.Id) { }
-                else if (currentPath.Peek().Id != parentId && currentPath.Count() > 0)
-                {
-                    while (currentPath.Peek().Id != id)
-                    {
-                        currentPath.Pop();
-                    }
-                    Session[SessionData.FolderPath] = currentPath;
-                }
+                var userId = HttpContext.User.Identity.GetUserId();
+                var user = repo.EmployeeRepo.GetEmployeeByUserId(userId);
+                var userAccessLevel = repo.AccessDetailsRepo.GetByEmployeeId(user.Id).AccessLevelId;
 
-                else
+                if (folder.FacultyId != null && user.Department.FacultyId != folder.FacultyId)
+                    return RedirectToAction("Login", "Account");
+                if(folder.FacultyId ==null)
                 {
-                    currentPath.Push(folder);
-                    Session[SessionData.FolderPath] = currentPath;
+                    if (folder.AccessLevelId > userAccessLevel || folder.DepartmentId != user.DepartmentId)
+                        return RedirectToAction("Login", "Account");
                 }
-
+                folder.Subfolders = folder.Subfolders.Where(x => x.AccessLevelId <= userAccessLevel).ToList();
             }
 
-
-            Session[SessionData.IsSearchRequest] = false;
+            var model = Mapper.Map<FolderViewModel>(folder);
+            var folderpath = repo.FolderRepo.GetFolderPath(folderId);
+            model.CurrentPath = folderpath;
+            ViewBag.AllowCreateFolder = true;
             return View("FolderList", model);
         }
 
-        //POST: /folders/{id}
+        //POST: /folders/{parentId}
         [HttpPost]
-        [Route("folders/{id}")]
+        [Route("folders/{parentId}")]
         public ActionResult BackToParent(int parentId)
         {
-            var folder = repo.FolderRepo.Get(parentId);
-            if (folder.Name == "Root")
-                return RedirectToAction(nameof(Index));
-            var currentPath = (Stack<Folder>)Session[SessionData.FolderPath];
-            currentPath.Pop(); 
-            Session[SessionData.FolderPath] = currentPath;
-            return RedirectToAction(nameof(GetSubFolders), new { id = folder.Id });
+            return RedirectToAction(nameof(GetFolderSubFolders), new { folderId = parentId });
         }
 
         //POST: /Folder/Edit
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateHeaderAntiForgeryToken]
         public ActionResult Edit(CreateFolderViewModel model)
         {
-            var folder = new Folder {Name=model.Name, Id=model.Id };
+
+            var folder = new Folder { Name = model.Name, Id = model.Id, AccessLevelId = model.AccessLevelId };
             repo.FolderRepo.UpdateFolder(folder);
-            var subFoleder = new SubFolder { FolderId = model.Id, AccessLevelId = model.AccessLevelId };
-            repo.SubFolderRepo.Update(subFoleder);
             repo.Save();
-            return RedirectToAction(nameof(GetSubFolders),new { id=model.Id });
+            return new HttpStatusCodeResult(200);
         }
 
 
         //GET: /Folder/GetEditPartialView
         public ActionResult GetEditFolderPartialView(int id)
         {
-            var subFolder = repo.SubFolderRepo.GetByFolderId(id);
-            if (subFolder == null)
-                return RedirectToAction("Index");
+            var folder = repo.FolderRepo.Get(id);
+            if (folder.IsRestricted)
+                return new HttpStatusCodeResult(403);
+
+            if (folder == null)
+                return new HttpStatusCodeResult(400);
 
             var model = new CreateFolderViewModel
             {
                 Id = id,
-                AccessLevelId = subFolder.AccessLevelId,
+                AccessLevelId = (int)folder.AccessLevelId,
                 AccessLevels = repo.AccessLevelRepo.GetAll(),
-                Name = subFolder.Folder.Name,
+                Name = folder.Name,
             };
             return PartialView("_EditFolder", model);
         }
 
         //GET: /Folder/GetDeleteFolderPartialView
-        public ActionResult GetDeleteFolderPartialView(int id, string name)
+        public ActionResult GetDeleteFolderPartialView(int id)
         {
-            var parentId = repo.SubFolderRepo.GetParentId(id);
-            return View("_DeleteFolder", new DeleteFolderViewModel { Name=name, Id=id,ParentId=parentId});
+            var folder = repo.FolderRepo.Get(id);
+            if (folder == null)
+                return new HttpStatusCodeResult(400);
+            if (folder.IsRestricted)
+                return new HttpStatusCodeResult(403);
+            return PartialView("_DeleteFolder", new DeleteFolderViewModel
+            {
+                Name = folder.Name,
+                Id = id,
+                ParentId = (int)folder.ParentId
+            });
         }
-    
-       
-    
-    
+
+        //GET: /Folder/GetConfirmItemMovePartialView
+        public ActionResult GetConfirmItemMovePartialView()
+        {
+
+            ViewBag.ItemName = Request.QueryString["itemName"];
+            ViewBag.CurrentFolder = Request.QueryString["currentFolder"];
+            return PartialView("_ConfirmItemMove");
+        }
+
+        private FolderViewModel GetRootViewModel(string search = null)
+        {
+            FolderViewModel model = new FolderViewModel();
+            if (string.IsNullOrEmpty(search))
+            {
+                var rootFolder = repo.FolderRepo.GetRootWithSubfolder();
+                model.Name = "Root";
+                model.DirectChildren = rootFolder.Subfolders;
+                model.CurrentPath = new List<FolderPath> { new FolderPath { Id = rootFolder.Id, Name = "Root" } };
+                model.Id = rootFolder.Id;
+            }
+            else
+            {
+                model.DirectChildren = repo.FolderRepo.GetFoldersThatMatchName(search);
+                model.CurrentPath = new List<FolderPath>();
+                model.Id = 0;
+            }
+            return model;
+        }
+
+        private FolderViewModel GetDepartmentFolder(string search = null)
+        {
+            return new FolderViewModel();
+        }
+
+        private void RestrictAccess(Folder folder, int userAccesslevel, Employee user )
+        {
+            folder.Subfolders = folder.Subfolders.Where(x => x.AccessLevelId <= userAccesslevel).ToList();
+        }
     }
 }
 

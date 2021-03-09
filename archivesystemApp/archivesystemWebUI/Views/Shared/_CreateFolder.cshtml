@@ -1,0 +1,46 @@
+﻿
+@using archivesystemWebUI.Models
+@using archivesystemDomain.Entities
+@model CreateFolderViewModel
+
+<div class="modal-header">
+    <h5 class="modal-title">Create Folder</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+
+    <form id="createFolder"  name="createFolder">
+        @Html.ValidationSummary()
+        @Html.AntiForgeryToken()
+        <input name="id" value="@Model.ParentId" hidden id="CF-parentId"/>
+        <div class="form-group">
+
+            <input name="name" class="form-control" rows="2" placeholder="Enter Folder Name" value="@Model.Name" id="CF-name" />
+        </div>
+        <div class="form-group">
+
+            <select name="accessLevelId" class="form-control" rows="2" typeof="number"  id="CF-accessLevel">
+                <option value="">Select access level</option>
+                @foreach (AccessLevel level in Model.AccessLevels)
+                {
+
+                    <option value="@level.Id">@level.Level</option>
+                }
+            </select>
+        </div>
+        <div class="submit-section">
+            <button style=" margin:auto" class="btn btn-primary submit-btn" >Add</button>
+        </div>
+    </form>
+
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+
+
+

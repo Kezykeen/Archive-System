@@ -16,6 +16,7 @@ namespace archivesystemDomain.Services
 
         
         private ApplicationRoleManager RoleManager => Context.GetOwinContext().GetUserManager<ApplicationRoleManager>();
+        private ApplicationUserManager UserManager => Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
 
         public IEnumerable<ApplicationRole> GetAllRoles()
         {

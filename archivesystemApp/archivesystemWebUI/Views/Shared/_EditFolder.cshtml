@@ -12,20 +12,19 @@
 </div>
 <div class="modal-body">
 
-    @using (Html.BeginForm("Edit", "Folder", FormMethod.Post))
-    {
+    <form id="editFolder" name="editFolder">
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary()
 
-        @Html.AntiForgeryToken();
-        @Html.ValidationSummary();
-
-        <input name="id" value="@Model.Id" hidden />
+        <input hidden value="@Request.Cookies["ASP.NET_SessionId"].Value" id="EF-sessionId"/>
+        <input name="id" value="@Model.Id" hidden  id="EF-id"/>
+        <input name="id" value="@Model.ParentId" hidden  id="EF-parentId"/>
         <div class="form-group">
-
-            <input name="name"  class="form-control" rows="2" placeholder="Enter Folder Name" value="@Model.Name" />
+            <input name="name" class="form-control" rows="2" placeholder="Enter Folder Name" value="@Model.Name" id="EF-name" />
         </div>
         <div class="form-group">
 
-            <select name="accessLevelId"  class="form-control" rows="2" typeof="number" value="">
+            <select name="accessLevelId" class="form-control" rows="2" typeof="number" id="EF-accessLevel">
                 <option value="@currentAccesslevel.Id">@currentAccesslevel.Level</option>
                 @foreach (AccessLevel level in Model.AccessLevels)
                 {
@@ -40,7 +39,7 @@
         <div class="submit-section">
             <button style=" margin:auto" class="btn btn-primary submit-btn" type="submit">Update</button>
         </div>
-    }
+     </form>
 
 </div>
 

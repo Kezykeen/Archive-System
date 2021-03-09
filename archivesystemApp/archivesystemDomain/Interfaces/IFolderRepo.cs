@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using archivesystemDomain.Services;
+
 
 namespace archivesystemDomain.Interfaces
 {
@@ -12,8 +14,14 @@ namespace archivesystemDomain.Interfaces
         Folder GetRootFolder();
         Folder GetFolderByName(string name);
         void UpdateFolder(Folder folder);
-        void DeleteFolders(List<Folder> folders);
-        List<Folder> GetMatchingFolders(string name);
-
+        void DeleteFolder(int folderId);
+        List<Folder> GetFoldersThatMatchName(string name);
+        Folder GetRootWithSubfolder();
+        Folder GetFolderWithSubFolders(int id);
+        List<FolderPath> GetFolderPath(int id);
+        void UpdateDepartmentalFolder(Folder model);
+        Folder GetFacultyFolder(string name);
+        void MoveFolder(int id, int newParentFolderId);
+        void UpdateFacultyFolder(Folder model);
     }
 }

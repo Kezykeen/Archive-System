@@ -15,5 +15,6 @@ namespace archivesystemDomain.Interfaces
         Employee GetEmployeeWithDept(int? id, string appId = null);
         void UpdateUserId(string email, string id);
         bool PhoneExists(string phone, int? userId);
+        Employee GetEmployeeByUserId(string id);
     }
 }

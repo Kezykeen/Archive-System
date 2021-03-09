@@ -10,7 +10,7 @@ namespace archivesystemDomain.Entities
     {
         public int Id { get; set; }
 
-        [Index("UserIdIndex", IsUnique = true)]
+        [Index("UserIdIndex")]
         [StringLength(50)]
         public string UserId { get; set; }
 

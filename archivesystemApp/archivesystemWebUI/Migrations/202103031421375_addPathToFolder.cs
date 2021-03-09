@@ -1,0 +1,18 @@
+namespace archivesystemWebUI.Migrations
+{
+    using System;
+    using System.Data.Entity.Migrations;
+    
+    public partial class addPathToFolder : DbMigration
+    {
+        public override void Up()
+        {
+            AddColumn("dbo.Folders", "Path", c => c.String());
+        }
+        
+        public override void Down()
+        {
+            DropColumn("dbo.Folders", "Path");
+        }
+    }
+}

@@ -9,6 +9,8 @@ using System.Web.Mvc;
 
 namespace archivesystemWebUI.Controllers
 {
+
+    [Authorize(Roles = "Admin, Manager")]
     public class UserAccessController : Controller
     {
         #region FIELD
@@ -39,7 +41,7 @@ namespace archivesystemWebUI.Controllers
         {
             var accessLevels = _unitOfWork.AccessLevelRepo.GetAll();
             var viewModel = new AddUserToAccessViewModel { AccessLevels = accessLevels };
-            return View(viewModel);
+            return PartialView("_AddUserAccess", viewModel);
         }
 
         [HttpPost]
@@ -49,24 +51,13 @@ namespace archivesystemWebUI.Controllers
             if (!ModelState.IsValid)
             {
                 model.AccessLevels = _unitOfWork.AccessLevelRepo.GetAll();
-                return View(model);
+                return PartialView("_AddUserAccess", model);
             }
 
             try
             {
                 var employee = _unitOfWork.EmployeeRepo.GetEmployeeByMail(model.Email);
-                if (employee == null)
-                {
-                    ModelState.AddModelError("EmployeeDoesNotExist", $"Employee with email \"{model.Email}\" does not exists. Please enter a different email");
-                    model.AccessLevels = _unitOfWork.AccessLevelRepo.GetAll();
-                    return View(model);
-                }
-                var userAccessDetail = _unitOfWork.AccessDetailsRepo.GetByEmployeeId(employee.Id);
-                if (userAccessDetail != null)
-                {
-                    TempData["UserAccessMessage"] = "User already has an access level!";
-                    return RedirectToAction(nameof(ManageUserAccess));
-                }
+               
                 var newAccessDetails = new AccessDetail
                 {
                     EmployeeId = employee.Id,
@@ -74,16 +65,18 @@ namespace archivesystemWebUI.Controllers
                     AccessCode = AccessCodeGenerator.NewCode(employee.StaffId),
                     Status = Status.Active
                 };
+
                 _unitOfWork.AccessDetailsRepo.Add(newAccessDetails);
                 await _unitOfWork.SaveAsync();
-                TempData["UserAddedMessage"] = "Successfully added user to an access level";
-                return RedirectToAction(nameof(ManageUserAccess));
+
+                return Json("success", JsonRequestBehavior.AllowGet);
+
             }
             catch (Exception e)
             {
                 ModelState.AddModelError("", e.Message);
                 model.AccessLevels = _unitOfWork.AccessLevelRepo.GetAll();
-                return View(model);
+                return PartialView("_AddUserAccess", model);
             }
         }
 
@@ -95,11 +88,11 @@ namespace archivesystemWebUI.Controllers
             var accessLevels = _unitOfWork.AccessLevelRepo.GetAll();
             var model = new EditUserViewModel
             {
-                RegenerateCode = CodeStatus.Yes,
+                RegenerateCode = CodeStatus.No,
                 AccessDetails = accessDetails,
                 AccessLevels = accessLevels
             };
-            return View(model);
+            return PartialView("_EditUserAccess", model);
         }
 
         [HttpPost]
@@ -109,7 +102,7 @@ namespace archivesystemWebUI.Controllers
             if (!ModelState.IsValid)
             {
                 model.AccessLevels = _unitOfWork.AccessLevelRepo.GetAll();
-                return View(model);
+                return PartialView("_EditUserAccess", model);
             }
             try
             {
@@ -120,13 +113,13 @@ namespace archivesystemWebUI.Controllers
                 }
                 _unitOfWork.AccessDetailsRepo.EditDetails(model.AccessDetails);
                 await _unitOfWork.SaveAsync();
-                return RedirectToAction(nameof(ManageUserAccess));
+                return Json("success", JsonRequestBehavior.AllowGet);
             }
             catch (Exception e)
             {
                 ModelState.AddModelError("", e.Message);
                 model.AccessLevels = _unitOfWork.AccessLevelRepo.GetAll();
-                return View(model);
+                return PartialView("_EditUserAccess", model);
             }
         }
 
@@ -153,9 +146,8 @@ namespace archivesystemWebUI.Controllers
                 var accessDetails = _unitOfWork.AccessDetailsRepo.Get(id);
                 _unitOfWork.AccessDetailsRepo.Remove(accessDetails);
                 await _unitOfWork.SaveAsync();
-                TempData["UserDeletedMessage"] = "User has been removed!";
 
-                return RedirectToAction(nameof(ManageUserAccess));
+                return Json("success", JsonRequestBehavior.AllowGet);
             }
             catch
             {
@@ -164,7 +156,22 @@ namespace archivesystemWebUI.Controllers
         }
 
         #endregion
-     
+
+
+        #region Validators
+
+       
+        [HttpPost]
+        public JsonResult ValidateEmail(string Email)
+        {
+            var employee = _unitOfWork.EmployeeRepo.GetEmployeeByMail(Email);
+            if (employee == null)
+                return Json("Employee with this email does not exists. Please enter a different email",  JsonRequestBehavior.AllowGet);
+
+            var accessDetails = _unitOfWork.AccessDetailsRepo.GetByEmployeeId(employee.Id);
+            return accessDetails == null? Json(true, JsonRequestBehavior.AllowGet) : Json("User already has an access level!", JsonRequestBehavior.AllowGet);
+        }
+        #endregion
 
     }
 }

@@ -1,6 +1,8 @@
 ﻿using archivesystemDomain.Entities;
+using archivesystemDomain.Services;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
@@ -17,14 +19,16 @@ namespace archivesystemWebUI.Models
        
     }
 
-    public class FolderListViewModel
+    public class FolderViewModel
     {
         public int Id { get; set; }
-        public string FolderName { get; set; }
+        public string Name { get; set; }
 
-        public int ParentId { get; set; }
+        public int? ParentId { get; set; }
 
-        public IEnumerable<Folder> SubFolders { get; set; }
+        public List<FolderPath> CurrentPath { get; set; }
+
+        public ICollection <Folder> DirectChildren { get;set; }
     }
 
     public class DeleteFolderViewModel
@@ -34,4 +38,16 @@ namespace archivesystemWebUI.Models
 
         public int ParentId { get; set; }
     }
+
+    public class MoveItemViewModel
+    {
+        public int Id { get; set; }
+         
+        public string FileType { get; set; }
+
+        public int NewParentFolder { get; set; }
+           
+    }
+
+
 }

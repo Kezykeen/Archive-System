@@ -36,35 +36,7 @@
 
 
     <!-- Search Filter -->
-    <div class="row filter-row">
-        <div class="col-sm-6 col-md-3">
-            <div class="form-group form-focus">
-                <input type="text" class="form-control floating">
-                <label class="focus-label">Employee ID</label>
-            </div>
-        </div>
-        <div class="col-sm-6 col-md-3">
-            <div class="form-group form-focus">
-                <input type="text" class="form-control floating">
-                <label class="focus-label">Employee Name</label>
-            </div>
-        </div>
-        <div class="col-sm-6 col-md-3">
-            <div class="form-group form-focus select-focus">
-                <select class="select floating">
-                    <option>Select Designation</option>
-                    <option>Web Developer</option>
-                    <option>Web Designer</option>
-                    <option>Android Developer</option>
-                    <option>Ios Developer</option>
-                </select>
-                <label class="focus-label">Designation</label>
-            </div>
-        </div>
-        <div class="col-sm-6 col-md-3">
-            <a href="#" class="btn btn-success btn-block"> Search </a>
-        </div>
-    </div>
+    
     <!-- /Search Filter -->
 
     <div class="row">
@@ -113,7 +85,7 @@
             var table = $("#users").DataTable({
                 responsive: true,
                 autoWidth: false,
-                "bFilter": false,
+                "bFilter": true,
                 language: {
                     search: "",
                     searchPlaceholder: "Search",
@@ -203,6 +175,7 @@
                     );
 
                 });
+
             $("#delete_user").on("click",
                 ".js-delete",
                 function () {
@@ -271,9 +244,7 @@
                 });
 
 
-            $(".modal-add").on("click",
-               
-                function (e) {
+            $(".modal-add").on("click", function (e) {
                     debugger;
                     e.preventDefault();
                   var  addButton = $(this);
@@ -312,8 +283,66 @@
                     });
               
 
-                });
-           
+            });
+
+          
         });
+//        function OnEnrollSuccess(response) {
+//
+//            if (response.status === 'success') {
+//
+//                $("#add_user").remove;
+//                $('#add_user').modal('hide');
+//
+//                Swal.fire({
+//                    position: 'top-end',
+//                    icon: 'success',
+//                    title: 'User Successfully Created',
+//                    showConfirmButton: false,
+//                    timer: 1500
+//                });
+//
+//                table.ajax.reload();
+//            } else if (response.status == null) {
+//                $('#add_user').modal('hide');
+//                //                    $("#add_user").remove;
+//                //                  
+//                //                    $("#add_user").html(response);
+//                //                   
+//                //                    $("#add_user").modal("show");
+//                $.validator.unobtrusive.parse("#enroll");
+//
+//                if ($('#add_user .select').length > 0) {
+//                    $('#add_user .select').select2({
+//                        minimumResultsForSearch: -1,
+//                        width: '100%'
+//                    });
+//
+//                }
+//
+//                if ($('#add_user .datetimepicker').length > 0) {
+//                    $('#add_user .datetimepicker').datetimepicker({
+//                        format: 'DD/MM/YYYY',
+//                        icons: {
+//                            up: "fa fa-angle-up",
+//                            down: "fa fa-angle-down",
+//                            next: 'fa fa-angle-right',
+//                            previous: 'fa fa-angle-left'
+//                        }
+//                    });
+//                }
+//
+//            }
+//        }
+//
+//        function OnEnrollFailure(response) {
+//            Swal.fire({
+//                position: 'top-end',
+//                icon: 'error',
+//                title: response,
+//                showConfirmButton: false,
+//                timer: 1500
+//            });
+//        }
     </script>
 }

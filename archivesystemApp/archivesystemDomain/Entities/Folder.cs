@@ -13,13 +13,33 @@ namespace archivesystemDomain.Entities
         [Key]
         public int Id { get; set; }
 
-        [Required]
         public string Name { get; set; }
+       
+        public int? ParentId { get; set; }
 
-        [Required]
+        [ForeignKey("ParentId")]
+        public ICollection<Folder> Subfolders { get; set; }
+
+        public int? FileId { get; set; }
+        public File File { get; set; }
+
+        public int? AccessLevelId { get; set; }
+
+        public AccessLevel AccessLevel { get; set; }
+
+        public ICollection<File> Files { get; set; }
+
+        public int? DepartmentId { get; set; }
+        public Department Department { get; set; }
+
+        [ForeignKey("Faculty")]
+        public int? FacultyId { get; set; }
+        public Faculty Faculty { get; set; }
+      
+        public bool IsRestricted { get; set;}
+ 
         public DateTime CreatedAt {get;set;}
 
-        [Required]
         public DateTime UpdatedAt {get;set;}
 
 
