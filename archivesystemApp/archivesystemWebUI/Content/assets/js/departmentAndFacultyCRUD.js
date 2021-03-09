@@ -1,4 +1,15 @@
 ﻿var facultyDataTable, departmentDataTable;
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'top',
+    showConfirmButton: false,
+    timer: 2000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer);
+        toast.addEventListener('mouseleave', Swal.resumeTimer);
+    }
+});
 
 $(document).ready(function() {
 // BEGIN DATATABLES
@@ -9,24 +20,29 @@ $(document).ready(function() {
             "type": "GET",
             "datatype": "json"
         },
+        "processing": true,
+        "autoWidth": false,
+        "language": {
+            processing: "Data loading..."
+        },
         "order": [[1, 'asc']],
         "columns": [
             {
                 "data": null,
                 "searchable": false,
                 "orderable": false,
-                "width": "30px"
+                "width": "20px"
             },
             { "data": "Name" },
             {
                 "data": "Id",
                 render: function(data) {
-                    return `<a class='btn btn-primary m-l-5 m-r-5' href='#' onclick="getAddOrEditPartialView('/Faculty/GetFacultyPartialView', ${
-                        data})"><i class='fa fa-pencil m-r-5'></i>Edit</a><a class='btn btn-danger' href='#' onclick='getDeletePartialView("/Faculty/GetDeletePartialView", ${
+                    return `<a class='btn btn-sm btn-outline-primary m-l-5 m-r-5' href='#' onclick="getAddOrEditPartialView('/Faculty/GetFacultyPartialView', ${
+                        data})"><i class='fa fa-pencil m-r-5'></i>Edit</a><a class='btn btn-sm btn-outline-danger' href='#' onclick='getDeletePartialView("/Faculty/GetDeletePartialView", ${
                         data})'><i class='fa fa-trash-o m-r-5'></i>Delete</a>`;
                 },
                 "orderable": false,
-                "width": "175px"
+                "width": "146px"
             }
         ]
     });
@@ -43,11 +59,11 @@ $(document).ready(function() {
     // Begin Department DataTable
     departmentDataTable = $("#departmentDataTable").DataTable({
         "processing": true,
-        "language": {
-         processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>'
-         
+        "autoWidth": false,
+        "language": { 
+            processing: '<i class="fa fa-spin fa-spinner"></i> Loading...'
         },
-        "ajax": {
+        ajax: {
             "url": "/Department/GetDepartmentData",
             "type": "GET",
             "datatype": "json"
@@ -56,7 +72,7 @@ $(document).ready(function() {
             {
                 "searchable": false,
                 "orderable": false,
-                "width": "30px",
+                "width": "20px",
                 "targets": 0
             }
         ],
@@ -68,12 +84,12 @@ $(document).ready(function() {
             {
                 "data": "Id",
                 render: function(data) {
-                    return `<a class='btn btn-primary m-l-5 m-r-5' href='#' onclick="getAddOrEditPartialView('/Department/GetDepartmentPartialView', ${
-                        data})"><i class='fa fa-pencil m-r-5'></i>Edit</a><a class='btn btn-danger' href='#' onclick='getDeletePartialView("/Department/GetDeletePartialView", ${
+                    return `<a class='btn btn-sm btn-outline-primary m-l-5 m-r-5' href='#' onclick="getAddOrEditPartialView('/Department/GetDepartmentPartialView', ${
+                        data})"><i class='fa fa-pencil m-r-5'></i>Edit</a><a class='btn btn-sm btn-outline-danger' href='#' onclick='getDeletePartialView("/Department/GetDeletePartialView", ${
                         data})'><i class='fa fa-trash-o m-r-5'></i>Delete</a>`;
                 },
                 "orderable": false,
-                "width": "175px"
+                "width": "146px"
             }
         ]
     });
@@ -98,39 +114,44 @@ function getAddOrEditPartialView(url, id) {
             $("#modalBody").html(res);
             $('#modal').modal({ backdrop: 'static', keyboard: true });
             $("#modal").modal("show");
+            $.validator.unobtrusive.parse(".addOrUpdateForm");
+            
+            if ($('#modal .select').length > 0) {
+                $('#modal .select').select2({
+                    minimumResultsForSearch: -1,
+                    width: '100%'
+                });
+
+            }
         });
 }
 
-	//Post to Add or Edit Action
+//Post to Add or Edit Action
 function addOrEdit(name, url) {
 	var form = $('form[name=' + name + ']');
-	form.validate();
-	if (!form.valid()) {
-		$("#editTxtName-error").addClass("field-validation-error");
-		$("#editTxtName").addClass("input-validation-error");
-		$("#editTxtName").keyup(function () {
-			$(this).removeClass("input-validation-error");
-		});
-		return;
-	} else {
-		var data = form.serialize();
-		$.post(url,
+    if (!form.valid()) {
+        return;
+        } else {
+        var data = form.serialize();
+        $.post(url,
 			data,
 			function (response) {
-				if (response === "success") {
-					$("#modal").modal("hide");
-                    //insert alert service
+                if (response === "success") {
+                    $("#modal").modal("hide");
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Update Successful'
+                    });
                     //reload both dataTables as both use the same ajax calls
                     facultyDataTable.ajax.reload();
                     departmentDataTable.ajax.reload();
-				} else if (response === "Name already exist") {
-					$("#validationMsg").html(response);
-					$("#editTxtName").keydown(function() {
-						$("#validationMsg").html("");
-					});
-				} else {
-					alert(response.responseText);
-				}
+                } else {
+                    $("#modal").modal("hide");
+                    Toast.fire({
+                        title: 'Update Failed',
+                        icon: 'error'
+                    });
+                }
 			});
 	}
 }
@@ -154,13 +175,20 @@ function confirmDelete(url) {
         dataType: "json",
         success: function () {
             $("#modal").modal("hide");
-            //insert alert service
+            Toast.fire({
+                icon: 'success',
+                title: 'Deleted Successfully'
+            });
             //reload both as since both use the same ajax calls
             facultyDataTable.ajax.reload();
             departmentDataTable.ajax.reload();
         },
         failure: function (response) {
-            alert(response.responseText);
+            $("#modal").modal("hide");
+            Toast.fire({
+                title: 'Delete failed',
+                icon: 'error'
+            });
         }
     });
     return false;

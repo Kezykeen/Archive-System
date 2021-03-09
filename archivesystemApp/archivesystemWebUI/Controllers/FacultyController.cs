@@ -46,19 +46,6 @@ namespace archivesystemWebUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> AddOrEdit(FacultyViewModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return Json("failure", JsonRequestBehavior.AllowGet);
-            }
-
-            // Check if the entry name exists & change is from a different entry and return custom message
-            var faculties = _unitOfWork.FacultyRepo.GetAllToList();
-            if (faculties.Any(x => x.Name == model.Name && x.Id != model.Id))
-            {
-                var message = "Name already exist";
-                return Json(message, JsonRequestBehavior.AllowGet);
-            }
-
             var faculty = Mapper.Map<Faculty>(model);
             if (model.Id == 0)
             {
@@ -120,6 +107,16 @@ namespace archivesystemWebUI.Controllers
                 AccessLevelId = _unitOfWork.AccessLevelRepo.GetBaseLevel().Id };
             _unitOfWork.SubFolderRepo.Add(subFolder);
 
+        }
+
+        [HttpPost]
+        public JsonResult FacultyNameCheck(string Name, int Id)
+        {
+            var faculties = _unitOfWork.FacultyRepo.GetAllToList();
+
+            // Check if the entry name exists & change is from a different entry and return error message from viewModel
+            bool status = faculties.Any(x => x.Name == Name && x.Id != Id);
+            return Json(!status, JsonRequestBehavior.AllowGet);
         }
     }
 }
