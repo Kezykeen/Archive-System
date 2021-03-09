@@ -86,6 +86,11 @@ namespace archivesystemWebUI.Infrastructures
                 .ForMember(m => m.UpdatedAt, opt => opt.UseValue<DateTime>(DateTime.Now));
             Mapper.CreateMap<FolderViewModel, Folder>().ReverseMap();
 
+            Mapper.CreateMap<DepartmentViewModel,Folder>()
+                .ForMember(dest => dest.Id ,opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedAt, opt => opt.UseValue(DateTime.Now));
+
+
         }
     }
 }

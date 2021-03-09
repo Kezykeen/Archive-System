@@ -9,6 +9,7 @@ using AutoMapper;
 
 namespace archivesystemWebUI.Controllers
 {
+    //[Authorize(Roles = "Admin, Manager")]
     public class FacultyController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -64,9 +65,7 @@ namespace archivesystemWebUI.Controllers
             {
                 faculty.CreatedAt = DateTime.Now;
                 faculty.UpdatedAt = DateTime.Now;
-                _unitOfWork.FacultyRepo.Add(faculty);
-                
-               int folderId= CreateFacultyFolder(faculty);
+                CreateFacultyAndFolder(faculty);
             }
             else
             {
@@ -111,7 +110,7 @@ namespace archivesystemWebUI.Controllers
             }
         }
 
-        private  int CreateFacultyFolder(Faculty faculty)
+        private  void CreateFacultyAndFolder(Faculty faculty)
         {
            
             var rootFolder = _unitOfWork.FolderRepo.GetRootFolder();
@@ -122,11 +121,12 @@ namespace archivesystemWebUI.Controllers
                 UpdatedAt = DateTime.Now,
                 AccessLevelId = _unitOfWork.AccessLevelRepo.GetBaseLevel().Id,
                 ParentId=rootFolder.Id,
-                IsRestricted=true
+                IsRestricted=true,
+                Faculty=faculty
             };
             _unitOfWork.FolderRepo.Add(folder);
 
-            return folder.Id;
+            return;
         }
     }
 }

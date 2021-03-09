@@ -188,6 +188,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Api\UsersController.cs" />
     <Compile Include="Controllers\CSRF.cs" />
+    <Compile Include="Controllers\FileMetaController.cs" />
     <Compile Include="Controllers\UserAccessController.cs" />
     <Compile Include="Controllers\DepartmentController.cs" />
     <Compile Include="Controllers\EmployeesController.cs" />
@@ -313,6 +314,14 @@
     <Compile Include="Migrations\202103051342124_modifiedFoldersEntity.Designer.cs">
       <DependentUpon>202103051342124_modifiedFoldersEntity.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202103071547416_FileMeta.cs" />
+    <Compile Include="Migrations\202103071547416_FileMeta.Designer.cs">
+      <DependentUpon>202103071547416_FileMeta.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202103081527545_ModifiedFoldersTable.cs" />
+    <Compile Include="Migrations\202103081527545_ModifiedFoldersTable.Designer.cs">
+      <DependentUpon>202103081527545_ModifiedFoldersTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CodeStatus.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -334,6 +343,7 @@
     <Compile Include="Repository\DeptRepository.cs" />
     <Compile Include="Repository\EmployeeRepository.cs" />
     <Compile Include="Repository\FacultyRepository.cs" />
+    <Compile Include="Repository\FileMetaRepo.cs" />
     <Compile Include="Repository\FolderRepo.cs" />
     <Compile Include="Repository\Repository.cs" />
     <Compile Include="Repository\AccessLevelRepository.cs" />
@@ -564,6 +574,7 @@
     <Content Include="Views\Shared\_EditAccessLevel.cshtml" />
     <Content Include="Views\Shared\_FolderPathPartial.cshtml" />
     <Content Include="Views\Shared\_ConfirmItemMove.cshtml" />
+    <Content Include="Views\FileMeta\New.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -668,6 +679,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202103051342124_modifiedFoldersEntity.resx">
       <DependentUpon>202103051342124_modifiedFoldersEntity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202103071547416_FileMeta.resx">
+      <DependentUpon>202103071547416_FileMeta.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202103081527545_ModifiedFoldersTable.resx">
+      <DependentUpon>202103081527545_ModifiedFoldersTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

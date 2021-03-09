@@ -8,9 +8,12 @@ using archivesystemDomain.Interfaces;
 using archivesystemDomain.Services;
 using archivesystemWebUI.Models;
 using AutoMapper;
+using Microsoft.AspNet.Identity;
 
 namespace archivesystemWebUI.Controllers
 {
+
+    [Authorize]
     public class FolderController : Controller
     {
         private IUnitOfWork repo { get; set; }
@@ -24,20 +27,14 @@ namespace archivesystemWebUI.Controllers
         [Route("folders")]
         public ActionResult Index(string search=null)
         {
-            FolderViewModel model = new FolderViewModel(); 
-            if (string.IsNullOrEmpty(search))
+
+            FolderViewModel model = GetRootViewModel(search);
+            if ( ! HttpContext.User.IsInRole("Admin") && search==null)
             {
-                var rootFolder = repo.FolderRepo.GetRootWithSubfolder();
-                model.Name="Root";
-                model.DirectChildren = rootFolder.Subfolders;
-                model.CurrentPath = new List<FolderPath> { new FolderPath { Id = rootFolder.Id, Name = "Root" } };
-                model.Id = rootFolder.Id;
-            }
-            else
-            {
-                model.DirectChildren = repo.FolderRepo.GetFoldersThatMatchName(search);
-                model.CurrentPath = new List<FolderPath>();
-                model.Id = 0;
+                var userId = User.Identity.GetUserId();
+                var user = repo.EmployeeRepo.GetEmployeeByUserId(userId);
+                var userFaculty = repo.FacultyRepo.Get(user.Department.FacultyId);
+                model.DirectChildren = model.DirectChildren.Where(x => x.Name == userFaculty.Name).ToList();
             }
             return View("FolderList",model);
         }
@@ -59,25 +56,23 @@ namespace archivesystemWebUI.Controllers
         public ActionResult Create(string name,int parentId,int accessLevelId)
         {
             Folder rootFolder = repo.FolderRepo.GetRootFolder();
-            var parentFolder = repo.FolderRepo.GetFolder(parentId);
+            var parentFolder = repo.FolderRepo.GetFolderWithSubFolders(parentId);
             var parentSubFolderNames = parentFolder.Subfolders.Select(x => x.Name);
             if(parentSubFolderNames.Contains(name) || name == "Root")
-            {
                 return new HttpStatusCodeResult(400);
-            }
             if (name.Contains(",") || name.Contains("#"))
                 return new HttpStatusCodeResult(403);
 
             var parentFolderPath = repo.FolderRepo.GetFolderPath(parentId);
             var parentFolderCurrentFolderDepth = parentFolderPath.Count();
             if (parentFolderCurrentFolderDepth >= (int) AllowableFolderDepth.Max)
-            {
                 return new HttpStatusCodeResult(404);
-            }
+            
             var folder = new Folder { Name = name, CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now, ParentId = parentId,
                 AccessLevelId = accessLevelId,
-                IsRestricted = false
+                IsRestricted = false,
+                DepartmentId=parentFolder.DepartmentId,
             };
             repo.FolderRepo.Add(folder);
             repo.Save();
@@ -132,14 +127,28 @@ namespace archivesystemWebUI.Controllers
         //GET: /folders/{id}
         [Route("folders/{folderId}")]
         [HttpGet]
-        public ActionResult GetFolderSubFolders(int folderId)
+        public ActionResult GetFolderSubFolders(int folderId, string accessKey="")
         {
-            var folder = repo.FolderRepo.GetFolder(folderId);
+            var folder = repo.FolderRepo.GetFolderWithSubFolders(folderId);
             if (folder.Name == "Root")
                 return RedirectToAction(nameof(Index));
-            var folderpath = repo.FolderRepo.GetFolderPath(folderId);
-            
 
+            var userId = User.Identity.GetUserId();
+            var user = repo.EmployeeRepo.GetEmployeeByUserId(userId);
+            var userAccesslevel = repo.AccessDetailsRepo.GetByEmployeeId(user.Id).AccessLevelId;
+            var folderpath = repo.FolderRepo.GetFolderPath(folderId);
+
+            if (folder.IsRestricted && folderpath.Count() == 2)
+                folder.Subfolders = folder.Subfolders.Where(x => x.Name == user.Department.Name).ToList();
+            else
+            {
+                if (folder.Department.Name != user.Department.Name)
+                    
+
+                folder.Subfolders = folder.Subfolders.Where(x => x.AccessLevelId <= userAccesslevel).ToList();
+            }
+
+               
             var model = new FolderViewModel
             {
                 Name = folder.Name,
@@ -213,9 +222,32 @@ namespace archivesystemWebUI.Controllers
             return PartialView("_ConfirmItemMove");
         }
 
+        private FolderViewModel GetRootViewModel(string search=null)
+        {
+            FolderViewModel model = new FolderViewModel();
+            if (string.IsNullOrEmpty(search))
+            {
+                var rootFolder = repo.FolderRepo.GetRootWithSubfolder();
+                model.Name = "Root";
+                model.DirectChildren = rootFolder.Subfolders;
+                model.CurrentPath = new List<FolderPath> { new FolderPath { Id = rootFolder.Id, Name = "Root" } };
+                model.Id = rootFolder.Id;
+            }
+            else
+            {
+                model.DirectChildren = repo.FolderRepo.GetFoldersThatMatchName(search);
+                model.CurrentPath = new List<FolderPath>();
+                model.Id = 0;
+            }
+            return model;
+        }
 
+        private FolderViewModel GetDepartmentFolder (string search = null)
+        {
+            return new FolderViewModel();
+        }
 
-
+       
     }
 }
 

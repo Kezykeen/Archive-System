@@ -12,6 +12,7 @@ using archivesystemDomain.Interfaces;
 
 namespace archivesystemWebUI.Controllers
 {
+    [Authorize(Roles = "Admin, Manager")]
     public class RolesController : Controller
     {
         private readonly IRoleService _service;
