@@ -90,6 +90,9 @@ namespace archivesystemWebUI.Infrastructures
                 .ForMember(dest => dest.Id ,opt => opt.Ignore())
                 .ForMember(dest => dest.UpdatedAt, opt => opt.UseValue(DateTime.Now));
 
+            Mapper.CreateMap<Folder, FolderViewModel>()
+                .ForMember(x=> x.DirectChildren,opt=> opt.MapFrom(src=> src.Subfolders));
+
 
         }
     }

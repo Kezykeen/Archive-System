@@ -36,6 +36,7 @@ namespace archivesystemWebUI.Controllers
                 var userFaculty = repo.FacultyRepo.Get(user.Department.FacultyId);
                 model.DirectChildren = model.DirectChildren.Where(x => x.Name == userFaculty.Name).ToList();
             }
+            
             return View("FolderList",model);
         }
 
@@ -132,31 +133,18 @@ namespace archivesystemWebUI.Controllers
             var folder = repo.FolderRepo.GetFolderWithSubFolders(folderId);
             if (folder.Name == "Root")
                 return RedirectToAction(nameof(Index));
-
-            var userId = User.Identity.GetUserId();
-            var user = repo.EmployeeRepo.GetEmployeeByUserId(userId);
-            var userAccesslevel = repo.AccessDetailsRepo.GetByEmployeeId(user.Id).AccessLevelId;
             var folderpath = repo.FolderRepo.GetFolderPath(folderId);
+            var initialSubfolderCount = folder.Subfolders.Count();
+            
+            if (!HttpContext.User.IsInRole("Admin"))
+                RestrictAccess(folder);
 
-            if (folder.IsRestricted && folderpath.Count() == 2)
-                folder.Subfolders = folder.Subfolders.Where(x => x.Name == user.Department.Name).ToList();
-            else
-            {
-                if (folder.Department.Name != user.Department.Name)
-                    
+            if (initialSubfolderCount > 0 && folder.Subfolders.Count() == 0)
+                return RedirectToAction(nameof(Index));
 
-                folder.Subfolders = folder.Subfolders.Where(x => x.AccessLevelId <= userAccesslevel).ToList();
-            }
-
+            var model= Mapper.Map<FolderViewModel>(folder);
+            model.CurrentPath = folderpath;
                
-            var model = new FolderViewModel
-            {
-                Name = folder.Name,
-                ParentId = (int)folder.ParentId,
-                CurrentPath = folderpath,
-                DirectChildren = folder.Subfolders,
-                Id=folder.Id
-            };
             return View("FolderList", model);
         }
 
@@ -247,7 +235,16 @@ namespace archivesystemWebUI.Controllers
             return new FolderViewModel();
         }
 
-       
+        private void RestrictAccess( Folder folder)
+        {
+            var userId = User.Identity.GetUserId();
+            var user = repo.EmployeeRepo.GetEmployeeByUserId(userId);
+            folder.Subfolders = folder.Subfolders.Where(x =>  x.Name == user.Department.Name).ToList();
+
+            //var userAccesslevel = repo.AccessDetailsRepo.GetByEmployeeId(user.Id).AccessLevelId;
+            //folder.Subfolders = folder.Subfolders.Where(x => x.AccessLevelId <= userAccesslevel).ToList();
+            
+        }
     }
 }
 
