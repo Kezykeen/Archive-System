@@ -55,6 +55,19 @@ namespace archivesystemWebUI.Repository
             folder.UpdatedAt = DateTime.Now;
         }
 
+        public void UpdateDepartmentalFolder(Folder model)
+        {
+            var folderInDb = _context.Folders.Include(x=> x.Department).SingleOrDefault(x => x.IsRestricted && x.DepartmentId == model.DepartmentId);
+            folderInDb.Name = model.Name;
+            folderInDb.UpdatedAt = DateTime.Now;
+            if(folderInDb.Department.FacultyId != model.FacultyId)
+            {
+                var newParentFolder = _context.Folders.SingleOrDefault(x => x.IsRestricted && x.FacultyId == model.FacultyId);
+                folderInDb.ParentId = newParentFolder.Id;
+            }
+            
+        }
+
         public void DeleteFolder(int folderId)
         {
             RecursiveDelete(folderId);
@@ -66,10 +79,11 @@ namespace archivesystemWebUI.Repository
             return _context.Folders.Where(x => x.Name.Contains(name)).ToList();
         }
 
-        public Folder GetFolder(int id)
+        public Folder GetFolderWithSubFolders(int id)
         {
             
-            var folder = _context.Folders.Include(x => x.Subfolders).Include(x => x.Files).Single(x => x.Id == id);
+            var folder = _context.Folders.Include(x => x.Subfolders).Include(x=> x.Department)
+                .Include(x=>x.Faculty).Include(x => x.Files).Single(x => x.Id == id);
             return folder;
         }
 

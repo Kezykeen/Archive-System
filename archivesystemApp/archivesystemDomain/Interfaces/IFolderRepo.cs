@@ -17,9 +17,9 @@ namespace archivesystemDomain.Interfaces
         void DeleteFolder(int folderId);
         List<Folder> GetFoldersThatMatchName(string name);
         Folder GetRootWithSubfolder();
-        Folder GetFolder(int id);
+        Folder GetFolderWithSubFolders(int id);
         List<FolderPath> GetFolderPath(int id);
-        
+        void UpdateDepartmentalFolder(Folder model);
         Folder GetFacultyFolder(string name);
         void MoveFolder(int id, int newParentFolderId);
     }

@@ -68,17 +68,17 @@ namespace archivesystemWebUI.Controllers
             {
                 department.CreatedAt = DateTime.Now;
                 department.UpdatedAt = DateTime.Now;
-
-                _unitOfWork.DeptRepo.Add(department);
-                var departmentFolder=CreateDepartmentFolder(department);
-                
+                CreateDepartmentAndFolder(department);
             }
             else
             {
+                var folderModel = Mapper.Map<Folder>(model);
+                folderModel.DepartmentId = model.Id;
+                _unitOfWork.FolderRepo.UpdateDepartmentalFolder(folderModel);
+
                 var getDepartment = _unitOfWork.DeptRepo.Get(model.Id);
                 Mapper.Map(model, getDepartment);
                 getDepartment.UpdatedAt = DateTime.Now;
-
                 _unitOfWork.DeptRepo.Update(getDepartment);
             }
             await _unitOfWork.SaveAsync();
@@ -117,7 +117,7 @@ namespace archivesystemWebUI.Controllers
             }
         }
 
-        private Folder CreateDepartmentFolder(Department department)
+        private void CreateDepartmentAndFolder(Department department)
         {
            
             var faculty = _unitOfWork.FacultyRepo.Get(department.FacultyId);
@@ -129,12 +129,14 @@ namespace archivesystemWebUI.Controllers
                 UpdatedAt = DateTime.Now,
                 AccessLevelId = _unitOfWork.AccessLevelRepo.GetBaseLevel().Id,
                 ParentId = facultyFolder.Id,
-                IsRestricted=true
+                IsRestricted=true,
+                Department=department
             };
 
             _unitOfWork.FolderRepo.Add(folder);
-            return folder;
-
+            return;
         }
+
+        
     }
 }

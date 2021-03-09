@@ -28,6 +28,13 @@ namespace archivesystemDomain.Entities
         public AccessLevel AccessLevel { get; set; }
 
         public ICollection<File> Files { get; set; }
+
+        public int? DepartmentId { get; set; }
+        public Department Department { get; set; }
+
+        [ForeignKey("Faculty")]
+        public int? FacultyId { get; set; }
+        public Faculty Faculty { get; set; }
       
         public bool IsRestricted { get; set;}
  

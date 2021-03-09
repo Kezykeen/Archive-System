@@ -14,9 +14,9 @@ namespace archivesystemDomain.Services
         {
             var dbContext = new ApplicationDbContext();
 
-            if (!dbContext.Faculties.Any())
+            if (!dbContext.Folders.Any())
             {
-                // Seed faculties
+                // create faculties and departments
                 List<Faculty> faculties = new List<Faculty>
                 {
                     new Faculty
@@ -51,64 +51,65 @@ namespace archivesystemDomain.Services
                         }
                     },
                 };
-                dbContext.Faculties.AddRange(faculties);
 
 
-                //Seed folders
-
-                if (!dbContext.Folders.Any())
+                //create faculty and departmental folders 
+                var facultyFolders = new List<Folder>();
+                foreach (var faculty in faculties)
                 {
+                    facultyFolders.Add(
 
-
-                    var facultyFolders = new List<Folder>();
-                    foreach (var faculty in faculties)
-                    {
-                        facultyFolders.Add(
-
-                            new Folder
-                            {
-                                Name = faculty.Name,
-                                CreatedAt = DateTime.Now,
-                                UpdatedAt = DateTime.Now,
-                                AccessLevelId = 1,
-                                IsRestricted = true,
-                                Subfolders = new List<Folder>
-                                { 
-                                    new Folder
-                                    {
-                                        Name=faculty.Departments[0].Name,
-                                        CreatedAt = DateTime.Now,
-                                        UpdatedAt = DateTime.Now,
-                                        AccessLevelId = 1,
-                                        IsRestricted=true,
-                                    }
-                                }                           
-                            });
-                    }
-
-
-                    //Seed Root folder
-                    var rootFolder = new Folder
-                    {
-                        Name = "Root",
-                        CreatedAt = DateTime.Now,
-                        UpdatedAt = DateTime.Now,
-                        IsRestricted = true,
-                        AccessLevel = new AccessLevel
+                        new Folder
                         {
-                            Level = AccessLevelNames.BaseLevel,
-                            LevelDescription = "Base level",
+                            Name = faculty.Name,
                             CreatedAt = DateTime.Now,
-                            UpdatedAt = DateTime.Now
-                        },
-                        Subfolders =facultyFolders
+                            UpdatedAt = DateTime.Now,
+                            AccessLevelId = 1,
+                            IsRestricted = true,
+                            Faculty=faculty,
+                            Subfolders = new List<Folder>
+                            { 
+                                new Folder
+                                {
+                                    Name=faculty.Departments[0].Name,
+                                    CreatedAt = DateTime.Now,
+                                    UpdatedAt = DateTime.Now,
+                                    AccessLevelId = 1,
+                                    IsRestricted=true,
+                                    Department=faculty.Departments[0]
+                                }
+                            }
+                                
+                        });
+                }
 
-                    };
-                    dbContext.Folders.Add(rootFolder);
+
+                //create Root folder
+                var rootFolder = new Folder
+                {
+                    Name = "Root",
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now,
+                    IsRestricted = true,
+                    AccessLevel = new AccessLevel
+                    {
+                        Level = AccessLevelNames.BaseLevel,
+                        LevelDescription = "Base level",
+                        CreatedAt = DateTime.Now,
+                        UpdatedAt = DateTime.Now
+                    },
+                    Subfolders =facultyFolders
                 };
-                dbContext.SaveChanges();
 
-            }
+                //seed the root folder,faculties , departments and their folders
+                dbContext.Folders.Add(rootFolder);
+
+                //save changes
+                dbContext.SaveChanges();
+            };
+                
+
+            
 
 
         
