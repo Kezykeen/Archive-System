@@ -239,7 +239,8 @@ namespace archivesystemWebUI.Controllers
                 {
                     await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                 }
-                return RedirectToAction("Index", new { Message = ManageMessageId.ChangePasswordSuccess });
+                
+                return Json("success", JsonRequestBehavior.AllowGet);
             }
             AddErrors(result);
             return View(model);
