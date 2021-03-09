@@ -281,22 +281,21 @@ namespace archivesystemWebUI.Controllers
         public async Task<ActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
             if (ModelState.IsValid)
-            {
-                var user = await UserManager.FindByNameAsync(model.Email);
+            {    
+                var user = await UserManager.FindByEmailAsync(model.Email);
                 if (user == null || !(await UserManager.IsEmailConfirmedAsync(user.Id)))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
-
                     return View("ForgotPasswordConfirmation");
                 }
 
                 // Send an email with this link
-                var employee = _unitOfWork.EmployeeRepo.GetEmployeeByMail(model.Email);
-                string code = _tokenGenerator.Code(employee.Id);
-                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = employee.Id, code = code }, protocol: Request.Url.Scheme);
+                string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+
                 try
                 {
-                    await _emailSender.SendEmailAsync(employee.Email, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                    await _emailSender.SendEmailAsync(model.Email, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
                 }
                 catch (Exception e)
@@ -353,6 +352,7 @@ namespace archivesystemWebUI.Controllers
             {
                 return RedirectToAction("ResetPasswordConfirmation", "Account");
             }
+
             AddErrors(result);
             return View();
         }
