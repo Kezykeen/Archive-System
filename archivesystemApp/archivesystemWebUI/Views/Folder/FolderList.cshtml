@@ -1,7 +1,7 @@
-﻿@using archivesystemWebUI.Models
+﻿@using archivesystemWebUI.Models.FolderViewModels
 @using archivesystemDomain.Entities
 @using archivesystemDomain.Services
-@model FolderViewModel
+@model FolderPageViewModel
 @{
     ViewBag.Title = $"{Model.Name} Folder";
     var currentPath = Model.CurrentPath;
@@ -12,6 +12,7 @@
 }
 
 @Html.Partial("_FolderPathPartial", Model)
+
 
 
 <!-- Page Content -->
@@ -109,7 +110,7 @@
                                 if (Model.Id != 0)
                                 {
                                     <div class="file-options">
-                                <span class="btn-fil"><a href="#" class=" text-dark modal-upload" data-toggle="modal" data-target="@Url.Action("New", "FileMeta")"><i class="fa fa-upload"></i></a></span>
+                                        <span class="btn-fil"><a href="#" class=" text-dark modal-upload" data-toggle="modal" data-target="@Url.Action("New", "FileMeta")"><i class="fa fa-upload"></i></a></span>
                                     </div>
                                     <div class="file-options">
                                         @Html.AntiForgeryToken()
@@ -119,7 +120,7 @@
                                 }
 
                             }
-                     
+
                         </div>
                         <div class="file-content">
                             <form class="file-search">
@@ -169,16 +170,16 @@
 @section scripts{
     <script src="~/Content/assets/js/folderControllerScript.js">
     </script>
-    
+
     <script>
-        
+
         $(".modal-upload").on("click", function (e) {
             debugger;
             e.preventDefault();
-            var  addButton = $(this);
+            var addButton = $(this);
             $("#new_upload").remove;
             $.get(addButton.data("target")).done(
-                function(data) {
+                function (data) {
 
                     $("#new_upload").html(data);
 
@@ -186,7 +187,7 @@
                     $.validator.unobtrusive.parse("#upload");
 
                 });
-              
+
 
         });
     </script>

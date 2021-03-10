@@ -187,7 +187,7 @@
     <Compile Include="Controllers\AccessLevelController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Api\UsersController.cs" />
-    <Compile Include="Controllers\CSRF.cs" />
+    <Compile Include="Infrastructures\CSRF.cs" />
     <Compile Include="Controllers\FileMetaController.cs" />
     <Compile Include="Controllers\UserAccessController.cs" />
     <Compile Include="Controllers\DepartmentController.cs" />
@@ -334,6 +334,10 @@
     <Compile Include="Models\FacultyViewModel.cs" />
     <Compile Include="Models\FileMetaVm.cs" />
     <Compile Include="Models\FolderViewModels.cs" />
+    <Compile Include="Models\FolderViewModels\CreateFolderViewModel.cs" />
+    <Compile Include="Models\FolderViewModels\DeleteFolderViewModel.cs" />
+    <Compile Include="Models\FolderViewModels\FolderPageViewModel.cs" />
+    <Compile Include="Models\FolderViewModels\MoveItemViewModel.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\UpdateEmployeeVM.cs" />
     <Compile Include="Models\RoleViewModels.cs" />
