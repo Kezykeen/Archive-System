@@ -547,22 +547,10 @@
     <Content Include="Views\Roles\Index.cshtml" />
     <Content Include="Views\Roles\EditRoleView.cshtml" />
     <Content Include="Views\AccessLevel\ManageAccessLevel.cshtml" />
-    <Content Include="Views\AccessLevel\EditAccessLevel.cshtml" />
     <Content Include="Views\Department\Index.cshtml" />
     <Content Include="Views\Faculty\Index.cshtml" />
     <Content Include="Views\UserAccess\ManageUserAccess.cshtml" />
-    <Content Include="Views\UserAccess\AddUser.cshtml" />
-    <Content Include="Views\UserAccess\EditUser.cshtml" />
-    <Content Include="Views\UserAccess\DeleteUser.cshtml" />
     <Content Include="Views\Department\_AddOrEditDepartment.cshtml" />
-    <Content Include="Views\AccessLevel\AddUserToAccess.cshtml" />
-    <Content Include="Views\AccessLevel\Delete.cshtml" />
-    <Content Include="Views\AccessDetails\Create.cshtml" />
-    <Content Include="Views\AccessDetails\Delete.cshtml" />
-    <Content Include="Views\AccessDetails\Details.cshtml" />
-    <Content Include="Views\AccessDetails\Edit.cshtml" />
-    <Content Include="Views\AccessDetails\Index.cshtml" />
-    <Content Include="Views\Shared\_AddOrEditDepartment.cshtml" />
     <Content Include="Views\Employees\DelPrompt.cshtml" />
     <Content Include="Views\Employees\Details.cshtml" />
     <Content Include="Views\Home\EmployeeDashboard.cshtml" />
@@ -588,6 +576,7 @@
     <Content Include="Views\Shared\_ConfirmItemMove.cshtml" />
     <Content Include="Views\FileMeta\New.cshtml" />
     <Content Include="Views\Shared\_EnterAccessCode.cshtml" />
+    <Content Include="Views\Shared\_ChangePassword.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

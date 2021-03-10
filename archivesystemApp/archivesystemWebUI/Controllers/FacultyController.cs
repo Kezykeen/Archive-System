@@ -119,12 +119,12 @@ namespace archivesystemWebUI.Controllers
         }
 
         [HttpPost]
-        public JsonResult FacultyNameCheck(string Name, int Id)
+        public JsonResult FacultyNameCheck(string name, int id)
         {
             var faculties = _unitOfWork.FacultyRepo.GetAllToList();
 
             // Check if the entry name exists & change is from a different entry and return error message from viewModel
-            bool status = faculties.Any(x => x.Name == Name && x.Id != Id);
+            bool status = faculties.Any(x => x.Name == name && x.Id != id);
             return Json(!status, JsonRequestBehavior.AllowGet);
         }
     }
