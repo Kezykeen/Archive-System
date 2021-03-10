@@ -587,6 +587,7 @@
     <Content Include="Views\Shared\_FolderPathPartial.cshtml" />
     <Content Include="Views\Shared\_ConfirmItemMove.cshtml" />
     <Content Include="Views\FileMeta\New.cshtml" />
+    <Content Include="Views\Shared\_EnterAccessCode.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

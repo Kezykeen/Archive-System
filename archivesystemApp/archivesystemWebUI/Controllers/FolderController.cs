@@ -2,6 +2,7 @@
 using archivesystemDomain.Interfaces;
 using archivesystemDomain.Services;
 using archivesystemWebUI.Infrastructures;
+using archivesystemWebUI.Models;
 using archivesystemWebUI.Models.FolderViewModels;
 using AutoMapper;
 using Microsoft.AspNet.Identity;
@@ -17,7 +18,8 @@ namespace archivesystemWebUI.Controllers
     public class FolderController : Controller
     {
         private IUnitOfWork repo { get; set; }
-
+        private const byte  LOCKOUT_TIME= 1; //lockout user after last request exceeds lockout time in minutes
+        
         public FolderController(IUnitOfWork repo)
         {
             this.repo = repo;
@@ -25,9 +27,10 @@ namespace archivesystemWebUI.Controllers
 
         // GET: /folders
         [Route("folders")]
-        public ActionResult Index(string search = null)
+        public ActionResult Index(string search = null, string returnUrl="/folders")
         {
             FolderPageViewModel model = GetRootViewModel(search);
+            model.ReturnUrl = returnUrl;
             if (!HttpContext.User.IsInRole("Admin") && search == null)
             {
                 var userId = User.Identity.GetUserId();
@@ -38,6 +41,9 @@ namespace archivesystemWebUI.Controllers
 
             ViewBag.AllowCreateFolder=false;
             ViewBag.ErrorMessage = TempData["errorMessage"];
+            var closeAccessCodeModal = TempData["isUserAccessVerified"] ?? true;
+            
+            model.CloseAccessCodeModal = (bool)closeAccessCodeModal;
             return View("FolderList", model);
         }
 
@@ -132,8 +138,17 @@ namespace archivesystemWebUI.Controllers
         //GET: /folders/{id}
         [Route("folders/{folderId}")]
         [HttpGet]
-        public ActionResult GetFolderSubFolders(int folderId, string accessKey = "")
+        public ActionResult GetFolderSubFolders(int folderId)
         {
+            var isAccessValidated = Session[SessionData.IsAccessValidated] ?? false;
+            var lastVisitTimme = Session[SessionData.LastVisit] ?? new DateTime();
+            var timeInMinutes = (DateTime.Now - (DateTime)lastVisitTimme).TotalMinutes;
+            if (!(bool)isAccessValidated || timeInMinutes> LOCKOUT_TIME)
+            {
+                TempData["isUserAccessVerified"] = false;
+                return RedirectToAction(nameof(Index), new { returnUrl = $"/folders/{folderId}" });
+            }
+                
             var folder = repo.FolderRepo.GetFolderWithSubFolders(folderId);
             if (folder.Name == "Root")
                 return RedirectToAction(nameof(Index));
@@ -148,6 +163,7 @@ namespace archivesystemWebUI.Controllers
             }
 
             var model = Mapper.Map<FolderPageViewModel>(folder);
+            model.CloseAccessCodeModal = true;
             var folderpath = repo.FolderRepo.GetFolderPath(folderId);
             model.CurrentPath = folderpath;
             ViewBag.AllowCreateFolder = true;
@@ -219,6 +235,21 @@ namespace archivesystemWebUI.Controllers
             ViewBag.CurrentFolder = Request.QueryString["currentFolder"];
             return PartialView("_ConfirmItemMove");
         }
+         
+        //GET: /Folder/VerifyAccessCode
+        public ActionResult VerifyAccessCode(string accessCode)
+        {
+            var userId = HttpContext.User.Identity.GetUserId();
+            var user = repo.EmployeeRepo.GetEmployeeByUserId(userId);
+            var userAccessCode = repo.AccessDetailsRepo.GetByEmployeeId(user.Id).AccessCode;
+
+            if (accessCode != userAccessCode)
+                return new HttpStatusCodeResult(400);
+
+            Session[SessionData.IsAccessValidated] = true;
+            Session[SessionData.LastVisit] = DateTime.Now;
+            return new HttpStatusCodeResult(200);
+        }
 
         private FolderPageViewModel GetRootViewModel(string search = null)
         {
@@ -238,11 +269,6 @@ namespace archivesystemWebUI.Controllers
                 model.Id = 0;
             }
             return model;
-        }
-
-        private FolderPageViewModel GetDepartmentFolder(string search = null)
-        {
-            return new FolderPageViewModel();
         }
 
         private bool AccessNotGranted(Folder folder)
