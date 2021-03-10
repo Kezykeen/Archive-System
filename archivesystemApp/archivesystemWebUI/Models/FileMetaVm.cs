@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Web;
 using archivesystemDomain.Entities;
@@ -13,6 +14,11 @@ namespace archivesystemWebUI.Models
         [MinLength(2)]
         public string Title { get; set; }
         public File File { get; set; }
+
+        [Required]
+        [Display(Name = "Access Level")]
+        public int AccessLevelId { get; set; }
+        public IEnumerable<AccessLevel> AccessLevel { get; set; }
         public int UploadedById  { get; set; }
         public int FolderId { get; set; }
         [Required]

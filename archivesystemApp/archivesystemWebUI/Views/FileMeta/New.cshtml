@@ -35,15 +35,24 @@
                             </div>
                       
                   
-                            <div class="form-group">
-                                @Html.LabelFor(e => e.FileBase, new { @class = "control-label col-md-6" })
-                                <div class="col-md-12">
-                                    @Html.TextBoxFor(e => e.FileBase, new { @class = "form-control", type="file" })
-                                    @Html.ValidationMessageFor(e => e.FileBase)
-                                </div>
-                               
+                    <div class="form-group">
+                        @Html.LabelFor(e => e.AccessLevelId)
 
-                            </div>
+                        <div class="col-md-12">
+                            @Html.DropDownListFor(m => m.AccessLevelId, new SelectList(Model.AccessLevel, "Id", "Level"), "Select Access Level", new { @class = "select" })
+                            @Html.ValidationMessageFor(e => e.AccessLevelId)
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(e => e.FileBase, new { @class = "control-label col-md-6" })
+                        <div class="col-md-12">
+                            @Html.TextBoxFor(e => e.FileBase, new { @class = "form-control", type="file" })
+                            @Html.ValidationMessageFor(e => e.FileBase)
+                        </div>
+
+                    </div>
+                  
                        
                       
 

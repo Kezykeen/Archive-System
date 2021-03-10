@@ -134,7 +134,7 @@
                                 <div class="file-scroll">
                                     <div class="file-content-inner">
 
-
+                                        @Html.Partial("_Files", Model.Id)
                                     </div>
                                 </div>
                             </div>
@@ -184,6 +184,13 @@
 
                     $("#new_upload").modal("show");
                     $.validator.unobtrusive.parse("#upload");
+                    if ($('#new_upload .select').length > 0) {
+                        $('#new_upload .select').select2({
+                            minimumResultsForSearch: -1,
+                            width: '100%'
+                        });
+
+                    }
 
                 });
               

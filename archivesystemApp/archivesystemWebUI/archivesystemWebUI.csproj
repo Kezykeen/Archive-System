@@ -563,7 +563,6 @@
     <Content Include="Views\Employees\DelPrompt.cshtml" />
     <Content Include="Views\Employees\Details.cshtml" />
     <Content Include="Views\Home\EmployeeDashboard.cshtml" />
-    <Content Include="Views\Home\Profile.cshtml" />
     <Content Include="Views\Employees\EditModal.cshtml" />
     <Content Include="Views\Shared\_EnrollPartial.cshtml" />
     <Content Include="Views\Employees\EnrollModal.cshtml" />
