@@ -92,7 +92,6 @@ namespace archivesystemWebUI.Repository
             return folder;
         }
 
-
         private void RecursiveDelete(int folderId)
         {
             var folder = _context.Folders.Include(x => x.Subfolders).Single(x => x.Id == folderId);
@@ -107,8 +106,7 @@ namespace archivesystemWebUI.Repository
                 }
             }
 
-            if (folder.IsRestricted)
-                Folders.Add(folder);
+            Folders.Add(folder);
         }
 
         void IFolderRepo.MoveFolder(int id, int newParentFolderId)

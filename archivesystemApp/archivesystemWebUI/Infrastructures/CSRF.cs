@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
 
-namespace archivesystemWebUI.Controllers
+namespace archivesystemWebUI.Infrastructures
 {
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public sealed class ValidateHeaderAntiForgeryTokenAttribute : FilterAttribute, IAuthorizationFilter
