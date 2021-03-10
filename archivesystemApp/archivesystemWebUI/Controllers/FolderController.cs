@@ -47,6 +47,8 @@ namespace archivesystemWebUI.Controllers
         public ActionResult Create(int id)
         {
             var accessLevels = repo.AccessLevelRepo.GetAll();
+            var parentFolder = repo.FolderRepo.Get(id);
+            accessLevels = accessLevels.Where(x => x.Id >= parentFolder.AccessLevelId);
             var data = new CreateFolderViewModel() { Name = "", ParentId = id, AccessLevels = accessLevels };
             return PartialView("_CreateFolder", data);
         }
