@@ -9,6 +9,7 @@ using archivesystemWebUI.Models;
 using archivesystemWebUI.Models.DataLayers;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using archivesystemWebUI.Models.FolderViewModels;
 
 
 
@@ -84,7 +85,7 @@ namespace archivesystemWebUI.Infrastructures
             Mapper.CreateMap<CreateAccessLevelViewModel, AccessLevel>()
                 .ForMember(dest => dest.CreatedAt, opt => opt.UseValue<DateTime>(DateTime.Now))
                 .ForMember(m => m.UpdatedAt, opt => opt.UseValue<DateTime>(DateTime.Now));
-            Mapper.CreateMap<FolderViewModel, Folder>().ReverseMap();
+            Mapper.CreateMap<FolderPageViewModel, Folder>().ReverseMap();
 
             Mapper.CreateMap<DepartmentViewModel,Folder>()
                 .ForMember(dest => dest.Id ,opt => opt.Ignore())
@@ -94,7 +95,7 @@ namespace archivesystemWebUI.Infrastructures
                .ForMember(dest => dest.UpdatedAt, opt => opt.UseValue(DateTime.Now))
                .ForMember(dest => dest.FacultyId, opt => opt.MapFrom(src=> src.Id));
 
-            Mapper.CreateMap<Folder, FolderViewModel>()
+            Mapper.CreateMap<Folder, FolderPageViewModel>()
                 .ForMember(x=> x.DirectChildren,opt=> opt.MapFrom(src=> src.Subfolders));
 
 

@@ -2,6 +2,7 @@
 using archivesystemDomain.Interfaces;
 using archivesystemDomain.Services;
 using archivesystemWebUI.Models;
+using archivesystemWebUI.Models.FolderViewModels;
 using AutoMapper;
 using Microsoft.AspNet.Identity;
 using System;
@@ -26,7 +27,7 @@ namespace archivesystemWebUI.Controllers
         [Route("folders")]
         public ActionResult Index(string search = null)
         {
-            FolderViewModel model = GetRootViewModel(search);
+            FolderPageViewModel model = GetRootViewModel(search);
             if (!HttpContext.User.IsInRole("Admin") && search == null)
             {
                 var userId = User.Identity.GetUserId();
@@ -61,7 +62,7 @@ namespace archivesystemWebUI.Controllers
             var parentSubFolderNames = parentFolder.Subfolders.Select(x => x.Name);
             if (parentSubFolderNames.Contains(name) || name == "Root")
                 return new HttpStatusCodeResult(400);
-            if (name.Contains(",") || name.Contains("#"))
+            if (parentFolder.AccessLevelId > accessLevelId)
                 return new HttpStatusCodeResult(403);
 
             var parentFolderPath = repo.FolderRepo.GetFolderPath(parentId);
@@ -119,14 +120,11 @@ namespace archivesystemWebUI.Controllers
         {
             var folderToDelete = repo.FolderRepo.Get(id);
             if (folderToDelete.IsRestricted)
-            {
-                repo.FolderRepo.DeleteFolder(folderToDelete.Id);
-                repo.Save();
-                return new HttpStatusCodeResult(204);
-            }
+                return new HttpStatusCodeResult(400);
 
-            return new HttpStatusCodeResult(400);
-
+            repo.FolderRepo.DeleteFolder(folderToDelete.Id);
+            repo.Save();
+            return new HttpStatusCodeResult(204);
         }
 
         //GET: /folders/{id}
@@ -147,7 +145,7 @@ namespace archivesystemWebUI.Controllers
                 }
             }
 
-            var model = Mapper.Map<FolderViewModel>(folder);
+            var model = Mapper.Map<FolderPageViewModel>(folder);
             var folderpath = repo.FolderRepo.GetFolderPath(folderId);
             model.CurrentPath = folderpath;
             ViewBag.AllowCreateFolder = true;
@@ -220,9 +218,9 @@ namespace archivesystemWebUI.Controllers
             return PartialView("_ConfirmItemMove");
         }
 
-        private FolderViewModel GetRootViewModel(string search = null)
+        private FolderPageViewModel GetRootViewModel(string search = null)
         {
-            FolderViewModel model = new FolderViewModel();
+            FolderPageViewModel model = new FolderPageViewModel();
             if (string.IsNullOrEmpty(search))
             {
                 var rootFolder = repo.FolderRepo.GetRootWithSubfolder();
@@ -240,12 +238,12 @@ namespace archivesystemWebUI.Controllers
             return model;
         }
 
-        private FolderViewModel GetDepartmentFolder(string search = null)
+        private FolderPageViewModel GetDepartmentFolder(string search = null)
         {
-            return new FolderViewModel();
+            return new FolderPageViewModel();
         }
 
-        private bool AccessNotGranted(Folder folder )
+        private bool AccessNotGranted(Folder folder)
         {
             var userId = HttpContext.User.Identity.GetUserId();
             var user = repo.EmployeeRepo.GetEmployeeByUserId(userId);
