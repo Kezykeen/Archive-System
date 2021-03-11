@@ -1,5 +1,6 @@
 ﻿using archivesystemDomain.Entities;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,5 +15,7 @@ namespace archivesystemDomain.Interfaces
         Task<IdentityResult> AddRole(string _roleName);
 
         Task<IdentityResult> EditRole(string oldName, string newName);
+        Task<ICollection<string>> GetUserIdsOfUsersInRole(string name);
     }
+
 }

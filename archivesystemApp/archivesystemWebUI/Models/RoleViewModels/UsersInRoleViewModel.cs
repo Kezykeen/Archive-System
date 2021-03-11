@@ -1,4 +1,5 @@
 ﻿using archivesystemDomain.Entities;
+using archivesystemDomain.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,8 +9,10 @@ namespace archivesystemWebUI.Models.RoleViewModels
 {
     public class UsersInRoleViewModel
     {
-        public string RoleId { get; set; }
-
-        public IEnumerable<Employee> Users { get; set; }
+        public string RoleName { get; set; }
+        public IEnumerable<RoleMemberData> Users { get; set; }
     }
+
+    
+
 }

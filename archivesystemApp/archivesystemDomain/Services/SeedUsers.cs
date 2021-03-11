@@ -125,7 +125,7 @@ namespace archivesystemDomain.Services
 
                 if (createNonAcademicStaff.Succeeded)
                 {
-                    await userManager.AddToRoleAsync(nonAcademicStaff.Id, "Employee");
+                    await userManager.AddToRoleAsync(nonAcademicStaff.Id, "Manager");
 
                     dbContext.Employees.Add(
                         new Employee

@@ -1,4 +1,9 @@
 ﻿
+$("document").ready(function () {
+    $("#user-roles-table").DataTable();
+});
+
+
 async function getPartialView(url) {
     
     let resp = await fetch(url)

@@ -10,6 +10,7 @@ using archivesystemWebUI.Models;
 using System.Threading.Tasks;
 using archivesystemDomain.Interfaces;
 using archivesystemWebUI.Models.RoleViewModels;
+using archivesystemDomain.Services;
 
 namespace archivesystemWebUI.Controllers
 {
@@ -17,10 +18,12 @@ namespace archivesystemWebUI.Controllers
     public class RolesController : Controller
     {
         private readonly IRoleService _service;
+        private readonly IUnitOfWork repo;
      
-        public RolesController(IRoleService service)
+        public RolesController(IRoleService service, IUnitOfWork repo)
         {
             _service = service;
+            this.repo = repo;
         }
         
 
@@ -86,25 +89,33 @@ namespace archivesystemWebUI.Controllers
             return RedirectToAction("Index");
         }
 
-        //POST: /roleadmin/getusers
-        //[HttpPost]
-        //public ActionResult GetUsers(string roleId)
-        //{
-        //    ApplicationRole role=RoleManager.FindById(roleId);
-        //    var users=role.Users;
-        //    List<>
-        //    foreach(ApplicationUser user in users)
-        //    {
-        //      HttpContext.User.Identity.Name
-        //    }
-        //}
+        //GET: /roles/users
+        [Route("roles/users")]
+        [HttpGet]
+        public async Task<ActionResult> GetUsers(string roleName)
+        {
+            var userIds=await _service.GetUserIdsOfUsersInRole(roleName);
+            var usersData=repo.EmployeeRepo.GetUserDataByUserIds(userIds);
+            var viewModel=GetUsersInRoleViewModel(usersData, roleName);
+            return View("UsersInRole",viewModel);
+        }
 
-        
+        private UsersInRoleViewModel GetUsersInRoleViewModel(IEnumerable<RoleMemberData> usersData,string roleName)
+        {
+            var viewModel = new UsersInRoleViewModel
+            {
+                RoleName = roleName,
+                Users = usersData
+            };
+            return viewModel;
+        }
 
-        
 
 
 
-        
+
+
+
+
     }
 }
