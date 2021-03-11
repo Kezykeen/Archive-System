@@ -8,7 +8,7 @@ using archivesystemDomain.Interfaces;
 
 namespace archivesystemWebUI.Repository
 {
-    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
+    public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
         protected readonly DbContext Context;
 

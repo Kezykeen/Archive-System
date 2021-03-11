@@ -30,6 +30,13 @@ namespace archivesystemDomain.Services
             private static readonly string MangrEmail = WebConfigurationManager.AppSettings["MangrEmail"];
             private static readonly string MangrPhone = WebConfigurationManager.AppSettings["MangrPhone"];
 
+            private static readonly string NonAcademicUser = WebConfigurationManager.AppSettings["NonAcademicUser"];
+            private static readonly string NonAcademicPassword = WebConfigurationManager.AppSettings["NonAcademicPwd"];
+            private static readonly string NonAcademicEmail = WebConfigurationManager.AppSettings["NonAcademicEmail"];
+            private static readonly string NonAcademicPhone = WebConfigurationManager.AppSettings["NonAcademicPhone"];
+
+
+
         public static async void EnsurePopulated()
             {
               
@@ -39,6 +46,7 @@ namespace archivesystemDomain.Services
                var admin = await userManager.FindByNameAsync(AdminUser);
                var employee = await userManager.FindByNameAsync(EmpUser);
                var manager = await userManager.FindByNameAsync(MangrUser);
+               var nonAcademicStaff = await userManager.FindByNameAsync(NonAcademicUser);
 
                if (admin != null) return;
                admin = new ApplicationUser
@@ -61,30 +69,34 @@ namespace archivesystemDomain.Services
                    { UserName = MangrUser, Email = MangrEmail, PhoneNumber = MangrPhone, EmailConfirmed = true };
                var createManager = await userManager.CreateAsync(manager, MangrPassword);
 
+                if ( nonAcademicStaff != null) return;
+                nonAcademicStaff = new ApplicationUser
+                { UserName = NonAcademicUser, Email = NonAcademicEmail, PhoneNumber = NonAcademicPhone, EmailConfirmed = true };
+                var createNonAcademicStaff = await userManager.CreateAsync(nonAcademicStaff, NonAcademicPassword);
 
-               if (createEmployee.Succeeded)
-               {
-                   await userManager.AddToRoleAsync(employee.Id, "Employee");
+                if (createEmployee.Succeeded)
+                   {
+                       await userManager.AddToRoleAsync(employee.Id, "Employee");
 
-                   dbContext.Employees.Add(
-                       new Employee
-                       {
-                           Name = employee.UserName,
-                           DepartmentId = 1,
-                           Completed = true,
-                           Gender = Gender.Male,
-                           Appointed = DateTime.Now,
-                           StaffId = "StaffId-01",
-                           Email = employee.Email,
-                           UserId = employee.Id,
-                           Phone = employee.PhoneNumber,
-                           DOB = DateTime.Now,
-                           CreatedAt = DateTime.Now,
-                           UpdatedAt = DateTime.Now
-                       }
-                   );
-                   dbContext.SaveChanges();
-               }
+                       dbContext.Employees.Add(
+                           new Employee
+                           {
+                               Name = employee.UserName,
+                               DepartmentId = 1,
+                               Completed = true,
+                               Gender = Gender.Male,
+                               Appointed = DateTime.Now,
+                               StaffId = "StaffId-01",
+                               Email = employee.Email,
+                               UserId = employee.Id,
+                               Phone = employee.PhoneNumber,
+                               DOB = DateTime.Now,
+                               CreatedAt = DateTime.Now,
+                               UpdatedAt = DateTime.Now
+                           }
+                       );
+                       dbContext.SaveChanges();
+                }
 
 
                if (createManager.Succeeded)
@@ -110,6 +122,30 @@ namespace archivesystemDomain.Services
                    );
                    dbContext.SaveChanges();
                }
+
+                if (createNonAcademicStaff.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(nonAcademicStaff.Id, "Employee");
+
+                    dbContext.Employees.Add(
+                        new Employee
+                        {
+                            Name = nonAcademicStaff.UserName,
+                            DepartmentId = 3,
+                            Completed = true,
+                            Gender = Gender.Female,
+                            Appointed = DateTime.Now,
+                            StaffId = "StaffId-03",
+                            Email = nonAcademicStaff.Email,
+                            UserId = nonAcademicStaff.Id,
+                            Phone = nonAcademicStaff.PhoneNumber,
+                            DOB = DateTime.Now,
+                            CreatedAt = DateTime.Now,
+                            UpdatedAt = DateTime.Now
+                        }
+                    );
+                    dbContext.SaveChanges();
+                }
 
         }
     }

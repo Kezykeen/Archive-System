@@ -117,6 +117,7 @@ async function deleteFolder() {
     }
     return;
 }
+
 function closeModal() {
     $("#modal").modal("hide");
 }
@@ -134,7 +135,6 @@ async function editFolder(id) {
         location.reload();
     }
     }
-   
 
 async function createFolder(url) {
     let verificationToken = document.getElementsByName("__RequestVerificationToken")[0].value
@@ -159,7 +159,6 @@ async function createFolder(url) {
     }
    
 }
-
 
 function addValidationErrors(formId, name, accesslevelId, isNameTaken=false) {
     let form = document.getElementById(formId);
@@ -235,7 +234,6 @@ async function CtrlV(newParentFolderId ) {
         setTimeout(() => { alertMessageBox.className = ''; return; }, 3000)
     }
 }
-
 
 async function VerifyAccessToken() {
     let verificationToken = document.getElementsByName("__RequestVerificationToken")[0].value;
