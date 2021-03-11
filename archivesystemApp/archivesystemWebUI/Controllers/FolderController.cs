@@ -168,6 +168,7 @@ namespace archivesystemWebUI.Controllers
             var folderpath = repo.FolderRepo.GetFolderPath(folderId);
             model.CurrentPath = folderpath;
             ViewBag.AllowCreateFolder = true;
+            Session[SessionData.LastVisit] = DateTime.Now;
             return View("FolderList", model);
         }
 

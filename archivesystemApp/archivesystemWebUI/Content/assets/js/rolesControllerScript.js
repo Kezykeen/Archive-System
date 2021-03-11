@@ -1,26 +1,25 @@
 ﻿
 async function getPartialView(url) {
-    var modalBody = document.getElementById("modalBody")
+    
     let resp = await fetch(url)
-    let textResp = resp.status === 200 ? await resp.text() : "Some error occured"
+    console.log(resp)
+    let textResp = resp.status === 200 ? await resp.text() :"<div class='modal-header'> <p class'text-danger'>Some error occured<p> </div>";
+
+    var modalBody = document.getElementById("modalBody")
     modalBody.innerHTML = textResp;
     $("#modal").modal("show");
 
-    if (!url.includes("&&delete=true")) {
-        console.log("yesjl;j;")
-        document.getElementById("manageRole").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            manageRole(url);
-            return
-        })
-    }
-    else {
-        
-    }
+    document.getElementById("manageRole").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        addOrEditRole(url);
+        return
+    })
+    
+   
     
 }
 
-async function manageRole(url) {
+async function addOrEditRole(url) {
     let verificationToken = document.getElementsByName("__RequestVerificationToken")[0].value
     let name = document.getElementById("role-name").value;
     let newName = document.getElementById("role-newName").value;
@@ -30,10 +29,8 @@ async function manageRole(url) {
     }
     else {
         let resp = await postData(url, name, newName, verificationToken)
-        console.log(resp);
-        if (resp.status === 200) {
-            location.reload()
-        }
+       
+        if (resp.status === 200) { location.reload() }
         else if (resp.status === 400) {
             addErrors("manageRole", isnullNamError = false, isnameAlreadyExist = true, isUnknown = false)
         }
@@ -78,4 +75,17 @@ function addErrors(formId, isnullNamError=false,isnameAlreadyExist=false,isUnkno
         </div>`
    
     form.prepend(errorMessage)
+}
+
+async function confirmDelete(url) {
+    let resp = await fetch(url)
+    let textResp = resp.status === 200 ? await resp.text() : "<div class='modal-header'> <p class'text-danger'>Some error occured<p> </div>";
+    var modalBody = document.getElementById("modalBody")
+    modalBody.innerHTML = textResp;
+    $("#modal").modal("show");
+}
+
+function closeModal() {
+    $("#modal").modal("hide");
+    return;
 }

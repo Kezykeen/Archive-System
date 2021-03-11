@@ -71,11 +71,11 @@
                                             }
                                         </td>
                                         <td>
-                                            <a onclick="getPartialView('/roles/manage?id=@role.Id&&name=@role.Name')" class="btn btn-outline-dark">Edit </a>
+                                            <a onclick="getPartialView('/roles/manage?id=@role.Id&name=@role.Name')" class="btn btn-outline-dark">Edit </a>
                                         </td>
                                         <td>
                                             <a class="btn btn-outline-dark btn-danger" 
-                                               onclick="getPartialView('/roles/manage?id=@role.Id&&name=@role.Name&&delete=true')" >Delete </a>
+                                               onclick='confirmDelete("/roles/delete?id=@role.Id&name=@role.Name")' >Delete </a>
                                         </td>
                                     </tr>
                                     }

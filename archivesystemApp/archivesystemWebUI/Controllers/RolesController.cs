@@ -9,6 +9,7 @@ using archivesystemWebUI.Infrastructures;
 using archivesystemWebUI.Models;
 using System.Threading.Tasks;
 using archivesystemDomain.Interfaces;
+using archivesystemWebUI.Models.RoleViewModels;
 
 namespace archivesystemWebUI.Controllers
 {
@@ -26,31 +27,26 @@ namespace archivesystemWebUI.Controllers
         // GET: /roles
         public ActionResult Index()
         {
-            return View(_service.GetAllRoles());
+            return View("RolesList",_service.GetAllRoles());
         }
 
         //GET: /roles/manage
         [Route("roles/manage")]
         [HttpGet()]
-        public ActionResult Manage()
+        public ActionResult Manage(string name, string id)
         {
-            string name = Request.QueryString["name"];
-            string id = Request.QueryString["id"];
-            string delete= Request.QueryString["delete"];
             Guid _id = Guid.Parse( string.IsNullOrEmpty(id) ? new Guid().ToString() : id);
-            
             if(_id== new Guid())
-                return PartialView("_AddEditRole", new RoleViewModel());
-            if (string.IsNullOrEmpty(delete))
-                return PartialView("_AddEditRole",new RoleViewModel() { Name = name, Id = _id });
-            return PartialView("_DeleteRole", new RoleViewModel() { Name = name, Id = _id });
+                return PartialView("_AddEditRole", new AddOrEditRoleViewModel());
+
+            return PartialView("_AddEditRole",new AddOrEditRoleViewModel() { Name = name, Id = _id });
         }
 
         //POST: /roles/manage
         [Route("roles/manage")]
         [HttpPost]
         [ValidateHeaderAntiForgeryToken]
-        public async Task<ActionResult> AddOrEdit(RoleViewModel _role)
+        public async Task<ActionResult> AddOrEdit(AddOrEditRoleViewModel _role)
         {
             IdentityResult result;
             if (string.IsNullOrEmpty(_role.Name))
@@ -68,7 +64,20 @@ namespace archivesystemWebUI.Controllers
             return new HttpStatusCodeResult(200);
         }
 
+        [Route("roles/delete")]
+        [HttpGet]
+        public ActionResult GetDeletePartial(string name, string id)
+        {
+            Guid idInGuid = Guid.Parse(string.IsNullOrEmpty(id) ? new Guid().ToString() : id);
+            if (idInGuid != new Guid())
+                return PartialView("_DeleteRole", new AddOrEditRoleViewModel() { Name = name, Id = idInGuid });
+
+            return new HttpStatusCodeResult(500);
+
+        }
+
         //POST: /role/delete
+        [Route("roles/delete")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(string roleId)
