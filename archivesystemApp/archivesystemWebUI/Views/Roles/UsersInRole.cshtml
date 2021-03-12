@@ -20,7 +20,7 @@
 
 
     <div class="col-auto float-right ml-auto">
-        <a id="addBtn" href="/roles" class="btn add-btn shadow "><i class="fa fa-plus"></i> Go To All Roles</a>
+        <a id="addBtn" href="/roles" class="btn add-btn shadow "><i class="fa fa-arrow-circle-left"></i> Go To All Roles</a>
     </div>
 
     <h3 class="page-title">Users in @Model.RoleName role</h3>
@@ -30,16 +30,10 @@
         <thead>
 
             <tr>
-                <th>
-                    Name
-                </th>
-                <th>
-                    Email
-                </th>
-                <th>
-                    Department
-                </th>
-                <th>Actions</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Department</th>
+                <th class="no-sort">Action</th>
             </tr>
         </thead>
         <tbody>
@@ -54,21 +48,27 @@
                         @item.Email
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Department.Name)
+                        @item.Department.Name
                     </td>
-
-
-                </tr>
-            }
+                    <td>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>
+                            <div class="dropdown-menu" style="">
+                                <a class="dropdown-item modal-delete" href="#" data-toggle="modal"><i class="fa fa-pencil m-r-5"></i>Add To New Role</a>
+                                <a class="dropdown-item modal-edit" href="#" data-toggle="modal"><i class="fa fa-trash-o m-r-5"></i>Remove from role</a>
+                            </div>
+                        </div>
+                    </td >
+                </tr >
+             }
         </tbody>
 
     </table>
 </div>
 
 
-<!-- BEGIN: Scripts -->
-@section scripts{
-    @Scripts.Render("~/Content/datatables/js")
-    <script src="~/Content/assets/js/rolesControllerScript.js"></script>
-}
-<!-- END: Scripts -->
+            <!-- BEGIN: Scripts -->
+            @section scripts{
+                <script src="~/Content/assets/js/rolesControllerScript.js"></script>
+            }
+            <!-- END: Scripts -->
