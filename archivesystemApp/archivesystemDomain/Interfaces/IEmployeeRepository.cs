@@ -1,4 +1,5 @@
 ﻿using archivesystemDomain.Entities;
+using archivesystemDomain.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,5 +17,6 @@ namespace archivesystemDomain.Interfaces
         void UpdateUserId(string email, string id);
         bool PhoneExists(string phone, int? userId);
         Employee GetEmployeeByUserId(string id);
+        IEnumerable<RoleMemberData> GetUserDataByUserIds(ICollection<string> userIds);
     }
 }

@@ -7,9 +7,7 @@ namespace archivesystemWebUI.Models
 {
     public class SessionData
     {
-        public const string IsSearchRequest = "isSearchRequest";
-        public const string FolderPath = "folderPath";
-        public const string PrevSearch = "prevSearch";
-        public const string Page = "currentPageNumber";
+        public const string IsAccessValidated = "IsAccessValidated";
+        public const string LastVisit = "LastVisit";
     }
 }

@@ -229,23 +229,34 @@ namespace archivesystemWebUI.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return PartialView("_ChangePassword", model);
             }
 
             var result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword, model.NewPassword);
             if (!result.Succeeded)
             {
-                AddErrors(result);
-                return View(model);
-            }
+                var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+                if (user != null)
+                {
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                }
 
-            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
-            if (user != null)
-            {
-                await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                return Json(new { success = true }, JsonRequestBehavior.AllowGet);
             }
+            AddErrors(result);
 
-            return Json("success", JsonRequestBehavior.AllowGet);
+            return PartialView("_ChangePassword", model);
+        }
+
+        //
+        // Remote validaion for old password
+        [HttpPost]
+        public ActionResult ValidateOldPassword(string oldpassword)
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var status = UserManager.CheckPassword(user, oldpassword);
+
+            return Json(status, JsonRequestBehavior.AllowGet);
         }
 
         //
@@ -389,5 +400,7 @@ namespace archivesystemWebUI.Controllers
         }
 
 #endregion
+
+
     }
 }

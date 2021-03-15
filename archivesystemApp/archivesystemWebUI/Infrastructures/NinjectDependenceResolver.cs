@@ -50,6 +50,7 @@ namespace archivesystemWebUI.Infrastructures
             kernel.Bind<IFileMetaRepo>().To<FileMetaRepo>();
             kernel.Bind<IAccessLevelService>().To<AccessLevelService>();
             kernel.Bind<IUserAccessService>().To<UserAccessService>();
+            kernel.Bind<IFileRepo>().To<FileRepo>();
         }
     }
 }

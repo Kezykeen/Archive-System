@@ -16,6 +16,7 @@ namespace archivesystemDomain.Interfaces
         IFolderRepo FolderRepo { get; }
 
         IFileMetaRepo FileMetaRepo { get; }
+        IFileRepo FileRepo { get; }
 
         int Save();
         Task<int> SaveAsync();

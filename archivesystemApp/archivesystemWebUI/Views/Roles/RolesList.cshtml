@@ -1,0 +1,107 @@
+﻿@using archivesystemDomain.Entities
+@model IEnumerable<ApplicationRole>
+@{
+    ViewBag.Title = "Roles";
+}
+
+
+<div class="content container-fluid" >
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row">
+            <div class="col">
+                <h3 class="page-title" style="text-align:center">Roles Dashboard</h3>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+
+    <div class="row" >
+        <div class="col-sm-12" style="display:flex;justify-content:start">
+            <div class="card mb-0" style="margin:auto">
+                <div class="card-header" style="display:flex;justify-content:space-between;align-items:center">
+                    <h4 class="card-title mb-0" style="display:inline-block"> Application Roles</h4>
+                    <div class="btn add-btn " style="margin:1em 0;color:white;display:inline-block" onclick="getPartialView('/roles/manage')">
+                        <i class="fa fa-plus"></i>
+                        <a href="#" style="color:white"> Add Role</a>
+
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (Model.Count() == 0)
+                    {
+                        <div class="table-responsive">
+                            <table class="datatable table table-stripped mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Role Id</th>
+                                        <th>Role Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td colspan="3" class="text-center">No User Accounts</td></tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="datatable table table-stripped mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Role Id</th>
+                                        <th>Role Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (ApplicationRole role in Model)
+                                    {
+                                    <tr>
+                                        <td>@role.Id</td>
+                                        <td>@role.Name</td>
+                                        <td>
+                                            
+                                            <a class="btn  btn-file" href="/roles/users?roleName=@role.Name">View Users</a> 
+                                            
+                                        </td>
+                                        <td>
+                                            <a onclick="getPartialView('/roles/manage?id=@role.Id&name=@role.Name')" class="btn btn-outline-dark">Edit </a>
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-outline-dark btn-danger" 
+                                               onclick='confirmDelete("/roles/delete?id=@role.Id&name=@role.Name")' >Delete </a>
+                                        </td>
+                                    </tr>
+                                    }
+
+
+                                </tbody>
+                            </table>
+
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Role Modal -->
+<div class="modal custom-modal fade" role="dialog" id="modal">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" id="modalBody">
+        </div>
+    </div>
+</div>
+<!-- / Role Modal -->
+
+
+
+@section scripts{
+    <script src="~/Content/assets/js/rolesControllerScript.js"></script>
+}

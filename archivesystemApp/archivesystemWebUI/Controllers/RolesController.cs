@@ -5,10 +5,12 @@ using System.Web;
 using System.Web.Mvc;
 
 using Microsoft.AspNet.Identity;
-using archivesystemDomain.Entities;
+using archivesystemWebUI.Infrastructures;
 using archivesystemWebUI.Models;
 using System.Threading.Tasks;
 using archivesystemDomain.Interfaces;
+using archivesystemWebUI.Models.RoleViewModels;
+using archivesystemDomain.Services;
 
 namespace archivesystemWebUI.Controllers
 {
@@ -16,41 +18,38 @@ namespace archivesystemWebUI.Controllers
     public class RolesController : Controller
     {
         private readonly IRoleService _service;
+        private readonly IUnitOfWork repo;
      
-        public RolesController(IRoleService service)
+        public RolesController(IRoleService service, IUnitOfWork repo)
         {
             _service = service;
+            this.repo = repo;
         }
         
 
         // GET: /roles
         public ActionResult Index()
         {
-            return View(_service.GetAllRoles());
+            return View("RolesList",_service.GetAllRoles());
         }
 
         //GET: /roles/manage
         [Route("roles/manage")]
         [HttpGet()]
-        public ActionResult Manage()
+        public ActionResult Manage(string name, string id)
         {
-            string name = Request.QueryString["name"];
-            string id = Request.QueryString["id"];
-            string delete= Request.QueryString["delete"];
             Guid _id = Guid.Parse( string.IsNullOrEmpty(id) ? new Guid().ToString() : id);
-            
             if(_id== new Guid())
-                return PartialView("_AddEditRole", new RoleViewModel());
-            if (string.IsNullOrEmpty(delete))
-                return PartialView("_AddEditRole",new RoleViewModel() { Name = name, Id = _id });
-            return PartialView("_DeleteRole", new RoleViewModel() { Name = name, Id = _id });
+                return PartialView("_AddEditRole", new AddOrEditRoleViewModel());
+
+            return PartialView("_AddEditRole",new AddOrEditRoleViewModel() { Name = name, Id = _id });
         }
 
         //POST: /roles/manage
         [Route("roles/manage")]
         [HttpPost]
         [ValidateHeaderAntiForgeryToken]
-        public async Task<ActionResult> AddOrEdit(RoleViewModel _role)
+        public async Task<ActionResult> AddOrEdit(AddOrEditRoleViewModel _role)
         {
             IdentityResult result;
             if (string.IsNullOrEmpty(_role.Name))
@@ -68,7 +67,20 @@ namespace archivesystemWebUI.Controllers
             return new HttpStatusCodeResult(200);
         }
 
+        [Route("roles/delete")]
+        [HttpGet]
+        public ActionResult GetDeletePartial(string name, string id)
+        {
+            Guid idInGuid = Guid.Parse(string.IsNullOrEmpty(id) ? new Guid().ToString() : id);
+            if (idInGuid != new Guid())
+                return PartialView("_DeleteRole", new AddOrEditRoleViewModel() { Name = name, Id = idInGuid });
+
+            return new HttpStatusCodeResult(500);
+
+        }
+
         //POST: /role/delete
+        [Route("roles/delete")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(string roleId)
@@ -77,25 +89,33 @@ namespace archivesystemWebUI.Controllers
             return RedirectToAction("Index");
         }
 
-        //POST: /roleadmin/getusers
-        //[HttpPost]
-        //public ActionResult GetUsers(string roleId)
-        //{
-        //    ApplicationRole role=RoleManager.FindById(roleId);
-        //    var users=role.Users;
-        //    List<>
-        //    foreach(ApplicationUser user in users)
-        //    {
-        //      HttpContext.User.Identity.Name
-        //    }
-        //}
+        //GET: /roles/users
+        [Route("roles/users")]
+        [HttpGet]
+        public async Task<ActionResult> GetUsers(string roleName)
+        {
+            var userIds=await _service.GetUserIdsOfUsersInRole(roleName);
+            var usersData=repo.EmployeeRepo.GetUserDataByUserIds(userIds);
+            var viewModel=GetUsersInRoleViewModel(usersData, roleName);
+            return View("UsersInRole",viewModel);
+        }
 
-        
+        private UsersInRoleViewModel GetUsersInRoleViewModel(IEnumerable<RoleMemberData> usersData,string roleName)
+        {
+            var viewModel = new UsersInRoleViewModel
+            {
+                RoleName = roleName,
+                Users = usersData
+            };
+            return viewModel;
+        }
 
-        
 
 
 
-        
+
+
+
+
     }
 }

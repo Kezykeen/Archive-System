@@ -12,8 +12,7 @@ namespace archivesystemWebUI.Infrastructures
         {
             if (model.File != null)
             {
-                model.File.Name = Guid.NewGuid().ToString("N") +
-                                  System.IO.Path.GetFileName(file.FileName)?.Split('.').Last();
+                model.File.Name = $"{Guid.NewGuid():N}.{System.IO.Path.GetFileName(file.FileName)?.Split('.').Last()}";
 
                 model.File.ContentType = file.ContentType;
                 using (var reader = new System.IO.BinaryReader(file.InputStream))
@@ -25,7 +24,7 @@ namespace archivesystemWebUI.Infrastructures
             {
                 model.File = new File()
                 {
-                    Name = Guid.NewGuid().ToString("N") + System.IO.Path.GetFileName(file.FileName)?.Split('.').Last(),
+                    Name = $"{Guid.NewGuid():N}.{System.IO.Path.GetFileName(file.FileName)?.Split('.').Last()}",
                     ContentType = file.ContentType
                 };
                 using (var reader = new System.IO.BinaryReader(file.InputStream))

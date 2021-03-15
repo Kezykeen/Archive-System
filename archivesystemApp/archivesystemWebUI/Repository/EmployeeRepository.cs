@@ -1,6 +1,8 @@
 ﻿using archivesystemDomain.Entities;
 using archivesystemDomain.Interfaces;
+using archivesystemDomain.Services;
 using archivesystemWebUI.Infrastructures;
+using archivesystemWebUI.Models.RoleViewModels;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -10,19 +12,19 @@ using System.Web;
 
 namespace archivesystemWebUI.Repository
 {
-    public class EmployeeRepository: Repository<Employee> , IEmployeeRepository
+    public class EmployeeRepository : Repository<Employee>, IEmployeeRepository
     {
         private readonly ApplicationDbContext _context;
 
         public EmployeeRepository(ApplicationDbContext context)
-        :base(context)
+        : base(context)
         {
             _context = context;
         }
 
         public bool NameExists(string name, int? userId)
         {
-            if(userId == null)
+            if (userId == null)
                 return GetAll().Any(e => string.Equals(e.Name, name,
                 StringComparison.OrdinalIgnoreCase));
             return GetAll().Any(e => string.Equals(e.Name, name,
@@ -41,20 +43,20 @@ namespace archivesystemWebUI.Repository
             return _context.Employees.Include(e => e.Department).ToList();
         }
 
-        public Employee GetEmployeeWithDept(int? id , string appId =null)
+        public Employee GetEmployeeWithDept(int? id, string appId = null)
         {
             if (!string.IsNullOrWhiteSpace(appId))
             {
                 return _context.Employees.Include(e => e.Department).SingleOrDefault(e => e.UserId == appId);
             }
-            
+
             return _context.Employees.Include(e => e.Department).SingleOrDefault(e => e.Id == id);
         }
 
         public bool EmailExists(string email, int? userId)
         {
-            
-            if(userId == null)
+
+            if (userId == null)
                 return GetAll().Any(e => string.Equals(e.Email, email,
                 StringComparison.OrdinalIgnoreCase));
             return GetAll().Any(e => string.Equals(e.Email, email,
@@ -64,8 +66,8 @@ namespace archivesystemWebUI.Repository
 
         public bool StaffIdExists(string staffId, int? userId)
         {
-            
-            if(userId == null)
+
+            if (userId == null)
                 return GetAll().Any(e => string.Equals(e.StaffId, staffId,
                 StringComparison.OrdinalIgnoreCase));
 
@@ -78,21 +80,31 @@ namespace archivesystemWebUI.Repository
         {
             var employee = GetEmployeeByMail(email);
             employee.UserId = id;
-           
+
         }
 
         public bool PhoneExists(string phone, int? userId)
         {
-             if(userId == null)
+            if (userId == null)
                 return GetAll().Any(e => string.Equals(e.Phone, phone,
                 StringComparison.OrdinalIgnoreCase));
-             return GetAll().Any(e => string.Equals(e.Phone, phone,
-                 StringComparison.OrdinalIgnoreCase) && e.Id != userId.Value);
+            return GetAll().Any(e => string.Equals(e.Phone, phone,
+                StringComparison.OrdinalIgnoreCase) && e.Id != userId.Value);
         }
 
         public Employee GetEmployeeByUserId(string id)
         {
-            return _context.Employees.Include(x=> x.Department).Single(x=> x.UserId== id);
+            return _context.Employees.Include(x => x.Department).Single(x => x.UserId == id);
+        }
+
+        public IEnumerable<RoleMemberData> GetUserDataByUserIds(ICollection<string> userIds )
+        {
+            var data=_context.Employees.Include(x=> x.Department)
+                                       .Where(x => userIds.Contains(x.UserId))
+                                       .Select(x=> new RoleMemberData{ Name=x.Name ,Email=x.Email, UserId=x.UserId,Department=x.Department })
+                                       ;
+            return data;
+           
         }
 
         public ApplicationDbContext ApplicationDbContext => Context as ApplicationDbContext;

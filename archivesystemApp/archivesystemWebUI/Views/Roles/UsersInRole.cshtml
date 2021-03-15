@@ -1,0 +1,74 @@
+﻿@using archivesystemWebUI.Models.RoleViewModels
+@model UsersInRoleViewModel
+
+@{
+    ViewBag.Title = "Users In Roles";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <ul class="breadcrumb">
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr />
+
+
+    <div class="col-auto float-right ml-auto">
+        <a id="addBtn" href="/roles" class="btn add-btn shadow "><i class="fa fa-arrow-circle-left"></i> Go To All Roles</a>
+    </div>
+
+    <h3 class="page-title">Users in @Model.RoleName role</h3>
+
+    <br />
+    <table id="user-roles-table" class="table table-active  table-striped custom-table mb-0  shadow">
+        <thead>
+
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Department</th>
+                <th class="no-sort">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var item in Model.Users)
+            {
+                <tr>
+                    <td>
+                        @item.Name
+                    </td>
+                    <td>
+                        @item.Email
+                    </td>
+                    <td>
+                        @item.Department.Name
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>
+                            <div class="dropdown-menu" style="">
+                                <a class="dropdown-item modal-delete" href="#" data-toggle="modal"><i class="fa fa-pencil m-r-5"></i>Add To New Role</a>
+                                <a class="dropdown-item modal-edit" href="#" data-toggle="modal"><i class="fa fa-trash-o m-r-5"></i>Remove from role</a>
+                            </div>
+                        </div>
+                    </td >
+                </tr >
+             }
+        </tbody>
+
+    </table>
+</div>
+
+
+            <!-- BEGIN: Scripts -->
+            @section scripts{
+                <script src="~/Content/assets/js/rolesControllerScript.js"></script>
+            }
+            <!-- END: Scripts -->

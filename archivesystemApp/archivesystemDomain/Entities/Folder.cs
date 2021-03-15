@@ -20,8 +20,8 @@ namespace archivesystemDomain.Entities
         [ForeignKey("ParentId")]
         public ICollection<Folder> Subfolders { get; set; }
 
-        public int? FileId { get; set; }
-        public File File { get; set; }
+        // public int? FileId { get; set; }
+        // public File File { get; set; }
 
         public int? AccessLevelId { get; set; }
 

@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNet.Identity
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -111,10 +112,10 @@
                             <img src="/Content/assets/img/profiles/avatar-21.jpg" alt="">
                             <span class="status online"></span>
                         </span>
-                        <span>Admin</span>
+                        <span>@User.Identity.Name.Split()[0]</span>
                     </a>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="#">My Profile</a>
+                        @* <a class="dropdown-item" href="#">My Profile</a> *@
                         <a class="dropdown-item" href="@Url.Action("ChangePassword", "Manage")">Settings</a>
                         <a class="dropdown-item" href="@Url.Action("LogOff", "Account")">Logout</a>
                     </div>
@@ -126,8 +127,8 @@
                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
                 <div class="dropdown-menu dropdown-menu-right">
                     <a class="dropdown-item" href="#">My Profile</a>
-                    <a class="dropdown-item" href="#">Settings</a>
-                    <a class="dropdown-item" href="#">Logout</a>
+                    <a class="dropdown-item" href="@Url.Action("ChangePassword", "Manage")">Settings</a>
+                    <a class="dropdown-item" href="@Url.Action("LogOff", "Account")">Logout</a>
                 </div>
             </div>
             <!-- /Mobile Menu -->

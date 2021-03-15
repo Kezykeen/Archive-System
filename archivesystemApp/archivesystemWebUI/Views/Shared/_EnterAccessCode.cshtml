@@ -1,0 +1,32 @@
+﻿
+@using archivesystemWebUI.Models.FolderViewModels
+@using archivesystemDomain.Entities
+
+
+<div id="EAC-con" >
+    <h2>Access Code Verififcation</h2>
+    <form id="EAC-form" name="folderAccessCode" >
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary()
+
+        <input hidden value="@Request.Cookies["ASP.NET_SessionId"].Value" id="EAC-sessionId" />
+        <input name="returnUrl" value="@Model.ReturnUrl" hidden id="EAC-returnUrl" />
+        <div class="form-group">
+            <label>Access Code</label>
+            <input name="name" class="form-control" rows="2" placeholder="Enter your access code"  id="EAC-code" />
+        </div>
+        
+        <div class="submit-section">
+            <button style=" margin:auto" class="btn btn-primary submit-btn" type="button" onclick="VerifyAccessToken()">Submit</button>
+        </div>
+    </form>
+
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+
+
+

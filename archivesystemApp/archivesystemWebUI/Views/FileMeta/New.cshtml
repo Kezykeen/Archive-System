@@ -1,49 +1,59 @@
 ﻿@model archivesystemWebUI.Models.FileMetaVm
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Archive Item</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                @using (Ajax.BeginForm("Enroll", "Employees", new AjaxOptions
-                {
-                    OnSuccess = "OnUploadSuccess",
-                    OnFailure = "OnUploadFailure",
-                    LoadingElementId = "saving",
-                    LoadingElementDuration = 2000
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Archive Item</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            @using (Ajax.BeginForm("New", "FileMeta", new AjaxOptions
+            {
+                HttpMethod = "POST",
+                OnSuccess = "OnUploadSuccess",
+                OnFailure = "OnUploadFailure",
+                LoadingElementId = "saving",
+                LoadingElementDuration = 1000
 
-                }, new { id = "upload" }))
-                {
-                    <div class="form-horizontal">
+            }, new { id = "upload", enctype = "multipart/form-data" }))
+            {
+                <div class="form-horizontal">
                     @Html.ValidationSummary(true, "", new { @class = "" })
                     @Html.AntiForgeryToken()
                     @Html.HiddenFor(e => e.FolderId)
                     @Html.HiddenFor(e => e.UploadedById)
                    
                        
-                            <div class="form-group">
-                                @Html.LabelFor(e => e.Title, new {@class= "control-label col-md-6" })
+                    <div class="form-group">
+                        @Html.LabelFor(e => e.Title, new {@class= "control-label col-md-6" })
                                 
-                                <div class="col-md-12">
-                                    @Html.TextBoxFor(e => e.Title, new { @class = "form-control" })
-                                    @Html.ValidationMessageFor(e => e.Title)
-                                </div>
+                        <div class="col-md-12">
+                            @Html.TextBoxFor(e => e.Title, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(e => e.Title)
+                        </div>
 
-                            </div>
+                    </div>
                       
                   
-                            <div class="form-group">
-                                @Html.LabelFor(e => e.FileBase, new { @class = "control-label col-md-6" })
-                                <div class="col-md-12">
-                                    @Html.TextBoxFor(e => e.FileBase, new { @class = "form-control", type="file" })
-                                    @Html.ValidationMessageFor(e => e.FileBase)
-                                </div>
-                               
+                    <div class="form-group">
+                        @Html.LabelFor(e => e.AccessLevelId)
 
-                            </div>
+                        <div class="col-md-12">
+                            @Html.DropDownListFor(m => m.AccessLevelId, new SelectList(Model.AccessLevel, "Id", "Level"), "Select Access Level", new { @class = "select" })
+                            @Html.ValidationMessageFor(e => e.AccessLevelId)
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(e => e.FileBase, new { @class = "control-label col-md-6" })
+                        <div class="col-md-12">
+                            @Html.TextBoxFor(e => e.FileBase, new { @class = "form-control", type="file" })
+                            @Html.ValidationMessageFor(e => e.FileBase)
+                        </div>
+
+                    </div>
+                  
                        
                       
 
@@ -57,9 +67,52 @@
                             <span class="sr-only">Uploading. Hang tight!</span>
                         </div>
                     </div>
-                    </div>
-                }
-            </div>
+                </div>
+            }
         </div>
-
     </div>
+
+</div>
+
+<script>
+    function OnUploadSuccess(response, status, xhr) {
+
+        if (xhr.status === 201) {
+
+            debugger;
+            console.log(xhr.status === 201);
+            
+               
+            $('#new_upload').modal('hide');
+
+            $("#filesContainer").append(response);
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: 'File Successfully Archived',
+                showConfirmButton: false,
+                timer: 1500
+            });
+           
+
+        } else if (xhr.status === 200) {
+           
+            $("#new_upload").html(response);
+            $("#new_upload").modal("show");
+            $.validator.unobtrusive.parse("#upload");
+
+            if ($('#upload .select').length > 0) {
+                $('#upload .select').select2({
+                    minimumResultsForSearch: -1,
+                    width: '100%'
+                });
+
+            }
+
+        }
+    }
+
+    function OnUploadFailure(response) {
+        console.log(response);
+    }
+</script>

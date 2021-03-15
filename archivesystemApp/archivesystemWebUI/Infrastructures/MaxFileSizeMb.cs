@@ -9,7 +9,7 @@ namespace archivesystemWebUI.Infrastructures
 
 
         public MaxFileSizeMb(int maxSize )
-        :base("{0} Exceeds the Maximum File Size")
+        :base("Maximum File Size Exceeded ("+ maxSize + "Mb)")
         {
             _maxSize = maxSize;
         }

@@ -341,35 +341,23 @@ $(window).on ('load', function (){
 	$('#loader-wrapper').delay(500).fadeOut('slow');
 });
 
-// Change password post action
-function changePassword() {
-    var form = $(".changePasswordForm");
-    if (!form.valid()) {
-        return;
-    } else {
-    var data = form.serialize();
-    var url = "/Manage/ChangePassword";
-	$.post(url, data, 
-        function(response) {
-            if (response === "success") {
-                Swal.fire({
-                    position: 'center',
-                    icon: 'success',
-                    title: 'Password updated successfully',
-                    showConfirmButton: false,
-                    timer: 1000,
-                    timerProgressBar: true
-                });
-                setTimeout(reloadToHome, 1000);
-            }
-        });
-    };
-};
-
+// Change password onsuccess action
 function reloadToHome() {
     window.location.href = "/Home/Index";
 };
-// /Change password post action
+
+function OnSuccess(response) {
+	if (response.success) {
+        Swal.fire({
+            position: 'center',
+            icon: 'success',
+            title: 'Password updated successfully',
+            showConfirmButton: false
+        });
+        setTimeout(reloadToHome, 1000);
+    }
+};
+// /Change password onsuccess action
 
 
     

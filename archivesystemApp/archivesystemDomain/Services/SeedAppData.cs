@@ -50,6 +50,21 @@ namespace archivesystemDomain.Services
                             }
                         }
                     },
+                    new Faculty
+                    {
+                        Name="Non Academic",
+                        CreatedAt=DateTime.Now,
+                        UpdatedAt= DateTime.Now,
+                        Departments = new List<Department>
+                        {
+                            new Department
+                            {
+                                Name = "Maintenanace",
+                                CreatedAt = DateTime.Now,
+                                UpdatedAt = DateTime.Now
+                            }
+                        }
+                    }
                 };
 
 
