@@ -206,6 +206,8 @@
     <Compile Include="Infrastructures\MappingProfile.cs" />
     <Compile Include="Infrastructures\EmpUniqueProps.cs" />
     <Compile Include="Infrastructures\UpsertFile.cs" />
+    <Compile Include="Interfaces\IAccessLevelService.cs" />
+    <Compile Include="Interfaces\IUserAccessService.cs" />
     <Compile Include="Migrations\202102081444191_Initial.cs" />
     <Compile Include="Migrations\202102081444191_Initial.Designer.cs">
       <DependentUpon>202102081444191_Initial.cs</DependentUpon>
@@ -349,6 +351,8 @@
     <Compile Include="Repository\AccessLevelRepository.cs" />
     <Compile Include="Repository\TokenRepository.cs" />
     <Compile Include="Repository\UnitOfWork.cs" />
+    <Compile Include="Services\UserAccessService.cs" />
+    <Compile Include="Services\AccessLevelService.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -543,22 +547,11 @@
     <Content Include="Views\Roles\Index.cshtml" />
     <Content Include="Views\Roles\EditRoleView.cshtml" />
     <Content Include="Views\AccessLevel\ManageAccessLevel.cshtml" />
-    <Content Include="Views\AccessLevel\EditAccessLevel.cshtml" />
     <Content Include="Views\Department\Index.cshtml" />
     <Content Include="Views\Faculty\Index.cshtml" />
     <Content Include="Views\UserAccess\ManageUserAccess.cshtml" />
-    <Content Include="Views\UserAccess\AddUser.cshtml" />
-    <Content Include="Views\UserAccess\EditUser.cshtml" />
-    <Content Include="Views\UserAccess\DeleteUser.cshtml" />
     <Content Include="Views\Department\_AddOrEditDepartment.cshtml" />
     <Content Include="Views\Folder\CreateFolder.cshtml" />
-    <Content Include="Views\AccessLevel\AddUserToAccess.cshtml" />
-    <Content Include="Views\AccessLevel\Delete.cshtml" />
-    <Content Include="Views\AccessDetails\Create.cshtml" />
-    <Content Include="Views\AccessDetails\Delete.cshtml" />
-    <Content Include="Views\AccessDetails\Details.cshtml" />
-    <Content Include="Views\AccessDetails\Edit.cshtml" />
-    <Content Include="Views\AccessDetails\Index.cshtml" />
     <Content Include="Views\Shared\_AddOrEditDepartment.cshtml" />
     <Content Include="Views\Employees\DelPrompt.cshtml" />
     <Content Include="Views\Employees\Details.cshtml" />

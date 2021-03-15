@@ -231,19 +231,21 @@ namespace archivesystemWebUI.Controllers
             {
                 return View(model);
             }
+
             var result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword, model.NewPassword);
-            if (result.Succeeded)
+            if (!result.Succeeded)
             {
-                var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
-                if (user != null)
-                {
-                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-                }
-                
-                return Json("success", JsonRequestBehavior.AllowGet);
+                AddErrors(result);
+                return View(model);
             }
-            AddErrors(result);
-            return View(model);
+
+            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+            if (user != null)
+            {
+                await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+            }
+
+            return Json("success", JsonRequestBehavior.AllowGet);
         }
 
         //
