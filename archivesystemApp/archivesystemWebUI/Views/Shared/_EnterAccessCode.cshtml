@@ -5,7 +5,7 @@
 
 <div id="EAC-con" >
     <h2>Access Code Verififcation</h2>
-    <form id="EAC-form" name="folderAccessCode" >
+    <form id="EAC-form" name="folderAccessCode" onsubmit="VerifyAccessToken()">
         @Html.AntiForgeryToken()
         @Html.ValidationSummary()
 
@@ -17,7 +17,7 @@
         </div>
         
         <div class="submit-section">
-            <button style=" margin:auto" class="btn btn-primary submit-btn" type="button" onclick="VerifyAccessToken()">Submit</button>
+            <button style=" margin:auto" class="btn btn-primary submit-btn" type="submit" onclick="VerifyAccessToken()">Submit</button>
         </div>
     </form>
 
