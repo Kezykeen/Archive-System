@@ -7,13 +7,13 @@ namespace archivesystemWebUI.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class ModifiedFoldersTable : IMigrationMetadata
+    public sealed partial class FileTOMetaRshipChges : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(ModifiedFoldersTable));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(FileTOMetaRshipChges));
         
         string IMigrationMetadata.Id
         {
-            get { return "202103081527545_ModifiedFoldersTable"; }
+            get { return "202103101519379_FileTOMetaRshipChges"; }
         }
         
         string IMigrationMetadata.Source

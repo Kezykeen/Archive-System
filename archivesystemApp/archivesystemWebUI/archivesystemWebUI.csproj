@@ -73,6 +73,9 @@
     <Reference Include="Microsoft.Owin.Security.Cookies, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Owin.Security.Cookies.4.0.1\lib\net45\Microsoft.Owin.Security.Cookies.dll</HintPath>
     </Reference>
+    <Reference Include="MimeTypes, Version=2.3.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MimeTypeMapOfficial.1.0.15\lib\net452\MimeTypes.dll</HintPath>
+    </Reference>
     <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <HintPath>..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
     </Reference>
@@ -202,6 +205,7 @@
     </Compile>
     <Compile Include="Infrastructures\MaxFileSizeMb.cs" />
     <Compile Include="Infrastructures\EmployeeValidator.cs" />
+    <Compile Include="Infrastructures\MIMEType.cs" />
     <Compile Include="Infrastructures\NinjectDependenceResolver.cs" />
     <Compile Include="Infrastructures\MappingProfile.cs" />
     <Compile Include="Infrastructures\EmpUniqueProps.cs" />
@@ -286,41 +290,9 @@
     <Compile Include="Migrations\202103021054224_removeSubFoldersTable.Designer.cs">
       <DependentUpon>202103021054224_removeSubFoldersTable.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202103021307587_FileModelChange.cs" />
-    <Compile Include="Migrations\202103021307587_FileModelChange.Designer.cs">
-      <DependentUpon>202103021307587_FileModelChange.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202103031156514_folderChng.cs" />
-    <Compile Include="Migrations\202103031156514_folderChng.Designer.cs">
-      <DependentUpon>202103031156514_folderChng.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202103031421375_addPathToFolder.cs" />
-    <Compile Include="Migrations\202103031421375_addPathToFolder.Designer.cs">
-      <DependentUpon>202103031421375_addPathToFolder.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202103031507084_addDeleteableFlagToFoldersTable.cs" />
-    <Compile Include="Migrations\202103031507084_addDeleteableFlagToFoldersTable.Designer.cs">
-      <DependentUpon>202103031507084_addDeleteableFlagToFoldersTable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202103051202252_removedPathFeildFromFoldersTable.cs" />
-    <Compile Include="Migrations\202103051202252_removedPathFeildFromFoldersTable.Designer.cs">
-      <DependentUpon>202103051202252_removedPathFeildFromFoldersTable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202103051331018_dummyMigration.cs" />
-    <Compile Include="Migrations\202103051331018_dummyMigration.Designer.cs">
-      <DependentUpon>202103051331018_dummyMigration.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202103051342124_modifiedFoldersEntity.cs" />
-    <Compile Include="Migrations\202103051342124_modifiedFoldersEntity.Designer.cs">
-      <DependentUpon>202103051342124_modifiedFoldersEntity.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202103071547416_FileMeta.cs" />
-    <Compile Include="Migrations\202103071547416_FileMeta.Designer.cs">
-      <DependentUpon>202103071547416_FileMeta.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202103081527545_ModifiedFoldersTable.cs" />
-    <Compile Include="Migrations\202103081527545_ModifiedFoldersTable.Designer.cs">
-      <DependentUpon>202103081527545_ModifiedFoldersTable.cs</DependentUpon>
+    <Compile Include="Migrations\202103131336104_FolderFileRHip.cs" />
+    <Compile Include="Migrations\202103131336104_FolderFileRHip.Designer.cs">
+      <DependentUpon>202103131336104_FolderFileRHip.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CodeStatus.cs" />
@@ -348,6 +320,7 @@
     <Compile Include="Repository\EmployeeRepository.cs" />
     <Compile Include="Repository\FacultyRepository.cs" />
     <Compile Include="Repository\FileMetaRepo.cs" />
+    <Compile Include="Repository\FileRepo.cs" />
     <Compile Include="Repository\FolderRepo.cs" />
     <Compile Include="Repository\Repository.cs" />
     <Compile Include="Repository\AccessLevelRepository.cs" />
@@ -586,6 +559,9 @@
     <Content Include="Views\Shared\_FolderPathPartial.cshtml" />
     <Content Include="Views\Shared\_ConfirmItemMove.cshtml" />
     <Content Include="Views\FileMeta\New.cshtml" />
+    <Content Include="Views\Folder\_Files.cshtml" />
+    <Content Include="Views\FileMeta\GetAllFiles.cshtml" />
+    <Content Include="Views\FileMeta\_File.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -670,32 +646,8 @@
     <EmbeddedResource Include="Migrations\202103021054224_removeSubFoldersTable.resx">
       <DependentUpon>202103021054224_removeSubFoldersTable.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202103021307587_FileModelChange.resx">
-      <DependentUpon>202103021307587_FileModelChange.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202103031156514_folderChng.resx">
-      <DependentUpon>202103031156514_folderChng.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202103031421375_addPathToFolder.resx">
-      <DependentUpon>202103031421375_addPathToFolder.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202103031507084_addDeleteableFlagToFoldersTable.resx">
-      <DependentUpon>202103031507084_addDeleteableFlagToFoldersTable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202103051202252_removedPathFeildFromFoldersTable.resx">
-      <DependentUpon>202103051202252_removedPathFeildFromFoldersTable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202103051331018_dummyMigration.resx">
-      <DependentUpon>202103051331018_dummyMigration.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202103051342124_modifiedFoldersEntity.resx">
-      <DependentUpon>202103051342124_modifiedFoldersEntity.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202103071547416_FileMeta.resx">
-      <DependentUpon>202103071547416_FileMeta.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202103081527545_ModifiedFoldersTable.resx">
-      <DependentUpon>202103081527545_ModifiedFoldersTable.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202103131336104_FolderFileRHip.resx">
+      <DependentUpon>202103131336104_FolderFileRHip.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

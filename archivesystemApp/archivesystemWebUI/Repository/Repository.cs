@@ -21,16 +21,28 @@ namespace archivesystemWebUI.Repository
         {
             return Context.Set<TEntity>().Find(id);
         }
+       
 
         public IEnumerable<TEntity> GetAll()
         {
-            
             return Context.Set<TEntity>().ToList();
+        }
+
+
+        public IEnumerable<TEntity> GetAllWithNavProps(params Expression<Func<TEntity, object>>[] includeProperties)
+        {
+            return IncludeProps(includeProperties).ToList();
         }
 
         public IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate)
         {
             return Context.Set<TEntity>().Where(predicate);
+        }
+
+        public IEnumerable<TEntity> FindWithNavProps(Expression<Func<TEntity, bool>> predicate,
+            params Expression<Func<TEntity, object>>[] includeProperties)
+        {
+            return IncludeProps(includeProperties).Where(predicate);
         }
 
         public void Add(TEntity entity)
@@ -51,6 +63,12 @@ namespace archivesystemWebUI.Repository
         public void RemoveRange(IEnumerable<TEntity> entities)
         {
             Context.Set<TEntity>().RemoveRange(entities);
+        }
+
+        private IQueryable<TEntity> IncludeProps(Expression<Func<TEntity, object>>[] includeProperties)
+        {
+            IQueryable<TEntity> queryable = Context.Set<TEntity>();
+            return includeProperties.Aggregate(queryable, (entity, expression) => entity.Include(expression));
         }
     }
 }

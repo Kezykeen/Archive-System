@@ -7,13 +7,13 @@ namespace archivesystemWebUI.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class dummyMigration : IMigrationMetadata
+    public sealed partial class FileTOMetaRshipChgess : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(dummyMigration));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(FileTOMetaRshipChgess));
         
         string IMigrationMetadata.Id
         {
-            get { return "202103051331018_dummyMigration"; }
+            get { return "202103101510486_FileTOMetaRshipChgess"; }
         }
         
         string IMigrationMetadata.Source

@@ -19,11 +19,13 @@ namespace archivesystemWebUI.Models
         [Display(Name = "Access Level")]
         public int AccessLevelId { get; set; }
         public IEnumerable<AccessLevel> AccessLevel { get; set; }
-        public int UploadedById  { get; set; }
+        public string UploadedById  { get; set; }
         public int FolderId { get; set; }
+
         [Required]
         [Display(Name = "Attach File")]
-        [MaxFileSizeMb(250, ErrorMessage = "File Exceeds the Max Size (250Mb)")]
+        [MaxFileSizeMb(50)]
+        [MIMEType(mimeTypes:"docx,doc,pdf,ppt,pptx,zip,xls,xlsx")]
         public HttpPostedFileBase FileBase { get; set; }
       
     }

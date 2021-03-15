@@ -9,7 +9,10 @@ namespace archivesystemDomain.Interfaces
     {
         TEntity Get(int id);
         IEnumerable<TEntity> GetAll();
+        IEnumerable<TEntity> GetAllWithNavProps(params Expression<Func<TEntity, object>>[] includeProperties);
         IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate);
+        IEnumerable<TEntity> FindWithNavProps(Expression<Func<TEntity, bool>> predicate,
+            params Expression<Func<TEntity, object>>[] includeProperties);
         void Add(TEntity entity);
         void AddRange(IEnumerable<TEntity> entities);
 

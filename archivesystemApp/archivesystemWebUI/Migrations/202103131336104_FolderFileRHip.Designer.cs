@@ -7,13 +7,13 @@ namespace archivesystemWebUI.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class FileMeta : IMigrationMetadata
+    public sealed partial class FolderFileRHip : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(FileMeta));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(FolderFileRHip));
         
         string IMigrationMetadata.Id
         {
-            get { return "202103071547416_FileMeta"; }
+            get { return "202103131336104_FolderFileRHip"; }
         }
         
         string IMigrationMetadata.Source
