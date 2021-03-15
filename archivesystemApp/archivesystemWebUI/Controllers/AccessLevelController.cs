@@ -1,5 +1,6 @@
 ﻿using archivesystemDomain.Entities;
 using archivesystemDomain.Interfaces;
+using archivesystemWebUI.Interfaces;
 using archivesystemWebUI.Models;
 using AutoMapper;
 using System;
@@ -14,12 +15,14 @@ namespace archivesystemWebUI.Controllers
     {
         #region FIELDS
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IAccessLevelService _service;
         #endregion
 
         #region CONSTRUCTOR
-        public AccessLevelController(IUnitOfWork unitOfWork)
+        public AccessLevelController(IUnitOfWork unitOfWork, IAccessLevelService service)
         {
             _unitOfWork = unitOfWork;
+            _service = service;
         }
 
        
@@ -32,9 +35,10 @@ namespace archivesystemWebUI.Controllers
         /// These actions make use of "AccessLevel" table
         /// </summary>
 
+        [Route("AccessLevels")]
         public ActionResult ManageAccessLevel()
         {
-            var model = _unitOfWork.AccessLevelRepo.GetAll();
+            var model = _service.GetAll();
             return View(model);
         }
         
@@ -55,11 +59,9 @@ namespace archivesystemWebUI.Controllers
             try
             {
                 var newAccess = Mapper.Map<AccessLevel>(model);
-                _unitOfWork.AccessLevelRepo.Add(newAccess);
-                await _unitOfWork.SaveAsync();
+                await _service.Create(newAccess);
 
                 return Json("success", JsonRequestBehavior.AllowGet);
-
             }
             catch (Exception e)
             {
@@ -70,7 +72,7 @@ namespace archivesystemWebUI.Controllers
 
         public ActionResult EditAccessLevel(int id)
         {
-            var accessLevel = _unitOfWork.AccessLevelRepo.Get(id);
+            var accessLevel = _service.GetById(id);
             if (accessLevel == null)
                 return HttpNotFound();
 
@@ -88,9 +90,7 @@ namespace archivesystemWebUI.Controllers
 
             try
             {
-                accessLevel.UpdatedAt = DateTime.Now;
-                _unitOfWork.AccessLevelRepo.EditDetails(accessLevel);
-                await _unitOfWork.SaveAsync();
+                await _service.Update(accessLevel);
 
                 return Json("success", JsonRequestBehavior.AllowGet);
             }
@@ -104,12 +104,10 @@ namespace archivesystemWebUI.Controllers
         #endregion
 
         #region Validators
-
         [HttpPost]
         public JsonResult LevelAvailable(string Level)
         {
-            var checkLevel = _unitOfWork.AccessLevelRepo.GetByLevel(Level);
-            bool status = checkLevel == null;
+            var status = _service.CheckLevel(Level);
             return Json(status);
         }
         #endregion

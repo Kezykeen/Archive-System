@@ -1,6 +1,7 @@
 ﻿using archivesystemDomain.Entities;
 using archivesystemDomain.Interfaces;
 using archivesystemDomain.Services;
+using archivesystemWebUI.Interfaces;
 using archivesystemWebUI.Models;
 using System;
 using System.Linq;
@@ -15,12 +16,14 @@ namespace archivesystemWebUI.Controllers
     {
         #region FIELD
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IUserAccessService _service;
         #endregion
 
         #region CONSTRUCTOR
-        public UserAccessController(IUnitOfWork unitOfWork)
+        public UserAccessController(IUnitOfWork unitOfWork, IUserAccessService service)
         {
             _unitOfWork = unitOfWork;
+            _service = service;
         }
 
         #endregion
@@ -31,16 +34,16 @@ namespace archivesystemWebUI.Controllers
         /// 
         /// These actions make use of "AccessDetails" table
         /// </summary>
+        [Route("UserAccess")]
         public ActionResult ManageUserAccess()
         {
-            var model = _unitOfWork.AccessDetailsRepo.GetAccessDetails();
+            var model = _service.AccessDetails;
             return View(model);
         }
 
         public ActionResult AddUser()
         {
-            var accessLevels = _unitOfWork.AccessLevelRepo.GetAll();
-            var viewModel = new AddUserToAccessViewModel { AccessLevels = accessLevels };
+            var viewModel = _service.AddUserModel();
             return PartialView("_AddUserAccess", viewModel);
         }
 
@@ -50,24 +53,13 @@ namespace archivesystemWebUI.Controllers
         {
             if (!ModelState.IsValid)
             {
-                model.AccessLevels = _unitOfWork.AccessLevelRepo.GetAll();
+                model.AccessLevels = _service.AccessLevels;
                 return PartialView("_AddUserAccess", model);
             }
 
             try
             {
-                var employee = _unitOfWork.EmployeeRepo.GetEmployeeByMail(model.Email);
-               
-                var newAccessDetails = new AccessDetail
-                {
-                    EmployeeId = employee.Id,
-                    AccessLevelId = model.AccessLevel,
-                    AccessCode = AccessCodeGenerator.NewCode(employee.StaffId),
-                    Status = Status.Active
-                };
-
-                _unitOfWork.AccessDetailsRepo.Add(newAccessDetails);
-                await _unitOfWork.SaveAsync();
+                await _service.AddUser(model);
 
                 return Json("success", JsonRequestBehavior.AllowGet);
 
@@ -75,23 +67,17 @@ namespace archivesystemWebUI.Controllers
             catch (Exception e)
             {
                 ModelState.AddModelError("", e.Message);
-                model.AccessLevels = _unitOfWork.AccessLevelRepo.GetAll();
+                model.AccessLevels = _service.AccessLevels;
                 return PartialView("_AddUserAccess", model);
             }
         }
 
         public ActionResult EditUser(int id)
         {
-            var accessDetails = _unitOfWork.AccessDetailsRepo.Get(id);
+            _service.EditUserModel(id, out EditUserViewModel model, out AccessDetail accessDetails);
             if (accessDetails == null)
                 return HttpNotFound();
-            var accessLevels = _unitOfWork.AccessLevelRepo.GetAll();
-            var model = new EditUserViewModel
-            {
-                RegenerateCode = CodeStatus.No,
-                AccessDetails = accessDetails,
-                AccessLevels = accessLevels
-            };
+                       
             return PartialView("_EditUserAccess", model);
         }
 
@@ -101,24 +87,19 @@ namespace archivesystemWebUI.Controllers
         {
             if (!ModelState.IsValid)
             {
-                model.AccessLevels = _unitOfWork.AccessLevelRepo.GetAll();
+                model.AccessLevels = _service.AccessLevels;
                 return PartialView("_EditUserAccess", model);
             }
+
             try
             {
-                if (model.RegenerateCode == CodeStatus.Yes)
-                {
-                    var employee = _unitOfWork.EmployeeRepo.Get(model.AccessDetails.EmployeeId);
-                    model.AccessDetails.AccessCode = AccessCodeGenerator.NewCode(employee.StaffId);
-                }
-                _unitOfWork.AccessDetailsRepo.EditDetails(model.AccessDetails);
-                await _unitOfWork.SaveAsync();
+                await _service.Update(model);
                 return Json("success", JsonRequestBehavior.AllowGet);
             }
             catch (Exception e)
             {
                 ModelState.AddModelError("", e.Message);
-                model.AccessLevels = _unitOfWork.AccessLevelRepo.GetAll();
+                model.AccessLevels = _service.AccessLevels;
                 return PartialView("_EditUserAccess", model);
             }
         }
@@ -129,7 +110,8 @@ namespace archivesystemWebUI.Controllers
             {
                 return RedirectToAction(nameof(ManageUserAccess));
             }
-            var model = _unitOfWork.AccessDetailsRepo.GetAccessDetails().SingleOrDefault(m => m.Id == id.Value);
+
+            var model =_service.GetByNullableId(id);
             if (model == null)
             {
                 return HttpNotFound();
@@ -143,9 +125,7 @@ namespace archivesystemWebUI.Controllers
         {
             try
             {
-                var accessDetails = _unitOfWork.AccessDetailsRepo.Get(id);
-                _unitOfWork.AccessDetailsRepo.Remove(accessDetails);
-                await _unitOfWork.SaveAsync();
+                await _service.Delete(id);
 
                 return Json("success", JsonRequestBehavior.AllowGet);
             }
@@ -164,11 +144,11 @@ namespace archivesystemWebUI.Controllers
         [HttpPost]
         public JsonResult ValidateEmail(string Email)
         {
-            var employee = _unitOfWork.EmployeeRepo.GetEmployeeByMail(Email);
+            _service.ValidateEmail(Email, out AccessDetail accessDetails, out Employee employee);
+
             if (employee == null)
                 return Json("Employee with this email does not exists. Please enter a different email",  JsonRequestBehavior.AllowGet);
 
-            var accessDetails = _unitOfWork.AccessDetailsRepo.GetByEmployeeId(employee.Id);
             return accessDetails == null? Json(true, JsonRequestBehavior.AllowGet) : Json("User already has an access level!", JsonRequestBehavior.AllowGet);
         }
         #endregion
