@@ -13,8 +13,6 @@
 
 @Html.Partial("_FolderPathPartial", Model)
 
-
-
 <!-- Page Content -->
 <div class="content container-fluid">
 
@@ -159,6 +157,18 @@
     </div>
 </div>
 <!-- / Folder Modal -->
+
+<!--  Access code Modal -->
+@{
+    if (Model.CloseAccessCodeModal==false)
+    {
+        <div id="AIM-overlay">
+            @Html.Partial("_EnterAccessCode");
+        </div>
+    }
+
+}
+<!-- / Access code Modal -->
 <!-- upload Modal -->
 <div id="new_upload" class="modal custom-modal fade" role="dialog">
 

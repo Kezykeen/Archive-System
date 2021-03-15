@@ -1,7 +1,7 @@
 ﻿
 
-@using archivesystemWebUI.Models
-@model RoleViewModel
+@using archivesystemWebUI.Models.RoleViewModels
+@model AddOrEditRoleViewModel
 @{
     Layout = null;
 }
@@ -22,7 +22,7 @@
             <input class="btn btn-danger" type="submit" value="Yes" />
 
         }
-        <button class="btn btn-primary" style="margin-left:0.5em" id="delFolder-no"> No</button>
+        <button class="btn btn-primary" style="margin-left:0.5em" id="delFolder-no" onclick="closeModal()"> No</button>
 
     </div>
 </div>

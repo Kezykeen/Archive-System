@@ -18,5 +18,8 @@ namespace archivesystemWebUI.Models.FolderViewModels
 
         public ICollection<Folder> DirectChildren { get; set; }
         public ICollection<File> Files { get; set; }
+
+        public string ReturnUrl { get; set; }
+        public bool CloseAccessCodeModal { get; set; }
     }
 }

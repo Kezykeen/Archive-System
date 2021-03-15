@@ -6,6 +6,7 @@ using System.Web;
 using archivesystemDomain.Entities;
 using archivesystemDomain.Interfaces;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 
 namespace archivesystemDomain.Services
@@ -47,6 +48,13 @@ namespace archivesystemDomain.Services
            return result;
         }
 
-        
+        public async Task<ICollection<string>> GetUserIdsOfUsersInRole(string roleName)
+        {
+            var role=await RoleManager.FindByNameAsync(roleName);
+            var identityUserRoleObjs =role.Users;
+            List<string> userIds = identityUserRoleObjs.Select(x => x.UserId).ToList();
+            return userIds;
+
+        }
     }
 }
