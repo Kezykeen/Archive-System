@@ -4,31 +4,11 @@ $("document").ready(function () {
 });
 
 
-async function getPartialView(url) {
-    
-    let resp = await fetch(url)
-    console.log(resp)
-    let textResp = resp.status === 200 ? await resp.text() :"<div class='modal-header'> <p class'text-danger'>Some error occured<p> </div>";
-
-    var modalBody = document.getElementById("modalBody")
-    modalBody.innerHTML = textResp;
-    $("#modal").modal("show");
-
-    document.getElementById("manageRole").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        addOrEditRole(url);
-        return
-    })
-    
-   
-    
-}
-
 async function addOrEditRole(url) {
     let verificationToken = document.getElementsByName("__RequestVerificationToken")[0].value
     let name = document.getElementById("role-name").value;
     let newName = document.getElementById("role-newName").value;
-    console.log("name:",name,"new Name:",newName)
+   
     if (!newName) {
         addErrors("manageRole", isnullNamError = true)
     }
@@ -45,22 +25,6 @@ async function addOrEditRole(url) {
 
     }
 
-}
-
-async function postData(url, name, newName, token) {
-    console.log(url, name, newName, token)
-    let resp = await fetch(url, {
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/json',
-            __RequestVerificationToken: token,
-        },
-        body: JSON.stringify({
-            Name: name ? name: "" ,
-            NewName:newName
-        })
-    })
-    return resp
 }
 
 function addErrors(formId, isnullNamError=false,isnameAlreadyExist=false,isUnknown=false) {
@@ -93,4 +57,66 @@ async function confirmDelete(url) {
 function closeModal() {
     $("#modal").modal("hide");
     return;
+}
+
+async function getPartialView(url) {
+
+    let resp = await fetch(url)
+    let textResp = resp.status === 200 ? await resp.text() : "<div class='modal-header'> <p class'text-danger'>Some error occured<p> </div>";
+
+    var modalBody = document.getElementById("modalBody")
+    modalBody.innerHTML = textResp;
+    $("#modal").modal("show");
+
+    document.getElementById("manageRole").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        addOrEditRole(url);
+        return
+    })
+
+
+
+}
+
+async function loadModal(url) {
+    var resp = await fetch(url);
+    console.log(resp)
+    let textResp = await resp.text();
+    var modalBody = document.getElementById("modalBody")
+    modalBody.innerHTML = textResp;
+    $("#modal").modal("show");
+}
+
+async function AddToRole() {
+    document.addEventListener("submit", (e) => { e.preventDefault() })
+    let token = document.getElementsByName("__RequestVerificationToken")[0].value;
+    let roleId = document.getElementById("AUTR-roleId").value;
+    let userId = document.getElementById("AUTR-userId").value;
+    let resp = await fetch(`/roles/AddUserToRole`, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            __RequestVerificationToken: token,
+        },
+        body: JSON.stringify({
+            userId,
+            roleId
+        })
+    })
+    return resp
+}
+async function postData(url, name, newName, token) {
+    console.log(url, name, newName, token)
+    let resp = await fetch(url, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            __RequestVerificationToken: token,
+        },
+        body: JSON.stringify({
+            Name: name ? name : "",
+            NewName: newName
+        })
+    })
+    return resp
 }

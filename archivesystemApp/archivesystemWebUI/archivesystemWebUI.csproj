@@ -315,6 +315,8 @@
     <Compile Include="Models\FolderViewModels\SaveFolderViewModel.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\RoleViewModels\AddOrEditRoleViewModel.cs" />
+    <Compile Include="Models\RoleViewModels\AddtoRoleViewModel.cs" />
+    <Compile Include="Models\RoleViewModels\RemoveUserFromRoleViewModel.cs" />
     <Compile Include="Models\RoleViewModels\UsersInRoleViewModel.cs" />
     <Compile Include="Models\UpdateEmployeeVM.cs" />
     <Compile Include="Models\SessionData.cs" />
@@ -331,6 +333,7 @@
     <Compile Include="Repository\TokenRepository.cs" />
     <Compile Include="Repository\UnitOfWork.cs" />
     <Compile Include="Services\FolderService.cs" />
+    <Compile Include="Services\RoleService.cs" />
     <Compile Include="Services\UserAccessService.cs" />
     <Compile Include="Services\AccessLevelService.cs" />
     <Compile Include="Startup.cs" />
@@ -560,6 +563,8 @@
     <Content Include="Views\Shared\_EnterAccessCode.cshtml" />
     <Content Include="Views\Shared\_ChangePassword.cshtml" />
     <Content Include="Views\Roles\UsersInRole.cshtml" />
+    <Content Include="Views\Shared\_AddUserToRole.cshtml" />
+    <Content Include="Views\Shared\_RemoveUserFromRole.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
