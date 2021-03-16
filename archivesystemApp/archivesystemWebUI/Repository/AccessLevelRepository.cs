@@ -27,6 +27,7 @@ namespace archivesystemWebUI.Repository
         /// <param name="accessLevel">AccessLevel</param>
         public void EditDetails(AccessLevel accessLevel)
         {
+            accessLevel.UpdatedAt = DateTime.Now;
             _context.Entry(accessLevel).State = EntityState.Modified;
         }
 
@@ -37,8 +38,7 @@ namespace archivesystemWebUI.Repository
         /// <returns>AccessLevel</returns>
         public AccessLevel GetByLevel(string Level)
         {
-            var access = _context.AccessLevels.FirstOrDefault(m => m.Level == Level);
-            return access;
+            return _context.AccessLevels.FirstOrDefault(m => m.Level == Level);
         }
         public AccessLevel GetBaseLevel()
         {

@@ -214,6 +214,9 @@
     <Compile Include="Migrations\202103161245019_NewSchema.Designer.cs">
       <DependentUpon>202103161245019_NewSchema.cs</DependentUpon>
     </Compile>
+     <Compile Include="Interfaces\IAccessLevelService.cs" />
+    <Compile Include="Interfaces\IFolderService.cs" />
+    <Compile Include="Interfaces\IUserAccessService.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CodeStatus.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -229,6 +232,7 @@
     <Compile Include="Models\FolderViewModels\DeleteFolderViewModel.cs" />
     <Compile Include="Models\FolderViewModels\FolderPageViewModel.cs" />
     <Compile Include="Models\FolderViewModels\MoveItemViewModel.cs" />
+    <Compile Include="Models\FolderViewModels\SaveFolderViewModel.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\RoleViewModels\AddOrEditRoleViewModel.cs" />
     <Compile Include="Models\RoleViewModels\UsersInRoleViewModel.cs" />
@@ -246,6 +250,9 @@
     <Compile Include="Repository\AccessLevelRepository.cs" />
     <Compile Include="Repository\TokenRepository.cs" />
     <Compile Include="Repository\UnitOfWork.cs" />
+    <Compile Include="Services\FolderService.cs" />
+    <Compile Include="Services\UserAccessService.cs" />
+    <Compile Include="Services\AccessLevelService.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -445,6 +452,8 @@
     <Content Include="Views\Users\DelPrompt.cshtml" />
     <Content Include="Views\Users\Details.cshtml" />
     <Content Include="Views\Home\EmployeeDashboard.cshtml" />
+    <Content Include="Views\Folder\CreateFolder.cshtml" />
+    <Content Include="Views\Shared\_AddOrEditDepartment.cshtml" />
     <Content Include="Views\Users\EditModal.cshtml" />
     <Content Include="Views\Shared\_EnrollPartial.cshtml" />
     <Content Include="Views\Users\EnrollModal.cshtml" />
@@ -466,7 +475,7 @@
     <Content Include="Views\Shared\_ConfirmItemMove.cshtml" />
     <Content Include="Views\FileMeta\New.cshtml" />
     <Content Include="Views\Folder\_Files.cshtml" />
-    <Content Include="Views\FileMeta\GetAllFiles.cshtml" />
+    <Content Include="Views\Shared\GetAllFiles.cshtml" />
     <Content Include="Views\FileMeta\_File.cshtml" />
     <Content Include="Views\Shared\_EnterAccessCode.cshtml" />
     <Content Include="Views\Shared\_ChangePassword.cshtml" />

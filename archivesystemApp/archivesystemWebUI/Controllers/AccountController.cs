@@ -215,11 +215,12 @@ namespace archivesystemWebUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
 
-           
-          
-           
-            if (ModelState.IsValid)
+            if (!_unitOfWork.EmployeeRepo.EmailExists(model.Email, null))
             {
                 if (_unitOfWork.UserRepo.EmailExists(model.Email, null))
                 {
@@ -230,8 +231,10 @@ namespace archivesystemWebUI.Controllers
                     if (result.Succeeded)
                     {
 
+           
+            var employee = _unitOfWork.EmployeeRepo.GetEmployeeByMail(model.Email);
 
-                        // Update UserId of Employee class
+                        // Update UserId of User class
                         _unitOfWork.UserRepo.UpdateUserId(model.Email, user.Id);
                         await UserManager.AddToRoleAsync(user.Id, "Employee");
                         employee.Completed = true;
@@ -247,7 +250,7 @@ namespace archivesystemWebUI.Controllers
                     return View(model);
                 }
             }
-
+            AddErrors(result);        
             // If we got this far, something failed, redisplay form
             return View(model);
         }
@@ -280,36 +283,34 @@ namespace archivesystemWebUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
-            if (ModelState.IsValid)
-            {    
-                var user = await UserManager.FindByEmailAsync(model.Email);
-                if (user == null || !(await UserManager.IsEmailConfirmedAsync(user.Id)))
-                {
-                    // Don't reveal that the user does not exist or is not confirmed
-                    return View("ForgotPasswordConfirmation");
-                }
-
-                // Send an email with this link
-                string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-
-                try
-                {
-                    await _emailSender.SendEmailAsync(model.Email, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
-
-                }
-                catch (Exception e)
-                {
-                    ModelState.AddModelError("", e.Message);
-                    return View(model);
-
-                }
-                return View("ForgotPasswordConfirmation");
+            if (!ModelState.IsValid)
+            {
+                return View(model);
 
             }
+            var user = await UserManager.FindByEmailAsync(model.Email);
+            if (user == null || !(await UserManager.IsEmailConfirmedAsync(user.Id)))
+            {
+                // Don't reveal that the user does not exist or is not confirmed
+                return View("ForgotPasswordConfirmation");
+            }
 
-            // If we got this far, something failed, redisplay form
-            return View(model);
+            // Send an email with this link
+            string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+            var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+
+            try
+            {
+                await _emailSender.SendEmailAsync(model.Email, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+            }
+            catch (Exception e)
+            {
+                ModelState.AddModelError("", e.Message);
+                return View(model);
+
+            }
+            return View("ForgotPasswordConfirmation");
         }
 
         //

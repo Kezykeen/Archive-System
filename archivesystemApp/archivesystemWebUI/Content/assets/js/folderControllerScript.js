@@ -1,5 +1,21 @@
 ﻿const NODE_COUNT_WITHOUT_ERROR_MESSAGE = 11;
 
+function addValidationErrors(formId, name, accesslevelId, isNameTaken = false) {
+    let form = document.getElementById(formId);
+    let validationErrorMessage = document.createElement("div");
+    if (form.childNodes.length > NODE_COUNT_WITHOUT_ERROR_MESSAGE) {
+        form.removeChild(form.childNodes[0])
+    }
+    validationErrorMessage.innerHTML =
+        `<div class='validation-summary-errors'>
+                <ul>
+                    ${!name ? '<li>Folder name field is required</li>' : ''}
+                    ${!accesslevelId ? '<li>Access level field is required</li>' : ''}
+                    ${isNameTaken ? `<li>${name} already exist in folder</li>` : ''}
+                </ul>
+            </div>`
+    form.prepend(validationErrorMessage)
+}
 async function getPartialView(url, id) {
     url =  `${url}?id=${id}` 
     
@@ -89,7 +105,7 @@ async function deleteFolder() {
     let verificationToken = document.getElementsByName("__RequestVerificationToken")[0].value;
     let folderId = document.getElementById("delFolder-id").value;
     let parentId = document.getElementById("delFolder-parentId").value;
-    console.log("reached here", folderId, parentId, "folders/delete")
+    
     let resp = await fetch("/folders/delete", {
         method: "POST",
         headers: {
@@ -160,22 +176,7 @@ async function createFolder(url) {
    
 }
 
-function addValidationErrors(formId, name, accesslevelId, isNameTaken=false) {
-    let form = document.getElementById(formId);
-    let validationErrorMessage = document.createElement("div");
-    if (form.childNodes.length > NODE_COUNT_WITHOUT_ERROR_MESSAGE) {
-        form.removeChild(form.childNodes[0])
-    }
-    validationErrorMessage.innerHTML =
-        `<div class='validation-summary-errors'>
-                <ul>
-                    ${!name ? '<li>Folder name field is required</li>' : ''}
-                    ${!accesslevelId ? '<li>Access level field is required</li>' : ''}
-                    ${isNameTaken ? `<li>${name} already exist in folder</li>` : ''}
-                </ul>
-            </div>`
-    form.prepend(validationErrorMessage)
-}
+
 
 async function postData(url, name, accesslevelId, parentId, token, id = 0) {
     let resp = await fetch(url, {
@@ -236,6 +237,10 @@ async function CtrlV(newParentFolderId ) {
 }
 
 async function VerifyAccessToken() {
+    document.getElementById("EAC-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+    })
+
     let verificationToken = document.getElementsByName("__RequestVerificationToken")[0].value;
     var accessCode = document.getElementById('EAC-code').value;
     var returnUrl = document.getElementById("EAC-returnUrl").value;
@@ -258,7 +263,7 @@ async function VerifyAccessToken() {
     }
     let form = document.getElementById("EAC-form");
     let validationErrorMessage = document.createElement("div");
-    
+    console.log(form.childNodes.length)
     if (form.childNodes.length > NODE_COUNT_WITHOUT_ERROR_MESSAGE) {
         form.removeChild(form.childNodes[0])
     }

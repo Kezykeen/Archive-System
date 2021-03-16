@@ -109,6 +109,8 @@ namespace archivesystemWebUI.Controllers
            
             var faculty = _unitOfWork.FacultyRepo.Get(department.FacultyId);
             var facultyFolder = _unitOfWork.FolderRepo.GetFacultyFolder(faculty.Name);
+            if (facultyFolder.Subfolders.Select(x => x.Name).Contains(department.Name))
+                return;
             var folder = new Folder
             {
                 Name = department.Name,

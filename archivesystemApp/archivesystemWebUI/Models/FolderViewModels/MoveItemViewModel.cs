@@ -9,9 +9,7 @@ namespace archivesystemWebUI.Models.FolderViewModels
     {
         public int Id { get; set; }
 
-        public string FileType { get; set; }
-
-        public int NewParentFolder { get; set; }
+        public int NewParentFolderId { get; set; }
 
     }
 }
