@@ -15,14 +15,12 @@ namespace archivesystemWebUI.Controllers
     public class UserAccessController : Controller
     {
         #region FIELD
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IUserAccessService _service;
         #endregion
 
         #region CONSTRUCTOR
-        public UserAccessController(IUnitOfWork unitOfWork, IUserAccessService service)
+        public UserAccessController( IUserAccessService service)
         {
-            _unitOfWork = unitOfWork;
             _service = service;
         }
 

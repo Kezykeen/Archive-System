@@ -1,16 +1,17 @@
 ﻿using System.Data.Entity;
+using archivesystemDomain.Interfaces;
 using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace archivesystemDomain.Entities
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplicationDbContext
     {
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
         {
         }
 
-       
+
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();
