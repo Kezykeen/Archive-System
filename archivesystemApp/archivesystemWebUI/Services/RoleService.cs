@@ -5,20 +5,35 @@ using System.Threading.Tasks;
 using System.Web;
 using archivesystemDomain.Entities;
 using archivesystemDomain.Interfaces;
+using archivesystemDomain.Services;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 
-namespace archivesystemDomain.Services
+namespace archivesystemWebUI.Services
 {
     public class RoleService : IRoleService
     {
         private static HttpContext  Context => HttpContext.Current;
-
-        
+        private ApplicationUserManager _userManager;
         private ApplicationRoleManager RoleManager => Context.GetOwinContext().GetUserManager<ApplicationRoleManager>();
-        private ApplicationUserManager UserManager => Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return _userManager ??Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
+        }
 
+        private IUnitOfWork repo;
+        public RoleService(IUnitOfWork repo)
+        {
+            this.repo = repo; 
+        }
         public IEnumerable<ApplicationRole> GetAllRoles()
         {
             return RoleManager.Roles.ToList();
@@ -56,5 +71,31 @@ namespace archivesystemDomain.Services
             return userIds;
 
         }
+
+        public string GetEmployeeName(string userId)
+        {
+            return repo.EmployeeRepo.Find(x => x.UserId == userId).FirstOrDefault().Name;
+        }
+
+        public IEnumerable<RoleMemberData> GetUsersData(ICollection<string> userIds)
+        {
+            return repo.EmployeeRepo.GetUserDataByUserIds(userIds);
+        }
+
+        public IdentityResult AddToRole(string userId, string roleId)
+        {
+            var role=RoleManager.FindById(roleId);
+            var result=UserManager.AddToRole(userId, role.Name);
+            return result;
+        }
+
+        public IdentityResult RemoveFromRole ( string userId,string roleName)
+        {
+            var role = RoleManager.FindByName(roleName);
+            var result=UserManager.RemoveFromRole(userId, roleName);
+            return result;
+            //f7fbf102-8f11-43d6-86a1-d34bd0fa7ed2
+        }
+
     }
 }
