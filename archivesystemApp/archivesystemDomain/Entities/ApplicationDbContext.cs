@@ -16,7 +16,7 @@ namespace archivesystemDomain.Entities
             return new ApplicationDbContext();
         }
 
-        public DbSet<Employee> Employees { get; set; }
+        public DbSet<AppUser> AppUsers { get; set; }
         public DbSet<Department> Departments { get; set; }
         public DbSet<Faculty> Faculties { get; set; }
         public DbSet<AccessLevel> AccessLevels { get; set; }
@@ -25,6 +25,12 @@ namespace archivesystemDomain.Entities
         public DbSet<FileMeta> FileMetas { get; set; }
         public DbSet<Folder> Folders { get; set; }
         public DbSet<File> Files { get; set; }
+        public DbSet<Ticket> Tickets { get; set; }
+        public DbSet<Application> Applications { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<Approval> Approvals { get; set; }
+        public DbSet<ApplicationReceiver> ApplicationReceivers { get; set; }
+        public DbSet<Activity> Activities { get; set; }
 
 
     }

@@ -194,7 +194,7 @@
     <Compile Include="Controllers\FileMetaController.cs" />
     <Compile Include="Controllers\UserAccessController.cs" />
     <Compile Include="Controllers\DepartmentController.cs" />
-    <Compile Include="Controllers\EmployeesController.cs" />
+    <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\FacultyController.cs" />
     <Compile Include="Controllers\FolderController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -204,95 +204,15 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Infrastructures\MaxFileSizeMb.cs" />
-    <Compile Include="Infrastructures\EmployeeValidator.cs" />
+    <Compile Include="Infrastructures\UserValidator.cs" />
     <Compile Include="Infrastructures\MIMEType.cs" />
     <Compile Include="Infrastructures\NinjectDependenceResolver.cs" />
     <Compile Include="Infrastructures\MappingProfile.cs" />
     <Compile Include="Infrastructures\EmpUniqueProps.cs" />
     <Compile Include="Infrastructures\UpsertFile.cs" />
-    <Compile Include="Migrations\202102081444191_Initial.cs" />
-    <Compile Include="Migrations\202102081444191_Initial.Designer.cs">
-      <DependentUpon>202102081444191_Initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202102121300258_DeptFacultyModelAdded.cs" />
-    <Compile Include="Migrations\202102121300258_DeptFacultyModelAdded.Designer.cs">
-      <DependentUpon>202102121300258_DeptFacultyModelAdded.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202102131001516_AddPhoneToEmpTable.cs" />
-    <Compile Include="Migrations\202102131001516_AddPhoneToEmpTable.Designer.cs">
-      <DependentUpon>202102131001516_AddPhoneToEmpTable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202102131513378_AddGenderToEmp.cs" />
-    <Compile Include="Migrations\202102131513378_AddGenderToEmp.Designer.cs">
-      <DependentUpon>202102131513378_AddGenderToEmp.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202102150106454_AddTokenEntity.cs" />
-    <Compile Include="Migrations\202102150106454_AddTokenEntity.Designer.cs">
-      <DependentUpon>202102150106454_AddTokenEntity.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202102130649017_ModifiedAccessLevelEntity.cs" />
-    <Compile Include="Migrations\202102130649017_ModifiedAccessLevelEntity.Designer.cs">
-      <DependentUpon>202102130649017_ModifiedAccessLevelEntity.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202102191549415_AddFoldersTable.cs" />
-    <Compile Include="Migrations\202102191549415_AddFoldersTable.Designer.cs">
-      <DependentUpon>202102191549415_AddFoldersTable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202102192117574_AddSubFoldersTable.cs" />
-    <Compile Include="Migrations\202102192117574_AddSubFoldersTable.Designer.cs">
-      <DependentUpon>202102192117574_AddSubFoldersTable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202102221824083_AddColumnsToSubFoldersTable.cs" />
-    <Compile Include="Migrations\202102221824083_AddColumnsToSubFoldersTable.Designer.cs">
-      <DependentUpon>202102221824083_AddColumnsToSubFoldersTable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202102251107030_AddedAccessDetails.cs" />
-    <Compile Include="Migrations\202102251107030_AddedAccessDetails.Designer.cs">
-      <DependentUpon>202102251107030_AddedAccessDetails.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202102160828000_AddCheckedToEmployee.cs" />
-    <Compile Include="Migrations\202102160828000_AddCheckedToEmployee.Designer.cs">
-      <DependentUpon>202102160828000_AddCheckedToEmployee.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202102160853551_AddIndexesToEmployee.cs" />
-    <Compile Include="Migrations\202102160853551_AddIndexesToEmployee.Designer.cs">
-      <DependentUpon>202102160853551_AddIndexesToEmployee.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202102260027414_chngesToEmp.cs" />
-    <Compile Include="Migrations\202102260027414_chngesToEmp.Designer.cs">
-      <DependentUpon>202102260027414_chngesToEmp.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202102260233439_newModelsFromTeam.cs" />
-    <Compile Include="Migrations\202102260233439_newModelsFromTeam.Designer.cs">
-      <DependentUpon>202102260233439_newModelsFromTeam.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202102261150214_littlechange.cs" />
-    <Compile Include="Migrations\202102261150214_littlechange.Designer.cs">
-      <DependentUpon>202102261150214_littlechange.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202103010916459_modifiedTheFolderEntity.cs" />
-    <Compile Include="Migrations\202103010916459_modifiedTheFolderEntity.Designer.cs">
-      <DependentUpon>202103010916459_modifiedTheFolderEntity.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202103011037427_addFilesTable.cs" />
-    <Compile Include="Migrations\202103011037427_addFilesTable.Designer.cs">
-      <DependentUpon>202103011037427_addFilesTable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202103011038452_addFilesCollectionToFoldersTable.cs" />
-    <Compile Include="Migrations\202103011038452_addFilesCollectionToFoldersTable.Designer.cs">
-      <DependentUpon>202103011038452_addFilesCollectionToFoldersTable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202103011133036_addAccessLevelFieldToFolderTable.cs" />
-    <Compile Include="Migrations\202103011133036_addAccessLevelFieldToFolderTable.Designer.cs">
-      <DependentUpon>202103011133036_addAccessLevelFieldToFolderTable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202103021054224_removeSubFoldersTable.cs" />
-    <Compile Include="Migrations\202103021054224_removeSubFoldersTable.Designer.cs">
-      <DependentUpon>202103021054224_removeSubFoldersTable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202103131336104_FolderFileRHip.cs" />
-    <Compile Include="Migrations\202103131336104_FolderFileRHip.Designer.cs">
-      <DependentUpon>202103131336104_FolderFileRHip.cs</DependentUpon>
+    <Compile Include="Migrations\202103161245019_NewSchema.cs" />
+    <Compile Include="Migrations\202103161245019_NewSchema.Designer.cs">
+      <DependentUpon>202103161245019_NewSchema.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CodeStatus.cs" />
@@ -312,12 +232,12 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\RoleViewModels\AddOrEditRoleViewModel.cs" />
     <Compile Include="Models\RoleViewModels\UsersInRoleViewModel.cs" />
-    <Compile Include="Models\UpdateEmployeeVM.cs" />
+    <Compile Include="Models\UpdateUserVm.cs" />
     <Compile Include="Models\SessionData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\AccessDetailsRepository.cs" />
     <Compile Include="Repository\DeptRepository.cs" />
-    <Compile Include="Repository\EmployeeRepository.cs" />
+    <Compile Include="Repository\UserRepository.cs" />
     <Compile Include="Repository\FacultyRepository.cs" />
     <Compile Include="Repository\FileMetaRepo.cs" />
     <Compile Include="Repository\FileRepo.cs" />
@@ -515,19 +435,19 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Shared\_SideBarPartial.cshtml" />
     <Content Include="Views\Shared\_AccountLayout.cshtml" />
-    <Content Include="Views\Employees\Index.cshtml" />
+    <Content Include="Views\Users\Index.cshtml" />
     <Content Include="Views\Roles\RolesList.cshtml" />
     <Content Include="Views\AccessLevel\ManageAccessLevel.cshtml" />
     <Content Include="Views\Department\Index.cshtml" />
     <Content Include="Views\Faculty\Index.cshtml" />
     <Content Include="Views\UserAccess\ManageUserAccess.cshtml" />
     <Content Include="Views\Department\_AddOrEditDepartment.cshtml" />
-    <Content Include="Views\Employees\DelPrompt.cshtml" />
-    <Content Include="Views\Employees\Details.cshtml" />
+    <Content Include="Views\Users\DelPrompt.cshtml" />
+    <Content Include="Views\Users\Details.cshtml" />
     <Content Include="Views\Home\EmployeeDashboard.cshtml" />
-    <Content Include="Views\Employees\EditModal.cshtml" />
+    <Content Include="Views\Users\EditModal.cshtml" />
     <Content Include="Views\Shared\_EnrollPartial.cshtml" />
-    <Content Include="Views\Employees\EnrollModal.cshtml" />
+    <Content Include="Views\Users\EnrollModal.cshtml" />
     <Content Include="Views\Department\_DeleteDepartment.cshtml" />
     <Content Include="Views\Faculty\_AddOrEditFaculty.cshtml" />
     <Content Include="Views\Faculty\_DeleteFaculty.cshtml" />
@@ -575,68 +495,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202102081444191_Initial.resx">
-      <DependentUpon>202102081444191_Initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202102121300258_DeptFacultyModelAdded.resx">
-      <DependentUpon>202102121300258_DeptFacultyModelAdded.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202102131001516_AddPhoneToEmpTable.resx">
-      <DependentUpon>202102131001516_AddPhoneToEmpTable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202102131513378_AddGenderToEmp.resx">
-      <DependentUpon>202102131513378_AddGenderToEmp.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202102150106454_AddTokenEntity.resx">
-      <DependentUpon>202102150106454_AddTokenEntity.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202102130649017_ModifiedAccessLevelEntity.resx">
-      <DependentUpon>202102130649017_ModifiedAccessLevelEntity.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202102191549415_AddFoldersTable.resx">
-      <DependentUpon>202102191549415_AddFoldersTable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202102192117574_AddSubFoldersTable.resx">
-      <DependentUpon>202102192117574_AddSubFoldersTable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202102221824083_AddColumnsToSubFoldersTable.resx">
-      <DependentUpon>202102221824083_AddColumnsToSubFoldersTable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202102251107030_AddedAccessDetails.resx">
-      <DependentUpon>202102251107030_AddedAccessDetails.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202102160828000_AddCheckedToEmployee.resx">
-      <DependentUpon>202102160828000_AddCheckedToEmployee.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202102160853551_AddIndexesToEmployee.resx">
-      <DependentUpon>202102160853551_AddIndexesToEmployee.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202102260027414_chngesToEmp.resx">
-      <DependentUpon>202102260027414_chngesToEmp.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202102260233439_newModelsFromTeam.resx">
-      <DependentUpon>202102260233439_newModelsFromTeam.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202102261150214_littlechange.resx">
-      <DependentUpon>202102261150214_littlechange.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202103010916459_modifiedTheFolderEntity.resx">
-      <DependentUpon>202103010916459_modifiedTheFolderEntity.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202103011037427_addFilesTable.resx">
-      <DependentUpon>202103011037427_addFilesTable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202103011038452_addFilesCollectionToFoldersTable.resx">
-      <DependentUpon>202103011038452_addFilesCollectionToFoldersTable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202103011133036_addAccessLevelFieldToFolderTable.resx">
-      <DependentUpon>202103011133036_addAccessLevelFieldToFolderTable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202103021054224_removeSubFoldersTable.resx">
-      <DependentUpon>202103021054224_removeSubFoldersTable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202103131336104_FolderFileRHip.resx">
-      <DependentUpon>202103131336104_FolderFileRHip.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202103161245019_NewSchema.resx">
+      <DependentUpon>202103161245019_NewSchema.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

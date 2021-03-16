@@ -11,8 +11,8 @@ namespace archivesystemDomain.Entities
     public class AccessDetail
     {
         public int Id { get; set; }   
-        public int EmployeeId { get; set; }
-        public Employee Employee { get; set; }
+        public int AppUserId { get; set; }
+        public AppUser AppUser { get; set; }
         public int AccessLevelId { get; set; }
         public AccessLevel AccessLevel { get; set; }
         public string AccessCode { get; set; }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-
 using Microsoft.AspNet.Identity;
 using archivesystemWebUI.Infrastructures;
 using archivesystemWebUI.Models;
@@ -95,7 +94,7 @@ namespace archivesystemWebUI.Controllers
         public async Task<ActionResult> GetUsers(string roleName)
         {
             var userIds=await _service.GetUserIdsOfUsersInRole(roleName);
-            var usersData=repo.EmployeeRepo.GetUserDataByUserIds(userIds);
+            var usersData=repo.UserRepo.GetUserDataByUserIds(userIds);
             var viewModel=GetUsersInRoleViewModel(usersData, roleName);
             return View("UsersInRole",viewModel);
         }

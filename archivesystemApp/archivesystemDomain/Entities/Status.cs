@@ -1,4 +1,7 @@
-﻿public enum Status
+﻿namespace archivesystemDomain.Entities
 {
-    Active, Inactive
+    public enum Status
+    {
+        Active, Inactive
+    }
 }

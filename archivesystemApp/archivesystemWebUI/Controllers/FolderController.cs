@@ -35,7 +35,7 @@ namespace archivesystemWebUI.Controllers
             if (!HttpContext.User.IsInRole("Admin") && search == null)
             {
                 var userId = User.Identity.GetUserId();
-                var user = repo.EmployeeRepo.GetEmployeeByUserId(userId);
+                var user = repo.UserRepo.GetUserByUserId(userId);
                 var userFaculty = repo.FacultyRepo.Get(user.Department.FacultyId);
                 model.DirectChildren = model.DirectChildren.Where(x => x.Name == userFaculty.Name).ToList();
             }
@@ -242,7 +242,7 @@ namespace archivesystemWebUI.Controllers
         public ActionResult VerifyAccessCode(string accessCode)
         {
             var userId = HttpContext.User.Identity.GetUserId();
-            var user = repo.EmployeeRepo.GetEmployeeByUserId(userId);
+            var user = repo.UserRepo.GetUserByUserId(userId);
             var userAccessCode = repo.AccessDetailsRepo.GetByEmployeeId(user.Id).AccessCode;
 
             if (accessCode != userAccessCode)
@@ -276,7 +276,7 @@ namespace archivesystemWebUI.Controllers
         private bool AccessNotGranted(Folder folder)
         {
             var userId = HttpContext.User.Identity.GetUserId();
-            var user = repo.EmployeeRepo.GetEmployeeByUserId(userId);
+            var user = repo.UserRepo.GetUserByUserId(userId);
             var userAccessLevel = repo.AccessDetailsRepo.GetByEmployeeId(user.Id).AccessLevelId;
 
             if (folder.FacultyId != null && user.Department.FacultyId != folder.FacultyId)

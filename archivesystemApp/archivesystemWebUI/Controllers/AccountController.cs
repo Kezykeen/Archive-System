@@ -182,7 +182,7 @@ namespace archivesystemWebUI.Controllers
             }
 
             var token = _unitOfWork.TokenRepo.Find(t => t.Code == code).SingleOrDefault();
-            var employee = _unitOfWork.EmployeeRepo.Get(userId.Value);
+            var employee = _unitOfWork.UserRepo.Get(userId.Value);
             
             if (token == null)
             {
@@ -221,9 +221,9 @@ namespace archivesystemWebUI.Controllers
            
             if (ModelState.IsValid)
             {
-                if (_unitOfWork.EmployeeRepo.EmailExists(model.Email, null))
+                if (_unitOfWork.UserRepo.EmailExists(model.Email, null))
                 {
-                    var employee = _unitOfWork.EmployeeRepo.GetEmployeeByMail(model.Email);
+                    var employee = _unitOfWork.UserRepo.GetUserByMail(model.Email);
                   
                     var user = new ApplicationUser { UserName = employee.Name, Email = model.Email, EmailConfirmed = true, PhoneNumber = employee.Phone};
                     var result = await UserManager.CreateAsync(user, model.Password);
@@ -232,7 +232,7 @@ namespace archivesystemWebUI.Controllers
 
 
                         // Update UserId of Employee class
-                        _unitOfWork.EmployeeRepo.UpdateUserId(model.Email, user.Id);
+                        _unitOfWork.UserRepo.UpdateUserId(model.Email, user.Id);
                         await UserManager.AddToRoleAsync(user.Id, "Employee");
                         employee.Completed = true;
                         await _unitOfWork.SaveAsync();

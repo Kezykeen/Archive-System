@@ -35,12 +35,12 @@ namespace archivesystemWebUI.Repository
         /// <returns>AccessDetails</returns>
         public AccessDetail GetByEmployeeId(int employeeId)
         {
-            return _context.AccessDetails.Where(m => m.EmployeeId == employeeId).FirstOrDefault();
+            return _context.AccessDetails.Where(m => m.AppUserId == employeeId).FirstOrDefault();
         }
 
         public IEnumerable<AccessDetail> GetAccessDetails()
         {
-            return _context.AccessDetails.Include(m => m.Employee).Include(m => m.AccessLevel).ToList();
+            return _context.AccessDetails.Include(m => m.AppUser).Include(m => m.AccessLevel).ToList();
         }
     }
 

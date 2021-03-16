@@ -56,13 +56,13 @@ namespace archivesystemWebUI.Controllers
 
             try
             {
-                var employee = _unitOfWork.EmployeeRepo.GetEmployeeByMail(model.Email);
+                var employee = _unitOfWork.UserRepo.GetUserByMail(model.Email);
                
                 var newAccessDetails = new AccessDetail
                 {
-                    EmployeeId = employee.Id,
+                    AppUserId = employee.Id,
                     AccessLevelId = model.AccessLevel,
-                    AccessCode = AccessCodeGenerator.NewCode(employee.StaffId),
+                    AccessCode = AccessCodeGenerator.NewCode(employee.TagId),
                     Status = Status.Active
                 };
 
@@ -108,8 +108,8 @@ namespace archivesystemWebUI.Controllers
             {
                 if (model.RegenerateCode == CodeStatus.Yes)
                 {
-                    var employee = _unitOfWork.EmployeeRepo.Get(model.AccessDetails.EmployeeId);
-                    model.AccessDetails.AccessCode = AccessCodeGenerator.NewCode(employee.StaffId);
+                    var employee = _unitOfWork.UserRepo.Get(model.AccessDetails.AppUserId);
+                    model.AccessDetails.AccessCode = AccessCodeGenerator.NewCode(employee.TagId);
                 }
                 _unitOfWork.AccessDetailsRepo.EditDetails(model.AccessDetails);
                 await _unitOfWork.SaveAsync();
@@ -164,7 +164,7 @@ namespace archivesystemWebUI.Controllers
         [HttpPost]
         public JsonResult ValidateEmail(string Email)
         {
-            var employee = _unitOfWork.EmployeeRepo.GetEmployeeByMail(Email);
+            var employee = _unitOfWork.UserRepo.GetUserByMail(Email);
             if (employee == null)
                 return Json("Employee with this email does not exists. Please enter a different email",  JsonRequestBehavior.AllowGet);
 
