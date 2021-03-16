@@ -30,7 +30,7 @@ namespace archivesystemWebUI.Repository
         public Folder GetFacultyFolder(string name)
         {
             var rootFolder = Find(x=> x.Name=="Root" && x.FacultyId==null && x.DepartmentId==null).FirstOrDefault();
-            var folder = _context.Folders.SingleOrDefault(x => x.Name == name && x.ParentId == rootFolder.Id);
+            var folder = _context.Folders.Include(x=> x.Subfolders).SingleOrDefault(x => x.Name == name && x.ParentId == rootFolder.Id);
             return folder;
         }
         public List<FolderPath> GetFolderPath(int folderId)
