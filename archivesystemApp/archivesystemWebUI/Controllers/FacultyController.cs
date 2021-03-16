@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using archivesystemDomain.Entities;
 using archivesystemDomain.Interfaces;
+using archivesystemWebUI.Interfaces;
 using archivesystemWebUI.Models;
 using AutoMapper;
 
@@ -13,10 +14,12 @@ namespace archivesystemWebUI.Controllers
     public class FacultyController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private IFolderService _folderService;
         
-        public FacultyController(IUnitOfWork unitOfWork)
+        public FacultyController(IUnitOfWork unitOfWork, IFolderService folderservice)
         {
             _unitOfWork = unitOfWork;
+            _folderService = folderservice;
         }
 
         public ActionResult Index()
@@ -102,7 +105,7 @@ namespace archivesystemWebUI.Controllers
         private  void CreateFacultyAndFolder(Faculty faculty)
         {
            
-            var rootFolder = _unitOfWork.FolderRepo.GetRootFolder();
+            var rootFolder = _folderService.GetRootFolder();
             var folder = new Folder
             {
                 Name = faculty.Name,

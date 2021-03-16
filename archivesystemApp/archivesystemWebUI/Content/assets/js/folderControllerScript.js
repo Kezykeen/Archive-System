@@ -105,7 +105,7 @@ async function deleteFolder() {
     let verificationToken = document.getElementsByName("__RequestVerificationToken")[0].value;
     let folderId = document.getElementById("delFolder-id").value;
     let parentId = document.getElementById("delFolder-parentId").value;
-    console.log("reached here", folderId, parentId, "folders/delete")
+    
     let resp = await fetch("/folders/delete", {
         method: "POST",
         headers: {
@@ -236,8 +236,11 @@ async function CtrlV(newParentFolderId ) {
     }
 }
 
-async function VerifyAccessToken(e) {
-    e.preventDefault();
+async function VerifyAccessToken() {
+    document.getElementById("EAC-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+    })
+
     let verificationToken = document.getElementsByName("__RequestVerificationToken")[0].value;
     var accessCode = document.getElementById('EAC-code').value;
     var returnUrl = document.getElementById("EAC-returnUrl").value;
@@ -260,7 +263,7 @@ async function VerifyAccessToken(e) {
     }
     let form = document.getElementById("EAC-form");
     let validationErrorMessage = document.createElement("div");
-    
+    console.log(form.childNodes.length)
     if (form.childNodes.length > NODE_COUNT_WITHOUT_ERROR_MESSAGE) {
         form.removeChild(form.childNodes[0])
     }

@@ -8,6 +8,7 @@
     var currentFolderDepth = currentPath.Count();
     var subFolderLenght = Model.DirectChildren == null ? 0 : Model.DirectChildren.Count();
     var headerTitle = Model.Id == 0 ? "Your Search Result" : $"{Model.Name} ";
+    ICollection<archivesystemDomain.Entities.File> Files = Model.Files;
 
 }
 
@@ -132,11 +133,10 @@
                             <div class="file-body">
                                 <div class="file-scroll">
                                     <div class="file-content-inner">
-
-                                        @{
-                                            Html.RenderAction("GetAllFiles", "FileMeta", new {folderId = Model.Id});
+                                        @if (Model.CloseAccessCodeModal==true)
+                                        {
+                                            Html.RenderAction("GetAllFiles", "FileMeta", new { folderId = Model.Id });
                                         }
-                                        
                                     </div>
                                 </div>
                             </div>
@@ -162,9 +162,7 @@
 @{
     if (Model.CloseAccessCodeModal==false)
     {
-        <div id="AIM-overlay">
-            @Html.Partial("_EnterAccessCode");
-        </div>
+        @Html.Partial("_EnterAccessCode")
     }
 
 }

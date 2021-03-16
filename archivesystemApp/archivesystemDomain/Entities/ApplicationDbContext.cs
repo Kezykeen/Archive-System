@@ -12,6 +12,7 @@ namespace archivesystemDomain.Entities
 
        
         public static ApplicationDbContext Create()
+        
         {
             return new ApplicationDbContext();
         }

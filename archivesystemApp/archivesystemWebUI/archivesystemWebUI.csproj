@@ -312,6 +312,7 @@
     <Compile Include="Models\FolderViewModels\DeleteFolderViewModel.cs" />
     <Compile Include="Models\FolderViewModels\FolderPageViewModel.cs" />
     <Compile Include="Models\FolderViewModels\MoveItemViewModel.cs" />
+    <Compile Include="Models\FolderViewModels\SaveFolderViewModel.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\RoleViewModels\AddOrEditRoleViewModel.cs" />
     <Compile Include="Models\RoleViewModels\UsersInRoleViewModel.cs" />
@@ -554,7 +555,7 @@
     <Content Include="Views\Shared\_ConfirmItemMove.cshtml" />
     <Content Include="Views\FileMeta\New.cshtml" />
     <Content Include="Views\Folder\_Files.cshtml" />
-    <Content Include="Views\FileMeta\GetAllFiles.cshtml" />
+    <Content Include="Views\Shared\GetAllFiles.cshtml" />
     <Content Include="Views\FileMeta\_File.cshtml" />
     <Content Include="Views\Shared\_EnterAccessCode.cshtml" />
     <Content Include="Views\Shared\_ChangePassword.cshtml" />
