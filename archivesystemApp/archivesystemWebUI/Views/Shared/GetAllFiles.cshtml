@@ -1,0 +1,14 @@
+﻿@using System.Web.Mvc.Html
+@model  ICollection<archivesystemDomain.Entities.File>
+
+
+<div class="row row-sm" id="filesContainer">
+
+
+@foreach (var file in Model )
+{
+    @Html.Partial("_File", file);
+
+}
+
+</div>

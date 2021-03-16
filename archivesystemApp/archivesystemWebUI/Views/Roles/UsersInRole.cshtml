@@ -54,21 +54,30 @@
                         <div class="btn-group">
                             <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>
                             <div class="dropdown-menu" style="">
-                                <a class="dropdown-item modal-delete" href="#" data-toggle="modal"><i class="fa fa-pencil m-r-5"></i>Add To New Role</a>
-                                <a class="dropdown-item modal-edit" href="#" data-toggle="modal"><i class="fa fa-trash-o m-r-5"></i>Remove from role</a>
+                                <a class="dropdown-item modal-delete" href="#" data-toggle="modal"
+                                   onclick="loadModal('/roles/AddUserToRole?userId=@item.UserId')"><i class="fa fa-pencil m-r-5"></i>Add To New Role</a>
+                                <a class="dropdown-item modal-edit" href="#" data-toggle="modal" 
+                                   onclick="loadModal('/roles/RemoveUserFromRole?userId=@item.UserId&roleName=@Model.RoleName')"><i class="fa fa-trash-o m-r-5"></i>Remove from role</a>
                             </div>
                         </div>
-                    </td >
-                </tr >
-             }
+                    </td>
+                </tr>
+            }
         </tbody>
 
     </table>
 </div>
 
+<!-- Manage UserRoles Modal -->
+<div class="modal custom-modal fade" role="dialog" id="modal">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" id="modalBody">
+        </div>
+    </div>
+</div>
 
-            <!-- BEGIN: Scripts -->
-            @section scripts{
-                <script src="~/Content/assets/js/rolesControllerScript.js"></script>
-            }
-            <!-- END: Scripts -->
+<!-- BEGIN: Scripts -->
+@section scripts{
+    <script src="~/Content/assets/js/rolesControllerScript.js"></script>
+}
+<!-- END: Scripts -->

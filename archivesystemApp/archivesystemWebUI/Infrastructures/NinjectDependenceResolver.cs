@@ -36,7 +36,7 @@ namespace archivesystemWebUI.Infrastructures
         private void AddBindings()
         {
             kernel.Bind(typeof(ApplicationDbContext)).ToSelf().InRequestScope();
-            kernel.Bind<IEmployeeRepository>().To<EmployeeRepository>();
+            kernel.Bind<IUserRepository>().To<UserRepository>();
             kernel.Bind<IDeptRepository>().To<DeptRepository>();
             kernel.Bind<IAccessDetailsRepository>().To<AccessDetailsRepository>();
             kernel.Bind<IAccessLevelRepository>().To<AccessLevelRepository>();

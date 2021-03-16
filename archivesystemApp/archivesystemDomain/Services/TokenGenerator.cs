@@ -19,7 +19,7 @@ namespace archivesystemDomain.Services
         public  string Code(int userId)
         {
 
-            var existingTokens = _unitOfWork.TokenRepo.Find(t => t.EmployeeId == userId);
+            var existingTokens = _unitOfWork.TokenRepo.Find(t => t.AppUserId == userId);
             if (existingTokens != null)
             {
                 _unitOfWork.TokenRepo.RemoveRange(existingTokens);
@@ -29,7 +29,7 @@ namespace archivesystemDomain.Services
             var token = new Token
             {
                 Code = Guid.NewGuid().ToString("N"),
-                EmployeeId = userId,
+                AppUserId = userId,
                 Expire = DateTime.Now.AddDays(3)
             };
             _unitOfWork.TokenRepo.Add(token);
