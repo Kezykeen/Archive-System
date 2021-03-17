@@ -19,6 +19,6 @@ namespace archivesystemWebUI.Interfaces
         void EditUserModel(int id, out EditUserViewModel model, out AccessDetail accessDetails);
         AccessDetail GetByNullableId(int? id);
         Task Update(EditUserViewModel model);
-        void ValidateEmail(string Email, out AccessDetail accessDetails, out Employee employee);
+        void ValidateEmail(string Email, out AccessDetail accessDetails, out AppUser user);
     }
 }

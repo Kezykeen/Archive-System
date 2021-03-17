@@ -22,7 +22,7 @@ namespace archivesystemWebUI.Interfaces
         IEnumerable<Folder> GetFoldersThatMatchName(string search);
         Folder GetFolder(int folderId);
         Folder GetRootFolder();
-        void GetUserData(out Employee user, out int userAccessLevel);
+        void GetUserData(out AppUser user, out int userAccessLevel);
         FolderActionResult MoveFolder(MoveItemViewModel model);
         FolderActionResult TrySaveFolder(SaveFolderViewModel model);
 

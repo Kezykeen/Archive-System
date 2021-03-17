@@ -142,9 +142,9 @@ namespace archivesystemWebUI.Controllers
         [HttpPost]
         public JsonResult ValidateEmail(string Email)
         {
-            _service.ValidateEmail(Email, out AccessDetail accessDetails, out Employee employee);
+            _service.ValidateEmail(Email, out AccessDetail accessDetails, out AppUser user);
 
-            if (employee == null)
+            if (user == null)
                 return Json("Employee with this email does not exists. Please enter a different email",  JsonRequestBehavior.AllowGet);
 
             return accessDetails == null? Json(true, JsonRequestBehavior.AllowGet) : Json("User already has an access level!", JsonRequestBehavior.AllowGet);

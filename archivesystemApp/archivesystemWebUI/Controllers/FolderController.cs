@@ -21,11 +21,13 @@ namespace archivesystemWebUI.Controllers
     public class FolderController : Controller
     {
         private const byte LOCKOUT_TIME = 1; //lockout user after last request exceeds lockout time in minutes
+        private readonly IUnitOfWork repo;
 
         private IFolderService _service { get; set; }
        
-        public FolderController(IFolderService service) 
+        public FolderController(IUnitOfWork unitOfWork, IFolderService service) 
         {
+            repo = unitOfWork;
             _service = service;
         }
 
@@ -212,7 +214,7 @@ namespace archivesystemWebUI.Controllers
             FolderPageViewModel model = new FolderPageViewModel();
             if (string.IsNullOrEmpty(search))
             {
-                _service.GetUserData(out Employee user, out int userAccessLevel);
+                _service.GetUserData(out AppUser user, out int userAccessLevel);
                 var rootFolder = _service.GetRootFolder();
                 model.Name = rootFolder.Name;
                 model.CurrentPath = new List<FolderPath> { new FolderPath { Id = rootFolder.Id, Name = "Root" } };
