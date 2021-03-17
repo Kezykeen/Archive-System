@@ -31,7 +31,7 @@ namespace archivesystemDomain.Entities
         public File Signature { get; set; }
        
         public IEnumerable<Activity> Activities { get; set; }
-        public int UserProfileId { get; set; }
+        public int? UserProfileId { get; set; }
         public UserProfile UserProfile { get; set; }
         public int DepartmentId { get; set; }
         public bool Completed { get; set; }

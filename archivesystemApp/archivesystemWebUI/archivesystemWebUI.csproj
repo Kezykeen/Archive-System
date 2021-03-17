@@ -217,6 +217,10 @@
     <Compile Include="Migrations\202103171245478_Initial.Designer.cs">
       <DependentUpon>202103171245478_Initial.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202103171400178_NullableUserProfileId.cs" />
+    <Compile Include="Migrations\202103171400178_NullableUserProfileId.Designer.cs">
+      <DependentUpon>202103171400178_NullableUserProfileId.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CodeStatus.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -511,6 +515,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202103171245478_Initial.resx">
       <DependentUpon>202103171245478_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202103171400178_NullableUserProfileId.resx">
+      <DependentUpon>202103171400178_NullableUserProfileId.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
