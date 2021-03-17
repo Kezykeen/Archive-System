@@ -182,7 +182,7 @@ namespace archivesystemWebUI.Controllers
             }
 
             var token = _unitOfWork.TokenRepo.Find(t => t.Code == code).SingleOrDefault();
-            var employee = _unitOfWork.EmployeeRepo.Get(userId.Value);
+            var employee = _unitOfWork.UserRepo.Get(userId.Value);
             
             if (token == null)
             {
@@ -222,25 +222,33 @@ namespace archivesystemWebUI.Controllers
 
             if (!_unitOfWork.EmployeeRepo.EmailExists(model.Email, null))
             {
-                ModelState.AddModelError("Email", @"Email does not Exist. Please contact Admin");
-                return View(model);
-            }
+                if (_unitOfWork.UserRepo.EmailExists(model.Email, null))
+                {
+                    var employee = _unitOfWork.UserRepo.GetUserByMail(model.Email);
+                  
+                    var user = new ApplicationUser { UserName = employee.Name, Email = model.Email, EmailConfirmed = true, PhoneNumber = employee.Phone};
+                    var result = await UserManager.CreateAsync(user, model.Password);
+                    if (result.Succeeded)
+                    {
 
            
             var employee = _unitOfWork.EmployeeRepo.GetEmployeeByMail(model.Email);
 
-            var user = new ApplicationUser { UserName = employee.Name, Email = model.Email, 
-                EmailConfirmed = true, PhoneNumber = employee.Phone };
-            var result = await UserManager.CreateAsync(user, model.Password);
-            if (result.Succeeded)
-            {
-                // Update UserId of Employee class
-                _unitOfWork.EmployeeRepo.UpdateUserId(model.Email, user.Id);
-                await UserManager.AddToRoleAsync(user.Id, "Employee");
-                employee.Completed = true;
-                await _unitOfWork.SaveAsync();
-                await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-                return RedirectToAction("Index", "Home");
+                        // Update UserId of User class
+                        _unitOfWork.UserRepo.UpdateUserId(model.Email, user.Id);
+                        await UserManager.AddToRoleAsync(user.Id, "Employee");
+                        employee.Completed = true;
+                        await _unitOfWork.SaveAsync();
+                        await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                        return RedirectToAction("Index", "Home");
+                    }
+                    AddErrors(result);
+                }
+                else
+                {
+                    ModelState.AddModelError("Email", @"Email does not Exist. Please contact Admin");
+                    return View(model);
+                }
             }
             AddErrors(result);        
             // If we got this far, something failed, redisplay form

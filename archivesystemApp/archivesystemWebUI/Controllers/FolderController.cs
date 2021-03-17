@@ -192,6 +192,9 @@ namespace archivesystemWebUI.Controllers
         //GET: /Folder/VerifyAccessCode
         public ActionResult VerifyAccessCode(string accessCode)
         {
+            var userId = HttpContext.User.Identity.GetUserId();
+            var user = repo.UserRepo.GetUserByUserId(userId);
+            var userAccessCode = repo.AccessDetailsRepo.GetByEmployeeId(user.Id).AccessCode;
 
             if (accessCode != _service.GetCurrentUserAccessCode())
                 return new HttpStatusCodeResult(400);

@@ -9,8 +9,8 @@ namespace archivesystemDomain.Entities
     public class Token
     {
         public int Id { get; set; }
-        public int EmployeeId { get; set; }
-        public Employee Employee { get; set; }
+        public int AppUserId { get; set; }
+        public AppUser AppUser { get; set; }
         public string Code { get; set; }
         public DateTime Expire { get; set; }
     }

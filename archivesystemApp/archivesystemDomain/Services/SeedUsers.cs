@@ -75,71 +75,20 @@ namespace archivesystemDomain.Services
                 var createNonAcademicStaff = await userManager.CreateAsync(nonAcademicStaff, NonAcademicPassword);
 
                 if (createEmployee.Succeeded)
-                   {
-                       await userManager.AddToRoleAsync(employee.Id, "Employee");
-
-                       dbContext.Employees.Add(
-                           new Employee
-                           {
-                               Name = employee.UserName,
-                               DepartmentId = 1,
-                               Completed = true,
-                               Gender = Gender.Male,
-                               Appointed = DateTime.Now,
-                               StaffId = "StaffId-01",
-                               Email = employee.Email,
-                               UserId = employee.Id,
-                               Phone = employee.PhoneNumber,
-                               DOB = DateTime.Now,
-                               CreatedAt = DateTime.Now,
-                               UpdatedAt = DateTime.Now
-                           }
-                       );
-                       dbContext.SaveChanges();
-                }
-
-
-               if (createManager.Succeeded)
-               {
-                   await userManager.AddToRoleAsync(manager.Id, "Manager");
-
-                   dbContext.Employees.Add(
-                       new Employee
-                       {
-                           Name = manager.UserName,
-                           DepartmentId = 2,
-                           Completed = true,
-                           Gender = Gender.Female,
-                           Appointed = DateTime.Now,
-                           StaffId = "StaffId-02",
-                           Email = manager.Email,
-                           UserId = manager.Id,
-                           Phone = manager.PhoneNumber,
-                           DOB = DateTime.Now,
-                           CreatedAt = DateTime.Now,
-                           UpdatedAt = DateTime.Now
-                       }
-                   );
-                   dbContext.SaveChanges();
-               }
-
-                if (createNonAcademicStaff.Succeeded)
                 {
-                    await userManager.AddToRoleAsync(nonAcademicStaff.Id, "Manager");
+                    await userManager.AddToRoleAsync(employee.Id, "Employee");
 
-                    dbContext.Employees.Add(
-                        new Employee
+                    dbContext.AppUsers.Add(
+                        new AppUser
                         {
-                            Name = nonAcademicStaff.UserName,
-                            DepartmentId = 3,
+                            Name = employee.UserName,
+                            DepartmentId = 1,
                             Completed = true,
-                            Gender = Gender.Female,
-                            Appointed = DateTime.Now,
-                            StaffId = "StaffId-03",
-                            Email = nonAcademicStaff.Email,
-                            UserId = nonAcademicStaff.Id,
-                            Phone = nonAcademicStaff.PhoneNumber,
-                            DOB = DateTime.Now,
+                            Gender = Gender.Male,
+                            TagId = "StaffId-01",
+                            Email = employee.Email,
+                            UserId = employee.Id,
+                            Phone = employee.PhoneNumber,
                             CreatedAt = DateTime.Now,
                             UpdatedAt = DateTime.Now
                         }
@@ -147,6 +96,50 @@ namespace archivesystemDomain.Services
                     dbContext.SaveChanges();
                 }
 
+
+               if (createManager.Succeeded)
+               {
+                   await userManager.AddToRoleAsync(manager.Id, "Manager");
+
+                   dbContext.AppUsers.Add(
+                       new AppUser
+                       {
+                           Name = manager.UserName,
+                           DepartmentId = 2,
+                           Completed = true,
+                           Gender = Gender.Female,
+                           TagId = "StaffId-02",
+                           Email = manager.Email,
+                           UserId = manager.Id,
+                           Phone = manager.PhoneNumber,
+                           CreatedAt = DateTime.Now,
+                           UpdatedAt = DateTime.Now
+                       }
+                   );
+                   dbContext.SaveChanges();
+               }
+
+               if (createNonAcademicStaff.Succeeded)
+               {
+                   await userManager.AddToRoleAsync(nonAcademicStaff.Id, "Manager");
+
+                   dbContext.AppUsers.Add(
+                       new AppUser
+                       {
+                           Name = nonAcademicStaff.UserName,
+                           DepartmentId = 3,
+                           Completed = true,
+                           Gender = Gender.Female,
+                           TagId = "StaffId-03",
+                           Email = nonAcademicStaff.Email,
+                           UserId = nonAcademicStaff.Id,
+                           Phone = nonAcademicStaff.PhoneNumber,
+                           CreatedAt = DateTime.Now,
+                           UpdatedAt = DateTime.Now
+                       }
+                   );
+                   dbContext.SaveChanges();
+               }
+            }
         }
-    }
 }

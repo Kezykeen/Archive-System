@@ -24,7 +24,7 @@
         @Html.AntiForgeryToken()
 
         @Html.HiddenFor(model => model.AccessDetails.Id)
-        @Html.HiddenFor(model => model.AccessDetails.EmployeeId)
+        @Html.HiddenFor(model => model.AccessDetails.AppUserId)
         @Html.HiddenFor(model => model.AccessDetails.AccessCode)
 
         <div class="form-group ">
