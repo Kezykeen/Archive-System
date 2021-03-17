@@ -3,7 +3,7 @@ namespace archivesystemWebUI.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class NewSchema : DbMigration
+    public partial class Initial : DbMigration
     {
         public override void Up()
         {
@@ -179,7 +179,7 @@ namespace archivesystemWebUI.Migrations
                         RoleId = c.String(nullable: false, maxLength: 128),
                     })
                 .PrimaryKey(t => new { t.UserId, t.RoleId })
-                .ForeignKey("dbo.AspNetUsers", t => t.UserId, cascadeDelete: true)
+                .ForeignKey("dbo.AspNetUsers", t => t.UserId)
                 .ForeignKey("dbo.AspNetRoles", t => t.RoleId, cascadeDelete: true)
                 .Index(t => t.UserId)
                 .Index(t => t.RoleId);

@@ -210,13 +210,13 @@
     <Compile Include="Infrastructures\MappingProfile.cs" />
     <Compile Include="Infrastructures\EmpUniqueProps.cs" />
     <Compile Include="Infrastructures\UpsertFile.cs" />
-    <Compile Include="Migrations\202103161245019_NewSchema.cs" />
-    <Compile Include="Migrations\202103161245019_NewSchema.Designer.cs">
-      <DependentUpon>202103161245019_NewSchema.cs</DependentUpon>
-    </Compile>
-     <Compile Include="Interfaces\IAccessLevelService.cs" />
+    <Compile Include="Interfaces\IAccessLevelService.cs" />
     <Compile Include="Interfaces\IFolderService.cs" />
     <Compile Include="Interfaces\IUserAccessService.cs" />
+    <Compile Include="Migrations\202103171245478_Initial.cs" />
+    <Compile Include="Migrations\202103171245478_Initial.Designer.cs">
+      <DependentUpon>202103171245478_Initial.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CodeStatus.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -509,8 +509,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202103161245019_NewSchema.resx">
-      <DependentUpon>202103161245019_NewSchema.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202103171245478_Initial.resx">
+      <DependentUpon>202103171245478_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

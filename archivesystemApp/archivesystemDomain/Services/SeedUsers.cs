@@ -48,7 +48,7 @@ namespace archivesystemDomain.Services
                var manager = await userManager.FindByNameAsync(MangrUser);
                var nonAcademicStaff = await userManager.FindByNameAsync(NonAcademicUser);
 
-               if (admin != null) return;
+               if (admin != null ) return;
                admin = new ApplicationUser
                     {UserName = AdminUser, Email = AdminEmail, PhoneNumber = AdminPhone, EmailConfirmed = true };
                var createAdmin = await userManager.CreateAsync(admin, AdminPassword);
