@@ -22,6 +22,7 @@ namespace archivesystemWebUI.Controllers
     {
         private const byte LOCKOUT_TIME = 1; //lockout user after last request exceeds lockout time in minutes
         private readonly IUnitOfWork repo;
+        private const  int DoesNotHaveAccessLevel=0;
 
         private IFolderService _service { get; set; }
        
@@ -36,6 +37,11 @@ namespace archivesystemWebUI.Controllers
         public ActionResult Index(string search = null, string returnUrl="/folders")
         {
             FolderPageViewModel model = GetRootViewModel(returnUrl, search);
+            if (string.IsNullOrEmpty(model.Name))
+            {
+                TempData[SessionData.userHasNoAccesscode] = true;
+                return RedirectToAction("Index", "Home");
+            }    
             CheckForUserAccessCode(out bool hasCorrectAccessCode, out double timeSinceLastRequest);
             model.CloseAccessCodeModal = hasCorrectAccessCode && timeSinceLastRequest <=LOCKOUT_TIME;
             model.Files = model.CloseAccessCodeModal ? model.Files : null;
@@ -214,6 +220,8 @@ namespace archivesystemWebUI.Controllers
             if (string.IsNullOrEmpty(search))
             {
                 _service.GetUserData(out AppUser user, out int userAccessLevel);
+                if (userAccessLevel == DoesNotHaveAccessLevel)
+                    return model;
                 var rootFolder = _service.GetRootFolder();
                 model.Name = rootFolder.Name;
                 model.CurrentPath = new List<FolderPath> { new FolderPath { Id = rootFolder.Id, Name = "Root" } };

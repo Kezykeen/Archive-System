@@ -1,26 +1,36 @@
-﻿@{
+﻿@using archivesystemWebUI.Models;
+@{
     ViewBag.Title = "Home Page";
 }
+   
 
-<!-- Page Content -->
+    <!-- Page Content -->
 <div class="content container-fluid">
 
     <!-- Page Header -->
-<div class="row">
-    <div class="col-md-12">
-        <div class="welcome-box">
-            <div class="welcome-img">
-                <img alt="" src="/Content/assets/img/profiles/avatar-02.jpg">
-            </div>
-            <div class="welcome-det">
-                <h3>Welcome, @User.Identity.Name</h3>
-                <p>@DateTime.Now.ToString("D")</p>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="welcome-box">
+                <div class="welcome-img">
+                    <img alt="" src="/Content/assets/img/profiles/avatar-02.jpg">
+                </div>
+                <div class="welcome-det">
+                    <h3>Welcome, @User.Identity.Name</h3>
+                    <p>@DateTime.Now.ToString("D")</p>
+                </div>
             </div>
         </div>
     </div>
-</div>
     <!-- /Page Header -->
-
+    @if (TempData[SessionData.userHasNoAccesscode] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Error!</strong> You are restricted from viewing archived documents.
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
     <div class="row">
         <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
             <div class="card dash-widget">
@@ -500,4 +510,4 @@
     </div>
 
 </div>
-<!-- /Page Content -->
+    <!-- /Page Content -->

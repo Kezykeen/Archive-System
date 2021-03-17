@@ -9,5 +9,6 @@ namespace archivesystemWebUI.Models
     {
         public const string IsAccessValidated = "IsAccessValidated";
         public const string LastVisit = "LastVisit";
+        public const string userHasNoAccesscode = " userHasNoAccesscode";
     }
 }

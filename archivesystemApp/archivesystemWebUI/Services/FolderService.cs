@@ -122,7 +122,8 @@ namespace archivesystemWebUI.Services
         {
             var userId = HttpContext.Current.User.Identity.GetUserId();
             user = repo.UserRepo.FindWithNavProps(c => c.UserId == userId, _ => _.Department).SingleOrDefault();
-            userAccessLevel = repo.AccessDetailsRepo.GetByEmployeeId(user.Id).AccessLevelId;
+            var userdetails = repo.AccessDetailsRepo.GetByEmployeeId(user.Id);
+            userAccessLevel = userdetails == null ? 0 : userdetails.AccessLevelId;
         }
 
         public FolderActionResult MoveFolder(MoveItemViewModel model)
