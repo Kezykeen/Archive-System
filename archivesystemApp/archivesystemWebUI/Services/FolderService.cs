@@ -25,7 +25,6 @@ namespace archivesystemWebUI.Services
         {
             repo = unitofwork;
         }
-       
 
         public FolderActionResult DeleteFolder(int folderId)
         {
@@ -50,7 +49,7 @@ namespace archivesystemWebUI.Services
 
         public bool DoesUserHasAccessToFolder(Folder folder)
         {
-            GetUserData(out Employee user, out int userAccessLevel);
+            GetUserData(out AppUser user, out int userAccessLevel);
             SetVariables(out bool isProhibited, out bool hasDepartmentId, folder, userAccessLevel, user);
 
             if (folder.FacultyId != null && user.Department.FacultyId != folder.FacultyId)
@@ -86,13 +85,13 @@ namespace archivesystemWebUI.Services
 
         public IEnumerable<AccessLevel> GetCurrentUserAllowedAccessLevels()
         {
-            GetUserData(out Employee user, out int userAccessLevel);
+            GetUserData(out AppUser user, out int userAccessLevel);
             return repo.AccessLevelRepo.GetAll().Where(x => x.Id <= userAccessLevel);
         }
         public string GetCurrentUserAccessCode()
         {
             var userId = HttpContext.Current.User.Identity.GetUserId();
-            var user = repo.EmployeeRepo.GetEmployeeByUserId(userId);
+            var user = repo.UserRepo.GetUserByUserId(userId);
             var userAccessCode = repo.AccessDetailsRepo.GetByEmployeeId(user.Id).AccessCode;
             return userAccessCode;
         }
@@ -119,10 +118,10 @@ namespace archivesystemWebUI.Services
                     x=>x.Subfolders)
                     .FirstOrDefault();
         }
-        public void GetUserData(out Employee user, out int userAccessLevel)
+        public void GetUserData(out AppUser user, out int userAccessLevel)
         {
             var userId = HttpContext.Current.User.Identity.GetUserId();
-            user = repo.EmployeeRepo.GetEmployeeByUserId(userId);
+            user = repo.UserRepo.GetUserByUserId(userId);
             userAccessLevel = repo.AccessDetailsRepo.GetByEmployeeId(user.Id).AccessLevelId;
         }
 
@@ -153,13 +152,20 @@ namespace archivesystemWebUI.Services
             return FolderActionResult.Success;
         }
 
+        public string GetUserAccesscode()
+        {
+            var userId = HttpContext.Current.User.Identity.GetUserId();
+            GetUserData(out AppUser user, out int userAccessLevel);
+            var userAccessCode = repo.AccessDetailsRepo.GetByEmployeeId(user.Id).AccessCode;
+            return userAccessCode;
+        }
         #region Private Methods
         private int GetFolderCurrentDepth(int parentId)
         {
             var parentFolderPath = GetFolderPath(parentId);
             return parentFolderPath.Count();
         }
-        public void SaveFolder(SaveFolderViewModel model)
+        private void SaveFolder(SaveFolderViewModel model)
         {
             var parentFolder = GetFolder(model.ParentId);
             var folder = new Folder
@@ -177,7 +183,7 @@ namespace archivesystemWebUI.Services
         }
 
         private void SetVariables(out bool isProhibited, out bool hasDepartmentId, Folder folder,
-            int userAccessLevel, Employee user)
+            int userAccessLevel, AppUser user)
         {
             isProhibited = folder.AccessLevelId > userAccessLevel || folder.DepartmentId != user.DepartmentId;
             hasDepartmentId = folder.DepartmentId != null;
