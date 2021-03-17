@@ -23,25 +23,16 @@ namespace archivesystemWebUI.Repository
         /// This method accepts an "AcceptDetails" object and modifies an existing data in the AccessDetails table.
         /// </summary>
         /// <param name="accessDetails"> AccessDetails</param>
-        public void EditDetails(AccessDetail accessDetails)
-        {
-            _context.Entry(accessDetails).State = EntityState.Modified;
-        }
+        public void EditDetails(AccessDetail accessDetails) => _context.Entry(accessDetails).State = EntityState.Modified;
 
         /// <summary>
         /// This method retrieves an "AccessDetails" object using the "EmployeeId" parameter of the table
         /// </summary>
         /// <param name="employeeId">Integer</param>
         /// <returns>AccessDetails</returns>
-        public AccessDetail GetByEmployeeId(int employeeId)
-        {
-            return _context.AccessDetails.Where(m => m.AppUserId == employeeId).FirstOrDefault();
-        }
+        public AccessDetail GetByEmployeeId(int employeeId) => _context.AccessDetails.Where(m => m.EmployeeId == employeeId).FirstOrDefault();
 
-        public IEnumerable<AccessDetail> GetAccessDetails()
-        {
-            return _context.AccessDetails.Include(m => m.AppUser).Include(m => m.AccessLevel).ToList();
-        }
+        public IEnumerable<AccessDetail> GetAccessDetails() => _context.AccessDetails.Include(m => m.Employee).Include(m => m.AccessLevel).ToList();
     }
 
 

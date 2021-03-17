@@ -110,7 +110,10 @@ namespace archivesystemWebUI.Controllers
 
             if (!HttpContext.User.IsInRole("Admin"))
             {
+                
                 CheckForUserAccessCode(out bool hasCorrectAccessCode, out double timeSinceLastRequest);
+
+             
                 if (!hasCorrectAccessCode || timeSinceLastRequest > LOCKOUT_TIME)
                     return RedirectToAction(nameof(Index), new { returnUrl = $"/folders/{folderId}" });
 
