@@ -121,7 +121,7 @@ namespace archivesystemWebUI.Services
         public void GetUserData(out AppUser user, out int userAccessLevel)
         {
             var userId = HttpContext.Current.User.Identity.GetUserId();
-            user = repo.UserRepo.GetUserByUserId(userId);
+            user = repo.UserRepo.FindWithNavProps(c => c.UserId == userId, _ => _.Department).SingleOrDefault();
             userAccessLevel = repo.AccessDetailsRepo.GetByEmployeeId(user.Id).AccessLevelId;
         }
 
