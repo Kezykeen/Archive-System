@@ -124,7 +124,7 @@ namespace archivesystemWebUI.Controllers
         [HttpPost]
         public ActionResult RemoveUserFromRole(string userId, string roleName)
         {
-            var result= _service.RemoveFromRole(userId, roleName);
+             var result= _service.RemoveFromRole(userId, roleName);
             if (result.Succeeded)
                 return RedirectToAction(nameof(GetUsers), new { roleName });
 
