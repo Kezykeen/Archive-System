@@ -23,13 +23,13 @@ namespace archivesystemWebUI.Services
 
         public async Task AddUser(AddUserToAccessViewModel model)
         {
-            var employee = _unitOfWork.EmployeeRepo.GetEmployeeByMail(model.Email);
+            var user = _unitOfWork.UserRepo.GetUserByMail(model.Email);
 
             var newAccessDetails = new AccessDetail
             {
-                EmployeeId = employee.Id,
+                AppUserId = user.Id,
                 AccessLevelId = model.AccessLevel,
-                AccessCode = AccessCodeGenerator.NewCode(employee.StaffId),
+                AccessCode = AccessCodeGenerator.NewCode(user.TagId),
                 Status = Status.Active
             };
 
@@ -75,8 +75,8 @@ namespace archivesystemWebUI.Services
         {
             if (model.RegenerateCode == CodeStatus.Yes)
             {
-                var employee = _unitOfWork.EmployeeRepo.Get(model.AccessDetails.EmployeeId);
-                model.AccessDetails.AccessCode = AccessCodeGenerator.NewCode(employee.StaffId);
+                var user = _unitOfWork.UserRepo.Get(model.AccessDetails.AppUserId);
+                model.AccessDetails.AccessCode = AccessCodeGenerator.NewCode(user.TagId);
             }
 
             _unitOfWork.AccessDetailsRepo.EditDetails(model.AccessDetails);
@@ -90,10 +90,10 @@ namespace archivesystemWebUI.Services
             await _unitOfWork.SaveAsync();
         }
 
-        public void ValidateEmail(string Email, out AccessDetail accessDetails, out Employee employee)
+        public void ValidateEmail(string Email, out AccessDetail accessDetails, out AppUser user)
         {
-            var getEmployee = _unitOfWork.EmployeeRepo.GetEmployeeByMail(Email);
-            employee = getEmployee;
+            var getEmployee = _unitOfWork.UserRepo.GetUserByMail(Email);
+            user = getEmployee;
             accessDetails = _unitOfWork.AccessDetailsRepo.GetByEmployeeId(getEmployee.Id);
         }       
     }
