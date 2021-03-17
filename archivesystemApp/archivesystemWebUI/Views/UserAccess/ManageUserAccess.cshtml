@@ -69,7 +69,7 @@
                             @Html.DisplayFor(modelItem => item.AccessLevel.Level)
                         </td>
                         <td>
-                            @if (item.Status == Status.Active)
+                            @if (item.Status ==archivesystemDomain.Entities.Status.Active)
                             {
                                 <span class="btn btn-rounded btn-sm  border-success"> <i class="fa fa-dot-circle-o text-success"></i> Active</span>
                             }

@@ -103,7 +103,20 @@ async function AddToRole() {
             roleId
         })
     })
-    return resp
+   
+    console.log("add to role respense",resp)
+    if (resp.status == 201) {
+        console.log("jdkhjkdhjk hbnmbm")
+        $('#modal').modal('hide');
+        Swal.fire({
+            position: 'top-end',
+            icon: 'success',
+            title: 'Employee successfully added to role',
+            showConfirmButton: false,
+            timer: 2000
+        });
+    }
+
 }
 async function postData(url, name, newName, token) {
     console.log(url, name, newName, token)

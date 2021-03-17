@@ -74,12 +74,12 @@ namespace archivesystemWebUI.Services
 
         public string GetEmployeeName(string userId)
         {
-            return repo.EmployeeRepo.Find(x => x.UserId == userId).FirstOrDefault().Name;
+            return repo.UserRepo.Find(x => x.UserId == userId).FirstOrDefault().Name;
         }
 
         public IEnumerable<RoleMemberData> GetUsersData(ICollection<string> userIds)
         {
-            return repo.EmployeeRepo.GetUserDataByUserIds(userIds);
+            return repo.UserRepo.GetUserDataByUserIds(userIds);
         }
 
         public IdentityResult AddToRole(string userId, string roleId)
