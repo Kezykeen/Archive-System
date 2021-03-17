@@ -21,11 +21,13 @@ namespace archivesystemWebUI.Controllers
     public class FolderController : Controller
     {
         private const byte LOCKOUT_TIME = 1; //lockout user after last request exceeds lockout time in minutes
+        private readonly IUnitOfWork repo;
 
         private IFolderService _service { get; set; }
        
-        public FolderController(IFolderService service) 
+        public FolderController(IUnitOfWork unitOfWork, IFolderService service) 
         {
+            repo = unitOfWork;
             _service = service;
         }
 

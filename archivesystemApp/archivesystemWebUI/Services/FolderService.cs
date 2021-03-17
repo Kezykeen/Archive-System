@@ -14,13 +14,13 @@ namespace archivesystemWebUI.Services
 {
     public enum FolderActionResult
     {
-        AlreadyExist, InvalidAccessLevel , MaxFolderDepthReached , Success
-            ,InvalidModelState , Prohibited ,NotFound ,UnknownError
+        AlreadyExist, InvalidAccessLevel, MaxFolderDepthReached, Success
+            , InvalidModelState, Prohibited, NotFound, UnknownError
     }
     public class FolderService : IFolderService
     {
         private IUnitOfWork repo { get; set; }
-       
+
         public FolderService(IUnitOfWork unitofwork)
         {
             repo = unitofwork;
@@ -79,7 +79,7 @@ namespace archivesystemWebUI.Services
             var parentFolder = repo.FolderRepo.Get(parentId);
             var userAllowedLevels = GetCurrentUserAllowedAccessLevels();
             userAllowedLevels = userAllowedLevels.Where(x => x.Id >= parentFolder.AccessLevelId);
-            var data = new CreateFolderViewModel() { Name = "", ParentId = parentId, AccessLevels =userAllowedLevels  };
+            var data = new CreateFolderViewModel() { Name = "", ParentId = parentId, AccessLevels = userAllowedLevels };
             return data;
         }
 
@@ -113,9 +113,9 @@ namespace archivesystemWebUI.Services
 
         public Folder GetRootFolder()
         {
-            return  repo.FolderRepo
+            return repo.FolderRepo
                     .FindWithNavProps(x => x.Name == "Root" && x.FacultyId == null && x.DepartmentId == null,
-                    x=>x.Subfolders)
+                    x => x.Subfolders)
                     .FirstOrDefault();
         }
         public void GetUserData(out AppUser user, out int userAccessLevel)
@@ -127,7 +127,7 @@ namespace archivesystemWebUI.Services
 
         public FolderActionResult MoveFolder(MoveItemViewModel model)
         {
-            if (model.Id == 0 || model.NewParentFolderId == 0 || model==null)
+            if (model.Id == 0 || model.NewParentFolderId == 0 || model == null)
                 return FolderActionResult.InvalidModelState;
             if (model.Id == model.NewParentFolderId)
                 return FolderActionResult.Prohibited; //Cannot move folder into itself

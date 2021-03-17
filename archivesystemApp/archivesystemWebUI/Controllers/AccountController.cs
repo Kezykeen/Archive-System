@@ -220,26 +220,23 @@ namespace archivesystemWebUI.Controllers
                 return View(model);
             }
 
-            if (!_unitOfWork.EmployeeRepo.EmailExists(model.Email, null))
+            if (!_unitOfWork.UserRepo.EmailExists(model.Email, null))
             {
                 if (_unitOfWork.UserRepo.EmailExists(model.Email, null))
                 {
-                    var employee = _unitOfWork.UserRepo.GetUserByMail(model.Email);
+                    var user = _unitOfWork.UserRepo.GetUserByMail(model.Email);
                   
-                    var user = new ApplicationUser { UserName = employee.Name, Email = model.Email, EmailConfirmed = true, PhoneNumber = employee.Phone};
-                    var result = await UserManager.CreateAsync(user, model.Password);
+                    var newUser = new ApplicationUser { UserName = user.Name, Email = model.Email, EmailConfirmed = true, PhoneNumber = user.Phone};
+                    var result = await UserManager.CreateAsync(newUser, model.Password);
                     if (result.Succeeded)
-                    {
-
-           
-            var employee = _unitOfWork.EmployeeRepo.GetEmployeeByMail(model.Email);
+                    {         
 
                         // Update UserId of User class
-                        _unitOfWork.UserRepo.UpdateUserId(model.Email, user.Id);
-                        await UserManager.AddToRoleAsync(user.Id, "Employee");
-                        employee.Completed = true;
+                        _unitOfWork.UserRepo.UpdateUserId(model.Email, newUser.Id);
+                        await UserManager.AddToRoleAsync(newUser.Id, "Employee");
+                        user.Completed = true;
                         await _unitOfWork.SaveAsync();
-                        await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                        await SignInManager.SignInAsync(newUser, isPersistent: false, rememberBrowser: false);
                         return RedirectToAction("Index", "Home");
                     }
                     AddErrors(result);
@@ -250,7 +247,6 @@ namespace archivesystemWebUI.Controllers
                     return View(model);
                 }
             }
-            AddErrors(result);        
             // If we got this far, something failed, redisplay form
             return View(model);
         }
