@@ -60,10 +60,10 @@ function closeModal() {
 }
 
 async function getPartialView(url) {
-
     let resp = await fetch(url)
+    console.log(url,resp)
     let textResp = resp.status === 200 ? await resp.text() : "<div class='modal-header'> <p class'text-danger'>Some error occured<p> </div>";
-
+    console.log(textResp)
     var modalBody = document.getElementById("modalBody")
     modalBody.innerHTML = textResp;
     $("#modal").modal("show");
@@ -92,6 +92,7 @@ async function AddToRole() {
     let token = document.getElementsByName("__RequestVerificationToken")[0].value;
     let roleId = document.getElementById("AUTR-roleId").value;
     let userId = document.getElementById("AUTR-userId").value;
+    let userEmail = document.getElementById("AUTR-userEmail").value;
     let resp = await fetch(`/roles/AddUserToRole`, {
         method: "POST",
         headers: {
@@ -100,13 +101,13 @@ async function AddToRole() {
         },
         body: JSON.stringify({
             userId,
-            roleId
+            roleId,
+            userEmail
         })
     })
    
     console.log("add to role respense",resp)
     if (resp.status == 201) {
-        console.log("jdkhjkdhjk hbnmbm")
         $('#modal').modal('hide');
         Swal.fire({
             position: 'top-end',
@@ -115,6 +116,10 @@ async function AddToRole() {
             showConfirmButton: false,
             timer: 2000
         });
+    }
+    else if (resp.status === 400) {
+        var ul = document.getElementById("AUTR-error");
+        ul.innerHTML=`<li>${userEmail} is already in role</li>`
     }
 
 }

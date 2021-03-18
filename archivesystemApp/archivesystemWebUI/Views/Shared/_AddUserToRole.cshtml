@@ -14,13 +14,26 @@
         @Html.AntiForgeryToken()
         @Html.ValidationSummary()
 
-        <input  value="@Model.UserId" hidden id="AUTR-userId" />
-        <div class="form-group">
-            <label for="employee-name">Employee Name:</label>
-            <input value="@Model.EmployeeName" class="form-control" rows="2" readonly name="employee-name"/>
+        <input value="@Model.UserId" hidden id="AUTR-userId" />
+        <div class='validation-summary-errors'>
+            <ul id="AUTR-error">
+            </ul>
         </div>
         <div class="form-group">
-            <select  class="form-control" rows="2" typeof="number" id="AUTR-roleId">
+            @if (string.IsNullOrWhiteSpace(Model.UserId))
+            {
+                <label for="employee-name">Employee Email:</label>
+                <input class="form-control" rows="2" name="employee-email" id="AUTR-userEmail" placeholder="Enter employee name" />
+            }
+            else
+            {
+                <label for="employee-name">Employee Name:</label>
+                <input value="@Model.EmployeeName" class="form-control" rows="2" readonly name="employee-name" />
+            }
+        </div>
+       
+        <div class="form-group">
+            <select class="form-control" rows="2" typeof="number" id="AUTR-roleId">
                 <option value="">Select Role</option>
                 @foreach (ApplicationRole role in Model.Roles)
                 {

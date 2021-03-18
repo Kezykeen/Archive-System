@@ -11,14 +11,15 @@ namespace archivesystemDomain.Interfaces
 {
     public interface IRoleService
     {
-        IEnumerable<ApplicationRole> GetAllRoles();
-        void DeleteRole(string roleId);
         Task<IdentityResult> AddRole(string _roleName);
         IdentityResult AddToRole(string userId, string roleId);
+        IdentityResult AddToRoleByEmail(string userEmail, string roleId);
+        void DeleteRole(string roleId);
         Task<IdentityResult> EditRole(string oldName, string newName);
-        Task<ICollection<string>> GetUserIdsOfUsersInRole(string name);
-        IEnumerable<RoleMemberData> GetUsersData(ICollection<string> userIds);
+        IEnumerable<ApplicationRole> GetAllRoles();
         string GetEmployeeName(string userId);
+        IEnumerable<RoleMemberData> GetUsersData(ICollection<string> userIds);
+        Task<ICollection<string>> GetUserIdsOfUsersInRole(string name);
         IdentityResult RemoveFromRole(string userId, string roleName);
 
     }

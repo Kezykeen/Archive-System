@@ -66,13 +66,13 @@ namespace archivesystemWebUI.Controllers
         {
             var result = _service.TrySaveFolder(model);
 
-            if (result == FolderActionResult.Success) return new HttpStatusCodeResult(200);
+            if (result == FolderServiceResult.Success) return new HttpStatusCodeResult(200);
 
-            if (result==FolderActionResult.AlreadyExist)  return new HttpStatusCodeResult(400);
+            if (result==FolderServiceResult.AlreadyExist)  return new HttpStatusCodeResult(400);
 
-            if (result == FolderActionResult.InvalidAccessLevel) return new HttpStatusCodeResult(403);
+            if (result == FolderServiceResult.InvalidAccessLevel) return new HttpStatusCodeResult(403);
 
-            if (result== FolderActionResult.MaxFolderDepthReached) return new HttpStatusCodeResult(404);
+            if (result== FolderServiceResult.MaxFolderDepthReached) return new HttpStatusCodeResult(404);
 
             return new HttpStatusCodeResult(500);
         }
@@ -84,11 +84,11 @@ namespace archivesystemWebUI.Controllers
         { 
             var result= _service.MoveFolder(model);
 
-            if (result== FolderActionResult.InvalidModelState) return new HttpStatusCodeResult(400);
+            if (result== FolderServiceResult.InvalidModelState) return new HttpStatusCodeResult(400);
 
-            if (result== FolderActionResult.Prohibited) return new HttpStatusCodeResult(405);
+            if (result== FolderServiceResult.Prohibited) return new HttpStatusCodeResult(405);
 
-            if (result== FolderActionResult.Success) return new HttpStatusCodeResult(200);
+            if (result== FolderServiceResult.Success) return new HttpStatusCodeResult(200);
 
             return new HttpStatusCodeResult(500);
         }
@@ -100,9 +100,9 @@ namespace archivesystemWebUI.Controllers
         public ActionResult Delete(int id)
         {
             var result = _service.DeleteFolder(id);
-            if (result==FolderActionResult.Success) return new HttpStatusCodeResult(204);
+            if (result==FolderServiceResult.Success) return new HttpStatusCodeResult(204);
 
-            if (result == FolderActionResult.Prohibited) return new HttpStatusCodeResult(400);
+            if (result == FolderServiceResult.Prohibited) return new HttpStatusCodeResult(400);
 
             return new HttpStatusCodeResult(500);  
         }
@@ -147,9 +147,9 @@ namespace archivesystemWebUI.Controllers
         public ActionResult Edit(CreateFolderViewModel model)
         {
             var result = _service.Edit(model);
-            if (result == FolderActionResult.InvalidModelState) return new HttpStatusCodeResult(400);
+            if (result == FolderServiceResult.InvalidModelState) return new HttpStatusCodeResult(400);
 
-            if (result == FolderActionResult.Success) return new HttpStatusCodeResult(200);
+            if (result == FolderServiceResult.Success) return new HttpStatusCodeResult(200);
 
             return new HttpStatusCodeResult(500);
         }
