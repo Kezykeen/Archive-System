@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "archivesystemDomain", "arch
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "archivesystemWebUI", "archivesystemWebUI\archivesystemWebUI.csproj", "{3BE0811D-C973-4A13-8174-93A5AF7C396C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "archivesystemApp.UnitTests", "..\..\..\..\..\..\source\repos\archive-system\archivesystemApp\archivesystemApp.UnitTests\archivesystemApp.UnitTests.csproj", "{67330A3A-DB1A-43D3-B429-5ED6CEC7AD39}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{3BE0811D-C973-4A13-8174-93A5AF7C396C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3BE0811D-C973-4A13-8174-93A5AF7C396C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3BE0811D-C973-4A13-8174-93A5AF7C396C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67330A3A-DB1A-43D3-B429-5ED6CEC7AD39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67330A3A-DB1A-43D3-B429-5ED6CEC7AD39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67330A3A-DB1A-43D3-B429-5ED6CEC7AD39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67330A3A-DB1A-43D3-B429-5ED6CEC7AD39}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
