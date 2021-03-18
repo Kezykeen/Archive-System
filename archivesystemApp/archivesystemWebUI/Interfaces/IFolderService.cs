@@ -24,7 +24,7 @@ namespace archivesystemWebUI.Interfaces
         Folder GetRootFolder();
         void GetUserData(out AppUser user, out int userAccessLevel);
         FolderServiceResult MoveFolder(MoveItemViewModel model);
-        FolderServiceResult TrySaveFolder(SaveFolderViewModel model);
+        FolderServiceResult SaveFolder(SaveFolderViewModel model);
 
 
 

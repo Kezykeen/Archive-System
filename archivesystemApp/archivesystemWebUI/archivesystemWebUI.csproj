@@ -243,7 +243,6 @@
     <Compile Include="Models\RoleViewModels\RemoveUserFromRoleViewModel.cs" />
     <Compile Include="Models\RoleViewModels\UsersInRoleViewModel.cs" />
     <Compile Include="Models\UpdateUserVm.cs" />
-    <Compile Include="Models\SessionData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\AccessDetailsRepository.cs" />
     <Compile Include="Repository\DeptRepository.cs" />

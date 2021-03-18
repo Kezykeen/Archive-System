@@ -29,16 +29,18 @@ namespace archivesystemWebUI.Repository
         }
         public Folder GetFacultyFolder(string name)
         {
-            var rootFolder = Find(x=> x.Name=="Root" && x.FacultyId==null && x.DepartmentId==null).FirstOrDefault();
-            var folder = _context.Folders.Include(x=> x.Subfolders).SingleOrDefault(x => x.Name == name && x.ParentId == rootFolder.Id);
+            var rootFolder = Find(x=> x.Name== GlobalConstants.RootFolderName && x.FacultyId==null && x.DepartmentId==null)
+                .FirstOrDefault();
+            var folders = FindWithNavProps(x => x.Name == name && x.FacultyId == null, x => x.Subfolders);
+            var folder=folders.SingleOrDefault(x => x.Name == name && x.ParentId == rootFolder.Id);
             return folder;
         }
         public List<FolderPath> GetFolderPath(int folderId)
         {
             var currentfolder = _context.Folders.Find(folderId);
-            if (currentfolder.Name == "Root")
+            if (currentfolder.Name == GlobalConstants.RootFolderName)
             {
-                CurrentPathFolders.Add(new FolderPath { Name = "Root", Id = currentfolder.Id });
+                CurrentPathFolders.Add(new FolderPath { Name = GlobalConstants.RootFolderName, Id = currentfolder.Id });
                 return CurrentPathFolders;
             }
             else
@@ -54,17 +56,18 @@ namespace archivesystemWebUI.Repository
             var folder = _context.Folders.Find(id);
             if (folder.IsRestricted || folder == null)
                 return;
-            var currentSubfolderNames = _context.Folders.Include(x => x.Subfolders).Single(x => x.Id == newParentFolderId)
-                .Subfolders.Select(x => x.Name);
+            var currentSubfolderNames =  FindWithNavProps(x=>x.Id == newParentFolderId,x => x.Subfolders)
+                                        .FirstOrDefault()
+                                        .Subfolders.Select(x => x.Name);
             if (currentSubfolderNames.Contains(folder.Name))
-                throw new Exception("folder already exist in location");
+                throw new ArgumentException();
 
             folder.ParentId = newParentFolderId;
             return;
         }
         private void RecursiveDelete(int folderId)
         {
-            var folder = _context.Folders.Include(x => x.Subfolders).Single(x => x.Id == folderId);
+            var folder = FindWithNavProps(x => x.Id == folderId,x => x.Subfolders).First();
             if (folder.IsRestricted || folder == null)
                 return;
             var subFolderCount = folder.Subfolders ?? new List<Folder>();
@@ -78,30 +81,36 @@ namespace archivesystemWebUI.Repository
 
             Folders.Add(folder);
         }
-        public void UpdateFolder(Folder folder)
+        public bool UpdateFolder(Folder folder)
         {
-            var folderInDb = _context.Folders.Find(folder.Id);
+            var folderInDb = Get(folder.Id);
             if (folderInDb == null || folderInDb.IsRestricted)
-                return;
+                return false; 
             folderInDb.Name = folder.Name;
             folderInDb.AccessLevelId = folder.AccessLevelId;
             folder.UpdatedAt = DateTime.Now;
+            return true;
         }
-        public void UpdateDepartmentalFolder(Folder model)
+        public bool UpdateDepartmentalFolder(Folder model)
         {
-            var folderInDb = _context.Folders.Include(x=> x.Department).SingleOrDefault(x => x.IsRestricted && x.DepartmentId == model.DepartmentId);
+            var folderInDb = FindWithNavProps(x => x.IsRestricted && x.DepartmentId == model.DepartmentId,x=> x.Department)
+                            .SingleOrDefault();
+            if (folderInDb == null) return false;
             folderInDb.Name = model.Name;
             if(folderInDb.Department.FacultyId != model.FacultyId)
             {
                 var newParentFolder = _context.Folders.SingleOrDefault(x => x.IsRestricted && x.FacultyId == model.FacultyId);
                 folderInDb.ParentId = newParentFolder.Id;
             }
-            
+            return true;
         }
-        public void UpdateFacultyFolder(Folder model)
+        public bool UpdateFacultyFolder(Folder model)
         {
-            var folderInDb = _context.Folders.Include(x => x.Department).SingleOrDefault(x => x.IsRestricted && x.FacultyId == model.FacultyId);
+            var folderInDb = FindWithNavProps(x => x.IsRestricted && x.FacultyId == model.FacultyId,x => x.Department)
+                            .SingleOrDefault();
+            if (folderInDb == null) return false;
             folderInDb.Name = model.Name;
+            return true;
         }
 
         

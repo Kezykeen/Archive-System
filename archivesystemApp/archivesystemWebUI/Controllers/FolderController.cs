@@ -39,7 +39,7 @@ namespace archivesystemWebUI.Controllers
             FolderPageViewModel model = GetRootViewModel(returnUrl, search);
             if (string.IsNullOrEmpty(model.Name))
             {
-                TempData[SessionData.userHasNoAccesscode] = true;
+                TempData[GlobalConstants.userHasNoAccesscode] = true;
                 return RedirectToAction("Index", "Home");
             }    
             CheckForUserAccessCode(out bool hasCorrectAccessCode, out double timeSinceLastRequest);
@@ -64,7 +64,7 @@ namespace archivesystemWebUI.Controllers
         [ValidateHeaderAntiForgeryToken]
         public ActionResult Create(SaveFolderViewModel model)
         {
-            var result = _service.TrySaveFolder(model);
+            var result = _service.SaveFolder(model);
 
             if (result == FolderServiceResult.Success) return new HttpStatusCodeResult(200);
 
@@ -206,8 +206,8 @@ namespace archivesystemWebUI.Controllers
             if (accessCode != _service.GetCurrentUserAccessCode())
                 return new HttpStatusCodeResult(400);
 
-            Session[SessionData.IsAccessValidated] = true;
-            Session[SessionData.LastVisit] = DateTime.Now;
+            Session[GlobalConstants.IsAccessValidated] = true;
+            Session[GlobalConstants.LastVisit] = DateTime.Now;
             return new HttpStatusCodeResult(200);
         }
 
@@ -250,8 +250,8 @@ namespace archivesystemWebUI.Controllers
         private void CheckForUserAccessCode(out bool hasCorrectAccessCode, out double timeSinceLastRequest)
         {
             hasCorrectAccessCode =
-               Session[SessionData.IsAccessValidated] != null && (bool)Session[SessionData.IsAccessValidated];
-            var lastVisitTime = Session[SessionData.LastVisit] ?? new DateTime();
+               Session[GlobalConstants.IsAccessValidated] != null && (bool)Session[GlobalConstants.IsAccessValidated];
+            var lastVisitTime = Session[GlobalConstants.LastVisit] ?? new DateTime();
             timeSinceLastRequest = (DateTime.Now - (DateTime)lastVisitTime).TotalMinutes;
         }
 
@@ -262,7 +262,7 @@ namespace archivesystemWebUI.Controllers
             model.CloseAccessCodeModal = true;
             model.CurrentPath = folderpath;
             ViewBag.AllowCreateFolder = true;
-            Session[SessionData.LastVisit] = DateTime.Now;
+            Session[GlobalConstants.LastVisit] = DateTime.Now;
             return model;
         }
 
