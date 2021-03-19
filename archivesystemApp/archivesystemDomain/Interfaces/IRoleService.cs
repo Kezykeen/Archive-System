@@ -17,10 +17,12 @@ namespace archivesystemDomain.Interfaces
         void DeleteRole(string roleId);
         Task<IdentityResult> EditRole(string oldName, string newName);
         IEnumerable<ApplicationRole> GetAllRoles();
+        string GetCurrentUserRoles();
         string GetEmployeeName(string userId);
         IEnumerable<RoleMemberData> GetUsersData(ICollection<string> userIds);
         Task<ICollection<string>> GetUserIdsOfUsersInRole(string name);
         IdentityResult RemoveFromRole(string userId, string roleName);
+
 
     }
 

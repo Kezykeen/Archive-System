@@ -1,6 +1,7 @@
 ﻿using archivesystemDomain.Entities;
 using archivesystemDomain.Services;
-using archivesystemWebUI.Models.FolderViewModels;
+using archivesystemWebUI.Models;
+using archivesystemWebUI.Models.FolderModels;
 using archivesystemWebUI.Services;
 using System;
 using System.Collections.Generic;
@@ -13,16 +14,17 @@ namespace archivesystemWebUI.Interfaces
     public interface IFolderService
     {
         FolderServiceResult DeleteFolder(int folderId);
-        bool DoesUserHasAccessToFolder(Folder folder);
+        bool DoesUserHasAccessToFolder(Folder folder,string userId);
         FolderServiceResult Edit(CreateFolderViewModel model);
-        CreateFolderViewModel GetCreateFolderViewModel(int parentId);
-        string GetCurrentUserAccessCode();
-        IEnumerable<AccessLevel> GetCurrentUserAllowedAccessLevels();
+        CreateFolderViewModel GetCreateFolderViewModel(int parentId,string userId);
+        string GetCurrentUserAccessCode(string userId);
+        IEnumerable<AccessLevel> GetCurrentUserAllowedAccessLevels(string userId);
         List<FolderPath> GetFolderPath(int folderId);
         IEnumerable<Folder> GetFoldersThatMatchName(string search);
         Folder GetFolder(int folderId);
         Folder GetRootFolder();
-        void GetUserData(out AppUser user, out int userAccessLevel);
+        FolderPageViewModel GetRootFolderPageViewModel(string userId, string userRole);
+        UserData GetUserData(string userId);
         FolderServiceResult MoveFolder(MoveItemViewModel model);
         FolderServiceResult SaveFolder(SaveFolderViewModel model);
 

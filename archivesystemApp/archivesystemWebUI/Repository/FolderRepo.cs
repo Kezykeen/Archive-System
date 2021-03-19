@@ -112,11 +112,5 @@ namespace archivesystemWebUI.Repository
             folderInDb.Name = model.Name;
             return true;
         }
-
-        
-
-        
-
-        
     }
 }

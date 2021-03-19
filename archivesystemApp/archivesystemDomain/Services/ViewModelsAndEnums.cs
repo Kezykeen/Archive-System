@@ -39,4 +39,10 @@ namespace archivesystemDomain.Services
         public const int MaxFolderDepth = 7;
 
     }
+
+    public class RoleNames
+    {
+        public const string Admin = "Admin";
+        public const string Manager = "Manager";
+    }
 }

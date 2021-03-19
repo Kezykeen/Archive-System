@@ -4,7 +4,7 @@ using archivesystemDomain.Services;
 using archivesystemWebUI.Infrastructures;
 using archivesystemWebUI.Interfaces;
 using archivesystemWebUI.Models;
-using archivesystemWebUI.Models.FolderViewModels;
+using archivesystemWebUI.Models.FolderModels;
 using archivesystemWebUI.Repository;
 using archivesystemWebUI.Services;
 using AutoMapper;
@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.Security;
 
 namespace archivesystemWebUI.Controllers
 {
@@ -21,15 +22,14 @@ namespace archivesystemWebUI.Controllers
     public class FolderController : Controller
     {
         private const byte LOCKOUT_TIME = 1; //lockout user after last request exceeds lockout time in minutes
-        private readonly IUnitOfWork repo;
-        private const  int DoesNotHaveAccessLevel=0;
-
+       
+        private IRoleService _roleService { get; set; }
         private IFolderService _service { get; set; }
        
-        public FolderController(IUnitOfWork unitOfWork, IFolderService service) 
+        public FolderController(IRoleService roleService, IFolderService service) 
         {
-            repo = unitOfWork;
             _service = service;
+            _roleService = roleService;
         }
 
         // GET: /folders
@@ -55,7 +55,7 @@ namespace archivesystemWebUI.Controllers
         [HttpGet]
         public ActionResult Create(int id)
         {
-            return PartialView("_CreateFolder", _service.GetCreateFolderViewModel(id));
+            return PartialView("_CreateFolder", _service.GetCreateFolderViewModel(id,HttpContext.User.Identity.GetUserId()));
         }
 
         //POST: /folders/add
@@ -169,7 +169,7 @@ namespace archivesystemWebUI.Controllers
             {
                 Id = id,
                 AccessLevelId = (int)folder.AccessLevelId,
-                AccessLevels = _service.GetCurrentUserAllowedAccessLevels(),
+                AccessLevels = _service.GetCurrentUserAllowedAccessLevels(HttpContext.User.Identity.GetUserId()),
                 Name = folder.Name,
             };
             return PartialView("_EditFolder", model);
@@ -203,7 +203,7 @@ namespace archivesystemWebUI.Controllers
         //GET: /Folder/VerifyAccessCode
         public ActionResult VerifyAccessCode(string accessCode)
         {
-            if (accessCode != _service.GetCurrentUserAccessCode())
+            if (accessCode != _service.GetCurrentUserAccessCode(HttpContext.User.Identity.GetUserId()))
                 return new HttpStatusCodeResult(400);
 
             Session[GlobalConstants.IsAccessValidated] = true;
@@ -213,35 +213,36 @@ namespace archivesystemWebUI.Controllers
 
 
         #region Private Methods
+        private FolderPageViewModel GetModelUsingService(string returnUrl)
+        {
+            var userId = HttpContext.User.Identity.GetUserId();
+            var userRoles = _roleService.GetCurrentUserRoles();
+            var model = _service.GetRootFolderPageViewModel(userId, userRoles);
+            model.ReturnUrl = returnUrl;
+            return model;
+        }
+
         private FolderPageViewModel GetRootViewModel(string returnUrl, string search = null)
         {
-
-            FolderPageViewModel model = new FolderPageViewModel();
             if (string.IsNullOrEmpty(search))
-            {
-                _service.GetUserData(out AppUser user, out int userAccessLevel);
-                if (userAccessLevel == DoesNotHaveAccessLevel)
-                    return model;
-                var rootFolder = _service.GetRootFolder();
-                model.Name = rootFolder.Name;
-                model.CurrentPath = new List<FolderPath> { new FolderPath { Id = rootFolder.Id, Name = "Root" } };
-                model.Id = rootFolder.Id; model.ReturnUrl = returnUrl;
-                model.DirectChildren = HttpContext.User.IsInRole("Admin") ?
-                    rootFolder.Subfolders : rootFolder.Subfolders.Where(x => x.FacultyId == user.Department.FacultyId).ToList();
-                return model;
-            }
+                return GetModelUsingService(returnUrl);
 
+            return SearchForFolders(search);
+        }
+
+        private FolderPageViewModel SearchForFolders(string search)
+        {
+            var model = new FolderPageViewModel();
             model.DirectChildren = _service.GetFoldersThatMatchName(search).ToList();
             model.CurrentPath = new List<FolderPath>();
             model.CloseAccessCodeModal = true;
             model.Id = 0;
-
             return model;
         }
-
         private void VerifyThatUserHasAccessToFolder(out bool hasAuthorizedAccessToFolder, Folder folder)
         {
-            hasAuthorizedAccessToFolder = _service.DoesUserHasAccessToFolder(folder);
+            var userId = HttpContext.User.Identity.GetUserId();
+            hasAuthorizedAccessToFolder = _service.DoesUserHasAccessToFolder(folder,userId);
             TempData["errorMessage"] =
                 hasAuthorizedAccessToFolder ? null : $"You are not authorized to view {folder.Name} folder";
 
