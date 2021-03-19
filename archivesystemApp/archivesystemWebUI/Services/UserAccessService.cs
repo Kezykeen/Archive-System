@@ -6,6 +6,7 @@ using archivesystemWebUI.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace archivesystemWebUI.Services
 {
@@ -25,11 +26,13 @@ namespace archivesystemWebUI.Services
         {
             var user = _unitOfWork.UserRepo.GetUserByMail(model.Email);
 
+            var accessCode = AccessCodeGenerator.NewCode(user.TagId);
+
             var newAccessDetails = new AccessDetail
             {
                 AppUserId = user.Id,
                 AccessLevelId = model.AccessLevel,
-                AccessCode = AccessCodeGenerator.NewCode(user.TagId),
+                AccessCode = AccessCodeGenerator.HashCode(accessCode),
                 Status = Status.Active
             };
 
@@ -38,17 +41,15 @@ namespace archivesystemWebUI.Services
         }
 
 
-        public void GetById(int id, out AccessDetail accessDetails)
+        public AppUser GetUserByEmail(string email)
         {
-            accessDetails = _unitOfWork.AccessDetailsRepo.Get(id);
+            return  _unitOfWork.UserRepo.GetUserByMail(email);
 
         }
 
         public AccessDetail GetByNullableId(int? id)
         {
             return   _unitOfWork.AccessDetailsRepo.GetAccessDetails().SingleOrDefault(m => m.Id == id.Value);
-
-
         }
 
 
@@ -90,11 +91,7 @@ namespace archivesystemWebUI.Services
             await _unitOfWork.SaveAsync();
         }
 
-        public void ValidateEmail(string Email, out AccessDetail accessDetails, out AppUser user)
-        {
-            var getEmployee = _unitOfWork.UserRepo.GetUserByMail(Email);
-            user = getEmployee;
-            accessDetails = _unitOfWork.AccessDetailsRepo.GetByEmployeeId(getEmployee.Id);
-        }       
+
+
     }
 }

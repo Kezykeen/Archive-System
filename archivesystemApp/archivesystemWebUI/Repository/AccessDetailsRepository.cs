@@ -30,7 +30,7 @@ namespace archivesystemWebUI.Repository
         /// </summary>
         /// <param name="employeeId">Integer</param>
         /// <returns>AccessDetails</returns>
-        public AccessDetail GetByEmployeeId(int employeeId) => _context.AccessDetails.Where(m => m.AppUserId == employeeId).FirstOrDefault();
+        public AccessDetail GetByUserId(int appUserId) => _context.AccessDetails.Where(m => m.AppUserId == appUserId).FirstOrDefault();
 
         public IEnumerable<AccessDetail> GetAccessDetails() => _context.AccessDetails.Include(m => m.AppUser).Include(m => m.AccessLevel).ToList();
     }
