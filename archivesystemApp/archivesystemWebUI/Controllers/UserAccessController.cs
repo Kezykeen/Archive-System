@@ -121,16 +121,10 @@ namespace archivesystemWebUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            try
-            {
-                await _service.Delete(id);
+            await _service.Delete(id);
 
-                return Json("success", JsonRequestBehavior.AllowGet);
-            }
-            catch
-            {
-                return View();
-            }
+            return Json("success", JsonRequestBehavior.AllowGet);
+            
         }
 
         #endregion
@@ -138,17 +132,18 @@ namespace archivesystemWebUI.Controllers
 
         #region Validators
 
-       
+
         [HttpPost]
         public JsonResult ValidateEmail(string Email)
         {
-            _service.ValidateEmail(Email, out AccessDetail accessDetails, out AppUser user);
-
+            var user = _service.GetUserByEmail(Email);
             if (user == null)
-                return Json("Employee with this email does not exists. Please enter a different email",  JsonRequestBehavior.AllowGet);
+                return Json("User with this email does not exists. Please enter a different email", JsonRequestBehavior.AllowGet);
 
-            return accessDetails == null? Json(true, JsonRequestBehavior.AllowGet) : Json("User already has an access level!", JsonRequestBehavior.AllowGet);
+            var accessDetails = _service.GetByNullableId(user.Id);
+            return accessDetails == null ? Json(true, JsonRequestBehavior.AllowGet) : Json("User already has an access level!", JsonRequestBehavior.AllowGet);
         }
+
         #endregion
 
     }

@@ -9,7 +9,7 @@ namespace archivesystemWebUI.Models
     {
         [Required(ErrorMessage ="Enter a valid identification for the user.")]
         [Display(Name = "Email Address")]
-        [Remote(nameof(archivesystemWebUI.Controllers.UserAccessController.ValidateEmail), "UserAccess", HttpMethod = "POST")]
+        [Remote(nameof(Controllers.UserAccessController.ValidateEmail), "UserAccess", HttpMethod = "POST")]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Choose an access level.")]

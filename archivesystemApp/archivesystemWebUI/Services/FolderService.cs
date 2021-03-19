@@ -92,7 +92,7 @@ namespace archivesystemWebUI.Services
         {
             var userId = HttpContext.Current.User.Identity.GetUserId();
             var user = repo.UserRepo.GetUserByUserId(userId);
-            var userAccessCode = repo.AccessDetailsRepo.GetByEmployeeId(user.Id).AccessCode;
+            var userAccessCode = repo.AccessDetailsRepo.GetByUserId(user.Id).AccessCode;
             return userAccessCode;
         }
 
@@ -122,7 +122,7 @@ namespace archivesystemWebUI.Services
         {
             var userId = HttpContext.Current.User.Identity.GetUserId();
             user = repo.UserRepo.FindWithNavProps(c => c.UserId == userId, _ => _.Department).SingleOrDefault();
-            var userdetails = repo.AccessDetailsRepo.GetByEmployeeId(user.Id);
+            var userdetails = repo.AccessDetailsRepo.GetByUserId(user.Id);
             userAccessLevel = userdetails == null ? 0 : userdetails.AccessLevelId;
         }
 
@@ -157,7 +157,7 @@ namespace archivesystemWebUI.Services
         {
             var userId = HttpContext.Current.User.Identity.GetUserId();
             GetUserData(out AppUser user, out int userAccessLevel);
-            var userAccessCode = repo.AccessDetailsRepo.GetByEmployeeId(user.Id).AccessCode;
+            var userAccessCode = repo.AccessDetailsRepo.GetByUserId(user.Id).AccessCode;
             return userAccessCode;
         }
         #region Private Methods
