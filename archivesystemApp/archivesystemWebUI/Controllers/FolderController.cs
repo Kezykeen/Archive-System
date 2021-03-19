@@ -212,6 +212,8 @@ namespace archivesystemWebUI.Controllers
                 return new HttpStatusCodeResult(400);
 
             var accessCodeInDb = _service.GetCurrentUserAccessCode(HttpContext.User.Identity.GetUserId());
+            if (string.IsNullOrWhiteSpace(accessCodeInDb)) 
+                return new HttpStatusCodeResult(403);
             if (AccessCodeGenerator.HashCode(accessCode)!= accessCodeInDb)
                 return new HttpStatusCodeResult(400);
 

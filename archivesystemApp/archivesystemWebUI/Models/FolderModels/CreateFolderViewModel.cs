@@ -13,7 +13,5 @@ namespace archivesystemWebUI.Models.FolderModels
         public int ParentId { get; set; }
         public IEnumerable<AccessLevel> AccessLevels { get; set; }
         public int AccessLevelId { get; set; }
-
-
     }
 }
