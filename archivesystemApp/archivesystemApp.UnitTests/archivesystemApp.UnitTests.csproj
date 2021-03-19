@@ -7,7 +7,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A0A3C9BF-1D15-458B-AC9C-E02AE96BD065}</ProjectGuid>
+    <ProjectGuid>{9094F9AA-9571-4A21-AAB5-8FA56AD823AF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>archivesystemApp.UnitTests</RootNamespace>
@@ -67,7 +67,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FolderServiceUnitTests.cs" />
+    <Compile Include="FolderServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

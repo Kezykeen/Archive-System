@@ -16,7 +16,7 @@ namespace archivesystemWebUI.Infrastructures
 {
     public class NinjectDependenceResolver : IDependencyResolver
     {
-        private IKernel kernel;
+        private readonly IKernel kernel;
         public NinjectDependenceResolver(IKernel kernelParam)
         {
             kernel = kernelParam;
