@@ -98,8 +98,9 @@ namespace archivesystemWebUI.Services
         public string GetCurrentUserAccessCode(string userId)
         {
             var user = _repo.UserRepo.GetUserByUserId(userId);
-            var userAccessCode = _repo.AccessDetailsRepo.GetByUserId(user.Id).AccessCode;
-            return userAccessCode;
+            var userDetails = _repo.AccessDetailsRepo.Find(x => x.AppUserId == user.Id).SingleOrDefault();
+            if (userDetails == null) return "";
+            return userDetails.AccessCode;
         }
 
         public IEnumerable<Folder> GetFoldersThatMatchName(string name)
@@ -128,7 +129,7 @@ namespace archivesystemWebUI.Services
         public FolderPageViewModel GetRootFolderPageViewModel(string userId,string userRole)
         {
             UserData data = GetUserData(userId);
-            if (data.UserAccessLevel == _GroundLevelAccess)
+            if (data.UserAccessLevel == _GroundLevelAccess && !userRole.Contains(RoleNames.Admin))
                 return new FolderPageViewModel(); ;
             var rootFolder = GetRootFolder();
             var model = new FolderPageViewModel
@@ -147,7 +148,7 @@ namespace archivesystemWebUI.Services
         {
             var user = _repo.UserRepo.FindWithNavProps(c => c.UserId == userId, _ => _.Department).SingleOrDefault();
             if (user == null) return new UserData { User = null, UserAccessLevel = 0 };
-            var userdetails = _repo.AccessDetailsRepo.GetByUserId(user.Id);
+            var userdetails = _repo.AccessDetailsRepo.Find(x=> x.AppUserId==user.Id).SingleOrDefault();
             var userAccessLevel = userdetails == null ? 0 : userdetails.AccessLevelId;
             return  new UserData { User = user, UserAccessLevel = userAccessLevel };
         }

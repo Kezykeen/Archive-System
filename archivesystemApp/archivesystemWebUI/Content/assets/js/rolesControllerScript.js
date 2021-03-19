@@ -106,7 +106,6 @@ async function AddToRole() {
         })
     })
    
-    console.log("add to role respense",resp)
     if (resp.status == 201) {
         $('#modal').modal('hide');
         Swal.fire({
@@ -120,6 +119,11 @@ async function AddToRole() {
     else if (resp.status === 400) {
         var ul = document.getElementById("AUTR-error");
         ul.innerHTML=`<li>${userEmail} is already in role</li>`
+    }
+    else if (resp.status === 403) {
+        console.log("add to role respense", resp)
+        var ul = document.getElementById("AUTR-error");
+        ul.innerHTML = `<li>${userEmail} was not found in the system</li>`
     }
 
 }
