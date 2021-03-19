@@ -78,8 +78,16 @@ namespace archivesystemWebUI.Services
         public string GetCurrentUserRoles()
         {
             var userId = Context.User.Identity.GetUserId();
-            var roles = UserManager.GetRoles(userId);
-            return string.Join(",", roles);
+            try
+            {
+                var roles = UserManager.GetRoles(userId);
+                return string.Join(",", roles);
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+            
         }
         public async Task<ICollection<string>> GetUserIdsOfUsersInRole(string roleName)
         {

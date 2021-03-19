@@ -6,9 +6,6 @@ using archivesystemDomain.Interfaces;
 using archivesystemDomain.Entities;
 using archivesystemWebUI.Services;
 using archivesystemDomain.Services;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Collections.Generic;
 using archivesystemWebUI.Models;
 
 namespace archivesystemApp.UnitTests
@@ -18,6 +15,7 @@ namespace archivesystemApp.UnitTests
     {
         private Mock<IUnitOfWork> _repo;
         private FolderService _service;
+
         [SetUp]
         public void Setup()
         {

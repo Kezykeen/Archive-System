@@ -37,13 +37,21 @@ namespace archivesystemWebUI.Controllers
         public ActionResult Index(string search = null, string returnUrl="/folders")
         {
             FolderPageViewModel model = GetRootViewModel(returnUrl, search);
-            if (string.IsNullOrEmpty(model.Name))
+            if (!HttpContext.User.IsInRole(RoleNames.Admin))
             {
-                TempData[GlobalConstants.userHasNoAccesscode] = true;
-                return RedirectToAction("Index", "Home");
-            }    
-            CheckForUserAccessCode(out bool hasCorrectAccessCode, out double timeSinceLastRequest);
-            model.CloseAccessCodeModal = hasCorrectAccessCode && timeSinceLastRequest <=LOCKOUT_TIME;
+                if (string.IsNullOrEmpty(model.Name))
+                {
+                    TempData[GlobalConstants.userHasNoAccesscode] = true;
+                    return RedirectToAction("Index", "Home");
+                }
+                CheckForUserAccessCode(out bool hasCorrectAccessCode, out double timeSinceLastRequest);
+                model.CloseAccessCodeModal = hasCorrectAccessCode && timeSinceLastRequest <= LOCKOUT_TIME;
+            }
+            else
+            {
+                model.CloseAccessCodeModal = true;
+            }
+            
             model.Files = model.CloseAccessCodeModal ? model.Files : null;
             ViewBag.AllowCreateFolder = false;
             ViewBag.ErrorMessage = TempData["errorMessage"];
@@ -118,7 +126,6 @@ namespace archivesystemWebUI.Controllers
 
             if (!HttpContext.User.IsInRole(RoleNames.Admin))
             {
-
                 CheckForUserAccessCode(out bool hasCorrectAccessCode, out double timeSinceLastRequest);
                 if (!hasCorrectAccessCode || timeSinceLastRequest > LOCKOUT_TIME)
                     return RedirectToAction(nameof(Index), new { returnUrl = $"/folders/{folderId}" });

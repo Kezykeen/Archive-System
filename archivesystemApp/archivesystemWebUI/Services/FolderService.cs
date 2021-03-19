@@ -128,7 +128,7 @@ namespace archivesystemWebUI.Services
         public FolderPageViewModel GetRootFolderPageViewModel(string userId,string userRole)
         {
             UserData data = GetUserData(userId);
-            if (data.UserAccessLevel == _GroundLevelAccess)
+            if (data.UserAccessLevel == _GroundLevelAccess && !userRole.Contains(RoleNames.Admin))
                 return new FolderPageViewModel(); ;
             var rootFolder = GetRootFolder();
             var model = new FolderPageViewModel
