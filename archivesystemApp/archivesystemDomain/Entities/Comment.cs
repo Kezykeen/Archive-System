@@ -7,7 +7,7 @@ namespace archivesystemDomain.Entities
     {
         public int Id { get; set; }
         public string Message { get; set; }
-        public IEnumerable<File> Attachments { get; set; }
+        public ICollection<File> Attachments { get; set; }
         public int UserId { get; set; }
         public AppUser User { get; set; }
         public int ApplicationId { get; set; }
