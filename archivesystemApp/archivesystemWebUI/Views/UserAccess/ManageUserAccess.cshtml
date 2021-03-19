@@ -51,10 +51,6 @@
                     <th>
                         Access Level
                     </th>
-                    
-                    <th>
-                        Access code
-                    </th>
                     <th>
                         Status
                     </th>
@@ -71,10 +67,6 @@
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.AccessLevel.Level)
-                        </td>
-                        
-                        <td>
-                            @Html.DisplayFor(modelItem => item.AccessCode)
                         </td>
                         <td>
                             @if (item.Status ==archivesystemDomain.Entities.Status.Active)
