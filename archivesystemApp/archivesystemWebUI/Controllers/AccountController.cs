@@ -220,32 +220,46 @@ namespace archivesystemWebUI.Controllers
                 return View(model);
             }
 
-            if (!_unitOfWork.UserRepo.EmailExists(model.Email, null))
+            if (_unitOfWork.UserRepo.EmailExists(model.Email, null))
             {
-                if (_unitOfWork.UserRepo.EmailExists(model.Email, null))
-                {
-                    var user = _unitOfWork.UserRepo.GetUserByMail(model.Email);
+                var user = _unitOfWork.UserRepo.GetUserByMail(model.Email);
                   
-                    var newUser = new ApplicationUser { UserName = user.Name, Email = model.Email, EmailConfirmed = true, PhoneNumber = user.Phone};
-                    var result = await UserManager.CreateAsync(newUser, model.Password);
-                    if (result.Succeeded)
-                    {         
+                var newUser = new ApplicationUser { UserName = user.Name, Email = model.Email, EmailConfirmed = true, PhoneNumber = user.Phone};
+                var result = await UserManager.CreateAsync(newUser, model.Password);
+                if (result.Succeeded)
+                {         
 
-                        // Update UserId of User class
-                        _unitOfWork.UserRepo.UpdateUserId(model.Email, newUser.Id);
-                        await UserManager.AddToRoleAsync(newUser.Id, "Employee");
-                        user.Completed = true;
-                        await _unitOfWork.SaveAsync();
-                        await SignInManager.SignInAsync(newUser, isPersistent: false, rememberBrowser: false);
-                        return RedirectToAction("Index", "Home");
+                    // Update UserId of User classS
+                    _unitOfWork.UserRepo.UpdateUserId(model.Email, newUser.Id);
+
+                    switch (user.Designation)
+                    {
+                        case Designation.Student:
+                            await UserManager.AddToRoleAsync(newUser.Id, "Student");
+
+                            break;
+                        case Designation.Alumni:
+                            await UserManager.AddToRoleAsync(newUser.Id, "Alumni");
+                            break;
+                        case Designation.Staff:
+                            await UserManager.AddToRoleAsync(newUser.Id, "Staff");
+                            break;
+                        default:
+                            break;
                     }
-                    AddErrors(result);
+
+
+                    user.Completed = true;
+                    await _unitOfWork.SaveAsync();
+                    await SignInManager.SignInAsync(newUser, isPersistent: false, rememberBrowser: false);
+                    return RedirectToAction("Index", "Home");
                 }
-                else
-                {
-                    ModelState.AddModelError("Email", @"Email does not Exist. Please contact Admin");
-                    return View(model);
-                }
+                AddErrors(result);
+            }
+            else
+            {
+                ModelState.AddModelError("Email", @"Email does not Exist. Please contact Admin");
+                return View(model);
             }
             // If we got this far, something failed, redisplay form
             return View(model);
