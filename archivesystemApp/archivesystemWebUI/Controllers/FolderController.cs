@@ -113,19 +113,17 @@ namespace archivesystemWebUI.Controllers
         public ActionResult GetFolder(int folderId)
         {
             GetFolder(out Folder folder, folderId);
-            if (folder.Name == "Root")
+            if (folder.Name == GlobalConstants.RootFolderName)
                 return RedirectToAction(nameof(Index));
 
-            if (!HttpContext.User.IsInRole("Admin"))
+            if (!HttpContext.User.IsInRole(RoleNames.Admin))
             {
-                
-                CheckForUserAccessCode(out bool hasCorrectAccessCode, out double timeSinceLastRequest);
 
-             
+                CheckForUserAccessCode(out bool hasCorrectAccessCode, out double timeSinceLastRequest);
                 if (!hasCorrectAccessCode || timeSinceLastRequest > LOCKOUT_TIME)
                     return RedirectToAction(nameof(Index), new { returnUrl = $"/folders/{folderId}" });
 
-                VerifyThatUserHasAccessToFolder(out bool hasAuthorizedAccessToFolder, folder);
+                VerifyAccessAndFilterFolderSubFolders(out bool hasAuthorizedAccessToFolder, folder);
                 if (!hasAuthorizedAccessToFolder)
                     return RedirectToAction(nameof(Index));
             }
@@ -213,6 +211,19 @@ namespace archivesystemWebUI.Controllers
 
 
         #region Private Methods
+        private void CheckForUserAccessCode(out bool hasCorrectAccessCode, out double timeSinceLastRequest)
+        {
+            hasCorrectAccessCode =
+               Session[GlobalConstants.IsAccessValidated] != null && (bool)Session[GlobalConstants.IsAccessValidated];
+            var lastVisitTime = Session[GlobalConstants.LastVisit] ?? new DateTime();
+            timeSinceLastRequest = (DateTime.Now - (DateTime)lastVisitTime).TotalMinutes;
+        }
+
+
+        private void GetFolder(out Folder folder, int folderId)
+        {
+            folder = _service.GetFolder(folderId);
+        }
         private FolderPageViewModel GetModelUsingService(string returnUrl)
         {
             var userId = HttpContext.User.Identity.GetUserId();
@@ -229,34 +240,7 @@ namespace archivesystemWebUI.Controllers
 
             return SearchForFolders(search);
         }
-
-        private FolderPageViewModel SearchForFolders(string search)
-        {
-            var model = new FolderPageViewModel();
-            model.DirectChildren = _service.GetFoldersThatMatchName(search).ToList();
-            model.CurrentPath = new List<FolderPath>();
-            model.CloseAccessCodeModal = true;
-            model.Id = 0;
-            return model;
-        }
-        private void VerifyThatUserHasAccessToFolder(out bool hasAuthorizedAccessToFolder, Folder folder)
-        {
-            var userId = HttpContext.User.Identity.GetUserId();
-            hasAuthorizedAccessToFolder = _service.DoesUserHasAccessToFolder(folder,userId);
-            TempData["errorMessage"] =
-                hasAuthorizedAccessToFolder ? null : $"You are not authorized to view {folder.Name} folder";
-
-        }
-
-        private void CheckForUserAccessCode(out bool hasCorrectAccessCode, out double timeSinceLastRequest)
-        {
-            hasCorrectAccessCode =
-               Session[GlobalConstants.IsAccessValidated] != null && (bool)Session[GlobalConstants.IsAccessValidated];
-            var lastVisitTime = Session[GlobalConstants.LastVisit] ?? new DateTime();
-            timeSinceLastRequest = (DateTime.Now - (DateTime)lastVisitTime).TotalMinutes;
-        }
-
-        private FolderPageViewModel GetViewModelForView( Folder folder, int folderId)
+        private FolderPageViewModel GetViewModelForView(Folder folder, int folderId)
         {
             var folderpath = _service.GetFolderPath(folderId);
             var model = Mapper.Map<FolderPageViewModel>(folder);
@@ -266,11 +250,29 @@ namespace archivesystemWebUI.Controllers
             Session[GlobalConstants.LastVisit] = DateTime.Now;
             return model;
         }
-
-        private void GetFolder(out Folder folder, int folderId)
+        private FolderPageViewModel SearchForFolders(string search)
         {
-            folder = _service.GetFolder(folderId);
+            var model = new FolderPageViewModel();
+            model.DirectChildren = _service.GetFoldersThatMatchName(search).ToList();
+            model.CurrentPath = new List<FolderPath>();
+            model.CloseAccessCodeModal = true;
+            model.Id = 0;
+            return model;
         }
+        private void VerifyAccessAndFilterFolderSubFolders(out bool hasAuthorizedAccessToFolder, Folder folder)
+        {
+            var userId = HttpContext.User.Identity.GetUserId();
+            var userData = _service.GetUserData(userId);
+            hasAuthorizedAccessToFolder = _service.DoesUserHasAccessToFolder(folder,userData);
+            if (hasAuthorizedAccessToFolder)
+                _service.FilterFolderSubFoldersUsingAccessLevel(folder, userData.UserAccessLevel);
+
+            TempData["errorMessage"] =
+                hasAuthorizedAccessToFolder ? null : $"You are not authorized to view {folder.Name} folder";
+
+        }
+
+        
 
        
         #endregion
