@@ -9,6 +9,7 @@ using archivesystemDomain.Services;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Collections.Generic;
+using archivesystemWebUI.Models;
 
 namespace archivesystemApp.UnitTests
 {
@@ -61,45 +62,52 @@ namespace archivesystemApp.UnitTests
         [Test]
         public void DoesUserHasAccessToFolder_UserDoesNotExist_ReturnsFalse()
         {
-            _repo.Setup(r => r.UserRepo.
-                FindWithNavProps(It.IsAny<Expression<Func<AppUser, bool>>>(),
-                It.IsAny<Expression<Func<AppUser, object>>>())).Returns(new List<AppUser>());
-            var result=_service.DoesUserHasAccessToFolder(new Folder { Name = "", AccessLevelId = 1 },"jljdl");
+            var userData=new UserData { User = null };
+            var folder = new Folder { AccessLevelId = 1, DepartmentId = 1, Department = new Department { Id = 1 } };
 
+            var result =_service.DoesUserHasAccessToFolder(folder, userData);
             Assert.That(result, Is.EqualTo(false));
-            _repo.Verify(c => c.UserRepo.FindWithNavProps(It.IsAny<Expression<Func<AppUser, bool>>>(),
-                It.IsAny<Expression<Func<AppUser, object>>>()));
         }
 
         [Test]
-        public void DoesUserHasAccessToFolder_FolderBelongsToUsersDepartmentButUserAccessLevelIsLower_ReturnsFalse()
+        public void DoesUserHasAccessToFolder_FolderIsFacuLtyFolderAndUserIsInFaculty_ReturnsTrue()
         {
-            var userId = "jljlsjljpasdjlfpjpl";
-            var user = new AppUser { Id = 1, UserId = userId, DepartmentId = 1, Department = new Department { Id = 1, FacultyId = 1 } };
-            var accessDetails = new AccessDetail { AppUserId = user.Id, AccessLevelId = 1 };
-            Expression<Func<AppUser,bool>> expression = u => u.UserId == userId;
-            Expression<Func<AppUser, object>> include = u => u.Department;
-            Folder folder = new Folder() { AccessLevelId = 3,DepartmentId=1, FacultyId = 1 };
+            var userData=new UserData{User=new AppUser{Department=new Department {FacultyId=1}},UserAccessLevel=1};
+            var folder=new Folder {FacultyId=1,AccessLevelId=1};
 
-            //_repo.Setup(r => r.UserRepo.FindWithNavProps(expression,include))
-            //    .Returns(new List<AppUser>(){user});
-            _repo.Setup(r => r.UserRepo.
-               FindWithNavProps(It.IsAny<Expression<Func<AppUser, bool>>>(),
-               It.IsAny<Expression<Func<AppUser, object>>>())).Returns(new List<AppUser> { user});
-            _repo.Setup(r => r.AccessDetailsRepo.GetByEmployeeId(user.Id)).Returns(accessDetails);
-
-            var result=_service.DoesUserHasAccessToFolder(folder, userId);
-
-            Assert.That(result, Is.EqualTo(false));
-            _repo.Verify(r =>
-                r.UserRepo.FindWithNavProps(
-                    It.IsAny<Expression<Func<AppUser, bool>>>(),
-                    It.IsAny<Expression<Func<AppUser, object>>>()
-                    )
-                );
-            _repo.Verify(r => r.AccessDetailsRepo.GetByEmployeeId(user.Id));
-
+            var result = _service.DoesUserHasAccessToFolder(folder, userData);
+            Assert.That(result, Is.EqualTo(true));
         }
-        
+
+        [Test]
+        public void DoesUserHasAccessToFolder_FolderIsFacuLtyFolderAndUserIsNotInFaculty_ReturnsTrue()
+        {
+            var userData=new UserData{User=new AppUser{Department=new Department{FacultyId=3}},UserAccessLevel=1};
+            var folder = new Folder {FacultyId=1,AccessLevelId=1};
+
+            var result = _service.DoesUserHasAccessToFolder(folder, userData);
+            Assert.That(result, Is.EqualTo(false));
+        }
+
+        [Test]
+        public void DoesUserHasAccessToFolder_FolderIsDepartmentalFolderAndUserIsNotInDepartment_ReturnsTrue()
+        {
+            var userData = new UserData { User = new AppUser{Department=new Department{Id=3}},UserAccessLevel=1};
+            var folder = new Folder {DepartmentId=1,AccessLevelId=1 };
+
+            var result = _service.DoesUserHasAccessToFolder(folder, userData);
+            Assert.That(result, Is.EqualTo(false));
+        }
+
+        [Test]
+        public void DoesUserHasAccessToFolder_FolderIsDepartmentalFolderAndUserIsInDepartment_ReturnsTrue()
+        {
+            var userData=new UserData{User=new AppUser{ DepartmentId = 1 }, UserAccessLevel = 1 };
+            var folder = new Folder { DepartmentId = 1,AccessLevelId=1,Faculty=null};
+
+            var result = _service.DoesUserHasAccessToFolder(folder, userData);
+            Assert.That(result, Is.EqualTo(true));
+        }
+
     }
 }

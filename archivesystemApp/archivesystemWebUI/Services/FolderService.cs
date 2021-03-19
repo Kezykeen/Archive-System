@@ -49,20 +49,19 @@ namespace archivesystemWebUI.Services
 
         }
 
-        public bool DoesUserHasAccessToFolder(Folder folder,string userId)
+        public bool DoesUserHasAccessToFolder(Folder folder,UserData data)
         {
-            var data=GetUserData(userId);
-            folder.Subfolders = folder.Subfolders.Where(x => x.AccessLevelId <= data.UserAccessLevel).ToList();
             if (data.User == null) return false;
+            if (folder.AccessLevelId > data.UserAccessLevel) return false;
+
             if (folder.FacultyId != null && data.User.Department.FacultyId != folder.FacultyId)//folder is faculty folder
                 return false;
             if (folder.DepartmentId != null && folder.DepartmentId != data.User.DepartmentId)
                 return false;
-            if (folder.AccessLevelId > data.UserAccessLevel)
-                return false;
-
+            
             return true;
         }
+
 
         public FolderServiceResult Edit(CreateFolderViewModel model)
         {
@@ -75,6 +74,12 @@ namespace archivesystemWebUI.Services
             return FolderServiceResult.Success;
         }
 
+        public Folder FilterFolderSubFoldersUsingAccessLevel(Folder folder,int userAccessLevel)
+        {
+            var subfolders = folder.Subfolders.Where(x => x.AccessLevelId <= userAccessLevel);
+            folder.Subfolders = subfolders.Count() != 0 ? subfolders.ToList(): new List<Folder>();
+            return folder;
+        }
         public CreateFolderViewModel GetCreateFolderViewModel(int parentId,string userId)
         {
             var parentFolder = _repo.FolderRepo.Get(parentId);
