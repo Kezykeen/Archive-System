@@ -98,7 +98,7 @@ namespace archivesystemWebUI.Services
         public string GetCurrentUserAccessCode(string userId)
         {
             var user = _repo.UserRepo.GetUserByUserId(userId);
-            var userAccessCode = _repo.AccessDetailsRepo.GetByEmployeeId(user.Id).AccessCode;
+            var userAccessCode = _repo.AccessDetailsRepo.GetByUserId(user.Id).AccessCode;
             return userAccessCode;
         }
 
@@ -147,7 +147,7 @@ namespace archivesystemWebUI.Services
         {
             var user = _repo.UserRepo.FindWithNavProps(c => c.UserId == userId, _ => _.Department).SingleOrDefault();
             if (user == null) return new UserData { User = null, UserAccessLevel = 0 };
-            var userdetails = _repo.AccessDetailsRepo.GetByEmployeeId(user.Id);
+            var userdetails = _repo.AccessDetailsRepo.GetByUserId(user.Id);
             var userAccessLevel = userdetails == null ? 0 : userdetails.AccessLevelId;
             return  new UserData { User = user, UserAccessLevel = userAccessLevel };
         }
