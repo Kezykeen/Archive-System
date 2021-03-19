@@ -41,10 +41,14 @@ namespace archivesystemWebUI.Models
         public Gender? Gender { get; set; }
 
         [Required]
-        [Display(Name = "Staff Id")]
-        [Remote("IsStaffIdTaken", "Users", AdditionalFields = "Id", ErrorMessage = "Staff Id Already taken!")]
+        [Display(Name = "Designation")]
+        public Designation? Designation { get; set; }
+
+        [Required]
+        [Display(Name = "Id")]
+        [Remote("IsIdTaken", "Users", AdditionalFields = "Id", ErrorMessage = "Id Already taken!")]
         
-        public string StaffId { get; set; }
+        public string TagId { get; set; }
 
         [Required]
         [Display(Name = "Department")]
@@ -52,9 +56,5 @@ namespace archivesystemWebUI.Models
         public IEnumerable<Department> Departments { get; set; }
 
 
-        
-        [Display(Name = "Roles")]
-        public string RoleId { get; set; }
-        public IEnumerable<ApplicationRole> Roles { get; set; }
     }
 }

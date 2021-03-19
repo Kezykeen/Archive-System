@@ -36,30 +36,22 @@ namespace archivesystemWebUI.Models
 
 
         [Required]
-        [Display(Name = "Birthday")]
-        public DateTime? DOB { get; set; }
-
-
-        [Required]
         [Display(Name = "Gender")]
         public Gender? Gender { get; set; }
 
-
         [Required]
-        [Display(Name = "Date Appointed")]
-        public DateTime? Appointed { get; set; }
+        [Display(Name = "Designation")]
+        public Designation? Designation { get; set; }
+       
         [Required]
-        [Display(Name = "Staff Id")]
-        [Remote("IsStaffIdTaken", "Users", ErrorMessage = "Staff Id Already taken!")]
-        public string StaffId { get; set; }
+        [Display(Name = "ID")]
+        [Remote("IsIdTaken", "Users", ErrorMessage = "Id Already taken!")]
+        public string TagId { get; set; }
 
         [Required]
         [Display(Name = "Department")]
         public int DepartmentId { get; set; }
         public IEnumerable<Department> Departments { get; set; }
-
-
-        
-
+    
     }
 }

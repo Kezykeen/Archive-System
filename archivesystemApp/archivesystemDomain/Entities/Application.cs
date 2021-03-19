@@ -14,11 +14,11 @@ namespace archivesystemDomain.Entities
         public ApplicationStatus Status { get; set; }
         public bool Archive { get; set; }
         public bool Approve { get; set; }
-        public IEnumerable<AppUser> Assignees { get; set; }
-        public IEnumerable<ApplicationReceiver> Receivers { get; set; }
-        public IEnumerable<Approval> Approvals { get; set; }
-        public IEnumerable<Comment> Comments { get; set; }
-        public IEnumerable<Activity> Activities { get; set; }
+        public ICollection<AppUser> Assignees { get; set; }
+        public ICollection<ApplicationReceiver> Receivers { get; set; }
+        public ICollection<Approval> Approvals { get; set; }
+        public ICollection<Comment> Comments { get; set; }
+        public ICollection<Activity> Activities { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }

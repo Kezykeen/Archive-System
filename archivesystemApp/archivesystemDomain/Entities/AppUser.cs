@@ -27,16 +27,16 @@ namespace archivesystemDomain.Entities
         [Index("TagIdIndex", IsUnique = true)]
         [StringLength(50)]
         public string TagId { get; set; }
+        public int DepartmentId { get; set; }
         public Department Department { get; set; }
         public File Signature { get; set; }
-       
-        public IEnumerable<Activity> Activities { get; set; }
+        public Designation Designation { get; set; }
         public int? UserProfileId { get; set; }
         public UserProfile UserProfile { get; set; }
-        public int DepartmentId { get; set; }
         public bool Completed { get; set; }
         public DateTime UpdatedAt { get; set; }
         public DateTime CreatedAt { get; set; }
+        public ICollection<Activity> Activities { get; set; }
 
     }
 }
