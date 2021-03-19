@@ -11,12 +11,13 @@ namespace archivesystemDomain.Interfaces
 {
     public interface IFolderRepo : IRepository<Folder>
     {
-        void UpdateFolder(Folder folder);
         void DeleteFolder(int folderId);
-        List<FolderPath> GetFolderPath(int id);
-        void UpdateDepartmentalFolder(Folder model);
         Folder GetFacultyFolder(string name);
+        List<FolderPath> GetFolderPath(int id);
         void MoveFolder(int id, int newParentFolderId);
-        void UpdateFacultyFolder(Folder model);
+        bool UpdateDepartmentalFolder(Folder model);
+        bool UpdateFacultyFolder(Folder model);
+        bool UpdateFolder(Folder folder);
+
     }
 }

@@ -12,6 +12,7 @@ using archivesystemWebUI.Models;
 using AutoMapper;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using static System.String;
 
 namespace archivesystemWebUI.Controllers
 {
@@ -82,13 +83,13 @@ namespace archivesystemWebUI.Controllers
 
         public ActionResult EditModal(int id)
         {
-            var employee = _unitOfWork.UserRepo.GetUserWithDept(id);
-            if (employee == null)
+            var user = _unitOfWork.UserRepo.GetUserWithDept(id);
+            if (user == null)
             {
                 return HttpNotFound();
             }
 
-            var vm = Mapper.Map<UpdateUserVm>(employee);
+            var vm = Mapper.Map<UpdateUserVm>(user);
             vm.Departments = _unitOfWork.DeptRepo.GetAll();
             return PartialView(vm);
         }
@@ -106,12 +107,12 @@ namespace archivesystemWebUI.Controllers
 
         public ActionResult Details(int id)
         {
-            var employee = _unitOfWork.UserRepo.GetUserWithDept(id);
-            if (employee == null)
+            var user = _unitOfWork.UserRepo.GetUserWithDept(id);
+            if (user == null)
             {
                 return HttpNotFound();
             }
-            return View(employee);
+            return View(user);
         }
       
 
@@ -135,18 +136,18 @@ namespace archivesystemWebUI.Controllers
                 return PartialView("EnrollModal", model);
             }
 
-            var employee = Mapper.Map<EnrollViewModel, AppUser>(model);
-            _unitOfWork.UserRepo.Add(employee);
+            var user = Mapper.Map<EnrollViewModel, AppUser>(model);
+            _unitOfWork.UserRepo.Add(user);
 
-            string code = _tokenGenerator.Code(employee.Id);
+            string code = _tokenGenerator.Code(user.Id);
             await _unitOfWork.SaveAsync();
-            var callbackUrl = Url.Action("Register", "Account", new { userId = employee.Id, code = code }, protocol: Request.Url.Scheme);
+            var callbackUrl = Url.Action("Register", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
             try
             {
                 await _emailSender
-                    .SendEmailAsync(employee.Email, 
+                    .SendEmailAsync(user.Email, 
                         "Complete Your Registration",
-                        $"Hi, {employee.Name} complete your Enrollment Process by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                        $"Hi, {user.Name} complete your Enrollment Process by clicking <a href=\"" + callbackUrl + "\">here</a>");
             }
             catch (Exception e)
             {
@@ -167,43 +168,38 @@ namespace archivesystemWebUI.Controllers
             if (!ModelState.IsValid)
             {
                 model.Departments = _unitOfWork.DeptRepo.GetAll();
-                model.Roles = _roleService.GetAllRoles();
                 return PartialView("EditModal", model);
             }
-            var employeeDb = _unitOfWork.UserRepo.GetUserWithDept(model.Id);
-            var Name = $"{model.FirstName} {model.LastName}";
+            var userDb = _unitOfWork.UserRepo.GetUserWithDept(model.Id);
+            var name = $"{model.FirstName} {model.LastName}";
 
-            if (!string.IsNullOrWhiteSpace(employeeDb.UserId))
+            if (!IsNullOrWhiteSpace(userDb.UserId))
             {
-                var rolesDb = UserManager.FindById(employeeDb.UserId).Roles;
+                var rolesDb = UserManager.FindById(userDb.UserId).Roles;
                 var roleDbId = rolesDb.SingleOrDefault()?.RoleId;
-                var appUser = UserManager.FindById(employeeDb.UserId);
+                var appUser = UserManager.FindById(userDb.UserId);
 
-                if (!String.Equals(model.Email, appUser.Email, StringComparison.OrdinalIgnoreCase))
+                if (!string.Equals(model.Email, appUser.Email, StringComparison.OrdinalIgnoreCase))
                 {
                     appUser.Email = model.Email;
                 }
-                else if(!String.Equals(Name, appUser.UserName, StringComparison.OrdinalIgnoreCase))
+                else if(!string.Equals(name, appUser.UserName, StringComparison.OrdinalIgnoreCase))
                 {
 
-                    appUser.UserName = Name;
-                }else if(!String.Equals(model.Phone, appUser.PhoneNumber, StringComparison.OrdinalIgnoreCase))
+                    appUser.UserName = name;
+                }else if(!string.Equals(model.Phone, appUser.PhoneNumber, StringComparison.OrdinalIgnoreCase))
                 {
                     appUser.PhoneNumber = model.Phone;
                 }
 
                 UserManager.Update(appUser);
 
-                if (!string.IsNullOrWhiteSpace(roleDbId) && model.RoleId != roleDbId)
-                {
-                    UserManager.RemoveFromRole(employeeDb.UserId, RoleManager.FindById(roleDbId).Name);
-                    UserManager.AddToRole(employeeDb.UserId, RoleManager.FindById(model.RoleId).Name);
-                }
+               
 
             }
 
-            Mapper.Map(model, employeeDb);
-            employeeDb.UpdatedAt = DateTime.Now;
+            Mapper.Map(model, userDb);
+            userDb.UpdatedAt = DateTime.Now;
             _unitOfWork.Save();
 
             return Json(new { status = "success", msg = $"{model.FirstName}" });
@@ -231,10 +227,10 @@ namespace archivesystemWebUI.Controllers
             return Json(!_unitOfWork.UserRepo.NameExists($"{firstName} {lastName}", id), JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult IsStaffIdTaken(string staffId, int? id =null)
+        public JsonResult IsIdTaken(string tagId, int? id =null)
         {
             // Check if the staffId already exists
-            return Json(!_unitOfWork.UserRepo.TagIdExists(staffId, id), JsonRequestBehavior.AllowGet);
+            return Json(!_unitOfWork.UserRepo.TagIdExists(tagId, id), JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult DelPrompt(int id)

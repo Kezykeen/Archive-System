@@ -9,7 +9,7 @@ using archivesystemWebUI.Models;
 using archivesystemWebUI.Models.DataLayers;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
-using archivesystemWebUI.Models.FolderViewModels;
+using archivesystemWebUI.Models.FolderModels;
 
 
 
@@ -52,10 +52,10 @@ namespace archivesystemWebUI.Infrastructures
                 .ForMember(dest => dest.Department, opt => opt.MapFrom(src => src.Department.Name))
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt.ToString("dd MMM, yy")))
                 .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.UpdatedAt.ToString("dd MMM, yy")))
-                .ForMember(dest => dest.Role, opt =>
+                .ForMember(dest => dest.Roles, opt =>
                     {
                         opt.PreCondition(src => !string.IsNullOrWhiteSpace(src.UserId));
-                        opt.MapFrom(src => UserManager.GetRoles(src.UserId).FirstOrDefault());
+                        opt.MapFrom(src => UserManager.GetRoles(src.UserId));
                     })
                 .ForMember(dest => dest.Gender, opt =>
                 {
@@ -68,11 +68,9 @@ namespace archivesystemWebUI.Infrastructures
                ;
 
             Mapper.CreateMap<AppUser, UpdateUserVm>()
-                .ForMember(dest => dest.FirstName, opt => opt.MapFrom( src => src.Name.Split().First()))
-                .ForMember(dest => dest.LastName, opt => opt.MapFrom( src => src.Name.Split().Last()))
-                .ForMember(dest => dest.RoleId, opt => opt.MapFrom( src => UserManager.FindById(src.UserId).Roles.SingleOrDefault().RoleId))
-                .ForMember(dest => dest.Roles, opt => opt.MapFrom( src => RoleManager.Roles.ToList()))
-                ;
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.Name.Split().First()))
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.Name.Split().Last()));
+              
             Mapper.CreateMap<CreateAccessLevelViewModel, AccessLevel>()
                 .ForMember(dest => dest.CreatedAt, opt => opt.UseValue<DateTime>(DateTime.Now))
                 .ForMember(m => m.UpdatedAt, opt => opt.UseValue<DateTime>(DateTime.Now));

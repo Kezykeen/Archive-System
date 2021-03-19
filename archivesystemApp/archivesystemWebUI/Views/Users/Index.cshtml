@@ -11,10 +11,10 @@
     <div class="page-header">
         <div class="row align-items-center">
             <div class="col">
-                <h3 class="page-title">Employee</h3>
+                <h3 class="page-title">Users</h3>
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
-                    <li class="breadcrumb-item active">Employee</li>
+                    <li class="breadcrumb-item active">Users</li>
                 </ul>
             </div>
             <div class="col-auto float-right ml-auto">
@@ -46,9 +46,9 @@
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>Staff ID</th>
+                            <th>ID</th>
                             <th>Email</th>
-                            <th>Role</th>
+                            <th>Roles</th>
                             <th>Created</th>
                             <th>Modified</th>
                             <th>Status</th>
@@ -104,21 +104,21 @@
                             return ' <h2 class="table-avatar">' +
                                 '<a href="profile.html" class="avatar">' +
                                 '<img alt="" src="assets/img/profiles/avatar-02.jpg">' +
-                                '</a><a href="/employees/details/' + user.id + '">' + data + '<span>' + user.department + '</span></a></h2>';
+                                '</a><a href="/users/details/' + user.id + '">' + data + '<span>' + user.department + '</span></a></h2>';
                         }
 
                     },
-                    { data: "staffId" },
+                    { data: "tagId" },
                     { data: "email" },
 
 
                     {
-                        data: "role",
+                        data: "roles",
                         render: function (data, type, user) {
                             if (data === null) {
                                 return "None";
                             }
-                            return '<span class="badge bg - inverse - success">' + data + '</span>';
+                            return '<span class="badge bg - inverse - success">' + data.join(",") + '</span>';
                         }
                     },
                     {

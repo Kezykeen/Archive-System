@@ -20,12 +20,16 @@ namespace archivesystemDomain.Services
 
         public static void EnsurePopulated()
         {
-            
-
             Create("Admin");
-            Create("Manager");
-            Create("Employee"); 
-
+            Create("Staff");
+            Create("FacultyOfficer");
+            Create("DeptOfficer");
+            Create("HOD");
+            Create("AgHOD");
+            Create("Secretary");
+            Create("Alumni");
+            Create("Student");
+           
             void Create(string name)
             {
                 if (RoleManager.RoleExists(name)) return;

@@ -52,6 +52,7 @@ namespace archivesystemWebUI.Infrastructures
             kernel.Bind<IUserAccessService>().To<UserAccessService>();
             kernel.Bind<IFileRepo>().To<FileRepo>();
             kernel.Bind<IFolderService>().To<FolderService>();
+            kernel.Bind<IFacultyService>().To<FacultyService>();
             
         }
     }

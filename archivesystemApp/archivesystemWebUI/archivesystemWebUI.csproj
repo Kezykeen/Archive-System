@@ -206,6 +206,7 @@
     <Compile Include="Controllers\AccessLevelController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Api\UsersController.cs" />
+    <Compile Include="Controllers\SettingsController.cs" />
     <Compile Include="Infrastructures\CSRF.cs" />
     <Compile Include="Controllers\FileMetaController.cs" />
     <Compile Include="Controllers\UserAccessController.cs" />
@@ -227,15 +228,12 @@
     <Compile Include="Infrastructures\EmpUniqueProps.cs" />
     <Compile Include="Infrastructures\UpsertFile.cs" />
     <Compile Include="Interfaces\IAccessLevelService.cs" />
+    <Compile Include="Interfaces\IFacultyService.cs" />
     <Compile Include="Interfaces\IFolderService.cs" />
     <Compile Include="Interfaces\IUserAccessService.cs" />
-    <Compile Include="Migrations\202103171245478_Initial.cs" />
-    <Compile Include="Migrations\202103171245478_Initial.Designer.cs">
-      <DependentUpon>202103171245478_Initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202103171400178_NullableUserProfileId.cs" />
-    <Compile Include="Migrations\202103171400178_NullableUserProfileId.Designer.cs">
-      <DependentUpon>202103171400178_NullableUserProfileId.cs</DependentUpon>
+    <Compile Include="Migrations\202103181107464_Initial.cs" />
+    <Compile Include="Migrations\202103181107464_Initial.Designer.cs">
+      <DependentUpon>202103181107464_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CodeStatus.cs" />
@@ -248,18 +246,18 @@
     <Compile Include="Models\EnrollViewModel.cs" />
     <Compile Include="Models\FacultyViewModel.cs" />
     <Compile Include="Models\FileMetaVm.cs" />
-    <Compile Include="Models\FolderViewModels\CreateFolderViewModel.cs" />
-    <Compile Include="Models\FolderViewModels\DeleteFolderViewModel.cs" />
-    <Compile Include="Models\FolderViewModels\FolderPageViewModel.cs" />
-    <Compile Include="Models\FolderViewModels\MoveItemViewModel.cs" />
-    <Compile Include="Models\FolderViewModels\SaveFolderViewModel.cs" />
+    <Compile Include="Models\FolderModels\CreateFolderViewModel.cs" />
+    <Compile Include="Models\FolderModels\DeleteFolderViewModel.cs" />
+    <Compile Include="Models\FolderModels\FolderPageViewModel.cs" />
+    <Compile Include="Models\FolderModels\MoveItemViewModel.cs" />
+    <Compile Include="Models\FolderModels\SaveFolderViewModel.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\RoleViewModels\AddOrEditRoleViewModel.cs" />
     <Compile Include="Models\RoleViewModels\AddtoRoleViewModel.cs" />
     <Compile Include="Models\RoleViewModels\RemoveUserFromRoleViewModel.cs" />
     <Compile Include="Models\RoleViewModels\UsersInRoleViewModel.cs" />
     <Compile Include="Models\UpdateUserVm.cs" />
-    <Compile Include="Models\SessionData.cs" />
+    <Compile Include="Models\UserData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\AccessDetailsRepository.cs" />
     <Compile Include="Repository\DeptRepository.cs" />
@@ -272,6 +270,7 @@
     <Compile Include="Repository\AccessLevelRepository.cs" />
     <Compile Include="Repository\TokenRepository.cs" />
     <Compile Include="Repository\UnitOfWork.cs" />
+    <Compile Include="Services\FacultyService.cs" />
     <Compile Include="Services\FolderService.cs" />
     <Compile Include="Services\RoleService.cs" />
     <Compile Include="Services\UserAccessService.cs" />
@@ -505,6 +504,7 @@
     <Content Include="Views\Roles\UsersInRole.cshtml" />
     <Content Include="Views\Shared\_AddUserToRole.cshtml" />
     <Content Include="Views\Shared\_RemoveUserFromRole.cshtml" />
+    <Content Include="Views\Settings\TicketTypes.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -529,11 +529,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202103171245478_Initial.resx">
-      <DependentUpon>202103171245478_Initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202103171400178_NullableUserProfileId.resx">
-      <DependentUpon>202103171400178_NullableUserProfileId.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202103181107464_Initial.resx">
+      <DependentUpon>202103181107464_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

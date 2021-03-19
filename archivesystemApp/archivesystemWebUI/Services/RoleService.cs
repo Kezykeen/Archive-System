@@ -7,8 +7,8 @@ using archivesystemDomain.Entities;
 using archivesystemDomain.Interfaces;
 using archivesystemDomain.Services;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
+
 
 namespace archivesystemWebUI.Services
 {
@@ -75,6 +75,12 @@ namespace archivesystemWebUI.Services
            return result;
         }
 
+        public string GetCurrentUserRoles()
+        {
+            var userId = Context.User.Identity.GetUserId();
+            var roles = UserManager.GetRoles(userId);
+            return string.Join(",", roles);
+        }
         public async Task<ICollection<string>> GetUserIdsOfUsersInRole(string roleName)
         {
             var role=await RoleManager.FindByNameAsync(roleName);
@@ -93,8 +99,6 @@ namespace archivesystemWebUI.Services
         {
             return repo.UserRepo.GetUserDataByUserIds(userIds);
         }
-
-        
 
         public IdentityResult RemoveFromRole ( string userId,string roleName)
         {

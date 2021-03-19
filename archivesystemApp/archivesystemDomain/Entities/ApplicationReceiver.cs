@@ -9,6 +9,7 @@ namespace archivesystemDomain.Entities
         public Department Receiver { get; set; }
         public bool Forwarded { get; set; }
         public bool? Received { get; set; }
+        public bool? Approved { get; set; }
         public DateTime TimeSent { get; set; }
         public DateTime? TimeReceived { get; set; }
         public DateTime TimeRejected { get; set; }
