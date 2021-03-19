@@ -115,7 +115,7 @@
                     {
                         data: "roles",
                         render: function (data, type, user) {
-                            if (data === []) {
+                            if (data === null) {
                                 return "None";
                             }
                             return '<span class="badge bg - inverse - success">' + data.join(",") + '</span>';
