@@ -98,8 +98,9 @@ namespace archivesystemWebUI.Services
         public string GetCurrentUserAccessCode(string userId)
         {
             var user = _repo.UserRepo.GetUserByUserId(userId);
-            var userAccessCode = _repo.AccessDetailsRepo.GetByEmployeeId(user.Id).AccessCode;
-            return userAccessCode;
+            var userDetails = _repo.AccessDetailsRepo.Find(x => x.AppUserId == user.Id).SingleOrDefault();
+            if (userDetails == null) return "";
+            return userDetails.AccessCode;
         }
 
         public IEnumerable<Folder> GetFoldersThatMatchName(string name)
@@ -147,7 +148,7 @@ namespace archivesystemWebUI.Services
         {
             var user = _repo.UserRepo.FindWithNavProps(c => c.UserId == userId, _ => _.Department).SingleOrDefault();
             if (user == null) return new UserData { User = null, UserAccessLevel = 0 };
-            var userdetails = _repo.AccessDetailsRepo.GetByEmployeeId(user.Id);
+            var userdetails = _repo.AccessDetailsRepo.Find(x=> x.AppUserId==user.Id).SingleOrDefault();
             var userAccessLevel = userdetails == null ? 0 : userdetails.AccessLevelId;
             return  new UserData { User = user, UserAccessLevel = userAccessLevel };
         }

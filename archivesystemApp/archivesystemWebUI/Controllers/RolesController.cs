@@ -77,6 +77,8 @@ namespace archivesystemWebUI.Controllers
             if(result.Succeeded) return new HttpStatusCodeResult(201);
 
             if (result.Errors.Any(x => x.Contains("User already in role"))) return new HttpStatusCodeResult(400);
+            if (result.Errors.Any(x => x.Contains("user does not exist"))) return new HttpStatusCodeResult(403);
+            
 
             return new HttpStatusCodeResult(500);
         }

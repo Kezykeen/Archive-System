@@ -208,7 +208,11 @@ namespace archivesystemWebUI.Controllers
         //GET: /Folder/VerifyAccessCode
         public ActionResult VerifyAccessCode(string accessCode)
         {
-            if (accessCode != _service.GetCurrentUserAccessCode(HttpContext.User.Identity.GetUserId()))
+            if (string.IsNullOrWhiteSpace(accessCode))
+                return new HttpStatusCodeResult(400);
+
+            var accessCodeInDb = _service.GetCurrentUserAccessCode(HttpContext.User.Identity.GetUserId());
+            if (AccessCodeGenerator.HashCode(accessCode)!= accessCodeInDb)
                 return new HttpStatusCodeResult(400);
 
             Session[GlobalConstants.IsAccessValidated] = true;

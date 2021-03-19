@@ -36,7 +36,7 @@ namespace archivesystemWebUI.Services
         }
         public IEnumerable<ApplicationRole> GetAllRoles()
         {
-            return RoleManager.Roles.ToList();
+            return RoleManager.Roles.ToList().Where(x=> x.Name != RoleNames.Admin);
         }
 
         public void DeleteRole(string roleId)
@@ -62,6 +62,7 @@ namespace archivesystemWebUI.Services
         public IdentityResult AddToRoleByEmail(string userEmail,string roleId)
         {
             var user=repo.UserRepo.GetUserByMail(userEmail);
+            if (user == null) return IdentityResult.Failed("user does not exist");
             return AddToRole(user.UserId, roleId);
         }
 
