@@ -6,6 +6,7 @@ using archivesystemDomain.Entities;
 using archivesystemDomain.Interfaces;
 using archivesystemWebUI.Interfaces;
 using archivesystemWebUI.Models;
+using archivesystemWebUI.Services;
 using AutoMapper;
 
 namespace archivesystemWebUI.Controllers
@@ -14,12 +15,12 @@ namespace archivesystemWebUI.Controllers
     public class FacultyController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-        private IFolderService _folderService;
+        private IFacultyService _service;
         
-        public FacultyController(IUnitOfWork unitOfWork, IFolderService folderservice)
+        public FacultyController(IUnitOfWork unitOfWork, IFacultyService _service)
         {
             _unitOfWork = unitOfWork;
-            _folderService = folderservice;
+            this._service = _service;
         }
 
         public ActionResult Index()
@@ -50,12 +51,12 @@ namespace archivesystemWebUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> AddOrEdit(FacultyViewModel model)
         {
-            var faculty = Mapper.Map<Faculty>(model);
             if (model.Id == 0)
             {
-                faculty.CreatedAt = DateTime.Now;
-                faculty.UpdatedAt = DateTime.Now;
-                CreateFacultyAndFolder(faculty);
+                var result =_service.SaveFaculty(model);
+                if(result== FacultyServiceResult.Succeeded)
+                    return Json("success", JsonRequestBehavior.AllowGet);
+                return Json("failure", JsonRequestBehavior.AllowGet);
             }
             else
             {
@@ -102,24 +103,7 @@ namespace archivesystemWebUI.Controllers
             }
         }
 
-        private  void CreateFacultyAndFolder(Faculty faculty)
-        {
-           
-            var rootFolder = _folderService.GetRootFolder();
-            var folder = new Folder
-            {
-                Name = faculty.Name,
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now,
-                AccessLevelId = _unitOfWork.AccessLevelRepo.GetBaseLevel().Id,
-                ParentId=rootFolder.Id,
-                IsRestricted=true,
-                Faculty=faculty
-            };
-            _unitOfWork.FolderRepo.Add(folder);
-
-            return;
-        }
+       
 
         [HttpPost]
         public JsonResult FacultyNameCheck(string name, int id)

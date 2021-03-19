@@ -22,6 +22,7 @@ namespace archivesystemWebUI.Controllers
     {
         private const byte LOCKOUT_TIME = 1; //lockout user after last request exceeds lockout time in minutes
         private readonly IUnitOfWork repo;
+        private const  int DoesNotHaveAccessLevel=0;
 
         private IFolderService _service { get; set; }
        
@@ -36,6 +37,11 @@ namespace archivesystemWebUI.Controllers
         public ActionResult Index(string search = null, string returnUrl="/folders")
         {
             FolderPageViewModel model = GetRootViewModel(returnUrl, search);
+            if (string.IsNullOrEmpty(model.Name))
+            {
+                TempData[GlobalConstants.userHasNoAccesscode] = true;
+                return RedirectToAction("Index", "Home");
+            }    
             CheckForUserAccessCode(out bool hasCorrectAccessCode, out double timeSinceLastRequest);
             model.CloseAccessCodeModal = hasCorrectAccessCode && timeSinceLastRequest <=LOCKOUT_TIME;
             model.Files = model.CloseAccessCodeModal ? model.Files : null;
@@ -58,15 +64,15 @@ namespace archivesystemWebUI.Controllers
         [ValidateHeaderAntiForgeryToken]
         public ActionResult Create(SaveFolderViewModel model)
         {
-            var result = _service.TrySaveFolder(model);
+            var result = _service.SaveFolder(model);
 
-            if (result == FolderActionResult.Success) return new HttpStatusCodeResult(200);
+            if (result == FolderServiceResult.Success) return new HttpStatusCodeResult(200);
 
-            if (result==FolderActionResult.AlreadyExist)  return new HttpStatusCodeResult(400);
+            if (result==FolderServiceResult.AlreadyExist)  return new HttpStatusCodeResult(400);
 
-            if (result == FolderActionResult.InvalidAccessLevel) return new HttpStatusCodeResult(403);
+            if (result == FolderServiceResult.InvalidAccessLevel) return new HttpStatusCodeResult(403);
 
-            if (result== FolderActionResult.MaxFolderDepthReached) return new HttpStatusCodeResult(404);
+            if (result== FolderServiceResult.MaxFolderDepthReached) return new HttpStatusCodeResult(404);
 
             return new HttpStatusCodeResult(500);
         }
@@ -78,11 +84,11 @@ namespace archivesystemWebUI.Controllers
         { 
             var result= _service.MoveFolder(model);
 
-            if (result== FolderActionResult.InvalidModelState) return new HttpStatusCodeResult(400);
+            if (result== FolderServiceResult.InvalidModelState) return new HttpStatusCodeResult(400);
 
-            if (result== FolderActionResult.Prohibited) return new HttpStatusCodeResult(405);
+            if (result== FolderServiceResult.Prohibited) return new HttpStatusCodeResult(405);
 
-            if (result== FolderActionResult.Success) return new HttpStatusCodeResult(200);
+            if (result== FolderServiceResult.Success) return new HttpStatusCodeResult(200);
 
             return new HttpStatusCodeResult(500);
         }
@@ -94,9 +100,9 @@ namespace archivesystemWebUI.Controllers
         public ActionResult Delete(int id)
         {
             var result = _service.DeleteFolder(id);
-            if (result==FolderActionResult.Success) return new HttpStatusCodeResult(204);
+            if (result==FolderServiceResult.Success) return new HttpStatusCodeResult(204);
 
-            if (result == FolderActionResult.Prohibited) return new HttpStatusCodeResult(400);
+            if (result == FolderServiceResult.Prohibited) return new HttpStatusCodeResult(400);
 
             return new HttpStatusCodeResult(500);  
         }
@@ -141,9 +147,9 @@ namespace archivesystemWebUI.Controllers
         public ActionResult Edit(CreateFolderViewModel model)
         {
             var result = _service.Edit(model);
-            if (result == FolderActionResult.InvalidModelState) return new HttpStatusCodeResult(400);
+            if (result == FolderServiceResult.InvalidModelState) return new HttpStatusCodeResult(400);
 
-            if (result == FolderActionResult.Success) return new HttpStatusCodeResult(200);
+            if (result == FolderServiceResult.Success) return new HttpStatusCodeResult(200);
 
             return new HttpStatusCodeResult(500);
         }
@@ -200,8 +206,8 @@ namespace archivesystemWebUI.Controllers
             if (accessCode != _service.GetCurrentUserAccessCode())
                 return new HttpStatusCodeResult(400);
 
-            Session[SessionData.IsAccessValidated] = true;
-            Session[SessionData.LastVisit] = DateTime.Now;
+            Session[GlobalConstants.IsAccessValidated] = true;
+            Session[GlobalConstants.LastVisit] = DateTime.Now;
             return new HttpStatusCodeResult(200);
         }
 
@@ -214,6 +220,8 @@ namespace archivesystemWebUI.Controllers
             if (string.IsNullOrEmpty(search))
             {
                 _service.GetUserData(out AppUser user, out int userAccessLevel);
+                if (userAccessLevel == DoesNotHaveAccessLevel)
+                    return model;
                 var rootFolder = _service.GetRootFolder();
                 model.Name = rootFolder.Name;
                 model.CurrentPath = new List<FolderPath> { new FolderPath { Id = rootFolder.Id, Name = "Root" } };
@@ -242,8 +250,8 @@ namespace archivesystemWebUI.Controllers
         private void CheckForUserAccessCode(out bool hasCorrectAccessCode, out double timeSinceLastRequest)
         {
             hasCorrectAccessCode =
-               Session[SessionData.IsAccessValidated] != null && (bool)Session[SessionData.IsAccessValidated];
-            var lastVisitTime = Session[SessionData.LastVisit] ?? new DateTime();
+               Session[GlobalConstants.IsAccessValidated] != null && (bool)Session[GlobalConstants.IsAccessValidated];
+            var lastVisitTime = Session[GlobalConstants.LastVisit] ?? new DateTime();
             timeSinceLastRequest = (DateTime.Now - (DateTime)lastVisitTime).TotalMinutes;
         }
 
@@ -254,7 +262,7 @@ namespace archivesystemWebUI.Controllers
             model.CloseAccessCodeModal = true;
             model.CurrentPath = folderpath;
             ViewBag.AllowCreateFolder = true;
-            Session[SessionData.LastVisit] = DateTime.Now;
+            Session[GlobalConstants.LastVisit] = DateTime.Now;
             return model;
         }
 

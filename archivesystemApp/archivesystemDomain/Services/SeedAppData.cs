@@ -102,7 +102,7 @@ namespace archivesystemDomain.Services
                 //create Root folder
                 var rootFolder = new Folder
                 {
-                    Name = "Root",
+                    Name = GlobalConstants.RootFolderName,
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now,
                     IsRestricted = true,

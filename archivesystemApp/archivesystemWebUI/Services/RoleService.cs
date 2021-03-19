@@ -53,6 +53,18 @@ namespace archivesystemWebUI.Services
             IdentityResult result = await RoleManager.CreateAsync(role);
             return result;   
         }
+        public IdentityResult AddToRole(string userId, string roleId)
+        {
+            var role = RoleManager.FindById(roleId);
+            var result = UserManager.AddToRole(userId, role.Name);
+            return result;
+        }
+        public IdentityResult AddToRoleByEmail(string userEmail,string roleId)
+        {
+            var user=repo.UserRepo.GetUserByMail(userEmail);
+            return AddToRole(user.UserId, roleId);
+        }
+
 
         public async Task<IdentityResult> EditRole(string oldName, string newName)
         {
@@ -82,12 +94,7 @@ namespace archivesystemWebUI.Services
             return repo.UserRepo.GetUserDataByUserIds(userIds);
         }
 
-        public IdentityResult AddToRole(string userId, string roleId)
-        {
-            var role=RoleManager.FindById(roleId);
-            var result=UserManager.AddToRole(userId, role.Name);
-            return result;
-        }
+        
 
         public IdentityResult RemoveFromRole ( string userId,string roleName)
         {

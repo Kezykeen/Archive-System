@@ -12,7 +12,7 @@ using System.Web.Http.ModelBinding;
 
 namespace archivesystemWebUI.Services
 {
-    public enum FolderActionResult
+    public enum FolderServiceResult
     {
         AlreadyExist, InvalidAccessLevel, MaxFolderDepthReached, Success
             , InvalidModelState, Prohibited, NotFound, UnknownError
@@ -26,23 +26,23 @@ namespace archivesystemWebUI.Services
             repo = unitofwork;
         }
 
-        public FolderActionResult DeleteFolder(int folderId)
+        public FolderServiceResult DeleteFolder(int folderId)
         {
             try
             {
                 var folderToDelete = repo.FolderRepo.Get(folderId);
                 if (folderToDelete == null)
-                    return FolderActionResult.NotFound;
+                    return FolderServiceResult.NotFound;
                 if (folderToDelete.IsRestricted)
-                    return FolderActionResult.Prohibited;
+                    return FolderServiceResult.Prohibited;
 
                 repo.FolderRepo.DeleteFolder(folderToDelete.Id);
                 repo.Save();
-                return FolderActionResult.Success;
+                return FolderServiceResult.Success;
             }
             catch
             {
-                return FolderActionResult.UnknownError;
+                return FolderServiceResult.UnknownError;
             }
 
         }
@@ -63,15 +63,15 @@ namespace archivesystemWebUI.Services
 
         }
 
-        public FolderActionResult Edit(CreateFolderViewModel model)
+        public FolderServiceResult Edit(CreateFolderViewModel model)
         {
             if (model.AccessLevelId == 0 || string.IsNullOrEmpty(model.Name) || model.Id == 0)
-                return FolderActionResult.InvalidModelState;
+                return FolderServiceResult.InvalidModelState;
             var folder = new Folder { Name = model.Name, Id = model.Id, AccessLevelId = model.AccessLevelId };
             repo.FolderRepo.UpdateFolder(folder);
             repo.Save();
 
-            return FolderActionResult.Success;
+            return FolderServiceResult.Success;
         }
 
         public CreateFolderViewModel GetCreateFolderViewModel(int parentId)
@@ -88,6 +88,7 @@ namespace archivesystemWebUI.Services
             GetUserData(out AppUser user, out int userAccessLevel);
             return repo.AccessLevelRepo.GetAll().Where(x => x.Id <= userAccessLevel);
         }
+
         public string GetCurrentUserAccessCode()
         {
             var userId = HttpContext.Current.User.Identity.GetUserId();
@@ -118,38 +119,13 @@ namespace archivesystemWebUI.Services
                     x => x.Subfolders)
                     .FirstOrDefault();
         }
+
         public void GetUserData(out AppUser user, out int userAccessLevel)
         {
             var userId = HttpContext.Current.User.Identity.GetUserId();
             user = repo.UserRepo.FindWithNavProps(c => c.UserId == userId, _ => _.Department).SingleOrDefault();
-            userAccessLevel = repo.AccessDetailsRepo.GetByEmployeeId(user.Id).AccessLevelId;
-        }
-
-        public FolderActionResult MoveFolder(MoveItemViewModel model)
-        {
-            if (model.Id == 0 || model.NewParentFolderId == 0 || model == null)
-                return FolderActionResult.InvalidModelState;
-            if (model.Id == model.NewParentFolderId)
-                return FolderActionResult.Prohibited; //Cannot move folder into itself
-            repo.FolderRepo.MoveFolder(model.Id, model.NewParentFolderId);
-            repo.Save();
-            return FolderActionResult.Success;
-        }
-
-        public FolderActionResult TrySaveFolder(SaveFolderViewModel model)
-        {
-            var parentFolder = GetFolder(model.ParentId);
-            if (parentFolder.Name == "Root")
-                return FolderActionResult.Prohibited;
-            if (parentFolder.Subfolders.Select(x => x.Name).Contains(model.Name) || model.Name == "Root")
-                return FolderActionResult.AlreadyExist;
-            if (parentFolder.AccessLevelId > model.AccessLevelId)
-                return FolderActionResult.InvalidAccessLevel;
-            if (GetFolderCurrentDepth(model.ParentId) >= (int)AllowableFolderDepth.Max)
-                return FolderActionResult.MaxFolderDepthReached;
-
-            SaveFolder(model);
-            return FolderActionResult.Success;
+            var userdetails = repo.AccessDetailsRepo.GetByEmployeeId(user.Id);
+            userAccessLevel = userdetails == null ? 0 : userdetails.AccessLevelId;
         }
 
         public string GetUserAccesscode()
@@ -159,13 +135,55 @@ namespace archivesystemWebUI.Services
             var userAccessCode = repo.AccessDetailsRepo.GetByEmployeeId(user.Id).AccessCode;
             return userAccessCode;
         }
+
+        public FolderServiceResult MoveFolder(MoveItemViewModel model)
+        {
+            if (model.Id == 0 || model.NewParentFolderId == 0 || model == null)
+                return FolderServiceResult.InvalidModelState;
+            if (model.Id == model.NewParentFolderId)
+                return FolderServiceResult.Prohibited; //Cannot move folder into itself
+            
+            var moveIsSuccessful=TryMoveFolder(model);
+            if(moveIsSuccessful)
+                return FolderServiceResult.Success;
+            return FolderServiceResult.Prohibited;
+        }
+
+        public FolderServiceResult SaveFolder(SaveFolderViewModel model)
+        {
+            var parentFolder = GetFolder(model.ParentId);
+            if (parentFolder.Name == GlobalConstants.RootFolderName)
+                return FolderServiceResult.Prohibited;
+            if (parentFolder.Subfolders.Select(x => x.Name).Contains(model.Name) || model.Name == GlobalConstants.RootFolderName)
+                return FolderServiceResult.AlreadyExist;
+            if (parentFolder.AccessLevelId > model.AccessLevelId)
+                return FolderServiceResult.InvalidAccessLevel;
+            if (GetFolderCurrentDepth(model.ParentId) >= GlobalConstants.MaxFolderDepth)
+                return FolderServiceResult.MaxFolderDepthReached;
+
+            TrySaveFolder(model);
+            return FolderServiceResult.Success;
+        }
+
+        
         #region Private Methods
         private int GetFolderCurrentDepth(int parentId)
         {
             var parentFolderPath = GetFolderPath(parentId);
             return parentFolderPath.Count();
         }
-        private void SaveFolder(SaveFolderViewModel model)
+
+        private bool TryMoveFolder(MoveItemViewModel model)
+        {
+            try
+            {
+                repo.FolderRepo.MoveFolder(model.Id, model.NewParentFolderId);
+                repo.Save();
+                return true;
+            }
+            catch (ArgumentException) { return false; } 
+        }
+        private void TrySaveFolder(SaveFolderViewModel model)
         {
             var parentFolder = GetFolder(model.ParentId);
             var folder = new Folder

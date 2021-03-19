@@ -57,6 +57,8 @@ namespace archivesystemWebUI.Controllers
         public ActionResult AddUserToRole(string userId)
         {
            var roles=_service.GetAllRoles();
+            if(string.IsNullOrWhiteSpace(userId))
+                return PartialView("_AddUserToRole", new AddToRoleViewModel{Roles = roles});
             var employeeName = _service.GetEmployeeName(userId);
             return PartialView("_AddUserToRole",new AddToRoleViewModel {
                 Roles = roles, UserId = userId, EmployeeName=employeeName });
@@ -64,10 +66,17 @@ namespace archivesystemWebUI.Controllers
 
         [HttpPost]
         [ValidateHeaderAntiForgeryToken]
-        public ActionResult AddUserToRole(string userId, string roleId)
+        public ActionResult AddUserToRole(string userId, string roleId,string userEmail)
         {
-            var result= _service.AddToRole(userId, roleId);
+            IdentityResult result;
+            if (string.IsNullOrWhiteSpace(roleId)) return new HttpStatusCodeResult(403);
+            if (string.IsNullOrWhiteSpace(userId) && !string.IsNullOrWhiteSpace(userEmail))
+                result=AddUserToRoleByEmail(userEmail, roleId);
+            else
+                result= _service.AddToRole(userId, roleId);
             if(result.Succeeded) return new HttpStatusCodeResult(201);
+
+            if (result.Errors.Any(x => x.Contains("User already in role"))) return new HttpStatusCodeResult(400);
 
             return new HttpStatusCodeResult(500);
         }
@@ -143,6 +152,12 @@ namespace archivesystemWebUI.Controllers
             };
             return viewModel;
         }
+
+        private IdentityResult AddUserToRoleByEmail(string userEmail, string roleId)
+        {
+           var result =_service.AddToRoleByEmail(userEmail, roleId);
+            return result;
+        } 
 
         #endregion
 

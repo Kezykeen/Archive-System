@@ -29,4 +29,14 @@ namespace archivesystemDomain.Services
         public string Name { get; set; }
         public string Email { get; set; }
     }
+
+    public class GlobalConstants
+    {
+        public const string IsAccessValidated = "IsAccessValidated";
+        public const string LastVisit = "LastVisit";
+        public const string userHasNoAccesscode = " userHasNoAccesscode";
+        public const string RootFolderName = "Root";
+        public const int MaxFolderDepth = 7;
+
+    }
 }
