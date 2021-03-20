@@ -22,9 +22,9 @@ namespace archivesystemWebUI.Controllers
     public class FolderController : Controller
     {
         private const byte LOCKOUT_TIME = 1; //lockout user after last request exceeds lockout time in minutes
-       
-        private IRoleService _roleService { get; set; }
-        private IFolderService _service { get; set; }
+
+        private readonly IRoleService _roleService;
+        private readonly IFolderService _service;
        
         public FolderController(IRoleService roleService, IFolderService service) 
         {
@@ -212,6 +212,8 @@ namespace archivesystemWebUI.Controllers
                 return new HttpStatusCodeResult(400);
 
             var accessCodeInDb = _service.GetCurrentUserAccessCode(HttpContext.User.Identity.GetUserId());
+            if (string.IsNullOrWhiteSpace(accessCodeInDb)) 
+                return new HttpStatusCodeResult(403);
             if (AccessCodeGenerator.HashCode(accessCode)!= accessCodeInDb)
                 return new HttpStatusCodeResult(400);
 
@@ -263,11 +265,13 @@ namespace archivesystemWebUI.Controllers
         }
         private FolderPageViewModel SearchForFolders(string search)
         {
-            var model = new FolderPageViewModel();
-            model.DirectChildren = _service.GetFoldersThatMatchName(search).ToList();
-            model.CurrentPath = new List<FolderPath>();
-            model.CloseAccessCodeModal = true;
-            model.Id = 0;
+            var model = new FolderPageViewModel
+            {
+                DirectChildren = _service.GetFoldersThatMatchName(search).ToList(),
+                CurrentPath = new List<FolderPath>(),
+                CloseAccessCodeModal = true,
+                Id = 0
+            };
             return model;
         }
         private void VerifyAccessAndFilterFolderSubFolders(out bool hasAuthorizedAccessToFolder, Folder folder)
