@@ -54,7 +54,7 @@ namespace archivesystemWebUI.Services
 
         }
 
-        public AccessDetail GetByNullableId(int? id)
+        public AccessDetail GetById(int? id)
         {
             return _unitOfWork.AccessDetailsRepo.GetAccessDetails().SingleOrDefault(m => m.Id == id.Value);
         }
@@ -106,14 +106,16 @@ namespace archivesystemWebUI.Services
             if (method == add)
             {
                 await _emailSender.SendEmailAsync(
-                    user.Email, "Access Code",
+                    user.Email,
+                    "Access Code",
                     $"Hello {user.Name},\nYour access code is:\n<strong>{accessCode}</strong>.\nThis is confidential. Do not share with anyone.");
             }
 
             if (method == update)
             {
                 await _emailSender.SendEmailAsync(
-                    user.Email, "Access Code (Updated)",
+                    user.Email,
+                    "Access Code (Updated)",
                     $"Hello {user.Name},\nYour new access code is:\n<strong>{accessCode}</strong>.\nThis is confidential. Do not share with anyone.");
             }
 
