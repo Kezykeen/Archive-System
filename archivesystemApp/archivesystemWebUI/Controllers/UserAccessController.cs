@@ -109,7 +109,7 @@ namespace archivesystemWebUI.Controllers
                 return RedirectToAction(nameof(ManageUserAccess));
             }
 
-            var model =_service.GetById(id);
+            var model =_service.GetByNullableId(id);
             if (model == null)
             {
                 return HttpNotFound();
@@ -140,7 +140,7 @@ namespace archivesystemWebUI.Controllers
             if (user == null)
                 return Json("User with this email does not exists. Please enter a different email", JsonRequestBehavior.AllowGet);
 
-            var accessDetails = _service.GetById(user.Id);
+            var accessDetails = _service.GetByNullableId(user.Id);
             return accessDetails == null ? Json(true, JsonRequestBehavior.AllowGet) : Json("User already has an access level!", JsonRequestBehavior.AllowGet);
         }
 

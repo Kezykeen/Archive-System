@@ -17,7 +17,7 @@ namespace archivesystemWebUI.Interfaces
         AddUserToAccessViewModel AddUserModel();
         Task Delete(int id);
         void EditUserModel(int id, out EditUserViewModel model, out AccessDetail accessDetails);
-        AccessDetail GetById(int? id);
+        AccessDetail GetByNullableId(int? id);
         AppUser GetUserByEmail(string email);
         Task Update(EditUserViewModel model);
         
