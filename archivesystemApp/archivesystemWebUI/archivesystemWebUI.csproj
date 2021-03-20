@@ -189,6 +189,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccessLevelController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\Api\TicketsController.cs" />
     <Compile Include="Controllers\Api\UsersController.cs" />
     <Compile Include="Controllers\SettingsController.cs" />
     <Compile Include="Infrastructures\CSRF.cs" />
@@ -222,6 +223,7 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CodeStatus.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\DataLayers\TicketDataView.cs" />
     <Compile Include="Models\DataLayers\UserDataView.cs" />
     <Compile Include="Models\AddUserToAccessViewModel.cs" />
     <Compile Include="Models\CreateAccessLevelViewModel.cs" />
@@ -240,11 +242,13 @@
     <Compile Include="Models\RoleViewModels\AddtoRoleViewModel.cs" />
     <Compile Include="Models\RoleViewModels\RemoveUserFromRoleViewModel.cs" />
     <Compile Include="Models\RoleViewModels\UsersInRoleViewModel.cs" />
+    <Compile Include="Models\TicketViewModel.cs" />
     <Compile Include="Models\UpdateUserVm.cs" />
     <Compile Include="Models\UserData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\AccessDetailsRepository.cs" />
     <Compile Include="Repository\DeptRepository.cs" />
+    <Compile Include="Repository\TicketRepo.cs" />
     <Compile Include="Repository\UserRepository.cs" />
     <Compile Include="Repository\FacultyRepository.cs" />
     <Compile Include="Repository\FileMetaRepo.cs" />
@@ -489,6 +493,7 @@
     <Content Include="Views\Shared\_AddUserToRole.cshtml" />
     <Content Include="Views\Shared\_RemoveUserFromRole.cshtml" />
     <Content Include="Views\Settings\TicketTypes.cshtml" />
+    <Content Include="Views\Settings\TicketTypeModal.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

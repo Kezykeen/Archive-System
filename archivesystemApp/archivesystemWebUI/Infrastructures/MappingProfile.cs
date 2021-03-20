@@ -64,8 +64,7 @@ namespace archivesystemWebUI.Infrastructures
                 .ForMember(dest => dest.Completed, opt =>
                 {
                     opt.MapFrom(src => src.Completed ? "Completed" : "Incomplete");
-                })
-               ;
+                });
 
             Mapper.CreateMap<AppUser, UpdateUserVm>()
                 .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.Name.Split().First()))
@@ -96,6 +95,26 @@ namespace archivesystemWebUI.Infrastructures
                 .ForMember(x=> x.DirectChildren,opt=> opt.MapFrom(src=> src.Subfolders));
 
 
+            Mapper.CreateMap<TicketViewModel, Ticket>()
+                .ForMember(dest => dest.CreatedAt, opt =>
+                    {
+                        opt.PreCondition(dest => dest.DestinationValue == null);
+                        opt.UseValue(DateTime.Now);
+                    }
+                )
+                .ForMember(dest => dest.UpdatedAt, opt => opt.UseValue(DateTime.Now));
+
+            Mapper.CreateMap<Ticket, TicketViewModel>();
+
+            Mapper.CreateMap<Ticket, TicketDataView>()
+                .ForMember(dest => dest.Status,
+                    opt => { opt.MapFrom(src => src.Status == Status.Active ? "Active" : "Inactive"); })
+                .ForMember(dest => dest.Designation, opt =>
+                {
+                    opt.MapFrom( src => GetDesignation.Value(src.Designation));
+                })
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt.ToString("dd MMM, yy")))
+                .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.UpdatedAt.ToString("dd MMM, yy")));
         }
     }
 }

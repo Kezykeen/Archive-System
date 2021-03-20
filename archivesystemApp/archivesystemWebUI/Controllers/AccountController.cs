@@ -224,34 +224,32 @@ namespace archivesystemWebUI.Controllers
             {
                 var user = _unitOfWork.UserRepo.GetUserByMail(model.Email);
                   
-                var newUser = new ApplicationUser { UserName = user.Name, Email = model.Email, EmailConfirmed = true, PhoneNumber = user.Phone};
-                var result = await UserManager.CreateAsync(newUser, model.Password);
+                var identityUser = new ApplicationUser { UserName = user.Name, Email = model.Email, EmailConfirmed = true, PhoneNumber = user.Phone};
+                var result = await UserManager.CreateAsync(identityUser, model.Password);
                 if (result.Succeeded)
                 {         
 
                     // Update UserId of User classS
-                    _unitOfWork.UserRepo.UpdateUserId(model.Email, newUser.Id);
+                    _unitOfWork.UserRepo.UpdateUserId(model.Email, identityUser.Id);
 
                     switch (user.Designation)
                     {
                         case Designation.Student:
-                            await UserManager.AddToRoleAsync(newUser.Id, "Student");
-
+                            await UserManager.AddToRoleAsync(identityUser.Id, "Student");
                             break;
                         case Designation.Alumni:
-                            await UserManager.AddToRoleAsync(newUser.Id, "Alumni");
+                            await UserManager.AddToRoleAsync(identityUser.Id, "Alumni");
                             break;
                         case Designation.Staff:
-                            await UserManager.AddToRoleAsync(newUser.Id, "Staff");
+                            await UserManager.AddToRoleAsync(identityUser.Id, "Staff");
                             break;
                         default:
                             break;
                     }
 
-
                     user.Completed = true;
                     await _unitOfWork.SaveAsync();
-                    await SignInManager.SignInAsync(newUser, isPersistent: false, rememberBrowser: false);
+                    await SignInManager.SignInAsync(identityUser, isPersistent: false, rememberBrowser: false);
                     return RedirectToAction("Index", "Home");
                 }
                 AddErrors(result);
@@ -376,7 +374,7 @@ namespace archivesystemWebUI.Controllers
             return View();
         }
 
-        //
+        
         // POST: /Account/ExternalLogin
         [HttpPost]
         [AllowAnonymous]

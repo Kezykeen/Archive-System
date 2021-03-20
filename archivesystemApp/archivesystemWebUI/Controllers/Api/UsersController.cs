@@ -54,22 +54,14 @@ namespace archivesystemWebUI.Controllers.Api
             }
         }
 
-        [Route("api/employees")]
+        [Route("api/users")]
         [HttpGet]
-        public IHttpActionResult GetAllEmployees()
+        public IHttpActionResult GetAllUsers()
         {
             var employees = _unitOfWork.UserRepo.GetUsersWithDept();
             var response = Mapper.Map<IEnumerable<AppUser>,List<UserDataView>>(employees);
 
             return Ok(response);
-
-        }
-
-        [Route("api/admins")]
-        [HttpGet]
-        public IHttpActionResult GetAllAdmins()
-        {
-            return NotFound();
 
         }
 
@@ -80,7 +72,6 @@ namespace archivesystemWebUI.Controllers.Api
             return NotFound();
         }
 
-       
 
         [HttpDelete]
         public IHttpActionResult DeleteUser(int id)
@@ -117,5 +108,4 @@ namespace archivesystemWebUI.Controllers.Api
             base.Dispose(disposing);
         }
     }
-
 }

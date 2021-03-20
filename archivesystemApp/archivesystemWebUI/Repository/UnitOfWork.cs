@@ -17,7 +17,7 @@ namespace archivesystemWebUI.Repository
         public IFolderRepo FolderRepo { get; }
         public IFileMetaRepo FileMetaRepo { get; }
         public IFileRepo FileRepo { get; }
-        
+        public ITicketRepo TicketRepo { get; }
 
 
         public UnitOfWork(
@@ -30,7 +30,8 @@ namespace archivesystemWebUI.Repository
             IAccessDetailsRepository accessDetailsRepository,
             IFolderRepo folderRepo,
             IFileMetaRepo fileMetaRepo,
-            IFileRepo fileRepo
+            IFileRepo fileRepo,
+            ITicketRepo ticketRepo
            
             )
         {
@@ -44,7 +45,8 @@ namespace archivesystemWebUI.Repository
             UserRepo = userRepo;
             FolderRepo = folderRepo;
             FacultyRepo = facultyRepo;
-            
+            TicketRepo = ticketRepo;
+
         }
 
 
