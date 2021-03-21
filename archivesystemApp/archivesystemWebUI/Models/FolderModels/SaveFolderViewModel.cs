@@ -9,7 +9,6 @@ namespace archivesystemWebUI.Models.FolderModels
 {
     public class SaveFolderViewModel
     {
-        public Folder ParentFolder { get; set; }
         public string Name { get; set; } 
         public int? AccessLevelId { get; set; }
         public int ParentId { get; set; }
