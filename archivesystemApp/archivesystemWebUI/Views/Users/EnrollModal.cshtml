@@ -77,7 +77,7 @@
                         @Html.LabelFor(e => e.DepartmentId)
 
 
-                        @Html.DropDownListFor(m => m.DepartmentId, new SelectList(Model.Departments, "Id", "Name"), "Select Department", new { @class = "select" })
+                        @Html.DropDownListFor(m => m.DepartmentId, new SelectList(Model.Departments, "Id", "Name"), "Select Type", new { @class = "select" })
                         @Html.ValidationMessageFor(e => e.DepartmentId)
 
                     </div>

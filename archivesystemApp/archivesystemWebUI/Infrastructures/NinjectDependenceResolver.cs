@@ -3,6 +3,7 @@ using Ninject;
 using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
+using System.Web.UI.WebControls;
 using archivesystemDomain;
 using archivesystemDomain.Entities;
 using archivesystemDomain.Interfaces;
@@ -49,9 +50,11 @@ namespace archivesystemWebUI.Infrastructures
             kernel.Bind<IFacultyRepository>().To<FacultyRepository>();
             kernel.Bind<IFileMetaRepo>().To<FileMetaRepo>();
             kernel.Bind<ITicketRepo>().To<TicketRepo>();
+            kernel.Bind<IApplicationRepo>().To<ApplicationRepo>();
             kernel.Bind<IAccessLevelService>().To<AccessLevelService>();
             kernel.Bind<IUserAccessService>().To<UserAccessService>();
             kernel.Bind<IFileRepo>().To<FileRepo>();
+            kernel.Bind<IUpsertFile>().To<UpsertFile>();
             kernel.Bind<IFolderService>().To<FolderService>();
             kernel.Bind<IFacultyService>().To<FacultyService>();
             

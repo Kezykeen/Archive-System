@@ -50,6 +50,7 @@ namespace archivesystemWebUI
                 "~/Content/assets/js/bootstrap-datetimepicker.min.js",
                 "~/Content/assets/js/bootbox.js",
                 "~/Content/assets/js/sweetalert2.all.min.js",
+                "~/Content/assets/plugins/summernote/dist/summernote-bs4.min.js",
                 "~/Content/assets/js/app.js"
             ));
 
@@ -71,6 +72,7 @@ namespace archivesystemWebUI
                 "~/Content/assets/css/select2.min.css",
                 "~/Content/assets/css/dataTables.bootstrap4.min.css",
                 "~/Content/assets/css/bootstrap-datetimepicker.min.css",
+                "~/Content/assets/plugins/summernote/dist/summernote-bs4.css",
                 "~/Content/assets/css/style.css",
                 "~/Content/assets/css/archive-custom.css"
                 ));

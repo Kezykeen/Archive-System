@@ -115,6 +115,23 @@ namespace archivesystemWebUI.Infrastructures
                 })
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt.ToString("dd MMM, yy")))
                 .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.UpdatedAt.ToString("dd MMM, yy")));
+
+
+            Mapper.CreateMap<ApplicationVm, Application>()
+                .ForMember(dest => dest.CreatedAt, opt =>
+                    {
+                        opt.PreCondition(dest => dest.DestinationValue == null);
+                        opt.UseValue(DateTime.Now);
+                    }
+                )
+                .ForMember(dest => dest.UpdatedAt, opt => opt.UseValue(DateTime.Now))
+                .ForMember(dest => dest.Status, opt =>
+                {
+                    opt.UseValue(ApplicationStatus.Pending);
+                })
+                .ForMember(dest => dest.RefNo, opt => opt.UseValue(Guid.NewGuid().ToString("N")));
+
+            Mapper.CreateMap<Application, ApplicationVm>();
         }
     }
 }

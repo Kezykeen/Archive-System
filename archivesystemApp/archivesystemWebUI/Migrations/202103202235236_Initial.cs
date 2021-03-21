@@ -271,20 +271,26 @@ namespace archivesystemWebUI.Migrations
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
-                        RefNo = c.String(),
+                        Title = c.String(maxLength: 50),
+                        RefNo = c.String(maxLength: 50),
                         UserId = c.Int(nullable: false),
                         Note = c.String(),
                         Status = c.Int(nullable: false),
                         Archive = c.Boolean(nullable: false),
-                        Approve = c.Boolean(nullable: false),
+                        Approve = c.Boolean(),
+                        AttachFileId = c.Int(),
                         CreatedAt = c.DateTime(nullable: false),
                         UpdatedAt = c.DateTime(nullable: false),
                         ApplicationType_Id = c.Int(),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Tickets", t => t.ApplicationType_Id)
+                .ForeignKey("dbo.Files", t => t.AttachFileId)
                 .ForeignKey("dbo.AppUsers", t => t.UserId, cascadeDelete: true)
+                .Index(t => t.Title, name: "TitleIndex")
+                .Index(t => t.RefNo, name: "RefNoIndex")
                 .Index(t => t.UserId)
+                .Index(t => t.AttachFileId)
                 .Index(t => t.ApplicationType_Id);
             
             CreateTable(
@@ -373,6 +379,7 @@ namespace archivesystemWebUI.Migrations
             DropForeignKey("dbo.Comments", "UserId", "dbo.AppUsers");
             DropForeignKey("dbo.Files", "Comment_Id", "dbo.Comments");
             DropForeignKey("dbo.Comments", "ApplicationId", "dbo.Applications");
+            DropForeignKey("dbo.Applications", "AttachFileId", "dbo.Files");
             DropForeignKey("dbo.AppUsers", "Application_Id", "dbo.Applications");
             DropForeignKey("dbo.Approvals", "UserId", "dbo.AppUsers");
             DropForeignKey("dbo.Approvals", "ApplicationId", "dbo.Applications");
@@ -406,7 +413,10 @@ namespace archivesystemWebUI.Migrations
             DropIndex("dbo.Approvals", new[] { "ApplicationId" });
             DropIndex("dbo.Approvals", new[] { "UserId" });
             DropIndex("dbo.Applications", new[] { "ApplicationType_Id" });
+            DropIndex("dbo.Applications", new[] { "AttachFileId" });
             DropIndex("dbo.Applications", new[] { "UserId" });
+            DropIndex("dbo.Applications", "RefNoIndex");
+            DropIndex("dbo.Applications", "TitleIndex");
             DropIndex("dbo.ApplicationReceivers", new[] { "Application_Id" });
             DropIndex("dbo.ApplicationReceivers", new[] { "ReceiverId" });
             DropIndex("dbo.UserProfiles", new[] { "SignatureId" });

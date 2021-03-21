@@ -12,7 +12,7 @@ namespace archivesystemDomain.Entities
         public bool? Approved { get; set; }
         public DateTime TimeSent { get; set; }
         public DateTime? TimeReceived { get; set; }
-        public DateTime TimeRejected { get; set; }
+        public DateTime? TimeRejected { get; set; }
 
     }
 }

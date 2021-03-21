@@ -9,10 +9,24 @@
                     <a href="@Url.Action("Index", "Home")"><i class="la la-dashboard"></i> <span> Dashboard</span> </a>
 
                 </li>
+
+
                 <li class="">
                     <a href="@Url.Action("Index", "Users")"><i class="la la-user"></i> <span> User Management</span> </a>
 
                 </li>
+                
+                <li class="menu-title">
+                    <span>Application Management</span>
+                </li>
+                <li class="submenu">
+                    <a href="#"><i class="la la-mail-bulk"></i> <span> Applications</span> <span class="menu-arrow"></span></a>
+                    <ul style="display: none;">
+                        <li><a href="@Url.Action("Index", "Applications")">All</a></li>
+
+                    </ul>
+                </li>
+
                 <li class="menu-title">
                     <span>Role Management</span>
                 </li>

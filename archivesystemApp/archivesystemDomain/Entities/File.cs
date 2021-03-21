@@ -13,7 +13,7 @@ namespace archivesystemDomain.Entities
         public string Name { get; set; }
         public string ContentType { get; set; }
         public byte[] Content { get; set; }
-        public int FileMetaId { get; set; }
+        public int? FileMetaId { get; set; }
         public FileMeta FileMeta { get; set; }
         public int? FolderId { get; set; }
         public Folder Folder { get; set; }

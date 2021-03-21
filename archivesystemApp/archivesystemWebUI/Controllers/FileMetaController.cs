@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using archivesystemDomain.Entities;
 using archivesystemDomain.Interfaces;
 using archivesystemWebUI.Infrastructures;
+using archivesystemWebUI.Interfaces;
 using archivesystemWebUI.Models;
 using Microsoft.AspNet.Identity;
 
@@ -14,11 +15,13 @@ namespace archivesystemWebUI.Controllers
     public class FileMetaController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IUpsertFile _upsertFile;
 
 
-        public FileMetaController(IUnitOfWork unitOfWork)
+        public FileMetaController(IUnitOfWork unitOfWork, IUpsertFile upsertFile )
         {
             _unitOfWork = unitOfWork;
+            _upsertFile = upsertFile;
         }
         
         // GET: FileMeta
@@ -36,6 +39,7 @@ namespace archivesystemWebUI.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult New(FileMetaVm model, HttpPostedFileBase fileBase)
         {
             if (!ModelState.IsValid)
@@ -47,7 +51,7 @@ namespace archivesystemWebUI.Controllers
 
             if (fileBase !=null)
             {
-                UpsertFile.Save(model, fileBase);
+              model.File = _upsertFile.Save(model.File, fileBase);
             }
 
             model.File.FileMeta = new FileMeta
@@ -59,10 +63,7 @@ namespace archivesystemWebUI.Controllers
             };
          
             model.File.AccessLevelId = model.AccessLevelId;
-            model.File.CreatedAt = DateTime.Now;
-            model.File.UpdatedAt = DateTime.Now;
-
-          _unitOfWork.FolderRepo
+            _unitOfWork.FolderRepo
                 .FindWithNavProps(f => f.Id == model.FolderId, _ => _.Files)
                 .SingleOrDefault()?.Files.Add(model.File);
             _unitOfWork.Save();

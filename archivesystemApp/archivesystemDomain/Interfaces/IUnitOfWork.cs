@@ -17,6 +17,7 @@ namespace archivesystemDomain.Interfaces
         IFileMetaRepo FileMetaRepo { get; }
         IFileRepo FileRepo { get; }
         ITicketRepo TicketRepo { get; }
+        IApplicationRepo ApplicationRepo { get;  }
 
 
         int Save();
