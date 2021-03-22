@@ -1,11 +1,11 @@
 ﻿
 
-@using archivesystemWebUI.Models
-@model RoleViewModel
+@using archivesystemWebUI.Models.RoleViewModels
+@model AddOrEditRoleViewModel
 @{
     string modalTitle;
     string btnText;
-    if (Model.Id == new Guid())
+    if (string.IsNullOrWhiteSpace(Model.Id))
     {
         modalTitle = "Create Role";
         btnText = "Add Role";
@@ -32,7 +32,7 @@
         <input hidden name="role-id" value="@Model.Id" id="role-id" />
         <input hidden name="role-id" value="@Model.Name" id="role-name" />
         @{
-            if (Model.Id == new Guid())
+            if (string.IsNullOrWhiteSpace(Model.Id))
             {
                 <div class="form-group">
                     <label for="name" style="font-weight:bold">Role Name:</label>

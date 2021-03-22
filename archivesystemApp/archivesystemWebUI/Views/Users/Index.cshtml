@@ -1,0 +1,348 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Page Content -->
+<div class="content container-fluid">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Users</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Users</li>
+                </ul>
+            </div>
+            <div class="col-auto float-right ml-auto">
+                <a href="#"  class="btn add-btn modal-add"  data-toggle="modal"  data-target="@Url.Action("EnrollModal")"><i class="fa fa-plus"></i> Add Employee</a>
+
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Success!</strong> @TempData["Success"].
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+
+    <!-- Search Filter -->
+    
+    <!-- /Search Filter -->
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table table-striped custom-table datatable" id="users">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>ID</th>
+                            <th>Email</th>
+                            <th>Roles</th>
+                            <th>Created</th>
+                            <th>Modified</th>
+                            <th>Status</th>
+                            <th class="no-sort">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Page Content -->
+<!-- Add User Modal -->
+<div id="add_user" class="modal custom-modal fade" role="dialog">
+    @* @{ Html.RenderAction("EnrollModal", "Employees");} *@
+</div>
+<!-- /Add User Modal -->
+<!-- Edit User Modal -->
+<div id="edit_user" class="modal custom-modal fade" role="dialog">
+    
+</div>
+<!-- /Edit User Modal -->
+<!-- Delete Employee Modal -->
+<div class="modal custom-modal fade" id="delete_user" role="dialog">
+    
+</div>
+<!-- /Delete Employee Modal -->
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            var table = $("#users").DataTable({
+                responsive: true,
+                autoWidth: false,
+                "bFilter": true,
+                language: {
+                    search: "",
+                    searchPlaceholder: "Search",
+                    sLengthMenu: "_MENU_items"
+                },
+
+                ajax: {
+                    url: "/api/employees",
+                    dataSrc: ''
+                },
+                columns: [
+                    {
+                        data: "name",
+                        render: function (data, type, user) {
+
+                            return ' <h2 class="table-avatar">' +
+                                '<a href="profile.html" class="avatar">' +
+                                '<img alt="" src="assets/img/profiles/avatar-02.jpg">' +
+                                '</a><a href="/users/details/' + user.id + '">' + data + '<span>' + user.department + '</span></a></h2>';
+                        }
+
+                    },
+                    { data: "tagId" },
+                    { data: "email" },
+
+
+                    {
+                        data: "roles",
+                        render: function (data, type, user) {
+                            if (data === null) {
+                                return "None";
+                            }
+                            return '<span class="badge bg - inverse - success">' + data.join(",") + '</span>';
+                        }
+                    },
+                    {
+                        data: "createdAt"
+                    },
+                    {
+                        data: "updatedAt"
+                    },
+                    { data: "completed" },
+                    {
+                        data: "id",
+                        render: function (data, type, user) {
+                            return '<div class="btn-group">' +
+                                '<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>' +
+                                '<div class="dropdown-menu" style="">' +
+                                '<a class="dropdown-item modal-edit" href="#" data-toggle="modal" data-target="/users/editmodal/'+data+'"  ><i class="fa fa-pencil m-r-5"></i> Edit</a>' +
+                                '<a class="dropdown-item modal-delete" href="#" data-toggle="modal" data-target="/users/delprompt/' + data + '"><i class="fa fa-trash-o m-r-5"></i> Delete</a>' +
+                                '</div>' +
+                                '</div>';
+
+                        }
+                    },
+                    {
+                        data: "id",
+                        render: function (data) {
+                            return '<a href="#" data-customer-id="' +
+                                data +
+                                '" class="js-delete" data-toggle="tooltip" data-original-title="Delete"> <i class="icon-trash txt-danger"></i></a>';
+
+                        }
+                    }
+
+                ]
+            });
+
+
+            var deleteButton = $("#users").on("click",
+                ".modal-delete",
+                function (e) {
+                    e.preventDefault();
+                    deleteButton = $(this);
+                    $("#delete_user").remove;
+                    $.get(deleteButton.data("target")).done(
+                        function (data) {
+
+                            $("#delete_user").html(data);
+
+                            $("#delete_user").modal();
+
+
+                        }
+
+
+                    );
+
+                });
+
+            $("#delete_user").on("click",
+                ".js-delete",
+                function () {
+                    var button = $(this);
+
+                    $.ajax({
+                        url: "/api/users/" + button.attr("data-user-id"),
+                        method: "DELETE",
+                        success: function () {
+
+
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'User Successfully Deleted',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                            table.row(deleteButton.parents("tr").remove()).remove().draw();
+
+                        }
+
+
+                    });
+                });
+
+            $("#users").on("click",
+                ".modal-edit",
+                function (e) {
+                    e.preventDefault();
+                   var editButton = $(this);
+                    $("#edit_user").remove;
+                    $.get(editButton.data("target")).done(
+                        function (data) {
+
+                            $("#edit_user").html(data);
+
+                            $("#edit_user").modal("show");
+
+                            $.validator.unobtrusive.parse("#update_user");
+                            
+                            if ($('#edit_user .select').length > 0) {
+                                $('#edit_user .select').select2({
+                                    minimumResultsForSearch: -1,
+                                    width: '100%'
+                                });
+
+                            }
+                           
+                            if ($('#edit_user .datetimepicker').length > 0) {
+                                $('#edit_user .datetimepicker').datetimepicker({
+                                    format: 'DD/MM/YYYY',
+                                    icons: {
+                                        up: "fa fa-angle-up",
+                                        down: "fa fa-angle-down",
+                                        next: 'fa fa-angle-right',
+                                        previous: 'fa fa-angle-left'
+                                    }
+                                });
+                            }
+                        }
+
+
+                    );
+
+                });
+
+
+            $(".modal-add").on("click", function (e) {
+                    debugger;
+                    e.preventDefault();
+                  var  addButton = $(this);
+                    $("#add_user").remove;
+                    $.get(addButton.data("target")).done(
+                            function(data) {
+
+                            $("#add_user").html(data);
+
+                            $("#add_user").modal("show");
+                            $.validator.unobtrusive.parse("#enroll");
+                            
+                            if ($('#add_user .select').length > 0) {
+                                $('#add_user .select').select2({
+                                    minimumResultsForSearch: -1,
+                                    width: '100%'
+                                });
+
+                            }
+                           
+                            if ($('#add_user .datetimepicker').length > 0) {
+                                $('#add_user .datetimepicker').datetimepicker({
+                                    format: 'DD/MM/YYYY',
+                                    icons: {
+                                        up: "fa fa-angle-up",
+                                        down: "fa fa-angle-down",
+                                        next: 'fa fa-angle-right',
+                                        previous: 'fa fa-angle-left'
+                                    }
+                                });
+                            }
+
+                        
+
+
+                    });
+              
+
+            });
+
+          
+        });
+//        function OnEnrollSuccess(response) {
+//
+//            if (response.status === 'success') {
+//
+//                $("#add_user").remove;
+//                $('#add_user').modal('hide');
+//
+//                Swal.fire({
+//                    position: 'top-end',
+//                    icon: 'success',
+//                    title: 'User Successfully Created',
+//                    showConfirmButton: false,
+//                    timer: 1500
+//                });
+//
+//                table.ajax.reload();
+//            } else if (response.status == null) {
+//                $('#add_user').modal('hide');
+//                //                    $("#add_user").remove;
+//                //                  
+//                //                    $("#add_user").html(response);
+//                //                   
+//                //                    $("#add_user").modal("show");
+//                $.validator.unobtrusive.parse("#enroll");
+//
+//                if ($('#add_user .select').length > 0) {
+//                    $('#add_user .select').select2({
+//                        minimumResultsForSearch: -1,
+//                        width: '100%'
+//                    });
+//
+//                }
+//
+//                if ($('#add_user .datetimepicker').length > 0) {
+//                    $('#add_user .datetimepicker').datetimepicker({
+//                        format: 'DD/MM/YYYY',
+//                        icons: {
+//                            up: "fa fa-angle-up",
+//                            down: "fa fa-angle-down",
+//                            next: 'fa fa-angle-right',
+//                            previous: 'fa fa-angle-left'
+//                        }
+//                    });
+//                }
+//
+//            }
+//        }
+//
+//        function OnEnrollFailure(response) {
+//            Swal.fire({
+//                position: 'top-end',
+//                icon: 'error',
+//                title: response,
+//                showConfirmButton: false,
+//                timer: 1500
+//            });
+//        }
+    </script>
+}

@@ -10,12 +10,14 @@ using archivesystemDomain.Services;
 using archivesystemWebUI.Repository;
 using archivesystemWebUI.Services;
 using Ninject.Web.Common;
+using archivesystemWebUI.Services;
+using archivesystemWebUI.Interfaces;
 
 namespace archivesystemWebUI.Infrastructures
 {
     public class NinjectDependenceResolver : IDependencyResolver
     {
-        private IKernel kernel;
+        private readonly IKernel kernel;
         public NinjectDependenceResolver(IKernel kernelParam)
         {
             kernel = kernelParam;
@@ -35,7 +37,7 @@ namespace archivesystemWebUI.Infrastructures
         private void AddBindings()
         {
             kernel.Bind(typeof(ApplicationDbContext)).ToSelf().InRequestScope();
-            kernel.Bind<IEmployeeRepository>().To<EmployeeRepository>();
+            kernel.Bind<IUserRepository>().To<UserRepository>();
             kernel.Bind<IDeptRepository>().To<DeptRepository>();
             kernel.Bind<IAccessDetailsRepository>().To<AccessDetailsRepository>();
             kernel.Bind<IAccessLevelRepository>().To<AccessLevelRepository>();
@@ -49,6 +51,12 @@ namespace archivesystemWebUI.Infrastructures
             kernel.Bind<IFileMetaRepo>().To<FileMetaRepo>();
             kernel.Bind<IFacultyService>().To<FacultyService>();
             kernel.Bind<IDepartmentService>().To<DepartmentService>();
+            kernel.Bind<IAccessLevelService>().To<AccessLevelService>();
+            kernel.Bind<IUserAccessService>().To<UserAccessService>();
+            kernel.Bind<IFileRepo>().To<FileRepo>();
+            kernel.Bind<IFolderService>().To<FolderService>();
+            kernel.Bind<IFacultyService>().To<FacultyService>();
+            
         }
     }
 }

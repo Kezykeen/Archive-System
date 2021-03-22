@@ -2,6 +2,12 @@
 using System.Web.Mvc;
 using archivesystemWebUI.Models;
 using archivesystemWebUI.Services;
+using archivesystemDomain.Entities;
+using archivesystemDomain.Interfaces;
+using archivesystemWebUI.Interfaces;
+using archivesystemWebUI.Models;
+using archivesystemWebUI.Services;
+using AutoMapper;
 
 namespace archivesystemWebUI.Controllers
 {
@@ -13,6 +19,13 @@ namespace archivesystemWebUI.Controllers
         public FacultyController(IFacultyService facultyService)
         {
             _facultyService = facultyService;
+        private readonly IUnitOfWork _unitOfWork;
+        private IFacultyService _service;
+        
+        public FacultyController(IUnitOfWork unitOfWork, IFacultyService _service)
+        {
+            _unitOfWork = unitOfWork;
+            this._service = _service;
         }
 
         public ActionResult Index()
@@ -66,6 +79,22 @@ namespace archivesystemWebUI.Controllers
 
             return Json(new {success = true}, JsonRequestBehavior.AllowGet);
         }
+            try
+            {
+                var result= _service.DeleteFaculty(id);
+                if(result.Result== FacultyServiceResult.Prohibited)
+                    return Json("prohibited", JsonRequestBehavior.AllowGet);
+
+
+                return Json("success", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception)
+            {
+                return Json("failure", JsonRequestBehavior.AllowGet);
+            }
+        }
+
+       
 
         [HttpPost]
         public JsonResult FacultyNameCheck(string name, int id)

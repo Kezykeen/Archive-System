@@ -182,7 +182,7 @@ namespace archivesystemWebUI.Controllers
             }
 
             var token = _unitOfWork.TokenRepo.Find(t => t.Code == code).SingleOrDefault();
-            var employee = _unitOfWork.EmployeeRepo.Get(userId.Value);
+            var employee = _unitOfWork.UserRepo.Get(userId.Value);
             
             if (token == null)
             {
@@ -215,39 +215,52 @@ namespace archivesystemWebUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
-
-           
-          
-           
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                if (_unitOfWork.EmployeeRepo.EmailExists(model.Email, null))
-                {
-                    var employee = _unitOfWork.EmployeeRepo.GetEmployeeByMail(model.Email);
-                  
-                    var user = new ApplicationUser { UserName = employee.Name, Email = model.Email, EmailConfirmed = true, PhoneNumber = employee.Phone};
-                    var result = await UserManager.CreateAsync(user, model.Password);
-                    if (result.Succeeded)
-                    {
-
-
-                        // Update UserId of Employee class
-                        _unitOfWork.EmployeeRepo.UpdateUserId(model.Email, user.Id);
-                        await UserManager.AddToRoleAsync(user.Id, "Employee");
-                        employee.Completed = true;
-                        await _unitOfWork.SaveAsync();
-                        await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-                        return RedirectToAction("Index", "Home");
-                    }
-                    AddErrors(result);
-                }
-                else
-                {
-                    ModelState.AddModelError("Email", @"Email does not Exist. Please contact Admin");
-                    return View(model);
-                }
+                return View(model);
             }
 
+            if (_unitOfWork.UserRepo.EmailExists(model.Email, null))
+            {
+                var user = _unitOfWork.UserRepo.GetUserByMail(model.Email);
+                  
+                var newUser = new ApplicationUser { UserName = user.Name, Email = model.Email, EmailConfirmed = true, PhoneNumber = user.Phone};
+                var result = await UserManager.CreateAsync(newUser, model.Password);
+                if (result.Succeeded)
+                {         
+
+                    // Update UserId of User classS
+                    _unitOfWork.UserRepo.UpdateUserId(model.Email, newUser.Id);
+
+                    switch (user.Designation)
+                    {
+                        case Designation.Student:
+                            await UserManager.AddToRoleAsync(newUser.Id, "Student");
+
+                            break;
+                        case Designation.Alumni:
+                            await UserManager.AddToRoleAsync(newUser.Id, "Alumni");
+                            break;
+                        case Designation.Staff:
+                            await UserManager.AddToRoleAsync(newUser.Id, "Staff");
+                            break;
+                        default:
+                            break;
+                    }
+
+
+                    user.Completed = true;
+                    await _unitOfWork.SaveAsync();
+                    await SignInManager.SignInAsync(newUser, isPersistent: false, rememberBrowser: false);
+                    return RedirectToAction("Index", "Home");
+                }
+                AddErrors(result);
+            }
+            else
+            {
+                ModelState.AddModelError("Email", @"Email does not Exist. Please contact Admin");
+                return View(model);
+            }
             // If we got this far, something failed, redisplay form
             return View(model);
         }
@@ -280,36 +293,34 @@ namespace archivesystemWebUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
-            if (ModelState.IsValid)
-            {    
-                var user = await UserManager.FindByEmailAsync(model.Email);
-                if (user == null || !(await UserManager.IsEmailConfirmedAsync(user.Id)))
-                {
-                    // Don't reveal that the user does not exist or is not confirmed
-                    return View("ForgotPasswordConfirmation");
-                }
-
-                // Send an email with this link
-                string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-
-                try
-                {
-                    await _emailSender.SendEmailAsync(model.Email, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
-
-                }
-                catch (Exception e)
-                {
-                    ModelState.AddModelError("", e.Message);
-                    return View(model);
-
-                }
-                return View("ForgotPasswordConfirmation");
+            if (!ModelState.IsValid)
+            {
+                return View(model);
 
             }
+            var user = await UserManager.FindByEmailAsync(model.Email);
+            if (user == null || !(await UserManager.IsEmailConfirmedAsync(user.Id)))
+            {
+                // Don't reveal that the user does not exist or is not confirmed
+                return View("ForgotPasswordConfirmation");
+            }
 
-            // If we got this far, something failed, redisplay form
-            return View(model);
+            // Send an email with this link
+            string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+            var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+
+            try
+            {
+                await _emailSender.SendEmailAsync(model.Email, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+            }
+            catch (Exception e)
+            {
+                ModelState.AddModelError("", e.Message);
+                return View(model);
+
+            }
+            return View("ForgotPasswordConfirmation");
         }
 
         //

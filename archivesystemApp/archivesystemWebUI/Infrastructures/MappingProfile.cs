@@ -9,7 +9,7 @@ using archivesystemWebUI.Models;
 using archivesystemWebUI.Models.DataLayers;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
-using archivesystemWebUI.Models.FolderViewModels;
+using archivesystemWebUI.Models.FolderModels;
 
 
 
@@ -25,7 +25,7 @@ namespace archivesystemWebUI.Infrastructures
         {
 
 
-            Mapper.CreateMap<EnrollViewModel, Employee>()
+            Mapper.CreateMap<EnrollViewModel, AppUser>()
                 .ForMember(
                     dest => dest.Name,
                     opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}")
@@ -39,24 +39,23 @@ namespace archivesystemWebUI.Infrastructures
                 opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}")
             );
 
-            Mapper.CreateMap<UpdateEmployeeVM, EmpUniqueProps>().ForMember(
+            Mapper.CreateMap<UpdateUserVm, EmpUniqueProps>().ForMember(
                 dest => dest.Name,
                 opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}")
             );
-            Mapper.CreateMap<UpdateEmployeeVM, Employee>().ForMember(
+            Mapper.CreateMap<UpdateUserVm, AppUser>().ForMember(
                 dest => dest.Name,
                 opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}")
             );
 
-            Mapper.CreateMap<Employee, UserDataView>()
+            Mapper.CreateMap<AppUser, UserDataView>()
                 .ForMember(dest => dest.Department, opt => opt.MapFrom(src => src.Department.Name))
-                .ForMember(dest => dest.Appointed, opt => opt.MapFrom(src => src.Appointed.ToString("dd MMM, yy")))
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt.ToString("dd MMM, yy")))
                 .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.UpdatedAt.ToString("dd MMM, yy")))
-                .ForMember(dest => dest.Role, opt =>
+                .ForMember(dest => dest.Roles, opt =>
                     {
                         opt.PreCondition(src => !string.IsNullOrWhiteSpace(src.UserId));
-                        opt.MapFrom(src => UserManager.GetRoles(src.UserId).FirstOrDefault());
+                        opt.MapFrom(src => UserManager.GetRoles(src.UserId));
                     })
                 .ForMember(dest => dest.Gender, opt =>
                 {
@@ -68,18 +67,16 @@ namespace archivesystemWebUI.Infrastructures
                 })
                ;
 
-            Mapper.CreateMap<Employee, UpdateEmployeeVM>()
-                .ForMember(dest => dest.FirstName, opt => opt.MapFrom( src => src.Name.Split().First()))
-                .ForMember(dest => dest.LastName, opt => opt.MapFrom( src => src.Name.Split().Last()))
-                .ForMember(dest => dest.RoleId, opt => opt.MapFrom( src => UserManager.FindById(src.UserId).Roles.SingleOrDefault().RoleId))
-                .ForMember(dest => dest.Roles, opt => opt.MapFrom( src => RoleManager.Roles.ToList()))
-                ;
+            Mapper.CreateMap<AppUser, UpdateUserVm>()
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.Name.Split().First()))
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.Name.Split().Last()));
+              
             Mapper.CreateMap<CreateAccessLevelViewModel, AccessLevel>()
                 .ForMember(dest => dest.CreatedAt, opt => opt.UseValue<DateTime>(DateTime.Now))
                 .ForMember(m => m.UpdatedAt, opt => opt.UseValue<DateTime>(DateTime.Now));
 
            
-            Mapper.CreateMap<EnrollViewModel, Employee>();
+            Mapper.CreateMap<EnrollViewModel, AppUser>();
             Mapper.CreateMap<Department, DepartmentViewModel>().ReverseMap();
             Mapper.CreateMap<Faculty, FacultyViewModel>().ReverseMap();
             Mapper.CreateMap<CreateAccessLevelViewModel, AccessLevel>()

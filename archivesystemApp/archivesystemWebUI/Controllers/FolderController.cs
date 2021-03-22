@@ -2,13 +2,19 @@
 using archivesystemDomain.Interfaces;
 using archivesystemDomain.Services;
 using archivesystemWebUI.Infrastructures;
-using archivesystemWebUI.Models.FolderViewModels;
+using archivesystemWebUI.Interfaces;
+using archivesystemWebUI.Models;
+using archivesystemWebUI.Models.FolderModels;
+using archivesystemWebUI.Repository;
+using archivesystemWebUI.Services;
 using AutoMapper;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.Security;
+
 
 namespace archivesystemWebUI.Controllers
 {
@@ -16,27 +22,37 @@ namespace archivesystemWebUI.Controllers
     [Authorize]
     public class FolderController : Controller
     {
-        private IUnitOfWork repo { get; set; }
+        private const byte LOCKOUT_TIME = 1; //lockout user after last request exceeds lockout time in minutes
 
-        public FolderController(IUnitOfWork repo)
+        private readonly IRoleService _roleService;
+        private readonly IFolderService _service;
+       
+        public FolderController(IRoleService roleService, IFolderService service) 
         {
-            this.repo = repo;
+            _service = service;
+            _roleService = roleService;
         }
 
         // GET: /folders
         [Route("folders")]
-        public ActionResult Index(string search = null)
+        public ActionResult Index(string search = null, string returnUrl="/folders")
         {
-            FolderPageViewModel model = GetRootViewModel(search);
-            if (!HttpContext.User.IsInRole("Admin") && search == null)
+            FolderPageViewModel model = GetRootViewModel(returnUrl, search);
+            if (!HttpContext.User.IsInRole(RoleNames.Admin))
             {
-                var userId = User.Identity.GetUserId();
-                var user = repo.EmployeeRepo.GetEmployeeByUserId(userId);
-                var userFaculty = repo.FacultyRepo.Get(user.Department.FacultyId);
-                model.DirectChildren = model.DirectChildren.Where(x => x.Name == userFaculty.Name).ToList();
+                if (string.IsNullOrEmpty(model.Name))
+                {
+                    TempData[GlobalConstants.userHasNoAccesscode] = true;
+                    return RedirectToAction("Index", "Home");
+                }
+                CheckForUserAccessCode(out bool hasCorrectAccessCode, out double timeSinceLastRequest);
+                model.CloseAccessCodeModal = hasCorrectAccessCode && timeSinceLastRequest <= LOCKOUT_TIME;
             }
+            else
+                model.CloseAccessCodeModal = true;
 
-            ViewBag.AllowCreateFolder=false;
+            model.Files = model.CloseAccessCodeModal ? model.Files : null;
+            ViewBag.AllowCreateFolder = false;
             ViewBag.ErrorMessage = TempData["errorMessage"];
             return View("FolderList", model);
         }
@@ -46,112 +62,83 @@ namespace archivesystemWebUI.Controllers
         [HttpGet]
         public ActionResult Create(int id)
         {
-            var accessLevels = repo.AccessLevelRepo.GetAll();
-            var parentFolder = repo.FolderRepo.Get(id);
-            accessLevels = accessLevels.Where(x => x.Id >= parentFolder.AccessLevelId);
-            var data = new CreateFolderViewModel() { Name = "", ParentId = id, AccessLevels = accessLevels };
-            return PartialView("_CreateFolder", data);
+            var viewModel = _service.GetCreateFolderViewModel(id, HttpContext.User.Identity.GetUserId());
+            return PartialView("_CreateFolder",viewModel );
         }
 
         //POST: /folders/add
         [Route("folders/add")]
         [HttpPost]
         [ValidateHeaderAntiForgeryToken]
-        public ActionResult Create(string name, int parentId, int accessLevelId)
+        public ActionResult Create(SaveFolderViewModel model)
         {
-            Folder rootFolder = repo.FolderRepo.GetRootFolder();
-            var parentFolder = repo.FolderRepo.GetFolderWithSubFolders(parentId);
-            var parentSubFolderNames = parentFolder.Subfolders.Select(x => x.Name);
-            if (parentSubFolderNames.Contains(name) || name == "Root")
-                return new HttpStatusCodeResult(400);
-            if (parentFolder.AccessLevelId > accessLevelId)
+            var userIsnotPermitted = IsCreateActionForbidden(_service.GetFolder(model.ParentId));
+            if (userIsnotPermitted)
                 return new HttpStatusCodeResult(403);
 
-            var parentFolderPath = repo.FolderRepo.GetFolderPath(parentId);
-            var parentFolderCurrentFolderDepth = parentFolderPath.Count();
-            if (parentFolderCurrentFolderDepth >= (int)AllowableFolderDepth.Max)
-                return new HttpStatusCodeResult(404);
+            var result = _service.SaveFolder(model);
+            if (result == FolderServiceResult.Success) return new HttpStatusCodeResult(200);
+            if (result == FolderServiceResult.AlreadyExist) return new HttpStatusCodeResult(400);
+            if (result == FolderServiceResult.InvalidAccessLevel) return new HttpStatusCodeResult(403);
+            if (result== FolderServiceResult.MaxFolderDepthReached) return new HttpStatusCodeResult(404);
 
-            var folder = new Folder
-            {
-                Name = name,
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now,
-                ParentId = parentId,
-                AccessLevelId = accessLevelId,
-                IsRestricted = false,
-                DepartmentId = parentFolder.DepartmentId,
-            };
-            repo.FolderRepo.Add(folder);
-            repo.Save();
-
-            return new HttpStatusCodeResult(200);
+            return new HttpStatusCodeResult(500);
         }
 
         [Route("folders/move")]
         [HttpPost]
         [ValidateHeaderAntiForgeryToken]
         public ActionResult MoveItem(MoveItemViewModel model)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                    return new HttpStatusCodeResult(400);
-                if (model.Id == model.NewParentFolder)
-                    return new HttpStatusCodeResult(405);
-                if (model.FileType == "folder")
-                    repo.FolderRepo.MoveFolder(model.Id, model.NewParentFolder);
-                repo.Save();
-                return new HttpStatusCodeResult(200);
-            }
+        { 
+            var result= _service.MoveFolder(model);
+            if (result== FolderServiceResult.InvalidModelState) return new HttpStatusCodeResult(400);
+            if (result== FolderServiceResult.Prohibited) return new HttpStatusCodeResult(405);
+            if (result== FolderServiceResult.Success) return new HttpStatusCodeResult(200);
 
-            catch (Exception e)
-            {
-                if (e.Message.Contains("folder already exist"))
-                    return new HttpStatusCodeResult(403);
-                return new HttpStatusCodeResult(500);
-            }
-
+            return new HttpStatusCodeResult(500);
         }
 
         //POST: /folders/create
         [Route("folders/delete")]
         [HttpPost]
         [ValidateHeaderAntiForgeryToken]
-        public ActionResult Delete(int id, int parentId)
+        public ActionResult Delete(int id)
         {
-            var folderToDelete = repo.FolderRepo.Get(id);
-            if (folderToDelete.IsRestricted)
-                return new HttpStatusCodeResult(400);
+            var result = _service.DeleteFolder(id);
+            if (result==FolderServiceResult.Success) return new HttpStatusCodeResult(System.Net.HttpStatusCode.OK);
 
-            repo.FolderRepo.DeleteFolder(folderToDelete.Id);
-            repo.Save();
-            return new HttpStatusCodeResult(204);
+            if (result == FolderServiceResult.Prohibited) return new HttpStatusCodeResult(System.Net.HttpStatusCode.OK);
+
+            return new HttpStatusCodeResult(System.Net.HttpStatusCode.OK);  
         }
 
         //GET: /folders/{id}
         [Route("folders/{folderId}")]
         [HttpGet]
-        public ActionResult GetFolderSubFolders(int folderId, string accessKey = "")
+        public ActionResult GetFolder(int folderId)
         {
-            var folder = repo.FolderRepo.GetFolderWithSubFolders(folderId);
-            if (folder.Name == "Root")
+            GetFolder(out Folder folder, folderId);
+            if (folder.Name == GlobalConstants.RootFolderName)
                 return RedirectToAction(nameof(Index));
 
-            if (!HttpContext.User.IsInRole("Admin"))
+            if (!HttpContext.User.IsInRole(RoleNames.Admin))
             {
-                if (AccessNotGranted(folder))
-                {
-                    TempData["errorMessage"] = $"You are not authorized to view {folder.Name} folder";
+                CheckForUserAccessCode(out bool hasCorrectAccessCode, out double timeSinceLastRequest);
+                if (!hasCorrectAccessCode || timeSinceLastRequest > LOCKOUT_TIME)
+                    return RedirectToAction(nameof(Index), new { returnUrl = $"/folders/{folderId}" });
+
+                VerifyAccessAndFilterFolderSubFolders(out bool hasAuthorizedAccessToFolder, folder);
+                if (!hasAuthorizedAccessToFolder)
                     return RedirectToAction(nameof(Index));
-                }
+
+                var userIsnotPermitted = IsCreateActionForbidden(folder);
+                if (userIsnotPermitted)
+                    ViewBag.AllowCreateFolder = false;
+                else
+                    ViewBag.AllowCreateFolder = true;
             }
 
-            var model = Mapper.Map<FolderPageViewModel>(folder);
-            var folderpath = repo.FolderRepo.GetFolderPath(folderId);
-            model.CurrentPath = folderpath;
-            ViewBag.AllowCreateFolder = true;
-            return View("FolderList", model);
+            return View("FolderList", GetViewModelForView(folder, folderId));
         }
 
         //POST: /folders/{parentId}
@@ -159,7 +146,7 @@ namespace archivesystemWebUI.Controllers
         [Route("folders/{parentId}")]
         public ActionResult BackToParent(int parentId)
         {
-            return RedirectToAction(nameof(GetFolderSubFolders), new { folderId = parentId });
+            return RedirectToAction(nameof(GetFolder), new { folderId = parentId });
         }
 
         //POST: /Folder/Edit
@@ -167,18 +154,19 @@ namespace archivesystemWebUI.Controllers
         [ValidateHeaderAntiForgeryToken]
         public ActionResult Edit(CreateFolderViewModel model)
         {
+            var result = _service.Edit(model);
+            if (result == FolderServiceResult.InvalidModelState) return new HttpStatusCodeResult(400);
 
-            var folder = new Folder { Name = model.Name, Id = model.Id, AccessLevelId = model.AccessLevelId };
-            repo.FolderRepo.UpdateFolder(folder);
-            repo.Save();
-            return new HttpStatusCodeResult(200);
+            if (result == FolderServiceResult.Success) return new HttpStatusCodeResult(200);
+
+            return new HttpStatusCodeResult(500);
         }
 
 
         //GET: /Folder/GetEditPartialView
         public ActionResult GetEditFolderPartialView(int id)
         {
-            var folder = repo.FolderRepo.Get(id);
+            var folder = _service.GetFolder(id);
             if (folder.IsRestricted)
                 return new HttpStatusCodeResult(403);
 
@@ -189,7 +177,7 @@ namespace archivesystemWebUI.Controllers
             {
                 Id = id,
                 AccessLevelId = (int)folder.AccessLevelId,
-                AccessLevels = repo.AccessLevelRepo.GetAll(),
+                AccessLevels = _service.GetCurrentUserAllowedAccessLevels(HttpContext.User.Identity.GetUserId()),
                 Name = folder.Name,
             };
             return PartialView("_EditFolder", model);
@@ -198,7 +186,7 @@ namespace archivesystemWebUI.Controllers
         //GET: /Folder/GetDeleteFolderPartialView
         public ActionResult GetDeleteFolderPartialView(int id)
         {
-            var folder = repo.FolderRepo.Get(id);
+            var folder = _service.GetFolder(id);
             if (folder == null)
                 return new HttpStatusCodeResult(400);
             if (folder.IsRestricted)
@@ -219,49 +207,109 @@ namespace archivesystemWebUI.Controllers
             ViewBag.CurrentFolder = Request.QueryString["currentFolder"];
             return PartialView("_ConfirmItemMove");
         }
-
-        private FolderPageViewModel GetRootViewModel(string search = null)
+         
+        //GET: /Folder/VerifyAccessCode
+        public ActionResult VerifyAccessCode(string accessCode)
         {
-            FolderPageViewModel model = new FolderPageViewModel();
-            if (string.IsNullOrEmpty(search))
-            {
-                var rootFolder = repo.FolderRepo.GetRootWithSubfolder();
-                model.Name = "Root";
-                model.DirectChildren = rootFolder.Subfolders;
-                model.CurrentPath = new List<FolderPath> { new FolderPath { Id = rootFolder.Id, Name = "Root" } };
-                model.Id = rootFolder.Id;
-            }
-            else
-            {
-                model.DirectChildren = repo.FolderRepo.GetFoldersThatMatchName(search);
-                model.CurrentPath = new List<FolderPath>();
-                model.Id = 0;
-            }
+            if (string.IsNullOrWhiteSpace(accessCode))
+                return new HttpStatusCodeResult(400);
+
+            var accessCodeInDb = _service.GetCurrentUserAccessCode(HttpContext.User.Identity.GetUserId());
+            if (string.IsNullOrWhiteSpace(accessCodeInDb)) 
+                return new HttpStatusCodeResult(403);
+            var codeIsCorrect=AccessCodeGenerator.VerifyCode(accessCode, accessCodeInDb);
+            if (!codeIsCorrect)
+                return new HttpStatusCodeResult(400);
+
+            Session[GlobalConstants.IsAccessValidated] = true;
+            Session[GlobalConstants.LastVisit] = DateTime.Now;
+            return new HttpStatusCodeResult(200);
+        }
+
+
+        #region Private Methods
+        private void CheckForUserAccessCode(out bool hasCorrectAccessCode, out double timeSinceLastRequest)
+        {
+            hasCorrectAccessCode =
+               Session[GlobalConstants.IsAccessValidated] != null && (bool)Session[GlobalConstants.IsAccessValidated];
+            var lastVisitTime = Session[GlobalConstants.LastVisit] ?? new DateTime();
+            timeSinceLastRequest = (DateTime.Now - (DateTime)lastVisitTime).TotalMinutes;
+        }
+
+
+        private void GetFolder(out Folder folder, int folderId)
+        {
+            folder = _service.GetFolder(folderId);
+        }
+        private FolderPageViewModel GetModelUsingService(string returnUrl)
+        {
+            var userId = HttpContext.User.Identity.GetUserId();
+            var userRoles = _roleService.GetCurrentUserRoles();
+            var model = _service.GetRootFolderPageViewModel(userId, userRoles);
+            model.ReturnUrl = returnUrl;
             return model;
         }
 
-        private FolderPageViewModel GetDepartmentFolder(string search = null)
+        private FolderPageViewModel GetRootViewModel(string returnUrl, string search = null)
         {
-            return new FolderPageViewModel();
+            if (string.IsNullOrEmpty(search))
+                return GetModelUsingService(returnUrl);
+
+            return SearchForFolders(search);
+        }
+        private FolderPageViewModel GetViewModelForView(Folder folder, int folderId)
+        {
+            var folderpath = _service.GetFolderPath(folderId);
+            var model = Mapper.Map<FolderPageViewModel>(folder);
+            model.CloseAccessCodeModal = true;
+            model.CurrentPath = folderpath;
+            Session[GlobalConstants.LastVisit] = DateTime.Now;
+            return model;
+        }
+        private FolderPageViewModel SearchForFolders(string search)
+        {
+            var model = new FolderPageViewModel
+            {
+                DirectChildren = _service.GetFoldersThatMatchName(search).ToList(),
+                CurrentPath = new List<FolderPath>(),
+                CloseAccessCodeModal = true,
+                Id = 0
+            };
+            return model;
         }
 
-        private bool AccessNotGranted(Folder folder)
+        public bool IsCreateActionForbidden(Folder folder)
         {
-            var userId = HttpContext.User.Identity.GetUserId();
-            var user = repo.EmployeeRepo.GetEmployeeByUserId(userId);
-            var userAccessLevel = repo.AccessDetailsRepo.GetByEmployeeId(user.Id).AccessLevelId;
-
-            if (folder.FacultyId != null && user.Department.FacultyId != folder.FacultyId)
+            //parent folder is faculty folder and user is not faculty officer 
+            if (folder.FacultyId != null && !HttpContext.User.IsInRole(RoleNames.FacultyOfficer))
                 return true;
 
-            if (folder.FacultyId == null)
-            {
-                if (folder.AccessLevelId > userAccessLevel || folder.DepartmentId != user.DepartmentId)
-                    return true;
-            }
-            folder.Subfolders = folder.Subfolders.Where(x => x.AccessLevelId <= userAccessLevel).ToList();
+            //parent folder is departmental folder and user is not departmental officer
+            if (folder.DepartmentId != null && folder.IsRestricted && !HttpContext.User.IsInRole(RoleNames.DeptOfficer))
+                return true;
+
+            if (folder.Name == GlobalConstants.RootFolderName)
+                return true;
+
             return false;
         }
+        private void VerifyAccessAndFilterFolderSubFolders(out bool hasAuthorizedAccessToFolder, Folder folder)
+        {
+            var userId = HttpContext.User.Identity.GetUserId();
+            var userData = _service.GetUserData(userId);
+            hasAuthorizedAccessToFolder = _service.DoesUserHasAccessToFolder(folder,userData);
+            if (hasAuthorizedAccessToFolder)
+                _service.FilterFolderSubFoldersUsingAccessLevel(folder, userData.UserAccessLevel);
+
+            TempData["errorMessage"] =
+                hasAuthorizedAccessToFolder ? null : $"You are not authorized to view {folder.Name} folder";
+
+        }
+
+        
+
+       
+        #endregion
     }
 }
 

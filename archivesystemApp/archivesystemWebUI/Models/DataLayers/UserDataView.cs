@@ -17,11 +17,10 @@ namespace archivesystemWebUI.Models.DataLayers
 
         public string Gender { get; set; }
         
-        public string StaffId { get; set; }
-        public string Appointed { get; set; }
+        public string TagId { get; set; }
         
         public string Department { get; set; }
-        public string Role { get; set; }
+        public IEnumerable<string> Roles { get; set; }
         public string Completed { get; set; }
         public string UpdatedAt { get; set; }
         public string CreatedAt { get; set; }

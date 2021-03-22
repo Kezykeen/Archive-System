@@ -10,7 +10,7 @@
 
                 </li>
                 <li class="">
-                    <a href="@Url.Action("Index", "Employees")"><i class="la la-user"></i> <span> User Management</span> </a>
+                    <a href="@Url.Action("Index", "Users")"><i class="la la-user"></i> <span> User Management</span> </a>
 
                 </li>
                 <li class="menu-title">
@@ -57,6 +57,14 @@
                     <span>Archive</span>
                 </li>
                 <li><a href="@Url.Action("Index", "Folder")"><i class="la la-archive"></i> <span> File Manager</span></a></li>
+                
+                <li class="submenu">
+                    <a href="#"><i class="la la-cog"></i> <span> Settings</span> <span class="menu-arrow"></span></a>
+                    <ul style="display: none;">
+                        <li><a href="@Url.Action("TicketTypes", "Settings")">Ticket Types</a></li>
+
+                    </ul>
+                </li>
             </ul>
         </div>
     </div>

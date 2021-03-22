@@ -1,5 +1,21 @@
-﻿
+﻿const NODE_COUNT_WITHOUT_ERROR_MESSAGE = 11;
 
+function addValidationErrors(formId, name, accesslevelId, isNameTaken = false) {
+    let form = document.getElementById(formId);
+    let validationErrorMessage = document.createElement("div");
+    if (form.childNodes.length > NODE_COUNT_WITHOUT_ERROR_MESSAGE) {
+        form.removeChild(form.childNodes[0])
+    }
+    validationErrorMessage.innerHTML =
+        `<div class='validation-summary-errors'>
+                <ul>
+                    ${!name ? '<li>Folder name field is required</li>' : ''}
+                    ${!accesslevelId ? '<li>Access level field is required</li>' : ''}
+                    ${isNameTaken ? `<li>${name} already exist in folder</li>` : ''}
+                </ul>
+            </div>`
+    form.prepend(validationErrorMessage)
+}
 async function getPartialView(url, id) {
     url =  `${url}?id=${id}` 
     
@@ -89,7 +105,7 @@ async function deleteFolder() {
     let verificationToken = document.getElementsByName("__RequestVerificationToken")[0].value;
     let folderId = document.getElementById("delFolder-id").value;
     let parentId = document.getElementById("delFolder-parentId").value;
-    console.log("reached here", folderId, parentId, "folders/delete")
+    
     let resp = await fetch("/folders/delete", {
         method: "POST",
         headers: {
@@ -117,6 +133,7 @@ async function deleteFolder() {
     }
     return;
 }
+
 function closeModal() {
     $("#modal").modal("hide");
 }
@@ -134,7 +151,6 @@ async function editFolder(id) {
         location.reload();
     }
     }
-   
 
 async function createFolder(url) {
     let verificationToken = document.getElementsByName("__RequestVerificationToken")[0].value
@@ -161,22 +177,6 @@ async function createFolder(url) {
 }
 
 
-function addValidationErrors(formId, name, accesslevelId, isNameTaken=false) {
-    let form = document.getElementById(formId);
-    let validationErrorMessage = document.createElement("div");
-    if (form.childNodes.length > 11) {
-        form.removeChild(form.childNodes[0])
-    }
-    validationErrorMessage.innerHTML =
-        `<div class='validation-summary-errors'>
-                <ul>
-                    ${!name ? '<li>Folder name field is required</li>' : ''}
-                    ${!accesslevelId ? '<li>Access level field is required</li>' : ''}
-                    ${isNameTaken ? `<li>${name} already exist in folder</li>` : ''}
-                </ul>
-            </div>`
-    form.prepend(validationErrorMessage)
-}
 
 async function postData(url, name, accesslevelId, parentId, token, id = 0) {
     let resp = await fetch(url, {
@@ -228,11 +228,56 @@ async function CtrlV(newParentFolderId ) {
         location.reload();
     }
     else {
-        moveFolderAlert.innerHTML = resp.status === 403 ? `Item with name already exist in Folder` :
-            resp.status === 405 ? "Warning: Cannot move a folder into itself" : "Server Error: Action Failed."
+        moveFolderAlert.innerHTML =(
+            resp.status === 403 ? `Item with name already exist in Folder` :
+                resp.status === 405 ? "Warning: Cannot move a folder into itself" : "Server Error: Action Failed.");
         moveFolderAlert.className = "showMessage task-failure";
         setTimeout(() => { alertMessageBox.className = ''; return; }, 3000)
     }
+}
+
+async function VerifyAccessToken() {
+    document.getElementById("EAC-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+    })
+
+    let verificationToken = document.getElementsByName("__RequestVerificationToken")[0].value;
+    var accessCode = document.getElementById('EAC-code').value;
+    var returnUrl = document.getElementById("EAC-returnUrl").value;
+    console.log(accessCode, returnUrl)
+    resp = await fetch("/Folder/VerifyAccessCode", {
+        method: "POST",
+        headers: {
+            __RequestVerificationToken: verificationToken,
+            'content-type': "application/json"
+        },
+        body: JSON.stringify({
+            accessCode: accessCode,
+            
+        })
+    })
+    console.log(resp);
+    if (resp.status === 200) {
+        location.href = returnUrl;
+        return;
+    }
+    let form = document.getElementById("EAC-form");
+    let validationErrorMessage = document.createElement("div");
+    console.log(form.childNodes.length)
+    if (form.childNodes.length > NODE_COUNT_WITHOUT_ERROR_MESSAGE) {
+        form.removeChild(form.childNodes[0])
+    }
+    var message = resp.status === 400 ? "Access code is incorrect" : "Server Error"
+    validationErrorMessage.innerHTML =
+        `<div class='validation-summary-errors'>
+                <ul>
+                    <li>${message}</li>
+                </ul>
+         </div>`
+    form.prepend(validationErrorMessage)
+
+
+
 }
 
 

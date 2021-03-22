@@ -58,8 +58,8 @@ namespace archivesystemWebUI.Controllers.Api
         [HttpGet]
         public IHttpActionResult GetAllEmployees()
         {
-            var employees = _unitOfWork.EmployeeRepo.GetEmployeesWithDept();
-            var response = Mapper.Map<IEnumerable<Employee>,List<UserDataView>>(employees);
+            var employees = _unitOfWork.UserRepo.GetUsersWithDept();
+            var response = Mapper.Map<IEnumerable<AppUser>,List<UserDataView>>(employees);
 
             return Ok(response);
 
@@ -86,7 +86,7 @@ namespace archivesystemWebUI.Controllers.Api
         public IHttpActionResult DeleteUser(int id)
         {
 
-            var employee = _unitOfWork.EmployeeRepo.Get(id);
+            var employee = _unitOfWork.UserRepo.Get(id);
             if (employee == null)
             {
                 return NotFound();
@@ -96,7 +96,7 @@ namespace archivesystemWebUI.Controllers.Api
                 var iduser = UserManager.FindById(employee.UserId);
                 UserManager.Delete(iduser);
             }
-            _unitOfWork.EmployeeRepo.Remove(employee);
+            _unitOfWork.UserRepo.Remove(employee);
             _unitOfWork.Save();
             return Ok();
         }
