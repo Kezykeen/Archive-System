@@ -353,6 +353,10 @@
     <Compile Include="Repository\AccessLevelRepository.cs" />
     <Compile Include="Repository\TokenRepository.cs" />
     <Compile Include="Repository\UnitOfWork.cs" />
+    <Compile Include="Services\DepartmentService.cs" />
+    <Compile Include="Services\FacultyService.cs" />
+    <Compile Include="Services\IDepartmentService.cs" />
+    <Compile Include="Services\IFacultyService.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
