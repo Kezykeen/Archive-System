@@ -15,6 +15,7 @@ using System.Linq;
 using System.Web.Mvc;
 using System.Web.Security;
 
+
 namespace archivesystemWebUI.Controllers
 {
 
@@ -104,11 +105,11 @@ namespace archivesystemWebUI.Controllers
         public ActionResult Delete(int id)
         {
             var result = _service.DeleteFolder(id);
-            if (result==FolderServiceResult.Success) return new HttpStatusCodeResult(204);
+            if (result==FolderServiceResult.Success) return new HttpStatusCodeResult(System.Net.HttpStatusCode.OK);
 
-            if (result == FolderServiceResult.Prohibited) return new HttpStatusCodeResult(400);
+            if (result == FolderServiceResult.Prohibited) return new HttpStatusCodeResult(System.Net.HttpStatusCode.OK);
 
-            return new HttpStatusCodeResult(500);  
+            return new HttpStatusCodeResult(System.Net.HttpStatusCode.OK);  
         }
 
         //GET: /folders/{id}
@@ -133,6 +134,8 @@ namespace archivesystemWebUI.Controllers
                 var userIsnotPermitted = IsCreateActionForbidden(folder);
                 if (userIsnotPermitted)
                     ViewBag.AllowCreateFolder = false;
+                else
+                    ViewBag.AllowCreateFolder = true;
             }
 
             return View("FolderList", GetViewModelForView(folder, folderId));
@@ -214,7 +217,8 @@ namespace archivesystemWebUI.Controllers
             var accessCodeInDb = _service.GetCurrentUserAccessCode(HttpContext.User.Identity.GetUserId());
             if (string.IsNullOrWhiteSpace(accessCodeInDb)) 
                 return new HttpStatusCodeResult(403);
-            if (AccessCodeGenerator.HashCode(accessCode)!= accessCodeInDb)
+            var codeIsCorrect=AccessCodeGenerator.VerifyCode(accessCode, accessCodeInDb);
+            if (!codeIsCorrect)
                 return new HttpStatusCodeResult(400);
 
             Session[GlobalConstants.IsAccessValidated] = true;
@@ -259,7 +263,6 @@ namespace archivesystemWebUI.Controllers
             var model = Mapper.Map<FolderPageViewModel>(folder);
             model.CloseAccessCodeModal = true;
             model.CurrentPath = folderpath;
-            ViewBag.AllowCreateFolder = true;
             Session[GlobalConstants.LastVisit] = DateTime.Now;
             return model;
         }

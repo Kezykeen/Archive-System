@@ -305,7 +305,7 @@ namespace archivesystemApp.UnitTests
         {
             var userId = "dummy userId";
             var user = new AppUser { UserId = userId, Id = 1 };
-            _repo.Setup(r => r.UserRepo.GetUserByUserId(userId)).Returns<AppUser>(null);
+            _repo.Setup(r => r.UserRepo.GetUserByUserId(userId)).Returns(()=> null);
 
             var result = _service.GetCurrentUserAccessCode(userId);
 
