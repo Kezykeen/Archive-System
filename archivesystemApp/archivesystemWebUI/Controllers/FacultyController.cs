@@ -91,9 +91,10 @@ namespace archivesystemWebUI.Controllers
         {
             try
             {
-                Faculty faculty = _unitOfWork.FacultyRepo.Get(id);
-                _unitOfWork.FacultyRepo.Remove(faculty);
-                await _unitOfWork.SaveAsync();
+                var result= _service.DeleteFaculty(id);
+                if(result.Result== FacultyServiceResult.Prohibited)
+                    return Json("prohibited", JsonRequestBehavior.AllowGet);
+
 
                 return Json("success", JsonRequestBehavior.AllowGet);
             }
