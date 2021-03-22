@@ -55,6 +55,20 @@ namespace archivesystemWebUI.Services
             return FacultyServiceResult.Succeeded;
         }
 
+        public async Task<FacultyServiceResult> EditFaculty(FacultyViewModel model)
+        {
+            try
+            {
+                var result= await  TryEditFaculty(model);
+                return result;
+            }
+            catch
+            {
+                return FacultyServiceResult.Failure;
+            }
+
+        }
+
         #region Private methods
         private Folder CreateCorrespondingFolder(Faculty faculty)
         {
@@ -72,7 +86,6 @@ namespace archivesystemWebUI.Services
             };
             return folder;
         }
-
         private bool DoesFacultyStillContainDepartments(int facultyId)
         {
             var depts= _unitOfWork.DeptRepo.Find(x => x.FacultyId == facultyId);
@@ -103,6 +116,20 @@ namespace archivesystemWebUI.Services
 
             return true;
         }
+
+        private async Task<FacultyServiceResult> TryEditFaculty( FacultyViewModel model)
+        {
+            var facultyInDb = _unitOfWork.FacultyRepo.Get(model.Id);
+            Mapper.Map(model, facultyInDb);
+            var folder = Mapper.Map<Folder>(model);
+            facultyInDb.UpdatedAt = DateTime.Now;
+
+            _unitOfWork.FacultyRepo.Update(facultyInDb);
+            _unitOfWork.FolderRepo.UpdateFacultyFolder(folder);
+            await _unitOfWork.SaveAsync();
+
+            return FacultyServiceResult.Succeeded;
+        }
         private FacultyServiceResult TrySaveFaculty(Faculty faculty)
         {
             try
@@ -118,7 +145,6 @@ namespace archivesystemWebUI.Services
             catch { return FacultyServiceResult.Failure; }
             
         }
-
         private FacultyServiceResult TrySaveFaculty(Faculty faculty, bool onlyCreateFaculty=true)
         {
             _unitOfWork.FacultyRepo.Add(faculty);

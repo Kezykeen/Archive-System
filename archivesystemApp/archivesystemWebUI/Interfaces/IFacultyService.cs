@@ -13,6 +13,7 @@ namespace archivesystemWebUI.Interfaces
     {
         FacultyServiceResult SaveFaculty(FacultyViewModel faculty);
         Task<FacultyServiceResult> DeleteFaculty(int id);
+        Task<FacultyServiceResult> EditFaculty(FacultyViewModel faculty);
 
     }
 }
