@@ -53,21 +53,18 @@ namespace archivesystemWebUI.Migrations
                         UpdatedAt = c.DateTime(nullable: false),
                         CreatedAt = c.DateTime(nullable: false),
                         Signature_Id = c.Int(),
-                        Application_Id = c.Int(),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Departments", t => t.DepartmentId, cascadeDelete: true)
                 .ForeignKey("dbo.Files", t => t.Signature_Id)
                 .ForeignKey("dbo.UserProfiles", t => t.UserProfileId)
-                .ForeignKey("dbo.Applications", t => t.Application_Id)
                 .Index(t => t.UserId, name: "UserIdIndex")
                 .Index(t => t.Email, unique: true, name: "EmailIndex")
                 .Index(t => t.Name, unique: true, name: "NameIndex")
                 .Index(t => t.TagId, unique: true, name: "TagIdIndex")
                 .Index(t => t.DepartmentId)
                 .Index(t => t.UserProfileId)
-                .Index(t => t.Signature_Id)
-                .Index(t => t.Application_Id);
+                .Index(t => t.Signature_Id);
             
             CreateTable(
                 "dbo.Activities",
@@ -122,22 +119,19 @@ namespace archivesystemWebUI.Migrations
                         Name = c.String(),
                         ContentType = c.String(),
                         Content = c.Binary(),
-                        FileMetaId = c.Int(nullable: false),
+                        FileMetaId = c.Int(),
                         FolderId = c.Int(),
                         AccessLevelId = c.Int(),
                         CreatedAt = c.DateTime(nullable: false),
                         UpdatedAt = c.DateTime(nullable: false),
-                        Comment_Id = c.Int(),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.AccessLevels", t => t.AccessLevelId)
-                .ForeignKey("dbo.FileMetas", t => t.FileMetaId, cascadeDelete: true)
+                .ForeignKey("dbo.FileMetas", t => t.FileMetaId)
                 .ForeignKey("dbo.Folders", t => t.FolderId)
-                .ForeignKey("dbo.Comments", t => t.Comment_Id)
                 .Index(t => t.FileMetaId)
                 .Index(t => t.FolderId)
-                .Index(t => t.AccessLevelId)
-                .Index(t => t.Comment_Id);
+                .Index(t => t.AccessLevelId);
             
             CreateTable(
                 "dbo.FileMetas",
@@ -255,9 +249,10 @@ namespace archivesystemWebUI.Migrations
                         Forwarded = c.Boolean(nullable: false),
                         Received = c.Boolean(),
                         Approved = c.Boolean(),
+                        RejectionMsg = c.String(),
                         TimeSent = c.DateTime(nullable: false),
                         TimeReceived = c.DateTime(),
-                        TimeRejected = c.DateTime(nullable: false),
+                        TimeRejected = c.DateTime(),
                         Application_Id = c.Int(),
                     })
                 .PrimaryKey(t => t.Id)
@@ -271,6 +266,7 @@ namespace archivesystemWebUI.Migrations
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
+                        ApplicationTypeId = c.Int(nullable: false),
                         Title = c.String(maxLength: 50),
                         RefNo = c.String(maxLength: 50),
                         UserId = c.Int(nullable: false),
@@ -278,20 +274,19 @@ namespace archivesystemWebUI.Migrations
                         Status = c.Int(nullable: false),
                         Archive = c.Boolean(nullable: false),
                         Approve = c.Boolean(),
-                        AttachFileId = c.Int(),
+                        AttachmentId = c.Int(),
                         CreatedAt = c.DateTime(nullable: false),
                         UpdatedAt = c.DateTime(nullable: false),
-                        ApplicationType_Id = c.Int(),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Tickets", t => t.ApplicationType_Id)
-                .ForeignKey("dbo.Files", t => t.AttachFileId)
+                .ForeignKey("dbo.Tickets", t => t.ApplicationTypeId, cascadeDelete: true)
+                .ForeignKey("dbo.Files", t => t.AttachmentId)
                 .ForeignKey("dbo.AppUsers", t => t.UserId, cascadeDelete: true)
+                .Index(t => t.ApplicationTypeId)
                 .Index(t => t.Title, name: "TitleIndex")
                 .Index(t => t.RefNo, name: "RefNoIndex")
                 .Index(t => t.UserId)
-                .Index(t => t.AttachFileId)
-                .Index(t => t.ApplicationType_Id);
+                .Index(t => t.AttachmentId);
             
             CreateTable(
                 "dbo.Tickets",
@@ -299,6 +294,7 @@ namespace archivesystemWebUI.Migrations
                     {
                         Id = c.Int(nullable: false, identity: true),
                         Name = c.String(),
+                        Acronym = c.String(),
                         Designation = c.Int(nullable: false),
                         WorkFlow = c.Int(nullable: false),
                         Status = c.Int(nullable: false),
@@ -316,8 +312,8 @@ namespace archivesystemWebUI.Migrations
                         ApplicationId = c.Int(nullable: false),
                         Remark = c.String(),
                         Approve = c.Boolean(),
-                        UpdatedAt = c.DateTime(nullable: false),
-                        CreatedAt = c.DateTime(nullable: false),
+                        ApprovalDate = c.DateTime(),
+                        InviteDate = c.DateTime(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Applications", t => t.ApplicationId, cascadeDelete: true)
@@ -326,21 +322,19 @@ namespace archivesystemWebUI.Migrations
                 .Index(t => t.ApplicationId);
             
             CreateTable(
-                "dbo.Comments",
+                "dbo.Signers",
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
-                        Message = c.String(),
                         UserId = c.Int(nullable: false),
-                        ApplicationId = c.Int(nullable: false),
-                        CreatedAt = c.DateTime(nullable: false),
-                        UpdatedAt = c.DateTime(nullable: false),
+                        InviteTime = c.DateTime(nullable: false),
+                        Application_Id = c.Int(),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Applications", t => t.ApplicationId, cascadeDelete: true)
-                .ForeignKey("dbo.AppUsers", t => t.UserId)
+                .ForeignKey("dbo.AppUsers", t => t.UserId, cascadeDelete: true)
+                .ForeignKey("dbo.Applications", t => t.Application_Id)
                 .Index(t => t.UserId)
-                .Index(t => t.ApplicationId);
+                .Index(t => t.Application_Id);
             
             CreateTable(
                 "dbo.AspNetRoles",
@@ -375,15 +369,13 @@ namespace archivesystemWebUI.Migrations
             DropForeignKey("dbo.Tokens", "AppUserId", "dbo.AppUsers");
             DropForeignKey("dbo.AspNetUserRoles", "RoleId", "dbo.AspNetRoles");
             DropForeignKey("dbo.Applications", "UserId", "dbo.AppUsers");
+            DropForeignKey("dbo.Signers", "Application_Id", "dbo.Applications");
+            DropForeignKey("dbo.Signers", "UserId", "dbo.AppUsers");
             DropForeignKey("dbo.ApplicationReceivers", "Application_Id", "dbo.Applications");
-            DropForeignKey("dbo.Comments", "UserId", "dbo.AppUsers");
-            DropForeignKey("dbo.Files", "Comment_Id", "dbo.Comments");
-            DropForeignKey("dbo.Comments", "ApplicationId", "dbo.Applications");
-            DropForeignKey("dbo.Applications", "AttachFileId", "dbo.Files");
-            DropForeignKey("dbo.AppUsers", "Application_Id", "dbo.Applications");
+            DropForeignKey("dbo.Applications", "AttachmentId", "dbo.Files");
             DropForeignKey("dbo.Approvals", "UserId", "dbo.AppUsers");
             DropForeignKey("dbo.Approvals", "ApplicationId", "dbo.Applications");
-            DropForeignKey("dbo.Applications", "ApplicationType_Id", "dbo.Tickets");
+            DropForeignKey("dbo.Applications", "ApplicationTypeId", "dbo.Tickets");
             DropForeignKey("dbo.Activities", "Ticket_Id", "dbo.Tickets");
             DropForeignKey("dbo.Activities", "Application_Id", "dbo.Applications");
             DropForeignKey("dbo.ApplicationReceivers", "ReceiverId", "dbo.Departments");
@@ -408,15 +400,15 @@ namespace archivesystemWebUI.Migrations
             DropForeignKey("dbo.AccessDetails", "AccessLevelId", "dbo.AccessLevels");
             DropIndex("dbo.Tokens", new[] { "AppUserId" });
             DropIndex("dbo.AspNetRoles", "RoleNameIndex");
-            DropIndex("dbo.Comments", new[] { "ApplicationId" });
-            DropIndex("dbo.Comments", new[] { "UserId" });
+            DropIndex("dbo.Signers", new[] { "Application_Id" });
+            DropIndex("dbo.Signers", new[] { "UserId" });
             DropIndex("dbo.Approvals", new[] { "ApplicationId" });
             DropIndex("dbo.Approvals", new[] { "UserId" });
-            DropIndex("dbo.Applications", new[] { "ApplicationType_Id" });
-            DropIndex("dbo.Applications", new[] { "AttachFileId" });
+            DropIndex("dbo.Applications", new[] { "AttachmentId" });
             DropIndex("dbo.Applications", new[] { "UserId" });
             DropIndex("dbo.Applications", "RefNoIndex");
             DropIndex("dbo.Applications", "TitleIndex");
+            DropIndex("dbo.Applications", new[] { "ApplicationTypeId" });
             DropIndex("dbo.ApplicationReceivers", new[] { "Application_Id" });
             DropIndex("dbo.ApplicationReceivers", new[] { "ReceiverId" });
             DropIndex("dbo.UserProfiles", new[] { "SignatureId" });
@@ -430,7 +422,6 @@ namespace archivesystemWebUI.Migrations
             DropIndex("dbo.AspNetUserClaims", new[] { "UserId" });
             DropIndex("dbo.AspNetUsers", "UserNameIndex");
             DropIndex("dbo.FileMetas", new[] { "UploadedById" });
-            DropIndex("dbo.Files", new[] { "Comment_Id" });
             DropIndex("dbo.Files", new[] { "AccessLevelId" });
             DropIndex("dbo.Files", new[] { "FolderId" });
             DropIndex("dbo.Files", new[] { "FileMetaId" });
@@ -438,7 +429,6 @@ namespace archivesystemWebUI.Migrations
             DropIndex("dbo.Activities", new[] { "Ticket_Id" });
             DropIndex("dbo.Activities", new[] { "Application_Id" });
             DropIndex("dbo.Activities", new[] { "UserId" });
-            DropIndex("dbo.AppUsers", new[] { "Application_Id" });
             DropIndex("dbo.AppUsers", new[] { "Signature_Id" });
             DropIndex("dbo.AppUsers", new[] { "UserProfileId" });
             DropIndex("dbo.AppUsers", new[] { "DepartmentId" });
@@ -450,7 +440,7 @@ namespace archivesystemWebUI.Migrations
             DropIndex("dbo.AccessDetails", new[] { "AppUserId" });
             DropTable("dbo.Tokens");
             DropTable("dbo.AspNetRoles");
-            DropTable("dbo.Comments");
+            DropTable("dbo.Signers");
             DropTable("dbo.Approvals");
             DropTable("dbo.Tickets");
             DropTable("dbo.Applications");

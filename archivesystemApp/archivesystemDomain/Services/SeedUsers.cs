@@ -35,9 +35,8 @@ namespace archivesystemDomain.Services
             private static readonly string NonAcademicEmail = WebConfigurationManager.AppSettings["NonAcademicEmail"];
             private static readonly string NonAcademicPhone = WebConfigurationManager.AppSettings["NonAcademicPhone"];
 
-
-
-        public static async void EnsurePopulated()
+            
+            public static async void EnsurePopulated()
             {
               
 
@@ -73,7 +72,7 @@ namespace archivesystemDomain.Services
                 nonAcademicStaff = new ApplicationUser
                 { UserName = NonAcademicUser, Email = NonAcademicEmail, PhoneNumber = NonAcademicPhone, EmailConfirmed = true };
                 var createNonAcademicStaff = await userManager.CreateAsync(nonAcademicStaff, NonAcademicPassword);
-
+                
                 if (createEmployee.Succeeded)
                 {
                     await userManager.AddToRoleAsync(facultyOfficer.Id, "Staff");
@@ -122,28 +121,26 @@ namespace archivesystemDomain.Services
                    dbContext.SaveChanges();
                }
 
-               if (createNonAcademicStaff.Succeeded)
-               {
-                   await userManager.AddToRoleAsync(nonAcademicStaff.Id, "Staff");
+               if (!createNonAcademicStaff.Succeeded) return;
+               await userManager.AddToRoleAsync(nonAcademicStaff.Id, "Staff");
 
-                   dbContext.AppUsers.Add(
-                       new AppUser
-                       {
-                           Name = nonAcademicStaff.UserName,
-                           DepartmentId = 3,
-                           Completed = true,
-                           Gender = Gender.Female,
-                           Designation = Designation.Staff,
-                           TagId = "StaffId-02",
-                           Email = nonAcademicStaff.Email,
-                           UserId = nonAcademicStaff.Id,
-                           Phone = nonAcademicStaff.PhoneNumber,
-                           CreatedAt = DateTime.Now,
-                           UpdatedAt = DateTime.Now
-                       }
-                   );
-                   dbContext.SaveChanges();
-               }
+               dbContext.AppUsers.Add(
+                   new AppUser
+                   {
+                       Name = nonAcademicStaff.UserName,
+                       DepartmentId = 3,
+                       Completed = true,
+                       Gender = Gender.Female,
+                       Designation = Designation.Staff,
+                       TagId = "StaffId-02",
+                       Email = nonAcademicStaff.Email,
+                       UserId = nonAcademicStaff.Id,
+                       Phone = nonAcademicStaff.PhoneNumber,
+                       CreatedAt = DateTime.Now,
+                       UpdatedAt = DateTime.Now
+                   }
+               );
+               dbContext.SaveChanges();
             }
         }
 }

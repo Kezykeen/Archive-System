@@ -16,6 +16,12 @@ namespace archivesystemWebUI.Models
         public string Name { get; set; }
 
         [Required]
+        [Display(Name = "Ticket Code")]
+        [StringLength(3)]
+        public string Acronym { get; set; }
+       
+
+        [Required]
         public Designation? Designation { get; set; }
         [Required]
         public WorkFlow? WorkFlow { get; set; }

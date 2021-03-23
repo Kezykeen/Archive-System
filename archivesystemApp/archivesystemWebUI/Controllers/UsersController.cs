@@ -257,6 +257,25 @@ namespace archivesystemWebUI.Controllers
             return RedirectToAction("Details", new { id = id });
         }
 
+        [AllowAnonymous]
+        public ActionResult Officers(string searchTerm)
+        {
+            var users = _unitOfWork.UserRepo.Find(u => u.Name.Contains(searchTerm)).Select(x => new
+            {
+                id = x.Id,
+                text = x.Name
+            });
+            if (IsNullOrWhiteSpace(searchTerm))
+            {
+                users = _unitOfWork.UserRepo.GetAll().Select(x => new
+                {
+                    id = x.Id,
+                    text = x.Name
+                });
+            }
+         
+            return Json(users, JsonRequestBehavior.AllowGet);
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

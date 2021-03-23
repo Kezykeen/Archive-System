@@ -1,0 +1,511 @@
+﻿@using archivesystemDomain.Services
+@model archivesystemDomain.Entities.Application
+    @{
+        ViewBag.Title = "Details";
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+
+
+    <!-- Page Content -->
+    <div class="content container-fluid">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">@Model.ApplicationType.Name</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Applications</li>
+                    </ul>
+                </div>
+                <div class="col-auto float-right ml-auto">
+                    <div class="btn-group mr-5">
+                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>
+                        <div class="dropdown-menu" style="">
+                            <a class="dropdown-item" href="@Url.Action("Accept", new{id = Model.Id})">Accept</a>
+                            <a class="dropdown-item" href="#">Decline</a>
+                            <a class="dropdown-item" href="#">Approve</a>
+                            <a class="dropdown-item" href="#">Reject</a>
+                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#edit_project"><i class="fa fa-plus"></i> Add New Version</a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Header -->
+
+        <div class="row">
+            <div class="col-lg-7 col-xl-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="project-title">
+                            <h5 class="card-title">@Model.Title</h5>
+                            <small class="block text-ellipsis m-b-15"><span class="text-muted">RefNo: <span class="badge badge-info">@Model.RefNo</span></span></small>
+                            <hr />
+                            <small class="block text-ellipsis m-b-15"><span class="text-muted">Description:</span></small>
+                        </div>
+                        <p>@Model.Note</p>
+
+                    </div>
+                </div>
+
+                @if (@Model.Attachment != null)
+                {
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title m-b-20">Attachment</h5>
+                            <ul class="files-list">
+                                <li>
+                                    <div class="files-cont">
+                                        <div class="file-type">
+                                            <span class="files-icon"><i class="fa fa-file"></i></span>
+                                        </div>
+                                        <div class="files-info">
+                                            <span class="file-name text-ellipsis"><a href="#">@($"{Model.Title}.{Model.Attachment.Name.Split('.').Last()}")</a></span>
+                                            <span class="file-author"><a href="#">John Doe</a></span> <span class="file-date">May 31st at 6:53 PM</span>
+                                            <div class="file-size">Size: 14.8Mb</div>
+                                        </div>
+                                        <ul class="files-action">
+                                            <li class="dropdown dropdown-action">
+                                                <a href="" class="dropdown-toggle btn btn-link" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_horiz</i></a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item" href="javascript:void(0)">Download</a>
+                                                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#share_files">Share</a>
+                                                    <a class="dropdown-item" href="javascript:void(0)">Delete</a>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </div>
+                }
+
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title m-b-20">Approvals/Remarks</h5>
+                        <ul class="files-list">
+                            <li>
+                                <div class="files-cont">
+                                    <div class="file-type">
+                                        <span class="files-icon"><i class="fa fa-file-pdf-o"></i></span>
+                                    </div>
+                                    <div class="files-info">
+                                        <span class="file-name text-ellipsis"><a href="#">AHA Selfcare Mobile Application Test-Cases.xls</a></span>
+                                        <span class="file-author"><a href="#">John Doe</a></span> <span class="file-date">May 31st at 6:53 PM</span>
+                                        <div class="file-size">Size: 14.8Mb</div>
+                                    </div>
+                                    <ul class="files-action">
+                                        <li class="dropdown dropdown-action">
+                                            <a href="" class="dropdown-toggle btn btn-link" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_horiz</i></a>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <a class="dropdown-item" href="javascript:void(0)">Download</a>
+                                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#share_files">Share</a>
+                                                <a class="dropdown-item" href="javascript:void(0)">Delete</a>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="files-cont">
+                                    <div class="file-type">
+                                        <span class="files-icon"><i class="fa fa-file-pdf-o"></i></span>
+                                    </div>
+                                    <div class="files-info">
+                                        <span class="file-name text-ellipsis"><a href="#">AHA Selfcare Mobile Application Test-Cases.xls</a></span>
+                                        <span class="file-author"><a href="#">Richard Miles</a></span> <span class="file-date">May 31st at 6:53 PM</span>
+                                        <div class="file-size">Size: 14.8Mb</div>
+                                    </div>
+                                    <ul class="files-action">
+                                        <li class="dropdown dropdown-action">
+                                            <a href="" class="dropdown-toggle btn btn-link" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_horiz</i></a>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <a class="dropdown-item" href="javascript:void(0)">Download</a>
+                                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#share_files">Share</a>
+                                                <a class="dropdown-item" href="javascript:void(0)">Delete</a>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title m-b-20">Activities</h5>
+                        <ul class="files-list">
+                            <li>
+                                <div class="files-cont">
+                                    <div class="file-type">
+                                        <span class="files-icon"><i class="fa fa-file-pdf-o"></i></span>
+                                    </div>
+                                    <div class="files-info">
+                                        <span class="file-name text-ellipsis"><a href="#">AHA Selfcare Mobile Application Test-Cases.xls</a></span>
+                                        <span class="file-author"><a href="#">John Doe</a></span> <span class="file-date">May 31st at 6:53 PM</span>
+                                        <div class="file-size">Size: 14.8Mb</div>
+                                    </div>
+                                    <ul class="files-action">
+                                        <li class="dropdown dropdown-action">
+                                            <a href="" class="dropdown-toggle btn btn-link" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_horiz</i></a>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <a class="dropdown-item" href="javascript:void(0)">Download</a>
+                                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#share_files">Share</a>
+                                                <a class="dropdown-item" href="javascript:void(0)">Delete</a>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="files-cont">
+                                    <div class="file-type">
+                                        <span class="files-icon"><i class="fa fa-file-pdf-o"></i></span>
+                                    </div>
+                                    <div class="files-info">
+                                        <span class="file-name text-ellipsis"><a href="#">AHA Selfcare Mobile Application Test-Cases.xls</a></span>
+                                        <span class="file-author"><a href="#">Richard Miles</a></span> <span class="file-date">May 31st at 6:53 PM</span>
+                                        <div class="file-size">Size: 14.8Mb</div>
+                                    </div>
+                                    <ul class="files-action">
+                                        <li class="dropdown dropdown-action">
+                                            <a href="" class="dropdown-toggle btn btn-link" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_horiz</i></a>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <a class="dropdown-item" href="javascript:void(0)">Download</a>
+                                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#share_files">Share</a>
+                                                <a class="dropdown-item" href="javascript:void(0)">Delete</a>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+              
+            </div>
+            <div class="col-lg-5 col-xl-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="card-title m-b-15">Project details</h6>
+                        <table class="table table-striped table-border">
+                            <tbody>
+
+                                <tr>
+                                    <td>Category:</td>
+                                    <td class="text-right">@Model.ApplicationType.Name</td>
+                                </tr>
+                                <tr>
+                                    <td>Submitted To:</td>
+                                    <td class="text-right">@(Model.Receivers.FirstOrDefault()?.Receiver.Name)</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Created:</td>
+                                    <td class="text-right">@Model.CreatedAt.ToString("dd/MM/yyyy")</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Approval:</td>
+                                    <td class="text-right">
+                                        @GetApproval.Value(Model.Approve)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Created by:</td>
+                                    <td class="text-right"><a href="@Url.Action("Details", "Users", new {id = Model.UserId})">@Model.User.Name</a></td>
+                                </tr>
+                                <tr>
+                                    <td>Status:</td>
+                                    <td class="text-right">@GetAppStatus.Value(Model.Status)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+
+                    </div>
+                </div>
+                @if (ViewBag.AssignUser == true )
+                {
+                    <div class="card project-user">
+                        <div class="card-body">
+                            <h6 class="card-title m-b-20">Assignees <button type="button" class="float-right btn btn-primary btn-sm assignBtn" data-toggle="modal" data-target="@Url.Action("AssignUsers", new {appId = Model.Id})"><i class="fa fa-plus"></i> Add</button></h6>
+                            <ul class="list-box">
+                                @Html.Partial("_Assignees", Model)
+                               
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card project-user">
+                        <div class="card-body">
+                            <h6 class="card-title m-b-20">
+                                Departments Forwarded
+                                <button type="button" class="float-right btn btn-primary btn-sm fwdBtn" data-toggle="modal" data-target="@Url.Action("SendToDepts", new {appId = Model.Id})"><i class="fa fa-plus"></i> Add</button>
+                            </h6>
+                            <ul class="list-box">
+                                @Html.Partial("_FwdDepts", Model.Receivers)
+                               
+
+                            </ul>
+                        </div>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+    <!-- /Page Content -->
+   
+    <!-- Assign User Modal -->
+    <div id="assign_user" class="modal custom-modal fade" role="dialog">
+       
+    </div>
+<!-- /Assign User Modal -->
+
+<!-- Assign User Modal -->
+<div id="assign_dept" class="modal custom-modal fade" role="dialog">
+       
+</div>
+<!-- /Assign User Modal -->
+<!-- Edit Project Modal -->
+    <div id="edit_project" class="modal custom-modal fade" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Project</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Project Name</label>
+                                    <input class="form-control" value="Project Management" type="text">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Client</label>
+                                    <select class="select">
+                                        <option>Global Technologies</option>
+                                        <option>Delta Infotech</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Start Date</label>
+                                    <div class="cal-icon">
+                                        <input class="form-control datetimepicker" type="text">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>End Date</label>
+                                    <div class="cal-icon">
+                                        <input class="form-control datetimepicker" type="text">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label>Rate</label>
+                                    <input placeholder="$50" class="form-control" value="$5000" type="text">
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label>&nbsp;</label>
+                                    <select class="select">
+                                        <option>Hourly</option>
+                                        <option selected>Fixed</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Priority</label>
+                                    <select class="select">
+                                        <option selected>High</option>
+                                        <option>Medium</option>
+                                        <option>Low</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Add Project Leader</label>
+                                    <input class="form-control" type="text">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Team Leader</label>
+                                    <div class="project-members">
+                                        <a class="avatar" href="#" data-toggle="tooltip" title="Jeffery Lalor">
+                                            <img alt="" src="assets/img/profiles/avatar-16.jpg">
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Add Team</label>
+                                    <input class="form-control" type="text">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Team Members</label>
+                                    <div class="project-members">
+                                        <a class="avatar" href="#" data-toggle="tooltip" title="John Doe">
+                                            <img alt="" src="assets/img/profiles/avatar-02.jpg">
+                                        </a>
+                                        <a class="avatar" href="#" data-toggle="tooltip" title="Richard Miles">
+                                            <img alt="" src="assets/img/profiles/avatar-09.jpg">
+                                        </a>
+                                        <a class="avatar" href="#" data-toggle="tooltip" title="John Smith">
+                                            <img alt="" src="assets/img/profiles/avatar-10.jpg">
+                                        </a>
+                                        <a class="avatar" href="#" data-toggle="tooltip" title="Mike Litorus">
+                                            <img alt="" src="assets/img/profiles/avatar-05.jpg">
+                                        </a>
+                                        <span class="all-team">+2</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea rows="4" class="form-control" placeholder="Enter your message here"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Upload Files</label>
+                            <input class="form-control" type="file">
+                        </div>
+                        <div class="submit-section">
+                            <button class="btn btn-primary submit-btn">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- /Edit Project Modal -->
+
+@section scripts {
+    <script>
+
+        $(document).ready(function() {
+            $(".assignBtn").on("click",
+                function(e) {
+                    debugger;
+                    e.preventDefault();
+                    var addButton = $(this);
+                    $("#assign_user").remove;
+                    $.get(addButton.data("target")).done(
+                        function(data) {
+
+                            $("#assign_user").html(data);
+
+                            $("#assign_user").modal("show");
+                          
+                            $.validator.unobtrusive.parse("#assignForm");
+                            if ($('#assignForm .select').length > 0) {
+                               
+                                $('#assignForm .select').select2({
+
+                                    placeholder: 'Assign Users',
+                                    width: '100%',
+                                    allowClear: true,
+                                    ajax: {
+                                        url: "/users/officers",
+                                        dataType: "json",
+                                        delay: 250,
+                                        data: function(params) {
+                                            return {
+                                                searchTerm: params.term
+                                            };
+                                        },
+                                        processResults: function(data, params) {
+                                            return {
+                                                results: data
+                                            };
+                                        }
+                                    }
+
+                                });
+
+                            }
+
+
+                        });
+                });
+
+            $(".fwdBtn").on("click",
+                function(e) {
+                    debugger;
+                    e.preventDefault();
+                    var addButton = $(this);
+                    $("#assign_dept").remove;
+                    $.get(addButton.data("target")).done(
+                        function(data) {
+
+                            $("#assign_dept").html(data);
+
+                            $("#assign_dept").modal("show");
+                          
+                            $.validator.unobtrusive.parse("fwdForm");
+                            if ($('#fwdForm .select').length > 0) {
+                               
+                                $('#fwdForm .select').select2({
+
+                                    placeholder: 'Forward To ',
+                                    width: '100%',
+                                    allowClear: true,
+                                    ajax: {
+                                        url: "/api/departments/",
+                                        dataType: "json",
+                                        delay: 250,
+                                        data: function(params) {
+                                            return {
+                                                searchTerm: params.term
+                                            };
+                                        },
+                                        processResults: function(data, params) {
+                                            return {
+                                                results: data
+                                            };
+                                        }
+                                    }
+
+                                });
+
+                            }
+
+
+                        });
+                });
+        });
+
+    </script>
+
+}

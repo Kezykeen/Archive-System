@@ -27,10 +27,9 @@ namespace archivesystemDomain.Entities
         public bool? Approve { get; set; }
         public int? AttachmentId { get; set; }
         public File Attachment { get; set; }
-        public ICollection<AppUser> Assignees { get; set; }
+        public ICollection<Signer> Signers { get; set; }
         public ICollection<ApplicationReceiver> Receivers { get; set; }
         public ICollection<Approval> Approvals { get; set; }
-        public ICollection<Comment> Comments { get; set; }
         public ICollection<Activity> Activities { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }

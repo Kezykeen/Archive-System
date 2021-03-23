@@ -116,6 +116,14 @@ namespace archivesystemWebUI.Infrastructures
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt.ToString("dd MMM, yy")))
                 .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.UpdatedAt.ToString("dd MMM, yy")));
 
+            Mapper.CreateMap<Application, ApplicationsDataView>()
+                .ForMember(dest => dest.SubmissionDate, opt => opt.MapFrom(src => src.CreatedAt.ToString("dd MMM, yyyy")))
+                .ForMember(dest => dest.Receiver, opt => opt.MapFrom(src => src.Receivers.FirstOrDefault().Receiver.Name))
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.ApplicationType.Name))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(scr => GetAppStatus.Value(scr.Status)))
+                .ForMember(dest => dest.Approval, opt => opt.MapFrom(src => GetApproval.Value(src.Approve)));
+
+
 
             Mapper.CreateMap<ApplicationVm, Application>()
                 .ForMember(dest => dest.CreatedAt, opt =>

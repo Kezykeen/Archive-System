@@ -216,38 +216,17 @@
     <Compile Include="Interfaces\IFacultyService.cs" />
     <Compile Include="Interfaces\IFolderService.cs" />
     <Compile Include="Interfaces\IUserAccessService.cs" />
-    <Compile Include="Migrations\202103202235236_Initial.cs" />
-    <Compile Include="Migrations\202103202235236_Initial.Designer.cs">
-      <DependentUpon>202103202235236_Initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202103211602262_FieldRename.cs" />
-    <Compile Include="Migrations\202103211602262_FieldRename.Designer.cs">
-      <DependentUpon>202103211602262_FieldRename.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202103211645567_nullableDate.cs" />
-    <Compile Include="Migrations\202103211645567_nullableDate.Designer.cs">
-      <DependentUpon>202103211645567_nullableDate.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202103211917194_someModelChanges.cs" />
-    <Compile Include="Migrations\202103211917194_someModelChanges.Designer.cs">
-      <DependentUpon>202103211917194_someModelChanges.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202103211919517_someModelChangess.cs" />
-    <Compile Include="Migrations\202103211919517_someModelChangess.Designer.cs">
-      <DependentUpon>202103211919517_someModelChangess.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202103211929398_someModelChangesss.cs" />
-    <Compile Include="Migrations\202103211929398_someModelChangesss.Designer.cs">
-      <DependentUpon>202103211929398_someModelChangesss.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202103212022379_someModelChangessss.cs" />
-    <Compile Include="Migrations\202103212022379_someModelChangessss.Designer.cs">
-      <DependentUpon>202103212022379_someModelChangessss.cs</DependentUpon>
+    <Compile Include="Migrations\202103231029370_Initial.cs" />
+    <Compile Include="Migrations\202103231029370_Initial.Designer.cs">
+      <DependentUpon>202103231029370_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationVm.cs" />
+    <Compile Include="Models\AssignDeptsVm.cs" />
+    <Compile Include="Models\AssignUsersVm.cs" />
     <Compile Include="Models\CodeStatus.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\DataLayers\ApplicationsDataView.cs" />
     <Compile Include="Models\DataLayers\TicketDataView.cs" />
     <Compile Include="Models\DataLayers\UserDataView.cs" />
     <Compile Include="Models\AddUserToAccessViewModel.cs" />
@@ -522,6 +501,13 @@
     <Content Include="Views\Settings\TicketTypeModal.cshtml" />
     <Content Include="Views\Applications\Index.cshtml" />
     <Content Include="Views\Applications\New.cshtml" />
+    <Content Include="Views\Applications\Details.cshtml" />
+    <Content Include="Views\Applications\Incoming.cshtml" />
+    <Content Include="Views\Applications\PendingApproval.cshtml" />
+    <Content Include="Views\Applications\AssignUsers.cshtml" />
+    <Content Include="Views\Applications\_Assignees.cshtml" />
+    <Content Include="Views\Applications\SendToDepts.cshtml" />
+    <Content Include="Views\Applications\_FwdDepts.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -546,26 +532,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202103202235236_Initial.resx">
-      <DependentUpon>202103202235236_Initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202103211602262_FieldRename.resx">
-      <DependentUpon>202103211602262_FieldRename.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202103211645567_nullableDate.resx">
-      <DependentUpon>202103211645567_nullableDate.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202103211917194_someModelChanges.resx">
-      <DependentUpon>202103211917194_someModelChanges.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202103211919517_someModelChangess.resx">
-      <DependentUpon>202103211919517_someModelChangess.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202103211929398_someModelChangesss.resx">
-      <DependentUpon>202103211929398_someModelChangesss.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202103212022379_someModelChangessss.resx">
-      <DependentUpon>202103212022379_someModelChangessss.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202103231029370_Initial.resx">
+      <DependentUpon>202103231029370_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
