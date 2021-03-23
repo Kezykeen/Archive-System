@@ -22,11 +22,13 @@
                 <div class="col-auto float-right ml-auto">
                     <div class="btn-group mr-5">
                         <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>
-                        <div class="dropdown-menu" style="">
+                        <div class="dropdown-menu" id="actionGroup" style="">
                             <a class="dropdown-item" href="@Url.Action("Accept", new{id = Model.Id})">Accept</a>
-                            <a class="dropdown-item" href="#">Decline</a>
-                            <a class="dropdown-item" href="#">Approve</a>
-                            <a class="dropdown-item" href="#">Reject</a>
+                            <a class="dropdown-item signBtn"  href="#" data-toggle="modal" data-target="@Url.Action("Reject", new{id = Model.Id})">Reject</a>
+                            <a class="dropdown-item signBtn"  href="#" data-toggle="modal" data-target="@Url.Action("Sign", new{id = Model.Id})">Sign</a>
+                            <a class="dropdown-item signBtn"  href="#" data-toggle="modal" data-target="@Url.Action("Decline", new{id = Model.Id})">Decline</a>
+                            <a class="dropdown-item signBtn"  href="#" data-toggle="modal" data-target="@Url.Action("SignApprove", new{id = Model.Id})">Sign/Approve</a>
+                            <a class="dropdown-item signBtn"  href="#" data-toggle="modal" data-target="@Url.Action("SignForward", new{id = Model.Id})">Sign/Forward</a>
                             <a class="dropdown-item" href="#" data-toggle="modal" data-target="#edit_project"><i class="fa fa-plus"></i> Add New Version</a>
 
                         </div>
@@ -262,17 +264,13 @@
     </div>
     <!-- /Page Content -->
    
-    <!-- Assign User Modal -->
-    <div id="assign_user" class="modal custom-modal fade" role="dialog">
-       
-    </div>
-<!-- /Assign User Modal -->
+    
 
-<!-- Assign User Modal -->
-<div id="assign_dept" class="modal custom-modal fade" role="dialog">
+<!--  Modal -->
+<div id="modal_container" class="modal custom-modal fade" role="dialog">
        
 </div>
-<!-- /Assign User Modal -->
+<!-- / Modal -->
 <!-- Edit Project Modal -->
     <div id="edit_project" class="modal custom-modal fade" role="dialog">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -420,13 +418,13 @@
                     debugger;
                     e.preventDefault();
                     var addButton = $(this);
-                    $("#assign_user").remove;
+                    $("#modal_container").remove;
                     $.get(addButton.data("target")).done(
                         function(data) {
 
-                            $("#assign_user").html(data);
+                            $("#modal_container").html(data);
 
-                            $("#assign_user").modal("show");
+                            $("#modal_container").modal("show");
                           
                             $.validator.unobtrusive.parse("#assignForm");
                             if ($('#assignForm .select').length > 0) {
@@ -465,15 +463,15 @@
                     debugger;
                     e.preventDefault();
                     var addButton = $(this);
-                    $("#assign_dept").remove;
+                    $("#modal_container").remove;
                     $.get(addButton.data("target")).done(
                         function(data) {
 
-                            $("#assign_dept").html(data);
+                            $("#modal_container").html(data);
 
-                            $("#assign_dept").modal("show");
+                            $("#modal_container").modal("show");
                           
-                            $.validator.unobtrusive.parse("fwdForm");
+                            $.validator.unobtrusive.parse("#fwdForm");
                             if ($('#fwdForm .select').length > 0) {
                                
                                 $('#fwdForm .select').select2({
@@ -502,6 +500,24 @@
                             }
 
 
+                        });
+                });
+
+
+            $("#actionGroup").on("click", ".signBtn",
+                function(e) {
+                    debugger;
+                    e.preventDefault();
+                    var addButton = $(this);
+                    $("#modal_container").remove;
+                    $.get(addButton.data("target")).done(
+                        function(data) {
+
+                            $("#modal_container").html(data);
+
+                            $("#modal_container").modal("show");
+                          
+                            $.validator.unobtrusive.parse("#signForm");
                         });
                 });
         });

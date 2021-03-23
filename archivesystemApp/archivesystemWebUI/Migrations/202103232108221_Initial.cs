@@ -274,6 +274,7 @@ namespace archivesystemWebUI.Migrations
                         Status = c.Int(nullable: false),
                         Archive = c.Boolean(nullable: false),
                         Approve = c.Boolean(),
+                        SendToHead = c.Boolean(nullable: false),
                         AttachmentId = c.Int(),
                         CreatedAt = c.DateTime(nullable: false),
                         UpdatedAt = c.DateTime(nullable: false),
@@ -296,7 +297,6 @@ namespace archivesystemWebUI.Migrations
                         Name = c.String(),
                         Acronym = c.String(),
                         Designation = c.Int(nullable: false),
-                        WorkFlow = c.Int(nullable: false),
                         Status = c.Int(nullable: false),
                         UpdatedAt = c.DateTime(nullable: false),
                         CreatedAt = c.DateTime(nullable: false),
@@ -312,7 +312,7 @@ namespace archivesystemWebUI.Migrations
                         ApplicationId = c.Int(nullable: false),
                         Remark = c.String(),
                         Approve = c.Boolean(),
-                        ApprovalDate = c.DateTime(),
+                        Date = c.DateTime(),
                         InviteDate = c.DateTime(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)

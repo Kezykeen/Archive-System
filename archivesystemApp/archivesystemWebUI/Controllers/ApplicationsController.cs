@@ -18,11 +18,13 @@ namespace archivesystemWebUI.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUpsertFile _upsertFile;
+        private readonly IRoleService _roleService;
 
-        public ApplicationsController(IUnitOfWork unitOfWork, IUpsertFile upsertFile)
+        public ApplicationsController(IUnitOfWork unitOfWork, IUpsertFile upsertFile, IRoleService roleService)
         {
             _unitOfWork = unitOfWork;
             _upsertFile = upsertFile;
+            _roleService = roleService;
         }
         
         // GET: Applications
@@ -131,13 +133,251 @@ namespace archivesystemWebUI.Controllers
             var appReceived = application.Receivers.SingleOrDefault(r => r.ReceiverId == user?.DepartmentId);
             if (appReceived == null || appReceived.Received != null) return RedirectToAction("Details", new {id});
             appReceived.Received = true;
+            appReceived.TimeReceived = DateTime.Now;
+            application.Status = ApplicationStatus.Opened;
             _unitOfWork.Save();
             return  RedirectToAction("Details", new{id});
 
           
         }
 
+        public ActionResult Sign(int id)
+        {
+            ViewBag.Action = "Sign";
+            return PartialView(new SignVm {AppId = id});
+        }
 
+        public ActionResult Disapprove(int id)
+        {
+            ViewBag.Action = "Disapprove";
+            return PartialView("Sign",new SignVm { AppId = id });
+        }
+        public ActionResult SignApprove(int id)
+        {
+            ViewBag.Action = "SignApprove";
+            return PartialView("Sign", new SignVm { AppId = id });
+        }
+        public ActionResult SignForward(int id)
+        {
+            ViewBag.Action = "SignForward";
+            return PartialView("Sign", new SignVm { AppId = id });
+        }
+
+        public ActionResult Decline (int id)
+        {
+            ViewBag.Action = "Decline";
+            return PartialView("Sign",new SignVm { AppId = id });
+        }
+
+        public ActionResult Reject(int id)
+        {
+            ViewBag.Action = "Reject";
+            return PartialView("Sign", new SignVm { AppId = id });
+        }
+
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Reject(SignVm model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Action = "Reject";
+                return PartialView("Sign",model);
+            }
+            var currentUserId = User.Identity.GetUserId();
+            var user = _unitOfWork.UserRepo.Find(u => u.UserId == currentUserId).SingleOrDefault();
+            var application = _unitOfWork.ApplicationRepo.FindWithNavProps(a => a.Id == model.AppId, _ => _.Receivers).SingleOrDefault();
+            if (application == null) return HttpNotFound();
+            var appReceived = application.Receivers.SingleOrDefault(r => r.ReceiverId == user?.DepartmentId);
+            if (appReceived == null || appReceived.Received != null) return RedirectToAction("Details", new { id =model.AppId});
+            appReceived.Received = false;
+            appReceived.TimeRejected = DateTime.Now;
+            appReceived.RejectionMsg = model.Remark;
+            application.Status = ApplicationStatus.Rejected;
+            _unitOfWork.Save();
+            return RedirectToAction("Incoming");
+
+
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Sign(SignVm model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Action = "Sign";
+                return PartialView(model);
+            }
+            
+            var currentUserId = User.Identity.GetUserId();
+            var user = _unitOfWork.UserRepo.Find(u => u.UserId == currentUserId).SingleOrDefault();
+            var application = _unitOfWork.ApplicationRepo
+                .FindWithNavProps(a => a.Id == model.AppId,
+                    _ => _.Approvals, _ => _.Signers)
+                .SingleOrDefault();
+            var appToSign = application?.Approvals.SingleOrDefault(a => a.UserId == user?.Id);
+            if (appToSign!=null )
+            {
+                appToSign.Remark = model.Remark;
+                appToSign.Approve = true;
+                appToSign.Date = DateTime.Now;
+
+                var signers = application.Signers.ToList();
+                if (signers.Last().UserId == user?.Id)
+                {
+                    application.SendToHead = true;
+
+                    _unitOfWork.Save();
+                    return Json(new { head = true });
+
+                }
+                signers = application.Signers.Where(s => s.UserId != user?.Id).OrderBy(s => s.InviteTime).ToList();
+                application.Approvals.Add(
+                    new Approval
+                    {
+                        ApplicationId = model.AppId,
+                        InviteDate = DateTime.Now,
+                        UserId = signers.First().UserId
+                    });
+                _unitOfWork.Save();
+                return Json(new {done = true});
+            }
+            ViewBag.Action = "Sign";
+            return PartialView(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Decline(SignVm model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Action = "Decline";
+                return PartialView("Sign",model);
+            }
+
+            var currentUserId = User.Identity.GetUserId();
+            var user = _unitOfWork.UserRepo.Find(u => u.UserId == currentUserId).SingleOrDefault();
+            var application = _unitOfWork.ApplicationRepo
+                .FindWithNavProps(a => a.Id == model.AppId,
+                    _ => _.Approvals)
+                .SingleOrDefault();
+            var appToSign = application?.Approvals.SingleOrDefault(a => a.UserId == user?.Id);
+            if (appToSign != null)
+            {
+                appToSign.Remark = model.Remark;
+                appToSign.Approve = false;
+                appToSign.Date = DateTime.Now;
+
+                _unitOfWork.Save();
+                return Json(new { done = true });
+            }
+            ViewBag.Action = "Decline";
+            return PartialView("Sign",model);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SignApprove(SignVm model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Action = "SignApprove";
+                return PartialView("Sign", model);
+            }
+
+            var currentUserId = User.Identity.GetUserId();
+            var user = _unitOfWork.UserRepo.Find(u => u.UserId == currentUserId).SingleOrDefault();
+            var application = _unitOfWork.ApplicationRepo
+                .FindWithNavProps(a => a.Id == model.AppId && a.SendToHead,
+                    _ => _.Approvals)
+                .SingleOrDefault();
+            if (application != null)
+            {
+                application.Approvals.Add(new Approval
+                {
+                    ApplicationId = application.Id,
+                    InviteDate = DateTime.Now,
+                    Approve = true,
+                    Date = DateTime.Now,
+                    UserId = user.Id,
+                    Remark = model.Remark,
+                });
+                application.Approve = true;
+                _unitOfWork.Save();
+                return Json(new { done = true });
+
+            }
+
+            ViewBag.Action = "SignApprove";
+            return PartialView("Sign", model);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SignForward(SignVm model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Action = "SignForward";
+                return PartialView("Sign", model);
+            }
+
+            var currentUserId = User.Identity.GetUserId();
+            var user = _unitOfWork.UserRepo.Find(u => u.UserId == currentUserId).SingleOrDefault();
+            var application = _unitOfWork.ApplicationRepo
+                .FindWithNavProps(a => a.Id == model.AppId && a.SendToHead,
+                    _ => _.Approvals)
+                .SingleOrDefault();
+            if (application != null)
+            {
+                application.Approvals.Add(new Approval
+                {
+                    ApplicationId = application.Id,
+                    InviteDate = DateTime.Now,
+                    Approve = true,
+                    Date = DateTime.Now,
+                    UserId = user.Id,
+                    Remark = model.Remark,
+                });
+                _unitOfWork.Save();
+                return Json(new { done = true });
+
+            }
+
+            ViewBag.Action = "SignForward";
+            return PartialView("Sign", model);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Disapprove(SignVm model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Action = "Disapprove";
+                return PartialView("Sign", model);
+            }
+
+            var currentUserId = User.Identity.GetUserId();
+            var user = _unitOfWork.UserRepo.Find(u => u.UserId == currentUserId).SingleOrDefault();
+            var application = _unitOfWork.ApplicationRepo
+                .FindWithNavProps(a => a.Id == model.AppId,
+                    _ => _.Approvals)
+                .SingleOrDefault();
+            if (application != null)
+            {
+                application.Approve = false;
+                _unitOfWork.Save();
+                return Json(new { done = true });
+            }
+
+            ViewBag.Action = "Disapprove";
+            return PartialView("Sign", model);
+        }
         public ActionResult AssignUsers(int appId)
         {
             return PartialView(new AssignUsersVm
@@ -246,6 +486,7 @@ namespace archivesystemWebUI.Controllers
                     TimeSent = DateTime.Now,
                     Forwarded = true
                 });
+            application.SendToHead = false;
             _unitOfWork.Save();
 
             return Json(new {done = true});

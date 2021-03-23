@@ -4,8 +4,7 @@
 @foreach (var signer in Model.Signers.OrderBy(s => s.InviteTime))
 {
 
-    foreach (var approval in Model.Approvals)
-    {
+  
         if (Model.Approvals.Select(a => a.UserId).Contains(signer.UserId) && Model.Approvals.SingleOrDefault(a => a.UserId == signer.UserId)?.Approve == null)
         {
 
@@ -44,7 +43,7 @@
             </li>
         }
 
-    }
+   
 
    
 }

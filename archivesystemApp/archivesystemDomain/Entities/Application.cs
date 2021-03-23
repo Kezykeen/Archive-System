@@ -25,6 +25,7 @@ namespace archivesystemDomain.Entities
         public ApplicationStatus Status { get; set; }
         public bool Archive { get; set; }
         public bool? Approve { get; set; }
+        public bool SendToHead { get; set; }
         public int? AttachmentId { get; set; }
         public File Attachment { get; set; }
         public ICollection<Signer> Signers { get; set; }

@@ -11,7 +11,7 @@ namespace archivesystemDomain.Entities
         public Application Application { get; set; }
         public string Remark { get; set; }
         public bool? Approve { get; set; }
-        public DateTime? ApprovalDate { get; set; }
+        public DateTime? Date { get; set; }
         public DateTime InviteDate { get; set; }
     }
 }

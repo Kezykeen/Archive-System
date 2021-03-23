@@ -24,8 +24,7 @@ namespace archivesystemWebUI.Models
         [Required]
         public Designation? Designation { get; set; }
         [Required]
-        public WorkFlow? WorkFlow { get; set; }
-        [Required]
+       
         public Status? Status { get; set; }
     }
 }

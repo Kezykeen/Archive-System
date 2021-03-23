@@ -216,9 +216,9 @@
     <Compile Include="Interfaces\IFacultyService.cs" />
     <Compile Include="Interfaces\IFolderService.cs" />
     <Compile Include="Interfaces\IUserAccessService.cs" />
-    <Compile Include="Migrations\202103231029370_Initial.cs" />
-    <Compile Include="Migrations\202103231029370_Initial.Designer.cs">
-      <DependentUpon>202103231029370_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\202103232108221_Initial.cs" />
+    <Compile Include="Migrations\202103232108221_Initial.Designer.cs">
+      <DependentUpon>202103232108221_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationVm.cs" />
@@ -246,6 +246,7 @@
     <Compile Include="Models\RoleViewModels\AddtoRoleViewModel.cs" />
     <Compile Include="Models\RoleViewModels\RemoveUserFromRoleViewModel.cs" />
     <Compile Include="Models\RoleViewModels\UsersInRoleViewModel.cs" />
+    <Compile Include="Models\SignVm.cs" />
     <Compile Include="Models\TicketViewModel.cs" />
     <Compile Include="Models\UpdateUserVm.cs" />
     <Compile Include="Models\UserData.cs" />
@@ -508,6 +509,7 @@
     <Content Include="Views\Applications\_Assignees.cshtml" />
     <Content Include="Views\Applications\SendToDepts.cshtml" />
     <Content Include="Views\Applications\_FwdDepts.cshtml" />
+    <Content Include="Views\Applications\Sign.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -532,8 +534,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202103231029370_Initial.resx">
-      <DependentUpon>202103231029370_Initial.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202103232108221_Initial.resx">
+      <DependentUpon>202103232108221_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
