@@ -28,6 +28,7 @@ namespace archivesystemApp.UnitTests
             _service = new FolderService(_repo.Object);
             _editModel = new CreateFolderViewModel { Name = GlobalConstants.RootFolderName, Id = 1, AccessLevelId = 1 };
             _editFolderInDb = new Folder { Id = _editModel.Id, Name = _editModel.Name, AccessLevelId = 1 };
+
         }
         [Test]
         public void DeleteFolder_FolderDoesNotExist_ReturnsFolderServiceResultNotFound()
@@ -305,7 +306,7 @@ namespace archivesystemApp.UnitTests
         {
             var userId = "dummy userId";
             var user = new AppUser { UserId = userId, Id = 1 };
-            _repo.Setup(r => r.UserRepo.GetUserByUserId(userId)).Returns<AppUser>(null);
+            _repo.Setup(r => r.UserRepo.GetUserByUserId(userId)).Returns(()=> null);
 
             var result = _service.GetCurrentUserAccessCode(userId);
 

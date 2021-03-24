@@ -474,7 +474,6 @@
     <Content Include="Views\Users\DelPrompt.cshtml" />
     <Content Include="Views\Users\Details.cshtml" />
     <Content Include="Views\Home\EmployeeDashboard.cshtml" />
-    <Content Include="Views\Folder\CreateFolder.cshtml" />
     <Content Include="Views\Shared\_AddOrEditDepartment.cshtml" />
     <Content Include="Views\Users\EditModal.cshtml" />
     <Content Include="Views\Shared\_EnrollPartial.cshtml" />

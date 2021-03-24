@@ -51,26 +51,15 @@ namespace archivesystemWebUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> AddOrEdit(FacultyViewModel model)
         {
+            FacultyServiceResult result;
             if (model.Id == 0)
-            {
-                var result =_service.SaveFaculty(model);
-                if(result== FacultyServiceResult.Succeeded)
-                    return Json("success", JsonRequestBehavior.AllowGet);
-                return Json("failure", JsonRequestBehavior.AllowGet);
-            }
+                result = _service.SaveFaculty(model);
             else
-            {
-                var getFaculty = _unitOfWork.FacultyRepo.Get(model.Id);
-                Mapper.Map(model, getFaculty);
-                getFaculty.UpdatedAt = DateTime.Now;
+                result = await _service.EditFaculty(model);
 
-                _unitOfWork.FacultyRepo.Update(getFaculty);
-                var folder = Mapper.Map<Folder>(model);
-                _unitOfWork.FolderRepo.UpdateFacultyFolder(folder);
-            }
-            await _unitOfWork.SaveAsync();
-
-            return Json("success", JsonRequestBehavior.AllowGet);
+            if (result == FacultyServiceResult.Succeeded)
+                return Json("success", JsonRequestBehavior.AllowGet);
+            return Json("failure", JsonRequestBehavior.AllowGet);
         }
 
         //GET: Faculty/Delete/5
@@ -91,9 +80,10 @@ namespace archivesystemWebUI.Controllers
         {
             try
             {
-                Faculty faculty = _unitOfWork.FacultyRepo.Get(id);
-                _unitOfWork.FacultyRepo.Remove(faculty);
-                await _unitOfWork.SaveAsync();
+                var result= await _service.DeleteFaculty(id);
+                if(result == FacultyServiceResult.Prohibited)
+                    return Json("prohibited", JsonRequestBehavior.AllowGet);
+
 
                 return Json("success", JsonRequestBehavior.AllowGet);
             }

@@ -20,15 +20,15 @@ namespace archivesystemDomain.Services
 
         public static void EnsurePopulated()
         {
-            Create("Admin");
-            Create("Staff");
-            Create("FacultyOfficer");
-            Create("DeptOfficer");
-            Create("HOD");
-            Create("AgHOD");
-            Create("Secretary");
-            Create("Alumni");
-            Create("Student");
+            Create(RoleNames.Admin);
+            Create(RoleNames.Staff);
+            Create(RoleNames.FacultyOfficer);
+            Create(RoleNames.HOD);
+            Create(RoleNames.DeptOfficer);
+            Create(RoleNames.AgHOD);
+            Create(RoleNames.Secretary);
+            Create(RoleNames.Alumni);
+            Create(RoleNames.Student);
            
             void Create(string name)
             {
