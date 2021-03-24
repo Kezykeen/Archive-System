@@ -68,7 +68,10 @@
     <Reference Include="System.Web.Mvc, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FolderServiceTests.cs" />
+    <Compile Include="FolderServiceTests\FolderServiceTest.cs" />
+    <Compile Include="FolderServiceTests\FolderService_DeleteFolder.cs" />
+    <Compile Include="FolderServiceTests\FolderService_EditFolder.cs" />
+    <Compile Include="FolderServiceTests\FolderService_GetCurrentUserAllowedAccessLevels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

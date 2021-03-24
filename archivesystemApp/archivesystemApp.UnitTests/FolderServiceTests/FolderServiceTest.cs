@@ -1,7 +1,5 @@
-﻿
-using Moq;
+﻿using Moq;
 using NUnit.Framework;
-using System;
 using archivesystemDomain.Interfaces;
 using archivesystemDomain.Entities;
 using archivesystemWebUI.Services;
@@ -11,7 +9,7 @@ using archivesystemWebUI.Models.FolderModels;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace archivesystemApp.UnitTests
+namespace archivesystemApp.UnitTests.FolderServiceTests
 {
     [TestFixture]
     public class FolderServiceUnitTests
@@ -28,42 +26,8 @@ namespace archivesystemApp.UnitTests
             _service = new FolderService(_repo.Object);
             _editModel = new CreateFolderViewModel { Name = GlobalConstants.RootFolderName, Id = 1, AccessLevelId = 1 };
             _editFolderInDb = new Folder { Id = _editModel.Id, Name = _editModel.Name, AccessLevelId = 1 };
-
         }
-        [Test]
-        public void DeleteFolder_FolderDoesNotExist_ReturnsFolderServiceResultNotFound()
-        {
-            _repo.Setup(r => r.FolderRepo.Get(2)).Returns<Folder>(null);
-            var result = _service.DeleteFolder(2);
-            Assert.That(result, Is.EqualTo(FolderServiceResult.NotFound));
-        }
-
-        //Only Faculty and Departmental folders are restricted folders
-        [Test]
-        public void DeleteFolder_FolderExistButRestricted_ReturnsFolderServiceResultProhibited()
-        {
-            _repo.Setup(r => r.FolderRepo.Get(2)).Returns(new Folder { Id = 2, IsRestricted = true });
-            var result = _service.DeleteFolder(2);
-            Assert.That(result, Is.EqualTo(FolderServiceResult.Prohibited));
-        }
-
-        [Test]
-        public void DeleteFolder_FolderExistAndNotRestricted_ReturnsFolderServiceResultSuccesful()
-        {
-            _repo.Setup(r => r.FolderRepo.Get(2)).Returns(new Folder { Id = 2, IsRestricted = false });
-            var result = _service.DeleteFolder(2);
-            Assert.That(result, Is.EqualTo(FolderServiceResult.Success));
-            _repo.Verify(r => r.FolderRepo.DeleteFolder(2));
-            _repo.Verify(r => r.Save());
-        }
-
-        [Test]
-        public void DeleteFolder_FolderIsRootFolder_ReturnsFolderServiceResultProhibited()
-        {
-            _repo.Setup(r => r.FolderRepo.Get(2)).Returns(new Folder { Id = 2, Name = GlobalConstants.RootFolderName });
-            var result = _service.DeleteFolder(2);
-            Assert.That(result, Is.EqualTo(FolderServiceResult.Prohibited));
-        }
+        
 
         [Test]
         public void DoesUserHasAccessToFolder_FolderIsRootFolderAndUserExist_ReturnsTrue()
@@ -125,62 +89,6 @@ namespace archivesystemApp.UnitTests
             Assert.That(result, Is.EqualTo(true));
         }
 
-        [Test]
-        public void Edit_NoAccessLevelId_ReturnFolderServiceResultInvalidModelState()
-        {
-            _editModel.AccessLevelId = 0;
-            var result = _service.Edit(_editModel);
-            Assert.That(result, Is.EqualTo(FolderServiceResult.InvalidModelState));
-        }
-
-        [Test]
-        public void Edit_NewNameIsRootFolderName_ReturnFolderServiceResultAlreadyExist()
-        {
-            _repo.Setup(x => x.FolderRepo.Get(_editModel.Id))
-                .Returns(new Folder { Name = GlobalConstants.RootFolderName, Id = _editModel.Id });
-            var result = _service.Edit(_editModel);
-            Assert.That(result, Is.EqualTo(FolderServiceResult.AlreadyExist));
-        }
-
-        [Test]
-        public void Edit_NoFolderName_ReturnFolderServiceResultInvalidModelState()
-        {
-            _editModel.Name = "";
-            var result = _service.Edit(_editModel);
-            Assert.That(result, Is.EqualTo(FolderServiceResult.InvalidModelState));
-        }
-
-        [Test]
-        public void Edit_FolderDoesNotExist_ReturnFolderServiceResultNotFound()
-        {
-            _repo.Setup(r => r.FolderRepo.Get(_editModel.Id)).Returns<Folder>(null);
-            var result = _service.Edit(_editModel);
-            Assert.That(result, Is.EqualTo(FolderServiceResult.NotFound));
-            _repo.Verify(r => r.FolderRepo.Get(_editModel.Id));
-        }
-
-        [Test]
-        public void Edit_FolderIsFoundButRestrictedAndNotRootFolder_ReturnFolderServiceResultProhibited()
-        {
-            _editFolderInDb.IsRestricted = true;
-            _editFolderInDb.Name = "dummy name";
-            _repo.Setup(r => r.FolderRepo.Get(_editModel.Id)).Returns(_editFolderInDb);
-            var result = _service.Edit(_editModel);
-            Assert.That(result, Is.EqualTo(FolderServiceResult.Prohibited));
-        }
-
-        [Test]
-        public void Edit_FolderIsFoundAndNotRestricted_ReturnFolderServiceResultSuccess()
-        {
-            _editModel.Name = "dummy name";
-            _editFolderInDb.Name = _editModel.Name;
-            _editFolderInDb.IsRestricted = false;
-            _repo.Setup(r => r.FolderRepo.Get(_editModel.Id)).Returns(_editFolderInDb);
-            var result = _service.Edit(_editModel);
-            Assert.That(result, Is.EqualTo(FolderServiceResult.Success));
-            _repo.Verify(r => r.FolderRepo.Get(_editModel.Id));
-            _repo.Verify(r => r.Save());
-        }
 
         [Test]
         public void FilterFolderSubFoldersUsingAccessLevel_WhenCalled_ReturnsFolderWithFilteredSufolders()
@@ -306,7 +214,7 @@ namespace archivesystemApp.UnitTests
         {
             var userId = "dummy userId";
             var user = new AppUser { UserId = userId, Id = 1 };
-            _repo.Setup(r => r.UserRepo.GetUserByUserId(userId)).Returns(()=> null);
+            _repo.Setup(r => r.UserRepo.GetUserByUserId(userId)).Returns<AppUser>(null);
 
             var result = _service.GetCurrentUserAccessCode(userId);
 
