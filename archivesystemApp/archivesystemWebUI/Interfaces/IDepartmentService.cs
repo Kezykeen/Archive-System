@@ -1,19 +1,23 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using archivesystemDomain.Entities;
+using archivesystemDomain.Services;
 using archivesystemWebUI.Models;
 
-namespace archivesystemWebUI.Services
+namespace archivesystemWebUI.Interfaces
 {
     public interface IDepartmentService
     {
         IEnumerable<Department> GetAllDepartmentToList();
         IEnumerable<Faculty> GetAllFaculties();
-        DepartmentViewModel GetDepartmentViewModel(int? id);
-        void AddOrEdit(DepartmentViewModel model);
+        DepartmentViewModel GetDepartment(int? id);
+        ServiceResult SaveDepartment(Department department);
+        Task<ServiceResult> UpdateDepartment(Department department);
+        Department GetDepartmentInDb(int id);
+        Task<ServiceResult> DeleteDepartment(int id);
         Department GetDepartmentById(int id);
+        IEnumerable<AppUser> GetAllUsersInDepartment(int id);
         Task Delete(int id);
-        void CreateDepartmentAndFolder(Department department);
         bool DepartNameCheck(string name, int id);
     }
 }
