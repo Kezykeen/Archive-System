@@ -16,6 +16,5 @@ namespace archivesystemWebUI.Interfaces
         Faculty GetFacultyById(int id);
         IEnumerable<Department> GetAllDepartmentsInFaculty(int id);
         bool FacultyNameCheck(string name, int id);
-
     }
 }

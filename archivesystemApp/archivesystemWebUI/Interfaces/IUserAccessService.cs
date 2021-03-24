@@ -12,14 +12,13 @@ namespace archivesystemWebUI.Interfaces
     {
         IEnumerable<AccessDetail> AccessDetails { get; }
         IEnumerable<AccessLevel> AccessLevels { get; }
-
-        Task AddUser(AddUserToAccessViewModel model);
+        Task<(string, Exception)> AddUser(AddUserToAccessViewModel model);
         AddUserToAccessViewModel AddUserModel();
-        Task Delete(int id);
+        Task<string> Delete(int id);
         void EditUserModel(int id, out EditUserViewModel model, out AccessDetail accessDetails);
         AccessDetail GetByNullableId(int? id);
         AppUser GetUserByEmail(string email);
-        Task Update(EditUserViewModel model);
-        
+        AccessDetail GetByAppUserId(int id);
+        Task<(string, Exception)> UpdateUser(EditUserViewModel model);
     }
 }

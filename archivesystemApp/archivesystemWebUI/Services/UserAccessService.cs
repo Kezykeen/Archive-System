@@ -3,9 +3,11 @@ using archivesystemDomain.Interfaces;
 using archivesystemDomain.Services;
 using archivesystemWebUI.Interfaces;
 using archivesystemWebUI.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace archivesystemWebUI.Services
 {
@@ -32,31 +34,47 @@ namespace archivesystemWebUI.Services
         #endregion
 
         #region MAIN METHODS
-        public async Task AddUser(AddUserToAccessViewModel model)
+        public async Task<(string, Exception)> AddUser(AddUserToAccessViewModel model)
         {
-            var user = _unitOfWork.UserRepo.GetUserByMail(model.Email);
-
-            var newAccessDetails = new AccessDetail
+            try
             {
-                AppUserId = user.Id,
-                AccessLevelId = model.AccessLevel,
-                AccessCode = await GenerateCode(user, add),
-                Status = Status.Active
-            };
+                var user = _unitOfWork.UserRepo.GetUserByMail(model.Email);
 
-            _unitOfWork.AccessDetailsRepo.Add(newAccessDetails);
-            await _unitOfWork.SaveAsync();
+                var newAccessDetails = new AccessDetail
+                {
+                    AppUserId = user.Id,
+                    AccessLevelId = model.AccessLevel,
+                    AccessCode = await GenerateCode(user, add),
+                    Status = Status.Active
+                };
+
+                _unitOfWork.AccessDetailsRepo.Add(newAccessDetails);
+                await _unitOfWork.SaveAsync();
+
+                return ("success", null);
+            }
+            catch (Exception e)
+            {
+                return ("failure", e);
+            }
+            
         }
-
+        
         public AppUser GetUserByEmail(string email)
         {
             return _unitOfWork.UserRepo.GetUserByMail(email);
-
         }
+
+        public AccessDetail GetByAppUserId(int appUserId)
+        {
+            return _unitOfWork.AccessDetailsRepo.GetByAppUserId(appUserId);
+        }
+
 
         public AccessDetail GetByNullableId(int? id)
         {
-            return _unitOfWork.AccessDetailsRepo.GetAccessDetails().SingleOrDefault(m => m.Id == id.Value);
+            return _unitOfWork.AccessDetailsRepo.Get(id.Value);
+
         }
 
         public AddUserToAccessViewModel AddUserModel()
@@ -77,24 +95,42 @@ namespace archivesystemWebUI.Services
 
         }
 
-        public async Task Update(EditUserViewModel model)
+        public async Task<(string, Exception)> UpdateUser(EditUserViewModel model)
         {
-            if (model.RegenerateCode == CodeStatus.Yes)
+            try
             {
-                var user = _unitOfWork.UserRepo.Get(model.AccessDetails.AppUserId);
-                model.AccessDetails.AccessCode = await GenerateCode(user, update);
-            }
+                if (model.RegenerateCode == CodeStatus.Yes)
+                {
+                    var user = _unitOfWork.UserRepo.Get(model.AccessDetails.AppUserId);
+                    model.AccessDetails.AccessCode = await GenerateCode(user, update);
+                }
 
-            _unitOfWork.AccessDetailsRepo.EditDetails(model.AccessDetails);
-            await _unitOfWork.SaveAsync();
+                _unitOfWork.AccessDetailsRepo.EditDetails(model.AccessDetails);
+                await _unitOfWork.SaveAsync();
+
+                return ("success", null);
+            }
+            catch (Exception e)
+            {
+                return ("failure", e);
+            }
         }
 
-        public async Task Delete(int id)
+        public async Task<string> Delete(int id)
         {
-            var accessDetails = _unitOfWork.AccessDetailsRepo.Get(id);
+            try
+            {
+                var accessDetails = _unitOfWork.AccessDetailsRepo.Get(id);
 
-            _unitOfWork.AccessDetailsRepo.Remove(accessDetails);
-            await _unitOfWork.SaveAsync();
+                _unitOfWork.AccessDetailsRepo.Remove(accessDetails);
+                await _unitOfWork.SaveAsync();
+
+                return "success";
+            }
+            catch (Exception)
+            {
+                return "failure";
+            }
         }
         #endregion
 
@@ -103,22 +139,26 @@ namespace archivesystemWebUI.Services
         {
             var accessCode = AccessCodeGenerator.NewCode(user.TagId);
 
-            if (method == add)
+            switch (method)
             {
-                await _emailSender.SendEmailAsync(
-                    user.Email, "Access Code",
-                    $"Hello {user.Name},\nYour access code is:\n<strong>{accessCode}</strong>.\nThis is confidential. Do not share with anyone.");
-            }
+                case add:
+                    await _emailSender.SendEmailAsync(
+                                                user.Email, "Access Code",
+                                                $"Hello {user.Name},\nYour access code is:\n<strong>{accessCode}</strong>.\nThis is confidential. Do not share with anyone.");
+                    return AccessCodeGenerator.HashCode(accessCode);
 
-            if (method == update)
-            {
-                await _emailSender.SendEmailAsync(
-                    user.Email, "Access Code (Updated)",
-                    $"Hello {user.Name},\nYour new access code is:\n<strong>{accessCode}</strong>.\nThis is confidential. Do not share with anyone.");
-            }
+                case update:
+                    await _emailSender.SendEmailAsync(
+                                                 user.Email, "Access Code (Updated)",
+                                                 $"Hello {user.Name},\nYour new access code is:\n<strong>{accessCode}</strong>.\nThis is confidential. Do not share with anyone.");
+                    return AccessCodeGenerator.HashCode(accessCode);
 
-            return AccessCodeGenerator.HashCode(accessCode);
+                default:
+                    return AccessCodeGenerator.HashCode(accessCode);
+            }
         }
+
+        
         #endregion
 
     }

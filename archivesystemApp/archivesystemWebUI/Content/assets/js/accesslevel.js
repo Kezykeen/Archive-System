@@ -33,7 +33,7 @@ function OnAddAccessSuccess(response) {
         window.location.reload();
 
     } else if (response == "failure") {
-        $("#modal").html(response);
+        $("#modal").html(response.model);
         $("#modal").modal("show");
         $.validator.unobtrusive.parse("#CreateAccessLevelForm");
     }
@@ -82,7 +82,7 @@ function OnAddUserSuccess(response) {
 
     } else if (response == "failure") {
  
-        $("#modal").html(response);
+        $("#modal").html(response.model);
         $("#modal").modal("show");
         $.validator.unobtrusive.parse("#AddUserAccessForm");
     }
@@ -91,7 +91,7 @@ function OnAddUserSuccess(response) {
 // EditUserAccess AJAX callback
 function OnEditUserSuccess(response) {
     if (response == "success") {
-
+        debugger;
         $('#modal').modal('hide');
 
         Swal.fire({
@@ -105,10 +105,10 @@ function OnEditUserSuccess(response) {
         window.location.reload();
 
     } else if (response == "failure") {
-
-        $("#modal").html(response);
-        $("#modal").modal("show");
+        debugger; 
         $.validator.unobtrusive.parse("#EditUserAccessForm");
+        $("#modal").html(response.model);
+        $("#modal").modal("show");
     }
 }
 
@@ -135,6 +135,7 @@ function OnDeleteUserSuccess(response) {
         $("#modal").modal("show");
     }
 }
+
 
 function OnFailure(error) {
     bootbox.alert("Internal server error. Please contact the Admin.");

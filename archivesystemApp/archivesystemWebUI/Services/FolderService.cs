@@ -103,8 +103,10 @@ namespace archivesystemWebUI.Services
 
         public IEnumerable<AccessLevel> GetCurrentUserAllowedAccessLevels(string userId)
         {
-            var user = _repo.UserRepo.Find(c => c.UserId == userId).SingleOrDefault();
+            var users = _repo.UserRepo.Find(c => c.UserId == userId);
+            var user= users.SingleOrDefault();
             if (user == null) return null;
+
             var userdetails = _repo.AccessDetailsRepo.Find(x => x.AppUserId == user.Id).SingleOrDefault();
             var userAccessLevel = userdetails == null ? 0 : userdetails.AccessLevelId;
             var allowedAccessLevels=_repo.AccessLevelRepo.GetAll().Where(x => x.Id <= userAccessLevel);
