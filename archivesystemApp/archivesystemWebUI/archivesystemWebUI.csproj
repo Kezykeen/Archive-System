@@ -272,9 +272,7 @@
     <Compile Include="Repository\UnitOfWork.cs" />
     <Compile Include="Services\DepartmentService.cs" />
     <Compile Include="Services\FacultyService.cs" />
-    <Compile Include="Services\IDepartmentService.cs" />
-    <Compile Include="Services\IFacultyService.cs" />
-    <Compile Include="Services\FacultyService.cs" />
+    <Compile Include="Interfaces\IDepartmentService.cs" />
     <Compile Include="Services\FolderService.cs" />
     <Compile Include="Services\RoleService.cs" />
     <Compile Include="Services\UserAccessService.cs" />
@@ -478,7 +476,6 @@
     <Content Include="Views\Users\DelPrompt.cshtml" />
     <Content Include="Views\Users\Details.cshtml" />
     <Content Include="Views\Home\EmployeeDashboard.cshtml" />
-    <Content Include="Views\Shared\_AddOrEditDepartment.cshtml" />
     <Content Include="Views\Users\EditModal.cshtml" />
     <Content Include="Views\Shared\_EnrollPartial.cshtml" />
     <Content Include="Views\Users\EnrollModal.cshtml" />
@@ -508,6 +505,8 @@
     <Content Include="Views\Shared\_AddUserToRole.cshtml" />
     <Content Include="Views\Shared\_RemoveUserFromRole.cshtml" />
     <Content Include="Views\Settings\TicketTypes.cshtml" />
+    <Content Include="Views\Department\ViewAllUsersInDept.cshtml" />
+    <Content Include="Views\Faculty\ViewAllDepartmentsInFaculty.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
