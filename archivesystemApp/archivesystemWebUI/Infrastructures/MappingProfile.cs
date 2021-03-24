@@ -95,7 +95,7 @@ namespace archivesystemWebUI.Infrastructures
             Mapper.CreateMap<Folder, FolderPageViewModel>()
                 .ForMember(x=> x.DirectChildren,opt=> opt.MapFrom(src=> src.Subfolders));
 
-
+            Mapper.CreateMap<EditAccessLevelViewModel, AccessLevel>().ReverseMap();
         }
     }
 }
