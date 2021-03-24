@@ -55,7 +55,7 @@ namespace archivesystemWebUI.Controllers
             if (model.Id == 0)
                 result = _service.SaveFaculty(model);
             else
-                result = await _service.EditFaculty(model);
+                result = await _service.EditFaculty(model); 
 
             if (result == FacultyServiceResult.Succeeded)
                 return Json("success", JsonRequestBehavior.AllowGet);
