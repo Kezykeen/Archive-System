@@ -1,10 +1,7 @@
 ﻿using archivesystemDomain.Entities;
-using archivesystemDomain.Interfaces;
-using archivesystemDomain.Services;
 using archivesystemWebUI.Interfaces;
 using archivesystemWebUI.Models;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 
@@ -52,22 +49,18 @@ namespace archivesystemWebUI.Controllers
             if (!ModelState.IsValid)
             {
                 model.AccessLevels = _service.AccessLevels;
-                return PartialView("_AddUserAccess", model);
+                return Json(new { model }, JsonRequestBehavior.AllowGet);
             }
-
-            try
+            
+            var data = await _service.AddUser(model);
+            if (data.Item2 == null)
             {
-                await _service.AddUser(model);
-
-                return Json("success", JsonRequestBehavior.AllowGet);
-
+                return Json(data.Item1, JsonRequestBehavior.AllowGet);
             }
-            catch (Exception e)
-            {
-                ModelState.AddModelError("", e.Message);
-                model.AccessLevels = _service.AccessLevels;
-                return PartialView("_AddUserAccess", model);
-            }
+            
+            ModelState.AddModelError("", data.Item2);
+            model.AccessLevels = _service.AccessLevels;
+            return Json(new { model }, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult EditUser(int id)
@@ -86,20 +79,18 @@ namespace archivesystemWebUI.Controllers
             if (!ModelState.IsValid)
             {
                 model.AccessLevels = _service.AccessLevels;
-                return PartialView("_EditUserAccess", model);
+                return Json(new { model }, JsonRequestBehavior.AllowGet);
             }
 
-            try
+            var data = await _service.UpdateUser(model);
+            if (data.Item2 == null)
             {
-                await _service.Update(model);
-                return Json("success", JsonRequestBehavior.AllowGet);
+                return Json(data.Item1, JsonRequestBehavior.AllowGet);
             }
-            catch (Exception e)
-            {
-                ModelState.AddModelError("", e.Message);
-                model.AccessLevels = _service.AccessLevels;
-                return PartialView("_EditUserAccess", model);
-            }
+
+            ModelState.AddModelError("", data.Item2);
+            model.AccessLevels = _service.AccessLevels;
+            return Json(new { model }, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult DeleteUser(int? id)
@@ -114,6 +105,7 @@ namespace archivesystemWebUI.Controllers
             {
                 return HttpNotFound();
             }
+
             return PartialView("_DeleteUserAccess", model);
         }
 
@@ -121,18 +113,13 @@ namespace archivesystemWebUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            await _service.Delete(id);
-
-            return Json("success", JsonRequestBehavior.AllowGet);
-            
+            var data = await _service.Delete(id);
+            return Json(data, JsonRequestBehavior.AllowGet);            
         }
-
         #endregion
 
 
         #region Validators
-
-
         [HttpPost]
         public JsonResult ValidateEmail(string Email)
         {
@@ -140,10 +127,9 @@ namespace archivesystemWebUI.Controllers
             if (user == null)
                 return Json("User with this email does not exists. Please enter a different email", JsonRequestBehavior.AllowGet);
 
-            var accessDetails = _service.GetByNullableId(user.Id);
+            var accessDetails = _service.GetByAppUserId(user.Id);
             return accessDetails == null ? Json(true, JsonRequestBehavior.AllowGet) : Json("User already has an access level!", JsonRequestBehavior.AllowGet);
         }
-
         #endregion
 
     }
