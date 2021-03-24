@@ -20,13 +20,13 @@ namespace archivesystemDomain.Services
         public static string HashCode(string code)
         {
             var salt = BCrypt.Net.BCrypt.GenerateSalt();
-            string codeHash = BCrypt.Net.BCrypt.HashPassword(code, salt);
+            var codeHash = BCrypt.Net.BCrypt.HashPassword(code, salt);
             return codeHash;
         }
 
         public static bool VerifyCode(string code, string hashedcode)
         {
-            bool verified = BCrypt.Net.BCrypt.Verify(code, hashedcode);
+            var verified = BCrypt.Net.BCrypt.Verify(code, hashedcode);
             return verified;
         }
 
