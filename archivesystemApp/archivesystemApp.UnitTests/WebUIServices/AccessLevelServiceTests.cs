@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UnitTestProject1.WebUIServices
+namespace archivesystemApp.UnitTests.WebUIServices
 {
     [TestFixture]
     class AccessLevelServiceTests
