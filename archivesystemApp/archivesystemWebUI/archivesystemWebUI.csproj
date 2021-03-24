@@ -242,6 +242,7 @@
     <Compile Include="Models\AddUserToAccessViewModel.cs" />
     <Compile Include="Models\CreateAccessLevelViewModel.cs" />
     <Compile Include="Models\DepartmentViewModel.cs" />
+    <Compile Include="Models\EditAccessLevelViewModel.cs" />
     <Compile Include="Models\EditUserviewModel.cs" />
     <Compile Include="Models\EnrollViewModel.cs" />
     <Compile Include="Models\FacultyViewModel.cs" />

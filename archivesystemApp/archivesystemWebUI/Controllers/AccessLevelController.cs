@@ -74,20 +74,22 @@ namespace archivesystemWebUI.Controllers
             if (accessLevel == null)
                 return HttpNotFound();
 
-            return PartialView("_EditAccessLevel", accessLevel);
+            var model = Mapper.Map<EditAccessLevelViewModel>(accessLevel);
+            return PartialView("_EditAccessLevel", model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> EditAccessLevel(AccessLevel accessLevel)
+        public async Task<ActionResult> EditAccessLevel(EditAccessLevelViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                return PartialView("_EditAccessLevel", accessLevel);
+                return PartialView("_EditAccessLevel", model);
             }
 
             try
             {
+                var accessLevel = Mapper.Map<AccessLevel>(model);
                 await _service.Update(accessLevel);
 
                 return Json("success", JsonRequestBehavior.AllowGet);
@@ -95,7 +97,7 @@ namespace archivesystemWebUI.Controllers
             catch (Exception e)
             {
                 ModelState.AddModelError("", e.Message);
-                return PartialView("_EditAccessLevel", accessLevel);
+                return PartialView("_EditAccessLevel", model);
             }
         }
 
