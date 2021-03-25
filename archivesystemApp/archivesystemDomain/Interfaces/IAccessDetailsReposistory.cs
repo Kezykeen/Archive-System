@@ -11,6 +11,6 @@ namespace archivesystemDomain.Interfaces
     {
         void EditDetails(AccessDetail accessDetails);
         IEnumerable<AccessDetail> GetAccessDetails();
-        AccessDetail GetByEmployeeId(int employeeId);
+        AccessDetail GetByAppUserId(int appUserId);
     }
 }

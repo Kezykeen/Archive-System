@@ -143,6 +143,7 @@ namespace archivesystemWebUI.Infrastructures
                 .ForMember(dest => dest.RefNo, opt => opt.UseValue(Guid.NewGuid().ToString("N")));
 
             Mapper.CreateMap<Application, ApplicationVm>();
+            Mapper.CreateMap<EditAccessLevelViewModel, AccessLevel>().ReverseMap();
         }
     }
 }

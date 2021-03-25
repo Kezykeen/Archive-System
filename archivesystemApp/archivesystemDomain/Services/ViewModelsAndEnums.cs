@@ -43,6 +43,20 @@ namespace archivesystemDomain.Services
     public class RoleNames
     {
         public const string Admin = "Admin";
-        public const string Manager = "Manager";
+        public const string Staff = "Staff";
+        public const string FacultyOfficer = "FacultyOfficer";
+        public const string DeptOfficer="DeptOfficer";
+        public const string HOD="HOD";
+        public const string AgHOD="AgHOD";
+        public const string Secretary="Secretary";
+        public const string Alumni="Alumni";
+        public const string Student="Student";
+    }
+
+    public enum ServiceResult
+    {
+        Succeeded,
+        Failure,
+        Prohibited
     }
 }

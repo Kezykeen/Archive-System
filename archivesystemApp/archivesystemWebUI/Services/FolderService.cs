@@ -4,12 +4,10 @@ using archivesystemDomain.Services;
 using archivesystemWebUI.Interfaces;
 using archivesystemWebUI.Models;
 using archivesystemWebUI.Models.FolderModels;
-using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using System.Web.Http.ModelBinding;
+
 
 namespace archivesystemWebUI.Services
 {
@@ -49,18 +47,16 @@ namespace archivesystemWebUI.Services
 
         }
 
-        public bool DoesUserHasAccessToFolder(Folder folder,string userId)
+        public bool DoesUserHasAccessToFolder(Folder folder,UserData data)
         {
-            var data=GetUserData(userId);
-            folder.Subfolders = folder.Subfolders.Where(x => x.AccessLevelId <= data.UserAccessLevel).ToList();
             if (data.User == null) return false;
+            if (folder.AccessLevelId > data.UserAccessLevel) return false;
+
             if (folder.FacultyId != null && data.User.Department.FacultyId != folder.FacultyId)//folder is faculty folder
                 return false;
             if (folder.DepartmentId != null && folder.DepartmentId != data.User.DepartmentId)
                 return false;
-            if (folder.AccessLevelId > data.UserAccessLevel)
-                return false;
-
+            
             return true;
         }
 
@@ -68,33 +64,85 @@ namespace archivesystemWebUI.Services
         {
             if (model.AccessLevelId == 0 || string.IsNullOrEmpty(model.Name) || model.Id == 0)
                 return FolderServiceResult.InvalidModelState;
-            var folder = new Folder { Name = model.Name, Id = model.Id, AccessLevelId = model.AccessLevelId };
-            _repo.FolderRepo.UpdateFolder(folder);
-            _repo.Save();
 
+            var folderInDb = _repo.FolderRepo.Get(model.Id);
+            if (folderInDb == null) return FolderServiceResult.NotFound;
+            if (folderInDb.Name == GlobalConstants.RootFolderName) return FolderServiceResult.AlreadyExist;
+            if (folderInDb.IsRestricted) return FolderServiceResult.Prohibited;
+            
+
+            folderInDb.Name = model.Name;
+            folderInDb.AccessLevelId = model.AccessLevelId;
+            _repo.Save();
             return FolderServiceResult.Success;
         }
 
-        public CreateFolderViewModel GetCreateFolderViewModel(int parentId,string userId)
+        public Folder FilterFolderSubFoldersUsingAccessLevel(Folder folder,int userAccessLevel)
         {
+            var subfolders = folder.Subfolders.Where(x => x.AccessLevelId <= userAccessLevel);
+            folder.Subfolders = subfolders.Count() != 0 ? subfolders.ToList(): new List<Folder>();
+            return folder;
+        }
+
+        public CreateFolderViewModel GetCreateFolderViewModel(int parentId,string userId,bool userIsAdmin=false )
+        {
+            if (userIsAdmin)
+                return GetAdminCreateFolderViewModel(parentId);
+            
             var parentFolder = _repo.FolderRepo.Get(parentId);
-            var userAllowedLevels = GetCurrentUserAllowedAccessLevels(userId);
+            if (parentFolder == null) return null;
+
+            var user = _repo.UserRepo.FindWithNavProps(c => c.UserId == userId, _ => _.Department).SingleOrDefault();
+            if (user == null) return null;
+
+            var userdetails = _repo.AccessDetailsRepo.Find(x => x.AppUserId == user.Id).SingleOrDefault();
+            if(userdetails==null) return null;
+            
+            var userAllowedLevels=_repo.AccessLevelRepo.GetAll().Where(x => x.Id <= userdetails.AccessLevelId);
             userAllowedLevels = userAllowedLevels.Where(x => x.Id >= parentFolder.AccessLevelId);
             var data = new CreateFolderViewModel() { Name = "", ParentId = parentId, AccessLevels = userAllowedLevels };
             return data;
         }
 
+        private CreateFolderViewModel GetAdminCreateFolderViewModel(int parentFolderId)
+        {
+            var parentFolder = _repo.FolderRepo.Get(parentFolderId);
+            if (parentFolder == null) return null;
+
+            var userAllowedLevels = _repo.AccessLevelRepo.GetAll();
+            userAllowedLevels = userAllowedLevels.Where(x => x.Id >= parentFolder.AccessLevelId);
+            var data = new CreateFolderViewModel() { Name = "", ParentId = parentFolderId, AccessLevels = userAllowedLevels };
+            return data;
+        }
+
+        public IEnumerable<AccessLevel> GetAllAccessLevels()
+        {
+           return  _repo.AccessLevelRepo.GetAll();
+        }
         public IEnumerable<AccessLevel> GetCurrentUserAllowedAccessLevels(string userId)
         {
-            var data =GetUserData(userId);
-            return _repo.AccessLevelRepo.GetAll().Where(x => x.Id <= data.UserAccessLevel);
+            var users = _repo.UserRepo.Find(c => c.UserId == userId);
+            var user= users.SingleOrDefault();
+            if (user == null) return null;
+
+            //_repo.Setup(r => r.AccessDetailsRepo.Find(x => x.AppUserId == dummyAppUserId)).Returns(accessDetails);
+            var userdetail = _repo.AccessDetailsRepo.Find(x => x.AppUserId == user  .Id);
+             var userdetails=userdetail.SingleOrDefault();
+            var userAccessLevel = userdetails == null ? 0 : userdetails.AccessLevelId;
+            var allowedAccessLevels=_repo.AccessLevelRepo.GetAll().Where(x => x.Id <= userAccessLevel);
+            if (allowedAccessLevels.Count() == 0) return null;
+
+            return allowedAccessLevels;
         }
 
         public string GetCurrentUserAccessCode(string userId)
         {
             var user = _repo.UserRepo.GetUserByUserId(userId);
-            var userAccessCode = _repo.AccessDetailsRepo.GetByEmployeeId(user.Id).AccessCode;
-            return userAccessCode;
+            if (user == null)
+                return "";
+            var userDetails = _repo.AccessDetailsRepo.Find(x => x.AppUserId == user.Id).SingleOrDefault();
+            if (userDetails == null) return "";
+            return userDetails.AccessCode;
         }
 
         public IEnumerable<Folder> GetFoldersThatMatchName(string name)
@@ -123,7 +171,7 @@ namespace archivesystemWebUI.Services
         public FolderPageViewModel GetRootFolderPageViewModel(string userId,string userRole)
         {
             UserData data = GetUserData(userId);
-            if (data.UserAccessLevel == _GroundLevelAccess)
+            if (data.UserAccessLevel == _GroundLevelAccess && !userRole.Contains(RoleNames.Admin))
                 return new FolderPageViewModel(); ;
             var rootFolder = GetRootFolder();
             var model = new FolderPageViewModel
@@ -142,7 +190,7 @@ namespace archivesystemWebUI.Services
         {
             var user = _repo.UserRepo.FindWithNavProps(c => c.UserId == userId, _ => _.Department).SingleOrDefault();
             if (user == null) return new UserData { User = null, UserAccessLevel = 0 };
-            var userdetails = _repo.AccessDetailsRepo.GetByEmployeeId(user.Id);
+            var userdetails = _repo.AccessDetailsRepo.Find(x=> x.AppUserId==user.Id).SingleOrDefault();
             var userAccessLevel = userdetails == null ? 0 : userdetails.AccessLevelId;
             return  new UserData { User = user, UserAccessLevel = userAccessLevel };
         }

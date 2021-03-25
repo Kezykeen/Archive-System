@@ -10,14 +10,19 @@ namespace archivesystemWebUI.Services
 {
     public class AccessLevelService : IAccessLevelService
     {
+        #region FIELD
         private readonly IUnitOfWork _unitOfWork;
+        #endregion
 
+        #region CONSTRUCTOR
         public AccessLevelService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
 
         }
+        #endregion
 
+        #region MAIN METHODS
         public IEnumerable<AccessLevel> GetAll()
         {
             return _unitOfWork.AccessLevelRepo.GetAll();
@@ -43,7 +48,8 @@ namespace archivesystemWebUI.Services
         public bool CheckLevel(string Level)
         {
             var checkLevel = _unitOfWork.AccessLevelRepo.GetByLevel(Level);
-           return checkLevel == null;
+            return checkLevel == null;
         }
+        #endregion
     }
 }

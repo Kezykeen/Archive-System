@@ -14,9 +14,11 @@ namespace archivesystemWebUI.Interfaces
     public interface IFolderService
     {
         FolderServiceResult DeleteFolder(int folderId);
-        bool DoesUserHasAccessToFolder(Folder folder,string userId);
+        bool DoesUserHasAccessToFolder(Folder folder,UserData userData);
         FolderServiceResult Edit(CreateFolderViewModel model);
-        CreateFolderViewModel GetCreateFolderViewModel(int parentId,string userId);
+        Folder FilterFolderSubFoldersUsingAccessLevel(Folder folder, int userAccessLevel);
+        IEnumerable<AccessLevel> GetAllAccessLevels();
+        CreateFolderViewModel GetCreateFolderViewModel(int parentId,string userId, bool userIsAdmin=false);
         string GetCurrentUserAccessCode(string userId);
         IEnumerable<AccessLevel> GetCurrentUserAllowedAccessLevels(string userId);
         List<FolderPath> GetFolderPath(int folderId);

@@ -9,6 +9,7 @@ using archivesystemDomain.Entities;
 using archivesystemDomain.Interfaces;
 using archivesystemDomain.Services;
 using archivesystemWebUI.Repository;
+using archivesystemWebUI.Services;
 using Ninject.Web.Common;
 using archivesystemWebUI.Services;
 using archivesystemWebUI.Interfaces;
@@ -17,7 +18,7 @@ namespace archivesystemWebUI.Infrastructures
 {
     public class NinjectDependenceResolver : IDependencyResolver
     {
-        private IKernel kernel;
+        private readonly IKernel kernel;
         public NinjectDependenceResolver(IKernel kernelParam)
         {
             kernel = kernelParam;
@@ -51,13 +52,13 @@ namespace archivesystemWebUI.Infrastructures
             kernel.Bind<IFileMetaRepo>().To<FileMetaRepo>();
             kernel.Bind<ITicketRepo>().To<TicketRepo>();
             kernel.Bind<IApplicationRepo>().To<ApplicationRepo>();
+            kernel.Bind<IFacultyService>().To<FacultyService>();
+            kernel.Bind<IDepartmentService>().To<DepartmentService>();
             kernel.Bind<IAccessLevelService>().To<AccessLevelService>();
             kernel.Bind<IUserAccessService>().To<UserAccessService>();
             kernel.Bind<IFileRepo>().To<FileRepo>();
             kernel.Bind<IUpsertFile>().To<UpsertFile>();
             kernel.Bind<IFolderService>().To<FolderService>();
-            kernel.Bind<IFacultyService>().To<FacultyService>();
-            
         }
     }
 }

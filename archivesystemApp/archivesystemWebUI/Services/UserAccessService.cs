@@ -3,59 +3,83 @@ using archivesystemDomain.Interfaces;
 using archivesystemDomain.Services;
 using archivesystemWebUI.Interfaces;
 using archivesystemWebUI.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace archivesystemWebUI.Services
 {
     public class UserAccessService : IUserAccessService
     {
+        #region FIELDS
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IEmailSender _emailSender;
+        private const string add = "add";
+        private const string update = "update";
+        #endregion
 
-        public UserAccessService(IUnitOfWork unitOfWork )
-        {
-            _unitOfWork = unitOfWork;
-        }
-
+        #region PROPERTIES
         public IEnumerable<AccessLevel> AccessLevels { get { return _unitOfWork.AccessLevelRepo.GetAll(); } }
         public IEnumerable<AccessDetail> AccessDetails { get { return _unitOfWork.AccessDetailsRepo.GetAccessDetails(); } }
+        #endregion
 
-        public async Task AddUser(AddUserToAccessViewModel model)
+        #region CONSTRUCTOR
+        public UserAccessService(IUnitOfWork unitOfWork, IEmailSender emailSender)
         {
-            var user = _unitOfWork.UserRepo.GetUserByMail(model.Email);
+            _unitOfWork = unitOfWork;
+            _emailSender = emailSender;
+        }
+        #endregion
 
-            var newAccessDetails = new AccessDetail
+        #region MAIN METHODS
+        public async Task<(string, Exception)> AddUser(AddUserToAccessViewModel model)
+        {
+            try
             {
-                AppUserId = user.Id,
-                AccessLevelId = model.AccessLevel,
-                AccessCode = AccessCodeGenerator.NewCode(user.TagId),
-                Status = Status.Active
-            };
+                var user = _unitOfWork.UserRepo.GetUserByMail(model.Email);
 
-            _unitOfWork.AccessDetailsRepo.Add(newAccessDetails);
-            await _unitOfWork.SaveAsync();
+                var newAccessDetails = new AccessDetail
+                {
+                    AppUserId = user.Id,
+                    AccessLevelId = model.AccessLevel,
+                    AccessCode = await GenerateCode(user, add),
+                    Status = Status.Active
+                };
+
+                _unitOfWork.AccessDetailsRepo.Add(newAccessDetails);
+                await _unitOfWork.SaveAsync();
+
+                return ("success", null);
+            }
+            catch (Exception e)
+            {
+                return ("failure", e);
+            }
+            
         }
-
-
-        public void GetById(int id, out AccessDetail accessDetails)
+        
+        public AppUser GetUserByEmail(string email)
         {
-            accessDetails = _unitOfWork.AccessDetailsRepo.Get(id);
-
+            return _unitOfWork.UserRepo.GetUserByMail(email);
         }
+
+        public AccessDetail GetByAppUserId(int appUserId)
+        {
+            return _unitOfWork.AccessDetailsRepo.GetByAppUserId(appUserId);
+        }
+
 
         public AccessDetail GetByNullableId(int? id)
         {
-            return   _unitOfWork.AccessDetailsRepo.GetAccessDetails().SingleOrDefault(m => m.Id == id.Value);
-
+            return _unitOfWork.AccessDetailsRepo.Get(id.Value);
 
         }
-
 
         public AddUserToAccessViewModel AddUserModel()
         {
             return new AddUserToAccessViewModel { AccessLevels = AccessLevels };
-
         }
 
         public void EditUserModel(int id, out EditUserViewModel model, out AccessDetail accessDetails)
@@ -71,30 +95,71 @@ namespace archivesystemWebUI.Services
 
         }
 
-        public async Task Update(EditUserViewModel model)
+        public async Task<(string, Exception)> UpdateUser(EditUserViewModel model)
         {
-            if (model.RegenerateCode == CodeStatus.Yes)
+            try
             {
-                var user = _unitOfWork.UserRepo.Get(model.AccessDetails.AppUserId);
-                model.AccessDetails.AccessCode = AccessCodeGenerator.NewCode(user.TagId);
+                if (model.RegenerateCode == CodeStatus.Yes)
+                {
+                    var user = _unitOfWork.UserRepo.Get(model.AccessDetails.AppUserId);
+                    model.AccessDetails.AccessCode = await GenerateCode(user, update);
+                }
+
+                _unitOfWork.AccessDetailsRepo.EditDetails(model.AccessDetails);
+                await _unitOfWork.SaveAsync();
+
+                return ("success", null);
             }
-
-            _unitOfWork.AccessDetailsRepo.EditDetails(model.AccessDetails);
-            await _unitOfWork.SaveAsync();
+            catch (Exception e)
+            {
+                return ("failure", e);
+            }
         }
 
-        public async Task Delete(int id)
+        public async Task<string> Delete(int id)
         {
-            var accessDetails = _unitOfWork.AccessDetailsRepo.Get(id);
-            _unitOfWork.AccessDetailsRepo.Remove(accessDetails);
-            await _unitOfWork.SaveAsync();
+            try
+            {
+                var accessDetails = _unitOfWork.AccessDetailsRepo.Get(id);
+
+                _unitOfWork.AccessDetailsRepo.Remove(accessDetails);
+                await _unitOfWork.SaveAsync();
+
+                return "success";
+            }
+            catch (Exception)
+            {
+                return "failure";
+            }
+        }
+        #endregion
+
+        #region HELPER METHOD
+        private async Task<string> GenerateCode(AppUser user, string method)
+        {
+            var accessCode = AccessCodeGenerator.NewCode(user.TagId);
+
+            switch (method)
+            {
+                case add:
+                    await _emailSender.SendEmailAsync(
+                                                user.Email, "Access Code",
+                                                $"Hello {user.Name},\nYour access code is:\n<strong>{accessCode}</strong>.\nThis is confidential. Do not share with anyone.");
+                    return AccessCodeGenerator.HashCode(accessCode);
+
+                case update:
+                    await _emailSender.SendEmailAsync(
+                                                 user.Email, "Access Code (Updated)",
+                                                 $"Hello {user.Name},\nYour new access code is:\n<strong>{accessCode}</strong>.\nThis is confidential. Do not share with anyone.");
+                    return AccessCodeGenerator.HashCode(accessCode);
+
+                default:
+                    return AccessCodeGenerator.HashCode(accessCode);
+            }
         }
 
-        public void ValidateEmail(string Email, out AccessDetail accessDetails, out AppUser user)
-        {
-            var getEmployee = _unitOfWork.UserRepo.GetUserByMail(Email);
-            user = getEmployee;
-            accessDetails = _unitOfWork.AccessDetailsRepo.GetByEmployeeId(getEmployee.Id);
-        }       
+        
+        #endregion
+
     }
 }

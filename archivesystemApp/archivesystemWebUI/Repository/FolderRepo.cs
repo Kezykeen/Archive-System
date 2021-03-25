@@ -13,7 +13,7 @@ namespace archivesystemWebUI.Repository
     public class FolderRepo : Repository<Folder>, IFolderRepo
     {
         private readonly ApplicationDbContext _context;
-        private List<Folder> Folders = new List<Folder>();
+        private List<Folder> __folders = new List<Folder>();
         private List<FolderPath> CurrentPathFolders = new List<FolderPath>();
 
         public FolderRepo(ApplicationDbContext context)
@@ -25,13 +25,13 @@ namespace archivesystemWebUI.Repository
         public void DeleteFolder(int folderId)
         {
             RecursiveDelete(folderId);
-            _context.Folders.RemoveRange(Folders);
+            _context.Folders.RemoveRange(__folders);
         }
         public Folder GetFacultyFolder(string name)
         {
             var rootFolder = Find(x=> x.Name== GlobalConstants.RootFolderName && x.FacultyId==null && x.DepartmentId==null)
                 .FirstOrDefault();
-            var folders = FindWithNavProps(x => x.Name == name && x.FacultyId == null, x => x.Subfolders);
+            var folders = FindWithNavProps(x => x.Name == name , x => x.Subfolders).ToList();
             var folder=folders.SingleOrDefault(x => x.Name == name && x.ParentId == rootFolder.Id);
             return folder;
         }
@@ -79,7 +79,7 @@ namespace archivesystemWebUI.Repository
                 }
             }
 
-            Folders.Add(folder);
+            __folders.Add(folder);
         }
         public bool UpdateFolder(Folder folder)
         {

@@ -32,7 +32,5 @@ namespace archivesystemDomain.Entities
         public DbSet<Signer> Signers { get; set; }
         public DbSet<ApplicationReceiver> ApplicationReceivers { get; set; }
         public DbSet<Activity> Activities { get; set; }
-
-
     }
 }
