@@ -505,6 +505,8 @@
     <Content Include="Views\Shared\_AddUserToRole.cshtml" />
     <Content Include="Views\Shared\_RemoveUserFromRole.cshtml" />
     <Content Include="Views\Settings\TicketTypes.cshtml" />
+    <Content Include="Views\Shared\_DashboardTables.cshtml" />
+    <Content Include="Views\Shared\_DashboardCards.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
