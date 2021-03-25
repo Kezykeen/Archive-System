@@ -1,4 +1,4 @@
-﻿@model IEnumerable<archivesystemDomain.Entities.Department>
+﻿@model archivesystemWebUI.Models.FacultyDepartmentsViewModel
 
 @{
     var count = 0;
@@ -10,7 +10,7 @@
     <div class="page-header">
         <div class="row align-items-center">
             <div class="col">
-                <h3 class="page-title">Departments</h3>
+                <h3 class="page-title">@Model.Faculty.Name</h3>
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="@Url.Action("Index", "Faculty")">Faculty</a></li>
                     <li class="breadcrumb-item active">Departments</li>
@@ -31,7 +31,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model)
+                    @foreach (var item in Model.Departments)
                     {
                     <tr>
                         <td>

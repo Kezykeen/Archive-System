@@ -6,7 +6,7 @@ using archivesystemDomain.Entities;
 using archivesystemDomain.Interfaces;
 using archivesystemDomain.Services;
 using archivesystemWebUI.Interfaces;
-using AutoMapper;
+using archivesystemWebUI.Models;
 
 namespace archivesystemWebUI.Services
 {
@@ -40,13 +40,6 @@ namespace archivesystemWebUI.Services
             return faculty;
         }
 
-        public Faculty GetFacultyById(int id)
-        {
-            Faculty faculty = _unitOfWork.FacultyRepo.Get(id);
-
-            return faculty;
-        }
-
         public ServiceResult SaveFaculty(Faculty model)
         {
             var facultyFolderExist = DoesFacultyFolderAlreadyExist(model);
@@ -56,17 +49,11 @@ namespace archivesystemWebUI.Services
             return result;
         }
 
-        public async Task<ServiceResult> UpdateFaculty(Faculty faculty)
+        public ServiceResult UpdateFaculty(Faculty faculty)
         {
             try
             {
-                faculty.UpdatedAt = DateTime.Now;
                 _unitOfWork.FacultyRepo.Update(faculty);
-
-                var folder = Mapper.Map<Folder>(faculty);
-                _unitOfWork.FolderRepo.UpdateFacultyFolder(folder);
-
-                await _unitOfWork.SaveAsync();
 
                 return ServiceResult.Succeeded;
             }
@@ -76,9 +63,9 @@ namespace archivesystemWebUI.Services
             }
         }
 
-        public Faculty GetFacultyInDb(int id)
+        public void UpdateFacultyFolder(Folder folder)
         {
-            return _unitOfWork.FacultyRepo.Get(id);
+            _unitOfWork.FolderRepo.UpdateFacultyFolder(folder);
         }
 
         public async Task<ServiceResult> DeleteFaculty(int id)
@@ -90,18 +77,25 @@ namespace archivesystemWebUI.Services
             if (facultyFolder != null)
                 facultyFolder.FacultyId = null;
 
-            Faculty faculty = _unitOfWork.FacultyRepo.Get(id);
-            _unitOfWork.FacultyRepo.Remove(faculty);
-            await _unitOfWork.SaveAsync();
+            await Delete(id);
 
             return ServiceResult.Succeeded;
         }
 
-        public IEnumerable<Department> GetAllDepartmentsInFaculty(int id)
+        public FacultyDepartmentsViewModel GetAllDepartmentsInFaculty(int id)
         {
-            var departments = _unitOfWork.DeptRepo.FindWithNavProps(d => d.FacultyId == id, d=>d.Faculty);
+            var viewModel = new FacultyDepartmentsViewModel
+            {
+                Departments = _unitOfWork.DeptRepo.Find(f=>f.FacultyId == id),
+                Faculty = GetFaculty(id)
+            };
 
-            return departments;
+            return viewModel;
+        }
+
+        public async Task SaveChanges()
+        {
+            await _unitOfWork.SaveAsync();
         }
 
         public bool FacultyNameCheck(string name, int id)
@@ -136,9 +130,7 @@ namespace archivesystemWebUI.Services
         private bool DoesFacultyContainDepartments(int facultyId)
         {
             var depts = _unitOfWork.DeptRepo.Find(x => x.FacultyId == facultyId);
-            if (depts.Any())
-                return true;
-            return false;
+            return depts.Any();
         }
 
         private Faculty CreateFaculty(Faculty faculty)
@@ -150,14 +142,12 @@ namespace archivesystemWebUI.Services
 
         private bool DoesFacultyFolderAlreadyExist(Faculty faculty)
         {
-            var rootfolder =
+            var folders =
                 _unitOfWork.FolderRepo.FindWithNavProps(x => x.Name == GlobalConstants.RootFolderName,
                     x => x.Subfolders);
-            var facultyFolderNames = rootfolder.FirstOrDefault()?.Subfolders.Select(x => x.Name);
+            var rootFolder = folders.SingleOrDefault();
 
-            if (facultyFolderNames != null && facultyFolderNames.Contains(faculty.Name))
-                return true;
-            return false;
+            return rootFolder?.Subfolders != null && rootFolder.Subfolders.Select(x=>x.Name).Contains(faculty.Name);
         }
 
         private ServiceResult TrySaveFacultyWithFolder(Faculty faculty)
@@ -184,6 +174,13 @@ namespace archivesystemWebUI.Services
             _unitOfWork.Save();
 
             return ServiceResult.Succeeded;
+        }
+
+        private async Task Delete(int id)
+        {
+            Faculty faculty = GetFaculty(id);
+            _unitOfWork.FacultyRepo.Remove(faculty);
+            await _unitOfWork.SaveAsync();
         }
         #endregion
     }

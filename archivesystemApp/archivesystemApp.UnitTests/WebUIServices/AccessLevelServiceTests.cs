@@ -47,9 +47,9 @@ namespace archivesystemApp.UnitTests.WebUIServices
             // Assert
             Assert.That(result.Count(), Is.EqualTo(4));
             Assert.That(result, Is.Not.Empty);
+            _unitOfWork.Verify(r => r.AccessLevelRepo.GetAll());
+        }
 
-        }   
-              
         [Test]
         public void GetById_IdIsNotZero_ReturnsAccessLevel()
         {
@@ -61,8 +61,9 @@ namespace archivesystemApp.UnitTests.WebUIServices
 
             // Assert
             Assert.That(result, Is.TypeOf<AccessLevel>());
+            _unitOfWork.Verify(r => r.AccessLevelRepo.Get(id));
         }
-        
+
         [Test]
         public void GetById_IdIsZero_ReturnsNull()
         {
@@ -87,8 +88,9 @@ namespace archivesystemApp.UnitTests.WebUIServices
 
             // Assert
             Assert.That(result, Is.False);
+            _unitOfWork.Verify(r => r.AccessLevelRepo.GetByLevel(level));
         }
-        
+
         [Test]
         public void CheckLevel_IfLevelDoesNotExist_ReturnTrue()
         {
@@ -101,8 +103,10 @@ namespace archivesystemApp.UnitTests.WebUIServices
 
             // Assert
             Assert.That(result, Is.True);
+            _unitOfWork.Verify(r => r.AccessLevelRepo.GetByLevel(level));
+
         }
-        
+
         [Test]
         public void Update_WhenCalled_EditsAccessLevel()
         {

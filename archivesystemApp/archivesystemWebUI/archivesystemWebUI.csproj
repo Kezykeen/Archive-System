@@ -241,6 +241,8 @@
     <Compile Include="Models\DataLayers\UserDataView.cs" />
     <Compile Include="Models\AddUserToAccessViewModel.cs" />
     <Compile Include="Models\CreateAccessLevelViewModel.cs" />
+    <Compile Include="Models\FacultyDepartmentsViewModel.cs" />
+    <Compile Include="Models\DepartmentUsersViewModel.cs" />
     <Compile Include="Models\DepartmentViewModel.cs" />
     <Compile Include="Models\EditAccessLevelViewModel.cs" />
     <Compile Include="Models\EditUserviewModel.cs" />
@@ -506,6 +508,8 @@
     <Content Include="Views\Shared\_AddUserToRole.cshtml" />
     <Content Include="Views\Shared\_RemoveUserFromRole.cshtml" />
     <Content Include="Views\Settings\TicketTypes.cshtml" />
+    <Content Include="Views\Shared\_DashboardTables.cshtml" />
+    <Content Include="Views\Shared\_DashboardCards.cshtml" />
     <Content Include="Views\Department\ViewAllUsersInDept.cshtml" />
     <Content Include="Views\Faculty\ViewAllDepartmentsInFaculty.cshtml" />
   </ItemGroup>

@@ -131,6 +131,5 @@ namespace archivesystemWebUI.Controllers
             return accessDetails == null ? Json(true, JsonRequestBehavior.AllowGet) : Json("User already has an access level!", JsonRequestBehavior.AllowGet);
         }
         #endregion
-
     }
 }
