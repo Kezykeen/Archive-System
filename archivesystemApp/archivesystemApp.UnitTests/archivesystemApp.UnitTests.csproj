@@ -69,6 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DomainServices\AccessCodeGeneratorTests.cs" />
+    <Compile Include="FacultyServiceTest.cs" />
     <Compile Include="FolderServiceTests\FolderServiceTest.cs" />
     <Compile Include="FolderServiceTests\FolderService_DeleteFolder.cs" />
     <Compile Include="FolderServiceTests\FolderService_EditFolder.cs" />

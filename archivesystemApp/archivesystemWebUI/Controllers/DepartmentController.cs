@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -7,7 +6,6 @@ using archivesystemDomain.Entities;
 using archivesystemDomain.Services;
 using archivesystemWebUI.Interfaces;
 using archivesystemWebUI.Models;
-using archivesystemWebUI.Models.DataLayers;
 using AutoMapper;
 
 namespace archivesystemWebUI.Controllers
@@ -48,9 +46,11 @@ namespace archivesystemWebUI.Controllers
         public ActionResult GetDepartmentPartialView(int? id)
         {
             var model = _departmentService.GetDepartment(id);
-            model.Faculties = _departmentService.GetAllFaculties();
+            var viewModel = Mapper.Map<DepartmentViewModel>(model);
 
-            return PartialView("_AddOrEditDepartment", model);
+            viewModel.Faculties = _departmentService.GetAllFaculties();
+
+            return PartialView("_AddOrEditDepartment", viewModel);
         }
 
         [HttpPost]
@@ -61,6 +61,15 @@ namespace archivesystemWebUI.Controllers
             if (!ModelState.IsValid)
                 return PartialView("_AddOrEditDepartment", model);
 
+            var result = await AddOrUpdateResult(model);
+
+            return result == ServiceResult.Succeeded
+                ? Json(new { success = true }, JsonRequestBehavior.AllowGet)
+                : Json(new { failure = true }, JsonRequestBehavior.AllowGet);
+        }
+
+        public async Task<ServiceResult> AddOrUpdateResult(DepartmentViewModel model)
+        {
             ServiceResult result;
             if (model.Id == 0)
             {
@@ -69,20 +78,28 @@ namespace archivesystemWebUI.Controllers
             }
             else
             {
-                var departmentInDb = _departmentService.GetDepartmentInDb(model.Id);
+                var departmentInDb = _departmentService.GetDepartment(model.Id);
+                departmentInDb.UpdatedAt = DateTime.Now;
                 Mapper.Map(model, departmentInDb);
-                result = await _departmentService.UpdateDepartment(departmentInDb);
+                result = _departmentService.UpdateDepartment(departmentInDb);
+                UpdateDepartmentFolder(departmentInDb, result);
+                await _departmentService.SaveChanges();
             }
-            
-            return result == ServiceResult.Succeeded
-                ? Json(new { success = true }, JsonRequestBehavior.AllowGet)
-                : Json(new { failure = true }, JsonRequestBehavior.AllowGet);
+
+            return result;
+        }
+
+        public void UpdateDepartmentFolder(Department department, ServiceResult result)
+        {
+            if (result != ServiceResult.Succeeded) return;
+            var folder = Mapper.Map<Folder>(department);
+            _departmentService.UpdateDepartmentFolder(folder);
         }
 
         //GET: Department/Delete/5
         public ActionResult GetDeletePartialView(int id)
         {
-            Department department = _departmentService.GetDepartmentById(id);
+            Department department = _departmentService.GetDepartment(id);
             if (department == null)
                 return HttpNotFound();
 
@@ -97,7 +114,7 @@ namespace archivesystemWebUI.Controllers
             {
                 var result = await _departmentService.DeleteDepartment(id);
                 return result == ServiceResult.Prohibited
-                    ? Json(new {prohibited = true}, JsonRequestBehavior.AllowGet)
+                    ? Json(new {prohibited = true, errorMessage = "Delete prohibited, kindly empty the user column"}, JsonRequestBehavior.AllowGet)
                     : Json(new {success = true}, JsonRequestBehavior.AllowGet);
             }
             catch (Exception)
@@ -109,9 +126,8 @@ namespace archivesystemWebUI.Controllers
         public ActionResult ViewAllUsersInDept(int id)
         {
             var users = _departmentService.GetAllUsersInDepartment(id);
-            var response = Mapper.Map<List<UserDataView>>(users);
 
-            return View(response);
+            return View(users);
         }
         #endregion
         

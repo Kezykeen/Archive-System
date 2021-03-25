@@ -1,7 +1,7 @@
 ﻿var facultyDataTable, departmentDataTable;
 const Toast = Swal.mixin({
     toast: true,
-    position: "center",
+    position: "top",
     showConfirmButton: false,
     timer: 2000,
     timerProgressBar: true,
@@ -227,7 +227,7 @@ function confirmDelete(url) {
             } else if (response.prohibited) {
                 $("#modal").modal("hide");
                 Toast.fire({
-                    title: "Delete prohibited, kindly empty the user column",
+                    title: response.errorMessage,
                     icon: "error"
                 });
             } else {

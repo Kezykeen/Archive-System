@@ -60,6 +60,15 @@ namespace archivesystemWebUI.Controllers
             if (!ModelState.IsValid)
                 return PartialView("_AddOrEditFaculty", model);
 
+            var result = await AddOrUpdateResult(model);
+
+            return result == ServiceResult.Succeeded 
+                ? Json(new {success = true}, JsonRequestBehavior.AllowGet) 
+                : Json(new {failure = true}, JsonRequestBehavior.AllowGet);
+        }
+
+        public async Task<ServiceResult> AddOrUpdateResult(FacultyViewModel model)
+        {
             ServiceResult result;
             if (model.Id == 0)
             {
@@ -68,20 +77,28 @@ namespace archivesystemWebUI.Controllers
             }
             else
             {
-                var facultyInDb = _facultyService.GetFacultyInDb(model.Id);
+                var facultyInDb = _facultyService.GetFaculty(model.Id);
+                facultyInDb.UpdatedAt = DateTime.Now;
                 Mapper.Map(model, facultyInDb);
-                result = await _facultyService.UpdateFaculty(facultyInDb);
+                result = _facultyService.UpdateFaculty(facultyInDb);
+                UpdateFacultyFolder(facultyInDb, result);
+                await _facultyService.SaveChanges();
             }
-            
-            return result == ServiceResult.Succeeded 
-                ? Json(new {success = true}, JsonRequestBehavior.AllowGet) 
-                : Json(new {failure = true}, JsonRequestBehavior.AllowGet);
+
+            return result;
+        }
+
+        public void UpdateFacultyFolder(Faculty faculty, ServiceResult result)
+        {
+            if (result != ServiceResult.Succeeded) return;
+            var folder = Mapper.Map<Folder>(faculty);
+            _facultyService.UpdateFacultyFolder(folder);
         }
 
         //GET: Faculty/Delete/5
         public ActionResult GetDeletePartialView(int id)
         {
-            var faculty = _facultyService.GetFacultyById(id);
+            var faculty = _facultyService.GetFaculty(id);
             if (faculty == null)
                 return HttpNotFound();
 
@@ -96,7 +113,7 @@ namespace archivesystemWebUI.Controllers
             {
                 var result = await _facultyService.DeleteFaculty(id);
                 return result == ServiceResult.Prohibited 
-                    ? Json(new {prohibited = true}, JsonRequestBehavior.AllowGet) 
+                    ? Json(new {prohibited = true, errorMessage = "Delete prohibited, kindly empty the department column"}, JsonRequestBehavior.AllowGet) 
                     : Json(new {success = true}, JsonRequestBehavior.AllowGet);
             }
             catch (Exception)
@@ -107,9 +124,9 @@ namespace archivesystemWebUI.Controllers
 
         public ActionResult ViewAllDepartmentsInFaculty(int id)
         {
-            var departments = _facultyService.GetAllDepartmentsInFaculty(id);
+            var viewModel = _facultyService.GetAllDepartmentsInFaculty(id);
 
-            return View(departments);
+            return View(viewModel);
         }
         #endregion
 

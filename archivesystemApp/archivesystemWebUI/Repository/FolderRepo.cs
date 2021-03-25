@@ -93,9 +93,12 @@ namespace archivesystemWebUI.Repository
         }
         public bool UpdateDepartmentalFolder(Folder model)
         {
-            var folderInDb = FindWithNavProps(x => x.IsRestricted && x.DepartmentId == model.DepartmentId,x=> x.Department)
-                            .SingleOrDefault();
+            var folders = FindWithNavProps(x => x.IsRestricted && x.DepartmentId == model.DepartmentId,x=> x.Department)?.ToList();
+            if (folders == null) return false;
+
+            var folderInDb=folders.SingleOrDefault();
             if (folderInDb == null) return false;
+
             folderInDb.Name = model.Name;
             if(folderInDb.Department.FacultyId != model.FacultyId)
             {

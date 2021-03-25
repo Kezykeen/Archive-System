@@ -10,14 +10,13 @@ namespace archivesystemWebUI.Interfaces
     {
         IEnumerable<Department> GetAllDepartmentToList();
         IEnumerable<Faculty> GetAllFaculties();
-        DepartmentViewModel GetDepartment(int? id);
+        Department GetDepartment(int? id);
         ServiceResult SaveDepartment(Department department);
-        Task<ServiceResult> UpdateDepartment(Department department);
-        Department GetDepartmentInDb(int id);
+        ServiceResult UpdateDepartment(Department department);
+        void UpdateDepartmentFolder(Folder folder);
         Task<ServiceResult> DeleteDepartment(int id);
-        Department GetDepartmentById(int id);
-        IEnumerable<AppUser> GetAllUsersInDepartment(int id);
-        Task Delete(int id);
+        DepartmentUsersViewModel GetAllUsersInDepartment(int id);
+        Task SaveChanges();
         bool DepartNameCheck(string name, int id);
     }
 }
