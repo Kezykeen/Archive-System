@@ -62,6 +62,32 @@
 </div>
 <script>
     function OnSignSuccess(response) {
-        console.log(response);
+
+        if (response.done) {
+
+            $('#modal_container').modal('hide');
+
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: 'Done!',
+                showConfirmButton: false,
+                timer: 1000
+            });
+            window.location.reload();
+
+        } else {
+            $("#modal_container").remove;
+            $.get(addButton.data("target")).done(
+                function(data) {
+
+                    $("#modal_container").html(data);
+
+                    $("#modal_container").modal("show");
+                          
+                    $.validator.unobtrusive.parse("#signForm");
+                });
+            
+        }
     }
 </script>

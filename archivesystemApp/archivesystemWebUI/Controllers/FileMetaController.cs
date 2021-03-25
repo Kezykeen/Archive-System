@@ -87,5 +87,18 @@ namespace archivesystemWebUI.Controllers
            
             return PartialView(files);
         }
+
+        public FileContentResult GetFile(int id, string fileName)
+        {
+
+            var file = _unitOfWork.FileRepo.Get(id);
+
+            if (file==null)
+            {
+                return null;
+            }
+            Response.AddHeader("Content-Disposition", "inline; filename=" + fileName);
+            return File(file.Content, file.ContentType);
+        }
     }
 }

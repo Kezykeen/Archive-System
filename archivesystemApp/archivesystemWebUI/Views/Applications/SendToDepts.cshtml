@@ -48,7 +48,53 @@
     </div>
 </div>
 <script>
-    function OnFwdSuccess(response) {
-        console.log(response);
+    function OnFwdSuccess(response, status, xhr) {
+        debugger;
+        if (xhr.status === 201) {
+            
+               
+        $('#modal_container').modal('hide');
+
+        $("#fwdDepts").append(response);
+        Swal.fire({
+            position: 'top-end',
+            icon: 'success',
+            title: 'Forwarded Successfully',
+            showConfirmButton: false,
+            timer: 1500
+        });
+        } else if (xhr.status === 200) {
+            $("#modal_container").html(response);
+
+            $("#modal_container").modal("show");
+                          
+            $.validator.unobtrusive.parse("#fwdForm");
+            if ($('#assignForm .select').length > 0) {
+                               
+                $('#assignForm .select').select2({
+
+                    placeholder: 'Assign Users',
+                    width: '100%',
+                    allowClear: true,
+                    ajax: {
+                        url: "/users/officers/" + addButton.attr("data-deptId"),
+                        dataType: "json",
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                searchTerm: params.term
+                            };
+                        },
+                        processResults: function(data, params) {
+                            return {
+                                results: data
+                            };
+                        }
+                    }
+
+                });
+
+            }
+        }
     }
 </script>

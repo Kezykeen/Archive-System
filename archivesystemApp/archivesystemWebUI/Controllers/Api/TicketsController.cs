@@ -6,10 +6,11 @@ using archivesystemDomain.Interfaces;
 using archivesystemWebUI.Models.DataLayers;
 using AutoMapper;
 using Microsoft.AspNet.Identity;
+using WebGrease.Css.Extensions;
 
 namespace archivesystemWebUI.Controllers.Api
 {
-    public class TicketsController: ApiController
+    public class TicketsController : ApiController
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -32,91 +33,98 @@ namespace archivesystemWebUI.Controllers.Api
 
         [Route("api/myapplications")]
         public IHttpActionResult GetMyApplications()
-        { 
+        {
             var currentUserId = User.Identity.GetUserId();
-            var user =  _unitOfWork.UserRepo.Find( c => c.UserId == currentUserId).SingleOrDefault();
+            var user = _unitOfWork.UserRepo.Find(c => c.UserId == currentUserId).SingleOrDefault();
             if (user == null)
             {
                 return BadRequest();
             }
 
             var applications = _unitOfWork.ApplicationRepo
-                .FindWithNavProps(a => a.UserId == user.Id, 
+                .FindWithNavProps(a => a.UserId == user.Id,
                     _ => _.ApplicationType,
                     _ => _.Receivers,
-                    _=> _.Receivers.Select(r => r.Receiver));
+                    _ => _.Receivers.Select(r => r.Receiver));
 
-          
+
             var response = Mapper.Map<IEnumerable<ApplicationsDataView>>(applications);
 
             return Ok(response);
         }
 
         [Route("api/incomingapplications")]
-        public IHttpActionResult GetIncomingApplications(bool forwarded = false)
+        public IHttpActionResult GetIncomingApplications(bool forwarded = false, bool? received = null, bool archived = false)
         {
             var currentUserId = User.Identity.GetUserId();
             var user = _unitOfWork.UserRepo.Find(c => c.UserId == currentUserId).SingleOrDefault();
             var applications = _unitOfWork.ApplicationRepo
-                .FindWithNavProps(a => 
-                    a.Receivers
-                        .FirstOrDefault(r 
-                            => r.ReceiverId == user.DepartmentId && r.Forwarded == forwarded)
-                        .ReceiverId == user.DepartmentId,
+                .FindWithNavProps(a =>
+                        a.Receivers
+                            .FirstOrDefault(r
+                                => r.ReceiverId == user.DepartmentId && r.Forwarded == forwarded &&
+                                   r.Received == received)
+                            .ReceiverId == user.DepartmentId,
                     _ => _.ApplicationType,
                     _ => _.Receivers,
-                    _ => _.Receivers.Select(r => r.Receiver)).ToList();
-            if (!forwarded)
-            {
-              applications =  _unitOfWork.ApplicationRepo
-                    .FindWithNavProps(a => a.Receivers
-                            .FirstOrDefault(r => r.ReceiverId == user.DepartmentId 
-                                                 && r.Forwarded == forwarded )
-                            .ReceiverId == user.DepartmentId,
-                        _ => _.ApplicationType,
-                        _ => _.Receivers,
-                        _ => _.Receivers.Select(r => r.Receiver)).ToList();
-            }
+                    _ => _.Receivers.Select(r => r.Receiver)).Where(a => a.Archive == archived).ToList();
 
-           
+
             var response = Mapper.Map<IEnumerable<ApplicationsDataView>>(applications);
             return Ok(response);
         }
 
-        [Route("api/applicationstoapprovals")]
-        public IHttpActionResult GetApplicationsForApproval(bool? approved = null)
+        [Route("api/applicationstosign")]
+        public IHttpActionResult GetApplicationsToSign(bool? signed = null)
         {
             var currentUserId = User.Identity.GetUserId();
             var user = _unitOfWork.UserRepo.Find(c => c.UserId == currentUserId).SingleOrDefault();
-            var response = _unitOfWork.ApplicationRepo
-                .FindWithNavProps(a => a.Approvals.FirstOrDefault(r => r.UserId == user.Id && r.Approve == approved).UserId == user.Id).ToList();
-            switch (approved)
+            var applications = _unitOfWork.ApplicationRepo
+                .FindWithNavProps(
+                    a => a.Approvals.FirstOrDefault(r => r.UserId == user.Id && r.Approve == signed).UserId == 
+                         user.Id,_ => _.Approvals, _=> _.ApplicationType).ToList();
+            foreach (var application in applications)
             {
-                case true:
-                    response = _unitOfWork.ApplicationRepo
-                        .FindWithNavProps(a => a.Approvals.FirstOrDefault(r => r.UserId == user.Id && r.Approve == approved).UserId == user.Id).ToList();
-                    break;
-                case false:
-                    response =  _unitOfWork.ApplicationRepo
-                        .FindWithNavProps(a => a.Approvals.FirstOrDefault(r => r.UserId == user.Id && r.Approve == approved).UserId == user.Id).ToList();
-                    break;
+                application.Approvals = application.Approvals.Where(c => c.UserId == user.Id).ToList();
             }
+            var response =   Mapper.Map<IEnumerable<ApplicationsToSignDataView>>(applications);
+            
+            
 
-           
             return Ok(response);
         }
 
-        [Route("api/departments/")]
-        public IHttpActionResult GetDepartments(string searchTerm = null)
+        [Route("api/applicationstoapprove")]
+        public IHttpActionResult GetApplicationsForApproval(bool? signed = null, bool? approved = null, bool sendToHead =true)
         {
-            var departments = _unitOfWork.DeptRepo.Find(u => u.Name.Contains(searchTerm)).Select(x => new
+            var currentUserId = User.Identity.GetUserId();
+            var user = _unitOfWork.UserRepo.Find(c => c.UserId == currentUserId).SingleOrDefault();
+            var applications = _unitOfWork.ApplicationRepo
+                .FindWithNavProps(
+                    a => a.Approvals.FirstOrDefault(r => r.UserId == user.Id && r.Approve == signed).UserId ==
+                         user.Id && a.SendToHead ==sendToHead && a.Approve ==approved, _ => _.Approvals, _ => _.ApplicationType).ToList();
+            foreach (var application in applications)
+            {
+                application.Approvals = application.Approvals.Where(c => c.UserId == user.Id).ToList();
+            }
+            var response = Mapper.Map<IEnumerable<ApplicationsToSignDataView>>(applications);
+
+
+
+            return Ok(response);
+        }
+
+        [Route("api/departments/{id}/")]
+        public IHttpActionResult GetDepartments(int id, string searchTerm = null)
+        {
+            var departments = _unitOfWork.DeptRepo.Find(d => d.Name.Contains(searchTerm) && d.Id != id).Select(x => new
             {
                 id = x.Id,
                 text = x.Name
             });
             if (string.IsNullOrWhiteSpace(searchTerm))
             {
-                departments = _unitOfWork.DeptRepo.GetAll().Select(x => new
+                departments = _unitOfWork.DeptRepo.Find(d => d.Id != id).Select(x => new
                 {
                     id = x.Id,
                     text = x.Name
@@ -127,3 +135,4 @@ namespace archivesystemWebUI.Controllers.Api
         }
     }
 }
+

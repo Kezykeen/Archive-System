@@ -122,8 +122,11 @@ namespace archivesystemWebUI.Infrastructures
                 .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.ApplicationType.Name))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(scr => GetAppStatus.Value(scr.Status)))
                 .ForMember(dest => dest.Approval, opt => opt.MapFrom(src => GetApproval.Value(src.Approve)));
+            Mapper.CreateMap<Approval, ApprovalDataView>();
 
-
+            Mapper.CreateMap<Application, ApplicationsToSignDataView>()
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.ApplicationType.Name))
+                .ForMember(dest => dest.Approval, opt => opt.MapFrom(src => src.Approvals.SingleOrDefault()));
 
             Mapper.CreateMap<ApplicationVm, Application>()
                 .ForMember(dest => dest.CreatedAt, opt =>

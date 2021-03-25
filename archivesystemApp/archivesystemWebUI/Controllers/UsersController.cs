@@ -17,16 +17,16 @@ using static System.String;
 namespace archivesystemWebUI.Controllers
 {
 
-    [Authorize(Roles = "Admin, Manager")]
+    [Authorize]
     public class UsersController : Controller
     {
+        private readonly IRoleService _roleService;
 
 
         private ApplicationUserManager _userManager;
         private ApplicationRoleManager _roleManager;
 
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IRoleService _roleService;
         private readonly IEmailSender _emailSender;
         private readonly ITokenGenerator _tokenGenerator;
        
@@ -34,14 +34,14 @@ namespace archivesystemWebUI.Controllers
 
         public UsersController(
             IUnitOfWork unitOfWork,
-            IRoleService roleService,
             IEmailSender emailSender,
-            ITokenGenerator tokenGenerator)
+            ITokenGenerator tokenGenerator,
+            IRoleService roleService)
         {
             _unitOfWork = unitOfWork;
-            _roleService = roleService;
             _emailSender = emailSender;
             _tokenGenerator = tokenGenerator;
+            _roleService = roleService;
         }
         public UsersController(ApplicationUserManager userManager, ApplicationRoleManager roleManager)
         {
@@ -72,7 +72,7 @@ namespace archivesystemWebUI.Controllers
                 _roleManager = value;
             }
         }
-      
+        [Authorize(Roles = "Admin")]
         // GET: Employees
         public ActionResult Index()
         {
@@ -80,7 +80,7 @@ namespace archivesystemWebUI.Controllers
         }
 
 
-
+        [Authorize(Roles = "Admin")]
         public ActionResult EditModal(int id)
         {
             var user = _unitOfWork.UserRepo.GetUserWithDept(id);
@@ -94,7 +94,7 @@ namespace archivesystemWebUI.Controllers
             return PartialView(vm);
         }
 
-
+        [Authorize(Roles = "Admin")]
         public ActionResult EnrollModal()
         {
             var model = new EnrollViewModel
@@ -105,6 +105,7 @@ namespace archivesystemWebUI.Controllers
             return PartialView(model);
         }
 
+        
         public ActionResult Details(int id)
         {
             var user = _unitOfWork.UserRepo.GetUserWithDept(id);
@@ -114,8 +115,9 @@ namespace archivesystemWebUI.Controllers
             }
             return View(user);
         }
-      
 
+
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Enroll( EnrollViewModel model)
@@ -159,8 +161,8 @@ namespace archivesystemWebUI.Controllers
             return Json(new { status = "success"});
         }
 
-     
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(UpdateUserVm model)
@@ -175,8 +177,7 @@ namespace archivesystemWebUI.Controllers
 
             if (!IsNullOrWhiteSpace(userDb.UserId))
             {
-                var rolesDb = UserManager.FindById(userDb.UserId).Roles;
-                var roleDbId = rolesDb.SingleOrDefault()?.RoleId;
+                
                 var appUser = UserManager.FindById(userDb.UserId);
 
                 if (!string.Equals(model.Email, appUser.Email, StringComparison.OrdinalIgnoreCase))
@@ -238,7 +239,7 @@ namespace archivesystemWebUI.Controllers
             return PartialView(_unitOfWork.UserRepo.Get(id));
         }
 
-
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> ResendConfirmation(int id, string email, string name)
         {
             string code = _tokenGenerator.Code(id);
@@ -257,17 +258,22 @@ namespace archivesystemWebUI.Controllers
             return RedirectToAction("Details", new { id = id });
         }
 
-        [AllowAnonymous]
-        public ActionResult Officers(string searchTerm)
+       
+        public  async Task<ActionResult> Officers(int id ,string searchTerm)
         {
-            var users = _unitOfWork.UserRepo.Find(u => u.Name.Contains(searchTerm)).Select(x => new
+            var currentUserId = User.Identity.GetUserId();
+            var usersInDept = await _roleService.GetUserIdsOfUsersInRole("DeptOfficer");
+           var users = _unitOfWork.UserRepo
+                .Find( u => u.DepartmentId == id && usersInDept.Contains(u.UserId) && u.UserId != currentUserId && u.Name.Contains(searchTerm) && usersInDept.Contains(u.UserId)).Select(x => new
             {
                 id = x.Id,
                 text = x.Name
             });
             if (IsNullOrWhiteSpace(searchTerm))
             {
-                users = _unitOfWork.UserRepo.GetAll().Select(x => new
+               
+                users = _unitOfWork.UserRepo.Find(u => u.DepartmentId == id && usersInDept.Contains(u.UserId) && u.UserId != currentUserId
+                ).Select(x => new
                 {
                     id = x.Id,
                     text = x.Name

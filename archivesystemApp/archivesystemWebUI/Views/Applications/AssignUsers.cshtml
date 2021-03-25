@@ -20,9 +20,9 @@
                         LoadingElementId = "saving",
                         LoadingElementDuration = 1000
 
-                    }, new { id = "assignForm" }))
+                    }, new { id = "assignForm"}))
                     {
-                        @Html.ValidationSummary(true, "", new { @class = "" })
+                        @Html.ValidationSummary(true, "", new { @class = ""})
                         @Html.AntiForgeryToken()
                         @Html.HiddenFor(e => e.Id)
                         <div class="row">
@@ -49,7 +49,56 @@
         </div>
     </div>
     <script>
-    function OnAssignSuccess(response) {
-        console.log(response);
-    }
+
+        function OnAssignSuccess(response, status, xhr) {
+            debugger;
+            console.log(xhr.status === 201);
+            if (xhr.status === 201) {
+
+
+            $('#modal_container').modal('hide');
+
+            $("#signers").append(response);
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: 'Assigned Successfully',
+                showConfirmButton: false,
+                timer: 1500
+            });
+
+            } else if (xhr.status === 200) {
+                $("#modal_container").html(response);
+
+                $("#modal_container").modal("show");
+                          
+                $.validator.unobtrusive.parse("#assignForm");
+                if ($('#assignForm .select').length > 0) {
+                               
+                    $('#assignForm .select').select2({
+
+                        placeholder: 'Assign Users',
+                        width: '100%',
+                        allowClear: true,
+                        ajax: {
+                            url: "/users/officers/" + addButton.attr("data-deptId"),
+                            dataType: "json",
+                            delay: 250,
+                            data: function(params) {
+                                return {
+                                    searchTerm: params.term
+                                };
+                            },
+                            processResults: function(data, params) {
+                                return {
+                                    results: data
+                                };
+                            }
+                        }
+
+                    });
+
+                }
+            }
+        }
     </script>

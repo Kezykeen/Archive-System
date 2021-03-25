@@ -227,6 +227,8 @@
     <Compile Include="Models\CodeStatus.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\DataLayers\ApplicationsDataView.cs" />
+    <Compile Include="Models\DataLayers\ApplicationsToSignDataView.cs" />
+    <Compile Include="Models\DataLayers\ApprovalDataView.cs" />
     <Compile Include="Models\DataLayers\TicketDataView.cs" />
     <Compile Include="Models\DataLayers\UserDataView.cs" />
     <Compile Include="Models\AddUserToAccessViewModel.cs" />
@@ -504,12 +506,24 @@
     <Content Include="Views\Applications\New.cshtml" />
     <Content Include="Views\Applications\Details.cshtml" />
     <Content Include="Views\Applications\Incoming.cshtml" />
-    <Content Include="Views\Applications\PendingApproval.cshtml" />
+    <Content Include="Views\Applications\ToSign.cshtml" />
     <Content Include="Views\Applications\AssignUsers.cshtml" />
     <Content Include="Views\Applications\_Assignees.cshtml" />
     <Content Include="Views\Applications\SendToDepts.cshtml" />
     <Content Include="Views\Applications\_FwdDepts.cshtml" />
     <Content Include="Views\Applications\Sign.cshtml" />
+    <Content Include="Views\Applications\IncomingForwarded.cshtml" />
+    <Content Include="Views\Applications\Received.cshtml" />
+    <Content Include="Views\Applications\Rejected.cshtml" />
+    <Content Include="Views\Applications\Archived.cshtml" />
+    <Content Include="Views\Applications\RejectedForwarded.cshtml" />
+    <Content Include="Views\Applications\ReceivedForwarded.cshtml" />
+    <Content Include="Views\Applications\Signed.cshtml" />
+    <Content Include="Views\Applications\Declined.cshtml" />
+    <Content Include="Views\Applications\ToApprove.cshtml" />
+    <Content Include="Views\Applications\Approved.cshtml" />
+    <Content Include="Views\Applications\Disapproved.cshtml" />
+    <Content Include="Views\Applications\Forwarded.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
