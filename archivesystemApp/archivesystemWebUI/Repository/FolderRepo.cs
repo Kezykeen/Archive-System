@@ -62,7 +62,7 @@ namespace archivesystemWebUI.Repository
 
             if (folder.Files == null) return null;
 
-            return folder.Files.Where(x=> x.FileMeta.Title.Contains(filename)).ToList();
+            return folder.Files.Where(x=> x.FileMeta.Title.ToLower().Contains(filename.ToLower())).ToList();
 
         }
         public void MoveFolder(int id, int newParentFolderId)

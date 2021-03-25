@@ -130,15 +130,16 @@
 
                         <!--File search section-->
                         <div class="file-content">
-                            @using (Html.BeginForm("", "", null, FormMethod.Post, new { @class = "file-search", id = "FL-filename-search-form" }))
-                            {
+                            <form class = "file-search", id = "FL-filename-search-form" onsubmit="findFile()">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <i class="fa fa-search"></i>
                                     </div>
-                                    <input type="text" id="FL-filename-search-input" data-folderId="@Model.Id" class="form-control" placeholder="Search for Files">
+                                    <input type="text" id="FL-filename-search-input" placeholder="Search for Files"
+                                           data-folderId="@Model.Id" class="form-control" onkeypress="findFile()">
                                 </div>
-                            }
+                            </form>
+                           
 
                             
                             <div class="file-body">

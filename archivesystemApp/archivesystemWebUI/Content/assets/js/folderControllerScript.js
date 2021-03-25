@@ -286,17 +286,23 @@ async function VerifyAccessToken() {
 }
 
 async function findFile() {
-    console.log("hdjhdkj")
+    console.log("fetching .... ")
+    document.getElementById("FL-filename-search-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+    })
     let filename = document.getElementById("FL-filename-search-input").value;
     let folderId = document.getElementById("FL-filename-search-input").getAttribute("data-folderId");
-
-    let resp = await fetch(`/folder/getfile?filename=${filename}&folderId=${folderId}`)
-    console.log(resp.status)
-    if (resp.status === 200) {
-        let textresp = await resp.text();
-        console.log(textresp);
-        document.getElementById("FL-files").innerHTML = textresp;
+    if (filename) {
+        let resp = await fetch(`/folder/getfile?filename=${filename}&folderId=${folderId}`)
+        if (resp.status === 200) {
+            let textresp = await resp.text();
+            document.getElementById("FL-files").innerHTML = textresp;
+        }
     }
+    else {
+
+    }
+    
 }
 
 
