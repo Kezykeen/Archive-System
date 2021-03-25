@@ -3,11 +3,11 @@
 @using archivesystemDomain.Entities
 
 
-<div id="AIM-overlay">
+<div id="AIM-overlay"> 
 
     <div id="EAC-con">
         <h2>Access Code Verification</h2>
-        <form id="EAC-form" name="folderAccessCode"  method="post">
+        <form id="EAC-form" name="folderAccessCode"  method="post" onsubmit="VerifyAccessToken()">
             @Html.AntiForgeryToken()
             @Html.ValidationSummary()
             
@@ -27,7 +27,9 @@
 </div>
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Content/assets/js/folderControllerScript.js"></script>
 }
+    
 
 
 

@@ -29,7 +29,7 @@
                         <span>@headerTitle </span>
                         <a href="javascript:void(0);" class="file-side-close"><i class="fa fa-times"></i></a>
                     </div>
-                    
+
                     <!--folder search section form-->
                     @using (Html.BeginForm("Index", "Folder", null, FormMethod.Get, new { @class = "file-search" }))
                     {
@@ -127,18 +127,23 @@
                             }
 
                         </div>
+
+                        <!--File search section-->
                         <div class="file-content">
-                            <form class="file-search">
+                            @using (Html.BeginForm("", "", null, FormMethod.Post, new { @class = "file-search", id = "FL-filename-search-form" }))
+                            {
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <i class="fa fa-search"></i>
                                     </div>
-                                    <input type="text" class="form-control" placeholder="Search">
+                                    <input type="text" id="FL-filename-search-input" data-folderId="@Model.Id" class="form-control" placeholder="Search for Files">
                                 </div>
-                            </form>
+                            }
+
+                            
                             <div class="file-body">
                                 <div class="file-scroll">
-                                    <div class="file-content-inner">
+                                    <div class="file-content-inner" id="FL-files">
                                         @if (Model.CloseAccessCodeModal == true)
                                         {
                                             Html.RenderAction("GetAllFiles", "FileMeta", new { folderId = Model.Id });
