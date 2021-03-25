@@ -1,22 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using archivesystemDomain.Entities;
 using archivesystemDomain.Interfaces;
 using archivesystemDomain.Services;
 using archivesystemWebUI.Services;
 using Moq;
 using NUnit.Framework;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
 
-namespace archivesystemApp.UnitTests
+namespace archivesystemApp.UnitTests.FacultyServiceTests
 {
     [TestFixture]
-    class FacultyServiceTest
+    class FacultyServiceTests
     {
         private Mock<IUnitOfWork> _unitOfWork;
         private Faculty _faculty;
-        private List<Faculty> _faculties;
         private List<Department> _departments;
         private Folder _folder;
         private List<Folder> _folders;
@@ -76,7 +74,6 @@ namespace archivesystemApp.UnitTests
             Assert.That(result,Is.EqualTo(ServiceResult.Succeeded));
 
             _unitOfWork.Verify(x=> x.AccessLevelRepo.GetBaseLevel());
-            _unitOfWork.Verify(x=>x.FolderRepo.Add(rootfolder));
             _unitOfWork.Verify(x=>x.Save());
         }
 
@@ -104,12 +101,11 @@ namespace archivesystemApp.UnitTests
         {
             _unitOfWork.Setup(x => x.FacultyRepo.Update(_faculty));
 
-            var result = _service.UpdateFaculty(_faculty).Result;
+            var result = _service.UpdateFaculty(_faculty);
 
             Assert.That(result, Is.EqualTo(ServiceResult.Succeeded));
 
             _unitOfWork.Verify(x=>x.FacultyRepo.Update(_faculty));
-            _unitOfWork.Verify(x=>x.SaveAsync());
         }
 
         [Test]
@@ -155,12 +151,6 @@ namespace archivesystemApp.UnitTests
             _unitOfWork.Verify(x => x.FacultyRepo.Remove(_faculty));
             _unitOfWork.Verify(x => x.SaveAsync());
 
-        }
-
-        [Test]
-        public void FacultyNameCheck_IfNameExists_ReturnTrue()
-        {
-            _unitOfWork.Setup(f => f.FacultyRepo.GetAllToList()).Returns(_faculties);
         }
     }
 }
