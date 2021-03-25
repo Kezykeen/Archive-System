@@ -51,6 +51,20 @@ namespace archivesystemWebUI.Repository
 
             return CurrentPathFolders;
         }
+
+        public List<File> GetFilesThatMactchFileName(int folderId,string filename)
+        {
+            var data=_context.Folders.Include(x => x.Files.Select( y=> y.FileMeta)).Where(c=> c.Id== folderId);
+            if (data == null) return null;
+
+            var folder = data.SingleOrDefault(c => c.Id == folderId);
+            if (folder == null) return null;
+
+            if (folder.Files == null) return null;
+
+            return folder.Files.Where(x=> x.FileMeta.Title.Contains(filename)).ToList();
+
+        }
         public void MoveFolder(int id, int newParentFolderId)
         {
             var folder = _context.Folders.Find(id);
@@ -93,9 +107,12 @@ namespace archivesystemWebUI.Repository
         }
         public bool UpdateDepartmentalFolder(Folder model)
         {
-            var folderInDb = FindWithNavProps(x => x.IsRestricted && x.DepartmentId == model.DepartmentId,x=> x.Department)
-                            .SingleOrDefault();
+            var folders = FindWithNavProps(x => x.IsRestricted && x.DepartmentId == model.DepartmentId,x=> x.Department)?.ToList();
+            if (folders == null) return false;
+
+            var folderInDb=folders.SingleOrDefault();
             if (folderInDb == null) return false;
+
             folderInDb.Name = model.Name;
             if(folderInDb.Department.FacultyId != model.FacultyId)
             {

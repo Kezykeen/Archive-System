@@ -7,7 +7,6 @@ using archivesystemDomain.Interfaces;
 using archivesystemDomain.Services;
 using archivesystemWebUI.Interfaces;
 using archivesystemWebUI.Models;
-using AutoMapper;
 
 namespace archivesystemWebUI.Services
 {
@@ -39,11 +38,11 @@ namespace archivesystemWebUI.Services
             return _unitOfWork.FacultyRepo.GetAll();
         }
 
-        public DepartmentViewModel GetDepartment(int? id)
+        public Department GetDepartment(int? id)
         {
             var department = id != null ? _unitOfWork.DeptRepo.Get(id.Value) : new Department();
-            var viewModel = Mapper.Map<DepartmentViewModel>(department);
-            return viewModel;
+            
+            return department;
         }
 
         public ServiceResult SaveDepartment(Department model)
@@ -55,17 +54,11 @@ namespace archivesystemWebUI.Services
             return result;
         }
 
-        public async Task<ServiceResult> UpdateDepartment(Department department)
+        public ServiceResult UpdateDepartment(Department department)
         {
             try
             {
-                department.UpdatedAt = DateTime.Now;
                 _unitOfWork.DeptRepo.Update(department);
-
-                var folder = Mapper.Map<Folder>(department);
-                _unitOfWork.FolderRepo.UpdateFacultyFolder(folder);
-
-                await _unitOfWork.SaveAsync();
 
                 return ServiceResult.Succeeded;
             }
@@ -75,9 +68,9 @@ namespace archivesystemWebUI.Services
             }
         }
 
-        public Department GetDepartmentInDb(int id)
+        public void UpdateDepartmentFolder(Folder folder)
         {
-            return _unitOfWork.DeptRepo.Get(id);
+            _unitOfWork.FolderRepo.UpdateDepartmentalFolder(folder);
         }
 
         public async Task<ServiceResult> DeleteDepartment(int id)
@@ -89,22 +82,24 @@ namespace archivesystemWebUI.Services
             if (departmentFolder != null)
                 departmentFolder.DepartmentId = null;
 
-            Department department = _unitOfWork.DeptRepo.Get(id);
-            _unitOfWork.DeptRepo.Remove(department);
-            await _unitOfWork.SaveAsync();
+            await Delete(id);
 
             return ServiceResult.Succeeded;
         }
 
-        public Department GetDepartmentById(int id)
+        public DepartmentUsersViewModel GetAllUsersInDepartment(int id)
         {
-            return _unitOfWork.DeptRepo.Get(id);
+            var viewModel = new DepartmentUsersViewModel
+            {
+                Users = _unitOfWork.UserRepo.Find(u=>u.DepartmentId == id),
+                Department = GetDepartment(id)
+            };
+
+            return viewModel;
         }
 
-        public async Task Delete(int id)
+        public async Task SaveChanges()
         {
-            Department department = GetDepartmentById(id);
-            _unitOfWork.DeptRepo.Remove(department);
             await _unitOfWork.SaveAsync();
         }
 
@@ -115,12 +110,6 @@ namespace archivesystemWebUI.Services
             // Check if the entry name exists & change is from a different entry and return error message from viewModel
             bool status = departments.Any(x => x.Name == name && x.Id != id);
             return status;
-        }
-
-        public IEnumerable<AppUser> GetAllUsersInDepartment(int id)
-        {
-            var users = _unitOfWork.UserRepo.Find(u => u.DepartmentId == id).ToList();
-            return users;
         }
         #endregion
 
@@ -201,6 +190,13 @@ namespace archivesystemWebUI.Services
             _unitOfWork.Save();
 
             return ServiceResult.Succeeded;
+        }
+
+        private async Task Delete(int id)
+        {
+            Department department = GetDepartment(id);
+            _unitOfWork.DeptRepo.Remove(department);
+            await _unitOfWork.SaveAsync();
         }
         #endregion
     }
