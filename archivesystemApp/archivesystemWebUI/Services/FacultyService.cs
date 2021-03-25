@@ -1,49 +1,91 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using System.Threading.Tasks;
+using archivesystemDomain.Entities;
 using archivesystemDomain.Interfaces;
 using archivesystemDomain.Services;
-using archivesystemWebUI.Models;
 using archivesystemWebUI.Interfaces;
-using archivesystemDomain.Entities;
 using AutoMapper;
-using System.Threading.Tasks;
 
 namespace archivesystemWebUI.Services
 {
-    public enum FacultyServiceResult
+    public class FacultyService : IFacultyService
     {
-        Succeeded, Failure, Prohibited
-    }
-    public class FacultyService:IFacultyService
-    {
-        private IUnitOfWork _unitOfWork;
-        public FacultyService(IUnitOfWork repo)
-        {
-            _unitOfWork = repo;
-        } 
-        public FacultyServiceResult SaveFaculty (FacultyViewModel model)
-        {
-            var facultyAlreadyExist = DoesFacultyAlreadyExist(model);
-            if (facultyAlreadyExist) return FacultyServiceResult.Failure;
+        #region Fields
 
-            var facultyFolderExist=DoesFacultyFolderAlreadyExist(model);
-            var faculty = CreateFaculty(model);
-            FacultyServiceResult result;
-            if (!facultyFolderExist)
-                result = TrySaveFaculty(faculty);
-            else
-                result = TrySaveFaculty(faculty, onlyCreateFaculty:true);
+        private readonly IUnitOfWork _unitOfWork;
+
+        #endregion
+
+        #region Constructors
+
+        public FacultyService(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+        }
+        #endregion
+
+        #region Public methods
+
+        public IEnumerable<Faculty> GetFacultyData()
+        {
+            return _unitOfWork.FacultyRepo.GetAllToList();
+        }
+
+        public Faculty GetFaculty(int? id)
+        {
+            var faculty = id != null ? _unitOfWork.FacultyRepo.Get(id.Value) : new Faculty();
             
+            return faculty;
+        }
+
+        public Faculty GetFacultyById(int id)
+        {
+            Faculty faculty = _unitOfWork.FacultyRepo.Get(id);
+
+            return faculty;
+        }
+
+        public ServiceResult SaveFaculty(Faculty model)
+        {
+            var facultyFolderExist = DoesFacultyFolderAlreadyExist(model);
+            var faculty = CreateFaculty(model);
+            var result = facultyFolderExist ? SaveOnlyFaculty(faculty) : TrySaveFacultyWithFolder(faculty);
+
             return result;
         }
-        
-        public async Task<FacultyServiceResult> DeleteFaculty(int id)
+
+        public async Task<ServiceResult> UpdateFaculty(Faculty faculty)
         {
-            var facultyContainsDepartments = DoesFacultyStillContainDepartments(id);
+            try
+            {
+                faculty.UpdatedAt = DateTime.Now;
+                _unitOfWork.FacultyRepo.Update(faculty);
+
+                var folder = Mapper.Map<Folder>(faculty);
+                _unitOfWork.FolderRepo.UpdateFacultyFolder(folder);
+
+                await _unitOfWork.SaveAsync();
+
+                return ServiceResult.Succeeded;
+            }
+            catch
+            {
+                return ServiceResult.Failure;
+            }
+        }
+
+        public Faculty GetFacultyInDb(int id)
+        {
+            return _unitOfWork.FacultyRepo.Get(id);
+        }
+
+        public async Task<ServiceResult> DeleteFaculty(int id)
+        {
+            var facultyContainsDepartments = DoesFacultyContainDepartments(id);
             if (facultyContainsDepartments)
-                return FacultyServiceResult.Prohibited;
+                return ServiceResult.Prohibited;
             var facultyFolder = _unitOfWork.FolderRepo.Find(x => x.FacultyId == id).FirstOrDefault();
             if (facultyFolder != null)
                 facultyFolder.FacultyId = null;
@@ -52,28 +94,32 @@ namespace archivesystemWebUI.Services
             _unitOfWork.FacultyRepo.Remove(faculty);
             await _unitOfWork.SaveAsync();
 
-            return FacultyServiceResult.Succeeded;
+            return ServiceResult.Succeeded;
         }
 
-        public async Task<FacultyServiceResult> EditFaculty(FacultyViewModel model)
+        public IEnumerable<Department> GetAllDepartmentsInFaculty(int id)
         {
-            try
-            {
-                var result= await  TryEditFaculty(model);
-                return result;
-            }
-            catch
-            {
-                return FacultyServiceResult.Failure;
-            }
+            var departments = _unitOfWork.DeptRepo.FindWithNavProps(d => d.FacultyId == id, d=>d.Faculty);
 
+            return departments;
         }
+
+        public bool FacultyNameCheck(string name, int id)
+        {
+            var faculties = _unitOfWork.FacultyRepo.GetAllToList();
+
+            // Check if the entry name exists & change is from a different entry and return error message from viewModel
+            bool status = faculties.Any(x => x.Name == name && x.Id != id);
+            return status;
+        }
+        #endregion
 
         #region Private methods
+
         private Folder CreateCorrespondingFolder(Faculty faculty)
         {
             var rootFolder = _unitOfWork.FolderRepo.Find(x => x.Name == GlobalConstants.RootFolderName)
-                                                   .Single();
+                .Single();
             var folder = new Folder
             {
                 Name = faculty.Name,
@@ -86,51 +132,35 @@ namespace archivesystemWebUI.Services
             };
             return folder;
         }
-        private bool DoesFacultyStillContainDepartments(int facultyId)
+
+        private bool DoesFacultyContainDepartments(int facultyId)
         {
-            var depts= _unitOfWork.DeptRepo.Find(x => x.FacultyId == facultyId);
-            if (depts.Count() > 0)
+            var depts = _unitOfWork.DeptRepo.Find(x => x.FacultyId == facultyId);
+            if (depts.Any())
                 return true;
             return false;
         }
-        private Faculty CreateFaculty(FacultyViewModel model)
+
+        private Faculty CreateFaculty(Faculty faculty)
         {
-            var faculty = Mapper.Map<Faculty>(model);
             faculty.CreatedAt = DateTime.Now;
             faculty.UpdatedAt = DateTime.Now;
             return faculty;
         }
-        private bool DoesFacultyFolderAlreadyExist(FacultyViewModel model)
-        {
-            var rootfolder=_unitOfWork.FolderRepo.FindWithNavProps(x => x.Name == GlobalConstants.RootFolderName, x => x.Subfolders);
-            var facultyFolderNames = rootfolder.FirstOrDefault().Subfolders.Select(x => x.Name);
 
-            if (facultyFolderNames.Contains(model.Name))
+        private bool DoesFacultyFolderAlreadyExist(Faculty faculty)
+        {
+            var rootfolder =
+                _unitOfWork.FolderRepo.FindWithNavProps(x => x.Name == GlobalConstants.RootFolderName,
+                    x => x.Subfolders);
+            var facultyFolderNames = rootfolder.FirstOrDefault()?.Subfolders.Select(x => x.Name);
+
+            if (facultyFolderNames != null && facultyFolderNames.Contains(faculty.Name))
                 return true;
             return false;
         }
-        private bool DoesFacultyAlreadyExist(FacultyViewModel model)
-        {
-            var faculty =_unitOfWork.FacultyRepo.Find(x => x.Name == model.Name).SingleOrDefault ();
-            if(faculty==null) return false;
 
-            return true;
-        }
-
-        private async Task<FacultyServiceResult> TryEditFaculty( FacultyViewModel model)
-        {
-            var facultyInDb = _unitOfWork.FacultyRepo.Get(model.Id);
-            Mapper.Map(model, facultyInDb);
-            var folder = Mapper.Map<Folder>(model);
-            facultyInDb.UpdatedAt = DateTime.Now;
-
-            _unitOfWork.FacultyRepo.Update(facultyInDb);
-            _unitOfWork.FolderRepo.UpdateFacultyFolder(folder);
-            await _unitOfWork.SaveAsync();
-
-            return FacultyServiceResult.Succeeded;
-        }
-        private FacultyServiceResult TrySaveFaculty(Faculty faculty)
+        private ServiceResult TrySaveFacultyWithFolder(Faculty faculty)
         {
             try
             {
@@ -140,18 +170,20 @@ namespace archivesystemWebUI.Services
                 //new faculty to the context.
                 _unitOfWork.FolderRepo.Add(facultyFolder);
                 _unitOfWork.Save();
-                return FacultyServiceResult.Succeeded;
+                return ServiceResult.Succeeded;
             }
-            catch { return FacultyServiceResult.Failure; }
-            
+            catch
+            {
+                return ServiceResult.Failure;
+            }
         }
-        private FacultyServiceResult TrySaveFaculty(Faculty faculty, bool onlyCreateFaculty=true)
+
+        private ServiceResult SaveOnlyFaculty(Faculty faculty)
         {
             _unitOfWork.FacultyRepo.Add(faculty);
-            var j = faculty.Id;
             _unitOfWork.Save();
 
-            return FacultyServiceResult.Succeeded;
+            return ServiceResult.Succeeded;
         }
         #endregion
     }

@@ -9,6 +9,7 @@ using archivesystemWebUI.Services;
 using archivesystemDomain.Services;
 using archivesystemWebUI.Models;
 using archivesystemWebUI.Models.FolderModels;
+using System.Linq.Expressions;
 
 namespace archivesystemApp.UnitTests.FolderServiceTests
 {
@@ -65,19 +66,21 @@ namespace archivesystemApp.UnitTests.FolderServiceTests
 
             Assert.That(result, Is.Null);
             _repo.Verify(r => r.UserRepo.Find(c => c.UserId == dummyId));
-            _repo.Verify(r => r.AccessDetailsRepo.Find(x => x.AppUserId == dummyAppUserId));
             _repo.Verify(r => r.AccessLevelRepo.GetAll());
         }
         
 
         [Test]
-        public void GetCurrentUserAllowedAccessLevels_AccessDetailsFound_ReturnAccessLevelList()
+        public void AccessDetailsFound_ReturnAccessLevelList()
         {
-            var userDetail = new AccessDetail { Id = 1, AppUserId = _user.Id, AccessLevelId = 2 };
-            _usersList.Add( _user);
+            _usersList.Add(_user);
+            var dummyId = "dummy id"; // must be same as _userId;
+            var dummyAppUserId = 1; //must be same as _user.Id
+            var userDetail = new AccessDetail { Id = 1, AppUserId = dummyAppUserId, AccessLevelId = 2 };
             var accessDetails = new List<AccessDetail> { userDetail };
-            _repo.Setup(r => r.UserRepo.Find(c => c.UserId == _userId)).Returns(_usersList);
-            _repo.Setup(r => r.AccessDetailsRepo.Find(x => x.AppUserId == _user.Id)).Returns(accessDetails);
+            _repo.Setup(r => r.UserRepo.Find(It.IsAny<Expression<Func<AppUser, bool>>>())).Returns(_usersList);
+            _repo.Setup(r => r.AccessDetailsRepo.Find(It.IsAny<Expression<Func<AccessDetail, bool>>>()))
+               .Returns(accessDetails);
             _repo.Setup(r => r.AccessLevelRepo.GetAll()).Returns(_accesslevels);
 
             var result = _service.GetCurrentUserAllowedAccessLevels(_userId).ToList();

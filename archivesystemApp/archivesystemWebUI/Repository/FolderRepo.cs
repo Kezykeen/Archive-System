@@ -31,7 +31,7 @@ namespace archivesystemWebUI.Repository
         {
             var rootFolder = Find(x=> x.Name== GlobalConstants.RootFolderName && x.FacultyId==null && x.DepartmentId==null)
                 .FirstOrDefault();
-            var folders = FindWithNavProps(x => x.Name == name && x.FacultyId == null, x => x.Subfolders);
+            var folders = FindWithNavProps(x => x.Name == name , x => x.Subfolders).ToList();
             var folder=folders.SingleOrDefault(x => x.Name == name && x.ParentId == rootFolder.Id);
             return folder;
         }

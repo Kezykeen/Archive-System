@@ -8,6 +8,7 @@ using archivesystemDomain.Entities;
 using archivesystemDomain.Interfaces;
 using archivesystemDomain.Services;
 using archivesystemWebUI.Repository;
+using archivesystemWebUI.Services;
 using Ninject.Web.Common;
 using archivesystemWebUI.Services;
 using archivesystemWebUI.Interfaces;
@@ -48,12 +49,12 @@ namespace archivesystemWebUI.Infrastructures
             kernel.Bind<IUnitOfWork>().To<UnitOfWork>();
             kernel.Bind<IFacultyRepository>().To<FacultyRepository>();
             kernel.Bind<IFileMetaRepo>().To<FileMetaRepo>();
+            kernel.Bind<IFacultyService>().To<FacultyService>();
+            kernel.Bind<IDepartmentService>().To<DepartmentService>();
             kernel.Bind<IAccessLevelService>().To<AccessLevelService>();
             kernel.Bind<IUserAccessService>().To<UserAccessService>();
             kernel.Bind<IFileRepo>().To<FileRepo>();
             kernel.Bind<IFolderService>().To<FolderService>();
-            kernel.Bind<IFacultyService>().To<FacultyService>();
-            
         }
     }
 }

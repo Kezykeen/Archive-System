@@ -235,17 +235,18 @@ namespace archivesystemWebUI.Controllers
             var result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword, model.NewPassword);
             if (!result.Succeeded)
             {
-                var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
-                if (user != null)
-                {
-                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-                }
+                AddErrors(result);
 
-                return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+                return PartialView("_ChangePassword", model);
             }
-            AddErrors(result);
 
-            return PartialView("_ChangePassword", model);
+            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+            if (user != null)
+            {
+                await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+            }
+
+            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
         }
 
         //

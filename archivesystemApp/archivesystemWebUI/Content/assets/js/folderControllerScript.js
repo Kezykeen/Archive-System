@@ -46,7 +46,7 @@ async function showModal(resp) {
     $("#modal").modal("show");
 }
 
-async function ConfirmMove(folderToMoveInto) {
+async function ConfirmMove(folderToMoveInto,newParentFolderId) {
     let copiedItem = JSON.parse(localStorage.getItem("copiedItem"));
     var moveFolderAlert = document.getElementById('alertMessageBox');
     console.log(copiedItem.time, new Date(Date.now() - new Date(copiedItem.time)).getHours())
@@ -56,13 +56,14 @@ async function ConfirmMove(folderToMoveInto) {
         setTimeout(() => { moveFolderAlert.className = ''; return; }, 2000)
     }
     else {
-        url = `/Folder/GetConfirmItemMovePartialView?itemName=${copiedItem.name}&currentFolder=${folderToMoveInto}`;
+        url = `/Folder/GetConfirmItemMovePartialView?itemName=${copiedItem.name}&currentFolder=${folderToMoveInto}&newParentFolderId=${newParentFolderId}`;
+        console.log(url)
         let resp = await fetch(url);
         if (resp.status === 200) {
             await showModal(resp);
             document.getElementById("confirmItemMove-form").addEventListener("submit", async (e) => {
-                e.preventDefault();
-                let newParentFolderId = document.getElementById("paste-here").getAttribute('data-FolderId');
+                e.preventDefault
+                console.log("newParentFolderId:", newParentFolderId)
                 await CtrlV(parseInt(newParentFolderId));
             })
         }
@@ -86,7 +87,7 @@ async function monitorUserActivityOnModal(url) {
     else if (url.includes("/Folder/GetEditFolderPartialView")) {
         document.getElementById("editFolder").addEventListener("submit", async (e) => {
             e.preventDefault();
-            await editFolder(id);
+            await editFolder();
         })
     }
     else {
@@ -138,16 +139,18 @@ function closeModal() {
     $("#modal").modal("hide");
 }
 
-async function editFolder(id) {
+async function editFolder() {
     let verificationToken = document.getElementsByName("__RequestVerificationToken")[0].value
     let accesslevelId = document.getElementById("EF-accessLevel").value;
     let name = document.getElementById("EF-name").value;
     let parentId = document.getElementById("EF-parentId").value;
+    let folderId = document.getElementById("EF-id").value;
+    console.log(verificationToken, accesslevelId, name, parentId);
     if (!name || !accesslevelId) {
         addValidationErrors("editFolder", name, accesslevelId)
     }
     else {
-        await postData("/Folder/Edit", name, accesslevelId, parentId, verificationToken, id = id)
+        await postData("/Folder/Edit", name, accesslevelId, parentId, verificationToken, id = folderId)
         location.reload();
     }
     }
@@ -175,8 +178,6 @@ async function createFolder(url) {
     }
    
 }
-
-
 
 async function postData(url, name, accesslevelId, parentId, token, id = 0) {
     let resp = await fetch(url, {
@@ -207,7 +208,7 @@ async function CtrlV(newParentFolderId ) {
     let copiedItem = JSON.parse(localStorage.getItem("copiedItem"));
     let verificationToken = document.getElementsByName("__RequestVerificationToken")[0].value;
     var moveFolderAlert = document.getElementById('alertMessageBox');
-    
+    console.log("newParentFolderId:", newParentFolderId)
     resp = await fetch("/folders/move", {
         method: "POST",
         headers: {
@@ -217,7 +218,7 @@ async function CtrlV(newParentFolderId ) {
         body: JSON.stringify({
             id: copiedItem.id,
             fileType: copiedItem.itemType,
-            newParentFolder: newParentFolderId
+            newParentFolderId: newParentFolderId
         })
     })
  

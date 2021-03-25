@@ -32,7 +32,5 @@ namespace archivesystemDomain.Entities
         public DbSet<Approval> Approvals { get; set; }
         public DbSet<ApplicationReceiver> ApplicationReceivers { get; set; }
         public DbSet<Activity> Activities { get; set; }
-
-
     }
 }

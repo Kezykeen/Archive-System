@@ -7,7 +7,14 @@
     </button>
 </div>
 <div class="modal-body">
-    @using (Html.BeginForm("AddOrEdit", "Department", FormMethod.Post, new { @class = "form-horizontal addOrUpdateForm", role = "form", name = "AddOrUpdateDepartmentForm" }))
+    @using (Ajax.BeginForm("AddOrUpdate", "Department", "",
+        new AjaxOptions
+        {
+            UpdateTargetId = "AddOrUpdateDepartmentForm",
+            InsertionMode = InsertionMode.Replace,
+            OnSuccess = "departmentOnSuccess",
+            OnFailure = "departmentOnFailure"
+        }, new { @class = "form-horizontal", role = "form", id = "AddOrUpdateDepartmentForm" }))
     {
 
         @Html.AntiForgeryToken()
@@ -32,7 +39,7 @@
             </div>
 
             <div class="form-group submit-section">
-                <input type="button" value="Save" onclick="addOrEdit('AddOrUpdateDepartmentForm', '@Url.Action("AddOrEdit", "Department")')" class="btn btn-primary submit-btn" />
+                <input type="submit" value="Save" class="btn btn-primary submit-btn" />
             </div>
         </div>
     }

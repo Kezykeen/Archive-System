@@ -52,4 +52,11 @@ namespace archivesystemDomain.Services
         public const string Alumni="Alumni";
         public const string Student="Student";
     }
+
+    public enum ServiceResult
+    {
+        Succeeded,
+        Failure,
+        Prohibited
+    }
 }

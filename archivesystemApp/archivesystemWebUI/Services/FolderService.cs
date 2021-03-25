@@ -84,8 +84,11 @@ namespace archivesystemWebUI.Services
             return folder;
         }
 
-        public CreateFolderViewModel GetCreateFolderViewModel(int parentId,string userId)
+        public CreateFolderViewModel GetCreateFolderViewModel(int parentId,string userId,bool userIsAdmin=false )
         {
+            if (userIsAdmin)
+                return GetAdminCreateFolderViewModel(parentId);
+            
             var parentFolder = _repo.FolderRepo.Get(parentId);
             if (parentFolder == null) return null;
 
@@ -101,13 +104,30 @@ namespace archivesystemWebUI.Services
             return data;
         }
 
+        private CreateFolderViewModel GetAdminCreateFolderViewModel(int parentFolderId)
+        {
+            var parentFolder = _repo.FolderRepo.Get(parentFolderId);
+            if (parentFolder == null) return null;
+
+            var userAllowedLevels = _repo.AccessLevelRepo.GetAll();
+            userAllowedLevels = userAllowedLevels.Where(x => x.Id >= parentFolder.AccessLevelId);
+            var data = new CreateFolderViewModel() { Name = "", ParentId = parentFolderId, AccessLevels = userAllowedLevels };
+            return data;
+        }
+
+        public IEnumerable<AccessLevel> GetAllAccessLevels()
+        {
+           return  _repo.AccessLevelRepo.GetAll();
+        }
         public IEnumerable<AccessLevel> GetCurrentUserAllowedAccessLevels(string userId)
         {
             var users = _repo.UserRepo.Find(c => c.UserId == userId);
             var user= users.SingleOrDefault();
             if (user == null) return null;
 
-            var userdetails = _repo.AccessDetailsRepo.Find(x => x.AppUserId == user.Id).SingleOrDefault();
+            //_repo.Setup(r => r.AccessDetailsRepo.Find(x => x.AppUserId == dummyAppUserId)).Returns(accessDetails);
+            var userdetail = _repo.AccessDetailsRepo.Find(x => x.AppUserId == user  .Id);
+             var userdetails=userdetail.SingleOrDefault();
             var userAccessLevel = userdetails == null ? 0 : userdetails.AccessLevelId;
             var allowedAccessLevels=_repo.AccessLevelRepo.GetAll().Where(x => x.Id <= userAccessLevel);
             if (allowedAccessLevels.Count() == 0) return null;

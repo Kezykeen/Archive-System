@@ -1,27 +1,33 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using archivesystemDomain.Entities;
-using archivesystemDomain.Interfaces;
-using archivesystemWebUI.Interfaces;
 using archivesystemWebUI.Models;
-using archivesystemWebUI.Services;
+using archivesystemDomain.Services;
+using archivesystemWebUI.Interfaces;
 using AutoMapper;
 
 namespace archivesystemWebUI.Controllers
 {
-    //[Authorize(Roles = "Admin, Manager")]
+    [Authorize(Roles = "Admin, Manager")]
     public class FacultyController : Controller
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private IFacultyService _service;
-        
-        public FacultyController(IUnitOfWork unitOfWork, IFacultyService _service)
+        #region Fields
+
+        private readonly IFacultyService _facultyService;
+
+        #endregion
+
+        #region Constructors
+
+        public FacultyController(IFacultyService facultyService)
         {
-            _unitOfWork = unitOfWork;
-            this._service = _service;
+            _facultyService = facultyService;
         }
+        #endregion
+
+        #region ActionMethods
 
         public ActionResult Index()
         {
@@ -31,45 +37,53 @@ namespace archivesystemWebUI.Controllers
         // GET json data for DataTable
         public ActionResult GetFacultyData()
         {
-            var faculty = _unitOfWork.FacultyRepo.GetAllToList();
-            var viewModel = faculty.Select(x => new {x.Name, x.Id});
+            var facultyData = _facultyService.GetFacultyData();
+            var map = Mapper.Map<IEnumerable<FacultyViewModel>>(facultyData);
 
-            return Json(new {data = viewModel}, JsonRequestBehavior.AllowGet);
+            return Json(new {data = map}, JsonRequestBehavior.AllowGet);
         }
 
-        //GET: Faculty/AddOrEdit/5?
+        //GET: Faculty/AddOrUpdate/5?
         public ActionResult GetFacultyPartialView(int? id)
         {
-            var faculty = id != null ? _unitOfWork.FacultyRepo.Get(id.Value) : new Faculty();
+            var faculty = _facultyService.GetFaculty(id);
             var model = Mapper.Map<FacultyViewModel>(faculty);
 
             return PartialView("_AddOrEditFaculty", model);
         }
 
         [HttpPost]
-        // POST: Faculty/AddOrEdit
+        // POST: Faculty/AddOrUpdate
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> AddOrEdit(FacultyViewModel model)
+        public async Task<ActionResult> AddOrUpdate(FacultyViewModel model)
         {
-            FacultyServiceResult result;
-            if (model.Id == 0)
-                result = _service.SaveFaculty(model);
-            else
-                result = await _service.EditFaculty(model); 
+            if (!ModelState.IsValid)
+                return PartialView("_AddOrEditFaculty", model);
 
-            if (result == FacultyServiceResult.Succeeded)
-                return Json("success", JsonRequestBehavior.AllowGet);
-            return Json("failure", JsonRequestBehavior.AllowGet);
+            ServiceResult result;
+            if (model.Id == 0)
+            {
+                var faculty = Mapper.Map<Faculty>(model);
+                result = _facultyService.SaveFaculty(faculty);
+            }
+            else
+            {
+                var facultyInDb = _facultyService.GetFacultyInDb(model.Id);
+                Mapper.Map(model, facultyInDb);
+                result = await _facultyService.UpdateFaculty(facultyInDb);
+            }
+            
+            return result == ServiceResult.Succeeded 
+                ? Json(new {success = true}, JsonRequestBehavior.AllowGet) 
+                : Json(new {failure = true}, JsonRequestBehavior.AllowGet);
         }
 
         //GET: Faculty/Delete/5
         public ActionResult GetDeletePartialView(int id)
         {
-            Faculty faculty = _unitOfWork.FacultyRepo.Get(id);
+            var faculty = _facultyService.GetFacultyById(id);
             if (faculty == null)
-            {
                 return HttpNotFound();
-            }
 
             return PartialView("_DeleteFaculty", faculty);
         }
@@ -80,29 +94,34 @@ namespace archivesystemWebUI.Controllers
         {
             try
             {
-                var result= await _service.DeleteFaculty(id);
-                if(result == FacultyServiceResult.Prohibited)
-                    return Json("prohibited", JsonRequestBehavior.AllowGet);
-
-
-                return Json("success", JsonRequestBehavior.AllowGet);
+                var result = await _facultyService.DeleteFaculty(id);
+                return result == ServiceResult.Prohibited 
+                    ? Json(new {prohibited = true}, JsonRequestBehavior.AllowGet) 
+                    : Json(new {success = true}, JsonRequestBehavior.AllowGet);
             }
             catch (Exception)
             {
-                return Json("failure", JsonRequestBehavior.AllowGet);
+                return Json(new {failure = true}, JsonRequestBehavior.AllowGet);
             }
         }
 
-       
+        public ActionResult ViewAllDepartmentsInFaculty(int id)
+        {
+            var departments = _facultyService.GetAllDepartmentsInFaculty(id);
 
+            return View(departments);
+        }
+        #endregion
+
+        #region Validators
+        //Remote validation for duplicate names
         [HttpPost]
         public JsonResult FacultyNameCheck(string name, int id)
         {
-            var faculties = _unitOfWork.FacultyRepo.GetAllToList();
+            var status = _facultyService.FacultyNameCheck(name, id);
 
-            // Check if the entry name exists & change is from a different entry and return error message from viewModel
-            bool status = faculties.Any(x => x.Name == name && x.Id != id);
             return Json(!status, JsonRequestBehavior.AllowGet);
         }
+        #endregion
     }
 }
