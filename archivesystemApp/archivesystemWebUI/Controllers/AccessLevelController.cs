@@ -110,9 +110,6 @@ namespace archivesystemWebUI.Controllers
             var status = _service.CheckLevel(Level);
             return Json(status);
         }
-        #endregion
-      
-
-
+        #endregion 
     }
 }
