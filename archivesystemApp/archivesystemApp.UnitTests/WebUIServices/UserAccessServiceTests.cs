@@ -1,5 +1,6 @@
 ﻿using archivesystemDomain.Entities;
 using archivesystemDomain.Interfaces;
+using archivesystemDomain.Services;
 using archivesystemWebUI.Models;
 using archivesystemWebUI.Services;
 using Moq;
@@ -15,7 +16,7 @@ namespace archivesystemApp.UnitTests.WebUIServices
     class UserAccessServiceTests
     {
         private Mock<IUnitOfWork> _unitOfWork;
-        private Mock<IEmailSender> _emailSender;
+        private Mock<IAccessCodeGenerator> _accessCodeGenerator;
         private string _email;
         private AccessDetail _accessDetails;
         private UserAccessService _service;
@@ -24,7 +25,7 @@ namespace archivesystemApp.UnitTests.WebUIServices
         public void SetUp()
         {
             _unitOfWork = new Mock<IUnitOfWork>();
-            _emailSender = new Mock<IEmailSender>();
+            _accessCodeGenerator = new Mock<IAccessCodeGenerator>();
             _email = "marvelousfrank5@gmail.com";
             _accessDetails = new AccessDetail { Id = 1, AccessCode = "gkuy23rfd", AccessLevelId = 5, Status = Status.Active };
 
@@ -42,7 +43,7 @@ namespace archivesystemApp.UnitTests.WebUIServices
             _unitOfWork.Setup(m =>m.UserRepo.Get(1))
                 .Returns(new AppUser { Id = 1, Name = "Marvelous", Email = _email });
 
-            _service = new UserAccessService(_unitOfWork.Object, _emailSender.Object);
+            _service = new UserAccessService(_unitOfWork.Object, _accessCodeGenerator.Object);
         }
 
         [Test]

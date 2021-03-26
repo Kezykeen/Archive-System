@@ -25,10 +25,12 @@ namespace archivesystemWebUI.Controllers
         private const byte LOCKOUT_TIME = 1; //lockout user after last request exceeds lockout time in minutes
 
         private readonly IRoleService _roleService;
+        private readonly IAccessCodeGenerator _accessCodeGenerator;
         private readonly IFolderService _service;
        
-        public FolderController(IRoleService roleService, IFolderService service) 
+        public FolderController(IRoleService roleService, IFolderService service, IAccessCodeGenerator accessCodeGenerator) 
         {
+            _accessCodeGenerator = accessCodeGenerator;
             _service = service;
             _roleService = roleService;
         }
@@ -235,7 +237,7 @@ namespace archivesystemWebUI.Controllers
             var accessCodeInDb = _service.GetCurrentUserAccessCode(HttpContext.User.Identity.GetUserId());
             if (string.IsNullOrWhiteSpace(accessCodeInDb)) 
                 return new HttpStatusCodeResult(403);
-            var codeIsCorrect=AccessCodeGenerator.VerifyCode(accessCode, accessCodeInDb);
+            var codeIsCorrect=_accessCodeGenerator.VerifyCode(accessCode, accessCodeInDb);
             if (!codeIsCorrect)
                 return new HttpStatusCodeResult(400);
 
