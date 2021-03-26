@@ -1,5 +1,12 @@
 ﻿const NODE_COUNT_WITHOUT_ERROR_MESSAGE = 11;
 
+
+$(document).ready(() => {
+    document.getElementById("FL-filename-search-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        findFile();
+    })
+})
 function addValidationErrors(formId, name, accesslevelId, isNameTaken = false) {
     let form = document.getElementById(formId);
     let validationErrorMessage = document.createElement("div");
@@ -275,10 +282,27 @@ async function VerifyAccessToken() {
                     <li>${message}</li>
                 </ul>
          </div>`
-    form.prepend(validationErrorMessage)
+    form.prepend(validationErrorMessage);
+}
 
+async function findFile() {
+    console.log("fetching .... ")
+    document.getElementById("FL-filename-search-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+    })
+    let filename = document.getElementById("FL-filename-search-input").value;
+    let folderId = document.getElementById("FL-filename-search-input").getAttribute("data-folderId");
+    if (filename) {
+        let resp = await fetch(`/folder/getfile?filename=${filename}&folderId=${folderId}`)
+        if (resp.status === 200) {
+            let textresp = await resp.text();
+            document.getElementById("FL-files").innerHTML = textresp;
+        }
+    }
+    else {
 
-
+    }
+    
 }
 
 

@@ -22,7 +22,7 @@ namespace archivesystemWebUI.Controllers
     [Authorize]
     public class FolderController : Controller
     {
-        private const byte LOCKOUT_TIME = 1; //lockout user after last request exceeds lockout time in minutes
+        private const byte LOCKOUT_TIME = 10; //lockout user after last request exceeds lockout time in minutes
 
         private readonly IRoleService _roleService;
         private readonly IAccessCodeGenerator _accessCodeGenerator;
@@ -203,6 +203,14 @@ namespace archivesystemWebUI.Controllers
             return PartialView("_EditFolder", model);
         }
 
+        //GET: /Folder/GetFiles
+        public ActionResult GetFile(string filename,int folderId)
+        {
+            var files=_service.GetFiles(filename, folderId);
+            if (files == null) return new HttpStatusCodeResult(404);
+            
+            return PartialView("GetAllFiles",files);
+        }
         //GET: /Folder/GetDeleteFolderPartialView
         public ActionResult GetDeleteFolderPartialView(int id)
         {

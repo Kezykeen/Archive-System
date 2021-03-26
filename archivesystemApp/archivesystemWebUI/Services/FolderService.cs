@@ -140,11 +140,16 @@ namespace archivesystemWebUI.Services
             var user = _repo.UserRepo.GetUserByUserId(userId);
             if (user == null)
                 return "";
-            var userDetails = _repo.AccessDetailsRepo.Find(x => x.AppUserId == user.Id).SingleOrDefault();
+            var userDetails = _repo.AccessDetailsRepo.Find(x => x.AppUserId == user.Id)?.SingleOrDefault();
             if (userDetails == null) return "";
             return userDetails.AccessCode;
         }
 
+        public List<File> GetFiles(string filename,int folderId)
+        {
+            return _repo.FolderRepo.GetFilesThatMactchFileName(folderId, filename);
+     
+        }
         public IEnumerable<Folder> GetFoldersThatMatchName(string name)
         {
             return _repo.FolderRepo.FindWithNavProps(x => x.Name.Contains(name));

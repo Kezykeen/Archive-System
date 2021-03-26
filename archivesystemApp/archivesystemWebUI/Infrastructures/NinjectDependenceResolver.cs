@@ -10,7 +10,6 @@ using archivesystemDomain.Services;
 using archivesystemWebUI.Repository;
 using archivesystemWebUI.Services;
 using Ninject.Web.Common;
-using archivesystemWebUI.Services;
 using archivesystemWebUI.Interfaces;
 
 namespace archivesystemWebUI.Infrastructures
