@@ -15,7 +15,7 @@ namespace archivesystemWebUI.Services
     {
         #region FIELDS
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IEmailSender _emailSender;
+        private readonly IAccessCodeGenerator _accessCode;
         private const string add = "add";
         private const string update = "update";
         #endregion
@@ -26,10 +26,10 @@ namespace archivesystemWebUI.Services
         #endregion
 
         #region CONSTRUCTOR
-        public UserAccessService(IUnitOfWork unitOfWork, IEmailSender emailSender)
+        public UserAccessService(IUnitOfWork unitOfWork, IAccessCodeGenerator accessCode)
         {
             _unitOfWork = unitOfWork;
-            _emailSender = emailSender;
+            _accessCode = accessCode;
         }
         #endregion
 
@@ -44,7 +44,7 @@ namespace archivesystemWebUI.Services
                 {
                     AppUserId = user.Id,
                     AccessLevelId = model.AccessLevel,
-                    AccessCode = await GenerateCode(user, add),
+                    AccessCode = await _accessCode.GenerateCode(user, add),
                     Status = Status.Active
                 };
 
@@ -102,7 +102,7 @@ namespace archivesystemWebUI.Services
                 if (model.RegenerateCode == CodeStatus.Yes)
                 {
                     var user = _unitOfWork.UserRepo.Get(model.AccessDetails.AppUserId);
-                    model.AccessDetails.AccessCode = await GenerateCode(user, update);
+                    model.AccessDetails.AccessCode = await _accessCode.GenerateCode(user, update);
                 }
 
                 _unitOfWork.AccessDetailsRepo.EditDetails(model.AccessDetails);
@@ -134,32 +134,6 @@ namespace archivesystemWebUI.Services
         }
         #endregion
 
-        #region HELPER METHOD
-        private async Task<string> GenerateCode(AppUser user, string method)
-        {
-            var accessCode = AccessCodeGenerator.NewCode(user.TagId);
-
-            switch (method)
-            {
-                case add:
-                    await _emailSender.SendEmailAsync(
-                                                user.Email, "Access Code",
-                                                $"Hello {user.Name},\nYour access code is:\n<strong>{accessCode}</strong>.\nThis is confidential. Do not share with anyone.");
-                    return AccessCodeGenerator.HashCode(accessCode);
-
-                case update:
-                    await _emailSender.SendEmailAsync(
-                                                 user.Email, "Access Code (Updated)",
-                                                 $"Hello {user.Name},\nYour new access code is:\n<strong>{accessCode}</strong>.\nThis is confidential. Do not share with anyone.");
-                    return AccessCodeGenerator.HashCode(accessCode);
-
-                default:
-                    return AccessCodeGenerator.HashCode(accessCode);
-            }
-        }
-
-        
-        #endregion
 
     }
 }
