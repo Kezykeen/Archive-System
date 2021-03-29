@@ -43,9 +43,9 @@ namespace archivesystemWebUI.Controllers
             return Json(new {data = viewModel}, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult GetDepartmentPartialView(int? id)
+        public ActionResult GetDepartmentPartialView(int id)
         {
-            var model = _departmentService.GetDepartment(id);
+            var model = _departmentService.GetDepartmentForPartialView(id);
             var viewModel = Mapper.Map<DepartmentViewModel>(model);
 
             viewModel.Faculties = _departmentService.GetAllFaculties();
@@ -61,15 +61,6 @@ namespace archivesystemWebUI.Controllers
             if (!ModelState.IsValid)
                 return PartialView("_AddOrEditDepartment", model);
 
-            var result = await AddOrUpdateResult(model);
-
-            return result == ServiceResult.Succeeded
-                ? Json(new { success = true }, JsonRequestBehavior.AllowGet)
-                : Json(new { failure = true }, JsonRequestBehavior.AllowGet);
-        }
-
-        public async Task<ServiceResult> AddOrUpdateResult(DepartmentViewModel model)
-        {
             ServiceResult result;
             if (model.Id == 0)
             {
@@ -78,7 +69,7 @@ namespace archivesystemWebUI.Controllers
             }
             else
             {
-                var departmentInDb = _departmentService.GetDepartment(model.Id);
+                var departmentInDb = _departmentService.GetDepartmentById(model.Id);
                 departmentInDb.UpdatedAt = DateTime.Now;
                 Mapper.Map(model, departmentInDb);
                 result = _departmentService.UpdateDepartment(departmentInDb);
@@ -86,7 +77,9 @@ namespace archivesystemWebUI.Controllers
                 await _departmentService.SaveChanges();
             }
 
-            return result;
+            return result == ServiceResult.Succeeded
+                ? Json(new { success = true }, JsonRequestBehavior.AllowGet)
+                : Json(new { failure = true }, JsonRequestBehavior.AllowGet);
         }
 
         public void UpdateDepartmentFolder(Department department, ServiceResult result)
@@ -99,7 +92,7 @@ namespace archivesystemWebUI.Controllers
         //GET: Department/Delete/5
         public ActionResult GetDeletePartialView(int id)
         {
-            Department department = _departmentService.GetDepartment(id);
+            var department = _departmentService.GetDepartmentById(id);
             if (department == null)
                 return HttpNotFound();
 
@@ -137,7 +130,7 @@ namespace archivesystemWebUI.Controllers
         [HttpPost]
         public JsonResult DepartmentNameCheck(string name, int id)
         {
-            var status = _departmentService.DepartNameCheck(name, id);
+            var status = _departmentService.DepartmentNameCheck(name, id);
 
             return Json(!status, JsonRequestBehavior.AllowGet);
         }
