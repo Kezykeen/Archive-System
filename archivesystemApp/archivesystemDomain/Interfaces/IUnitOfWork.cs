@@ -7,14 +7,6 @@ namespace archivesystemDomain.Interfaces
 {
     public interface IUnitOfWork
     {
-        IUserRepository UserRepo { get; }
-        IDeptRepository DeptRepo { get; }
-        IAccessLevelRepository AccessLevelRepo { get; }
-        ITokenRepo TokenRepo { get; }
-        IFacultyRepository FacultyRepository { get; }
-        IAccessDetailsRepository AccessDetailsRepo { get; }
-        IFolderRepo FolderRepo { get; }
-        IFileMetaRepo FileMetaRepo { get; }
         IFileRepo FileRepo { get; }
 
         int Save();
