@@ -12,7 +12,10 @@
 <div class="modal-body">
 
     <form id="createFolder"  name="createFolder">
-        @Html.ValidationSummary()
+        <div class='validation-summary-errors'>
+            <ul id="CF-validation-errors">
+            </ul>
+        </div>
         @Html.AntiForgeryToken()
         <input name="id" value="@Model.ParentId" hidden id="CF-parentId"/>
         <div class="form-group">

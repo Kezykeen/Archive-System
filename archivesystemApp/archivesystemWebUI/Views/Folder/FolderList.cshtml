@@ -45,18 +45,17 @@
                     <!--folder list side bar-->
                     <div class="file-pro-list">
                         <div class="file-scroll">
+                            <!--Create new folder button-->
+                            @if (currentFolderDepth < (int)AllowableFolderDepth.Max && (bool)ViewBag.AllowCreateFolder)
+                            {
+                                <div class="btn add-btn float-left" style="margin:1em 0;color:white"
+                                     onclick="getPartialView('@Url.Action("Create", "Folder")', @Model.Id)">
+                                    <i class="fa fa-plus"></i>
+                                    <a href="#" style="color:white"> Add Folder</a>
+                                </div>
+                            }
                             @if (subFolderLenght > 0)
                             {
-                                <!--Create new folder button-->
-                                if (currentFolderDepth < (int)AllowableFolderDepth.Max && (bool)ViewBag.AllowCreateFolder)
-                                {
-                                    <div class="btn add-btn float-left" style="margin:1em 0;color:white"
-                                         onclick="getPartialView('@Url.Action("Create", "Folder")', @Model.Id)">
-                                        <i class="fa fa-plus"></i>
-                                        <a href="#" style="color:white"> Add Folder</a>
-                                    </div>
-                                }
-
                                 <!--Folders subfolders list-->
                                 <ul class="file-menu" id="FL-folders">
                                     @foreach (Folder folder in Model.DirectChildren)
@@ -84,15 +83,18 @@
                                     }
                                 </ul>
 
-                                <!--Back to previous folder button-->
-                                if (Model.Name != "Root" && Model.Id != 0)
-                                {
-                                    using (Html.BeginForm($"/{Model.ParentId}", "folders", FormMethod.Post))
+                            }
+
+                            <!--Back to previous folder button-->
+                            @if (Model.Name != "Root" && Model.Id != 0)
+                            {
+                                <div style="display:block;margin-top:3em" >
+                                    @using (Html.BeginForm($"/{Model.ParentId}", "folders", FormMethod.Post))
                                     {
                                         <input hidden name="parentId" value="@Model.ParentId" />
-                                        <button type="submit" class="btn btn-primary">Back</button>
+                                        <button type="submit" style="margin:1em 0;color:white" class="btn btn-primary">Back</button>
                                     }
-                                }
+                                </div> 
                             }
 
                         </div>

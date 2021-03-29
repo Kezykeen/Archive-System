@@ -11,6 +11,7 @@ using archivesystemWebUI.Repository;
 using archivesystemWebUI.Services;
 using Ninject.Web.Common;
 using archivesystemWebUI.Interfaces;
+using AutoMapper;
 
 namespace archivesystemWebUI.Infrastructures
 {

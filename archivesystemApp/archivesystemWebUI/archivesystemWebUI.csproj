@@ -251,6 +251,7 @@
     <Compile Include="Models\FileMetaVm.cs" />
     <Compile Include="Models\FolderModels\CreateFolderViewModel.cs" />
     <Compile Include="Models\FolderModels\DeleteFolderViewModel.cs" />
+    <Compile Include="Models\FolderModels\EditFolderViewModel.cs" />
     <Compile Include="Models\FolderModels\FolderPageViewModel.cs" />
     <Compile Include="Models\FolderModels\MoveItemViewModel.cs" />
     <Compile Include="Models\FolderModels\SaveFolderViewModel.cs" />
@@ -419,7 +420,6 @@
     <Content Include="Content\assets\plugins\summernote\dist\font\summernote.woff" />
     <Content Include="libman.json" />
     <Content Include="bower.json" />
-    <None Include="ApiKeys.config" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />

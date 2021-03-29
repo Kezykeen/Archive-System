@@ -7,6 +7,7 @@ using archivesystemWebUI.Models.FolderModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AutoMapper;
 
 
 namespace archivesystemWebUI.Services
@@ -21,7 +22,7 @@ namespace archivesystemWebUI.Services
         private IUnitOfWork _repo { get; set; }
         private const int  _GroundLevelAccess=0;
 
-        public FolderService(IUnitOfWork unitofwork)
+        public FolderService(IUnitOfWork unitofwork )
         {
             _repo = unitofwork;
         }
@@ -67,16 +68,25 @@ namespace archivesystemWebUI.Services
 
             var folderInDb = _repo.FolderRepo.Get(model.Id);
             if (folderInDb == null) return FolderServiceResult.NotFound;
-            if (folderInDb.Name == GlobalConstants.RootFolderName) return FolderServiceResult.AlreadyExist;
             if (folderInDb.IsRestricted) return FolderServiceResult.Prohibited;
-            
+            if (folderInDb.Name == GlobalConstants.RootFolderName) return FolderServiceResult.AlreadyExist;
 
-            folderInDb.Name = model.Name;
+            var parentFolder = _repo.FolderRepo.FindWithNavProps(
+                x=> x.Id==(int)folderInDb.ParentId,
+                x=> x.Subfolders
+                );
+            if (parentFolder.Count() != 1) return FolderServiceResult.NotFound;
+            if (parentFolder.Single().Subfolders.Select(x => x.Name.ToLower()).Any(x=> x==model.Name.ToLower().Trim())
+                && folderInDb.Name != model.Name) return FolderServiceResult.AlreadyExist;
+             
+            folderInDb.Name= model.Name.Trim();
             folderInDb.AccessLevelId = model.AccessLevelId;
+            folderInDb.UpdatedAt = DateTime.Now;
             _repo.Save();
             return FolderServiceResult.Success;
         }
 
+     
         public Folder FilterFolderSubFoldersUsingAccessLevel(Folder folder,int userAccessLevel)
         {
             var subfolders = folder.Subfolders.Where(x => x.AccessLevelId <= userAccessLevel);
@@ -145,7 +155,7 @@ namespace archivesystemWebUI.Services
             return userDetails.AccessCode;
         }
 
-        public List<File> GetFiles(string filename,int folderId)
+        public List<File> GetFiles(string filename,int folderId, bool returnall=false)
         {
             return _repo.FolderRepo.GetFilesThatMactchFileName(folderId, filename);
      
@@ -162,7 +172,9 @@ namespace archivesystemWebUI.Services
 
         public Folder GetFolder(int folderId)
         {
-            return _repo.FolderRepo.FindWithNavProps(x => x.Id == folderId, x => x.Subfolders).Single(x => x.Id == folderId);
+            var folders = _repo.FolderRepo.FindWithNavProps(x => x.Id == folderId, x => x.Subfolders);
+            if (folders.Count() != 1) return null;
+            return folders.Single(x => x.Id == folderId);
         }
 
         public Folder GetRootFolder()
@@ -177,7 +189,7 @@ namespace archivesystemWebUI.Services
         {
             UserData data = GetUserData(userId);
             if (data.UserAccessLevel == _GroundLevelAccess && !userRole.Contains(RoleNames.Admin))
-                return new FolderPageViewModel(); ;
+                return null ;
             var rootFolder = GetRootFolder();
             var model = new FolderPageViewModel
             {
@@ -216,10 +228,11 @@ namespace archivesystemWebUI.Services
         public FolderServiceResult SaveFolder(SaveFolderViewModel model)
         {
             var parentFolder = GetFolder(model.ParentId);
+            if (parentFolder == null) return FolderServiceResult.NotFound;
             if (parentFolder.Name == GlobalConstants.RootFolderName)
                 return FolderServiceResult.Prohibited;
-            if (parentFolder.Subfolders.Select(x => x.Name).Contains(model.Name) || model.Name == GlobalConstants.RootFolderName)
-                return FolderServiceResult.AlreadyExist;
+            if (parentFolder.Subfolders.Select(x => x.Name.ToLower()).Contains(model.Name.ToLower()) 
+                || model.Name == GlobalConstants.RootFolderName) return FolderServiceResult.AlreadyExist;
             if (parentFolder.AccessLevelId > model.AccessLevelId)
                 return FolderServiceResult.InvalidAccessLevel;
             if (GetFolderCurrentDepth(model.ParentId) >= GlobalConstants.MaxFolderDepth)
@@ -252,7 +265,7 @@ namespace archivesystemWebUI.Services
             var parentFolder = GetFolder(model.ParentId);
             var folder = new Folder
             {
-                Name = model.Name,
+                Name = model.Name.Trim(),
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
                 ParentId = parentFolder.Id,
@@ -263,8 +276,6 @@ namespace archivesystemWebUI.Services
             _repo.FolderRepo.Add(folder);
             _repo.Save();
         }
-
-
         #endregion
     }
 }

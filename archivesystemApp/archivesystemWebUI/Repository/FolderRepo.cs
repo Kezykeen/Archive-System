@@ -52,7 +52,7 @@ namespace archivesystemWebUI.Repository
             return CurrentPathFolders;
         }
 
-        public List<File> GetFilesThatMactchFileName(int folderId,string filename)
+        public List<File> GetFilesThatMactchFileName(int folderId,string filename,bool returnall=false)
         {
             var data=_context.Folders.Include(x => x.Files.Select( y=> y.FileMeta)).Where(c=> c.Id== folderId);
             if (data == null) return null;
@@ -62,6 +62,7 @@ namespace archivesystemWebUI.Repository
 
             if (folder.Files == null) return null;
 
+            if (returnall) return folder.Files.ToList();
             return folder.Files.Where(x=> x.FileMeta.Title.ToLower().Contains(filename.ToLower())).ToList();
 
         }
@@ -95,20 +96,10 @@ namespace archivesystemWebUI.Repository
 
             __folders.Add(folder);
         }
-        public bool UpdateFolder(Folder folder)
-        {
-            var folderInDb = Get(folder.Id);
-            if (folderInDb == null || folderInDb.IsRestricted)
-                return false; 
-            folderInDb.Name = folder.Name;
-            folderInDb.AccessLevelId = folder.AccessLevelId;
-            folder.UpdatedAt = DateTime.Now;
-            return true;
-        }
         public bool UpdateDepartmentalFolder(Folder model)
         {
             var folders = FindWithNavProps(x => x.IsRestricted && x.DepartmentId == model.DepartmentId,x=> x.Department)?.ToList();
-            if (folders == null) return false;
+            if (folders == null || folders.Count()!=1 ) return false;
 
             var folderInDb=folders.SingleOrDefault();
             if (folderInDb == null) return false;
