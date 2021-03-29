@@ -12,12 +12,14 @@ namespace archivesystemWebUI.Services
     {
         #region FIELD
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IAccessLevelRepository _accessLevelRepository;
         #endregion
 
         #region CONSTRUCTOR
-        public AccessLevelService(IUnitOfWork unitOfWork)
+        public AccessLevelService(IUnitOfWork unitOfWork, IAccessLevelRepository accessLevelRepository)
         {
             _unitOfWork = unitOfWork;
+            _accessLevelRepository = accessLevelRepository;
 
         }
         #endregion
@@ -25,29 +27,29 @@ namespace archivesystemWebUI.Services
         #region MAIN METHODS
         public IEnumerable<AccessLevel> GetAll()
         {
-            return _unitOfWork.AccessLevelRepo.GetAll();
+            return _accessLevelRepository.GetAll();
         }
 
         public async Task Create(AccessLevel newAccess)
         {
-            _unitOfWork.AccessLevelRepo.Add(newAccess);
+            _accessLevelRepository.Add(newAccess);
             await _unitOfWork.SaveAsync();
         }
 
         public AccessLevel GetById(int id)
         {
-            return _unitOfWork.AccessLevelRepo.Get(id);
+            return _accessLevelRepository.Get(id);
         }
 
         public async Task Update(AccessLevel accessLevel)
         {
-            _unitOfWork.AccessLevelRepo.EditDetails(accessLevel);
+            _accessLevelRepository.EditDetails(accessLevel);
             await _unitOfWork.SaveAsync();
         }
 
         public bool CheckLevel(string Level)
         {
-            var checkLevel = _unitOfWork.AccessLevelRepo.GetByLevel(Level);
+            var checkLevel = _accessLevelRepository.GetByLevel(Level);
             return checkLevel == null;
         }
         #endregion

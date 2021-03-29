@@ -14,11 +14,14 @@
 
     <form id="editFolder" name="editFolder">
         @Html.AntiForgeryToken()
-        @Html.ValidationSummary()
-
-        <input hidden value="@Request.Cookies["ASP.NET_SessionId"].Value" id="EF-sessionId"/>
-        <input name="id" value="@Model.Id" hidden  id="EF-id"/>
-        <input name="id" value="@Model.ParentId" hidden  id="EF-parentId"/>
+        <div class='validation-summary-errors' >
+            <ul id="EF-validation-errors">
+                
+            </ul>
+        </div>
+        <input hidden value="@Request.Cookies["ASP.NET_SessionId"].Value" id="EF-sessionId" />
+        <input name="id" value="@Model.Id" hidden id="EF-id" />
+        <input name="id" value="@Model.ParentId" hidden id="EF-parentId" />
         <div class="form-group">
             <input name="name" class="form-control" rows="2" placeholder="Enter Folder Name" value="@Model.Name" id="EF-name" />
         </div>
@@ -39,7 +42,7 @@
         <div class="submit-section">
             <button style=" margin:auto" class="btn btn-primary submit-btn" type="submit">Update</button>
         </div>
-     </form>
+    </form>
 
 </div>
 

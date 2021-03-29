@@ -21,6 +21,8 @@ namespace archivesystemWebUI.Interfaces
         CreateFolderViewModel GetCreateFolderViewModel(int parentId,string userId, bool userIsAdmin=false);
         string GetCurrentUserAccessCode(string userId);
         IEnumerable<AccessLevel> GetCurrentUserAllowedAccessLevels(string userId);
+
+        List<File> GetFiles(string filename, int folderId, bool returnall=false);
         List<FolderPath> GetFolderPath(int folderId);
         IEnumerable<Folder> GetFoldersThatMatchName(string search);
         Folder GetFolder(int folderId);

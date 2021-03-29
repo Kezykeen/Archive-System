@@ -8,13 +8,15 @@ using archivesystemWebUI.Models;
 using archivesystemWebUI.Models.FolderModels;
 using System.Collections.Generic;
 using System.Linq;
+using AutoMapper;
+using archivesystemWebUI.Interfaces;
 
 namespace archivesystemApp.UnitTests.FolderServiceTests
 {
     [TestFixture]
     public class FolderServiceUnitTests
     {
-        private Mock<IUnitOfWork> _repo;
+        private Mock<IFolderServiceRepo> _repo;
         private FolderService _service;
         private CreateFolderViewModel _editModel;
         private Folder _editFolderInDb;
@@ -22,7 +24,7 @@ namespace archivesystemApp.UnitTests.FolderServiceTests
         [SetUp]
         public void Setup()
         {
-            _repo = new Mock<IUnitOfWork>();
+            _repo = new Mock<IFolderServiceRepo>();
             _service = new FolderService(_repo.Object);
             _editModel = new CreateFolderViewModel { Name = GlobalConstants.RootFolderName, Id = 1, AccessLevelId = 1 };
             _editFolderInDb = new Folder { Id = _editModel.Id, Name = _editModel.Name, AccessLevelId = 1 };
@@ -36,6 +38,7 @@ namespace archivesystemApp.UnitTests.FolderServiceTests
             var folder = new Folder { AccessLevelId = 1, Department = null, Faculty = null, Name = GlobalConstants.RootFolderName };
 
             var result = _service.DoesUserHasAccessToFolder(folder, userData);
+
             Assert.That(result, Is.EqualTo(true));
         }
 
@@ -46,6 +49,7 @@ namespace archivesystemApp.UnitTests.FolderServiceTests
             var folder = new Folder { AccessLevelId = 1, DepartmentId = 1, Department = new Department { Id = 1 } };
 
             var result = _service.DoesUserHasAccessToFolder(folder, userData);
+
             Assert.That(result, Is.EqualTo(false));
         }
 
@@ -56,6 +60,7 @@ namespace archivesystemApp.UnitTests.FolderServiceTests
             var folder = new Folder { FacultyId = 1, AccessLevelId = 1 };
 
             var result = _service.DoesUserHasAccessToFolder(folder, userData);
+
             Assert.That(result, Is.EqualTo(true));
         }
 
@@ -66,6 +71,7 @@ namespace archivesystemApp.UnitTests.FolderServiceTests
             var folder = new Folder { FacultyId = 1, AccessLevelId = 1 };
 
             var result = _service.DoesUserHasAccessToFolder(folder, userData);
+            
             Assert.That(result, Is.EqualTo(false));
         }
 
@@ -76,6 +82,7 @@ namespace archivesystemApp.UnitTests.FolderServiceTests
             var folder = new Folder { DepartmentId = 1, AccessLevelId = 1 };
 
             var result = _service.DoesUserHasAccessToFolder(folder, userData);
+
             Assert.That(result, Is.EqualTo(false));
         }
 
@@ -86,6 +93,7 @@ namespace archivesystemApp.UnitTests.FolderServiceTests
             var folder = new Folder { DepartmentId = 1, AccessLevelId = 1, Faculty = null };
 
             var result = _service.DoesUserHasAccessToFolder(folder, userData);
+
             Assert.That(result, Is.EqualTo(true));
         }
 
@@ -93,6 +101,7 @@ namespace archivesystemApp.UnitTests.FolderServiceTests
         [Test]
         public void FilterFolderSubFoldersUsingAccessLevel_WhenCalled_ReturnsFolderWithFilteredSufolders()
         {
+            //Arrange
             var accessLevel = 2;
             _editFolderInDb.Subfolders = new List<Folder>
             {
@@ -102,7 +111,10 @@ namespace archivesystemApp.UnitTests.FolderServiceTests
                 new Folder {AccessLevelId=3},
             };
 
+            //Act
             var result = _service.FilterFolderSubFoldersUsingAccessLevel(_editFolderInDb, accessLevel);
+
+            //Assert
             Assert.That(result.Subfolders.Count, Is.EqualTo(3));
         }
 
@@ -138,6 +150,7 @@ namespace archivesystemApp.UnitTests.FolderServiceTests
         [Test]
         public void GetCreateFolderViewModel_UserAcceesDetailsIsNotFound_ReturnNull()
         {
+            //Arrange
             var parentFolderId = 3;
             var userId = "dummuy id";
             var user = new AppUser { UserId = userId, Id = 1 };
@@ -147,66 +160,15 @@ namespace archivesystemApp.UnitTests.FolderServiceTests
                 .Returns(new List<AppUser> { user });
             _repo.Setup(r => r.AccessDetailsRepo.Find(c => c.AppUserId == user.Id))
                 .Returns(new List<AccessDetail>());
+
+            //Act
             var result = _service.GetCreateFolderViewModel(parentFolderId, userId);
 
+            //Assert
             Assert.That(result, Is.Null);
             _repo.Verify(r => r.FolderRepo.Get(parentFolderId));
             _repo.Verify(r => r.UserRepo.FindWithNavProps(c => c.UserId == userId, _ => _.Department));
             _repo.Verify(r => r.AccessDetailsRepo.Find(c => c.AppUserId == user.Id));
-        }
-
-        [Test]
-        public void GetCurrentUserAllowedAccessLevels_UserIsNotFound_ReturnNull()
-        {
-            var userId = "dummy id";
-            var usersList = new List<AppUser>();
-            _repo.Setup(r => r.UserRepo.Find(c => c.UserId == userId)).Returns(usersList);
-
-            var result = _service.GetCurrentUserAllowedAccessLevels(userId);
-
-            Assert.That(result, Is.Null);
-        }
-
-        [Test]
-        public void GetCurrentUserAllowedAccessLevels_AccessDetailsNotFound_ReturnNull()
-        {
-            var userId = "dummy id";
-            var user = new AppUser { UserId = userId, Id = 1 };
-            var usersList = new List<AppUser> { user };
-            var accesslevels = new List<AccessLevel> { new AccessLevel { Id = 2 }, new AccessLevel { Id = 3 } };
-            _repo.Setup(r => r.UserRepo.Find(c => c.UserId == userId)).Returns(usersList);
-            _repo.Setup(r => r.AccessDetailsRepo.Find(x => x.AppUserId == user.Id)).Returns(new List<AccessDetail>());
-            _repo.Setup(r => r.AccessLevelRepo.GetAll()).Returns(accesslevels);
-            var result = _service.GetCurrentUserAllowedAccessLevels(userId);
-
-            Assert.That(result, Is.Null);
-            _repo.Verify(r => r.UserRepo.Find(c => c.UserId == userId));
-            _repo.Verify(r => r.AccessDetailsRepo.Find(x => x.AppUserId == user.Id));
-            _repo.Verify(r => r.AccessLevelRepo.GetAll());
-        }
-
-        [Test]
-        public void GetCurrentUserAllowedAccessLevels_AccessDetailsFound_ReturnAccessLevelList()
-        {
-            var userId = "dummy id";
-            var user = new AppUser { UserId = userId, Id = 1 };
-            var userDetail = new AccessDetail { Id = 1, AppUserId = user.Id, AccessLevelId = 2 };
-            var usersList = new List<AppUser> { user };
-            var accessDetails = new List<AccessDetail> { userDetail };
-            var accesslevels = new List<AccessLevel>
-                { new AccessLevel { Id = 1 },new AccessLevel { Id = 2 }, new AccessLevel { Id = 3 } };
-            var _accesslevels = new List<AccessLevel>
-                { new AccessLevel { Id = 1 },new AccessLevel { Id = 2 } };
-            _repo.Setup(r => r.UserRepo.Find(c => c.UserId == userId)).Returns(usersList);
-            _repo.Setup(r => r.AccessDetailsRepo.Find(x => x.AppUserId == user.Id)).Returns(accessDetails);
-            _repo.Setup(r => r.AccessLevelRepo.GetAll()).Returns(accesslevels);
-
-            var result = _service.GetCurrentUserAllowedAccessLevels(userId).ToList();
-
-            Assert.That(result, Is.EquivalentTo(accesslevels.Where(x => x.Id <= userDetail.AccessLevelId)));
-            _repo.Verify(r => r.UserRepo.Find(c => c.UserId == userId));
-            _repo.Verify(r => r.AccessDetailsRepo.Find(x => x.AppUserId == user.Id));
-            _repo.Verify(r => r.AccessLevelRepo.GetAll());
         }
 
         [Test]
@@ -236,6 +198,7 @@ namespace archivesystemApp.UnitTests.FolderServiceTests
         }
         public void GetCurrentUserAccessCode_AccessCodeIsFound_ReturnEmptyString()
         {
+            //Arrange
             var userId = "dummy userId";
             var user = new AppUser { UserId = userId, Id = 1 };
             var userDetails = new AccessDetail { AccessCode = "dummy code" };
@@ -243,8 +206,10 @@ namespace archivesystemApp.UnitTests.FolderServiceTests
             _repo.Setup(r => r.AccessDetailsRepo.Find(x => x.AppUserId == user.Id))
                 .Returns(new List<AccessDetail> { userDetails });
 
+            //Act
             var result = _service.GetCurrentUserAccessCode(userId);
 
+            //Assert
             Assert.That(result, Is.EqualTo(userDetails.AccessCode));
             _repo.Verify(r => r.UserRepo.GetUserByUserId(userId));
             _repo.Verify(r => r.AccessDetailsRepo.Find(x => x.AppUserId == user.Id));

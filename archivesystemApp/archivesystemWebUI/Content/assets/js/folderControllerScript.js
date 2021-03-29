@@ -1,20 +1,24 @@
 ﻿const NODE_COUNT_WITHOUT_ERROR_MESSAGE = 11;
 
-function addValidationErrors(formId, name, accesslevelId, isNameTaken = false) {
-    let form = document.getElementById(formId);
-    let validationErrorMessage = document.createElement("div");
-    if (form.childNodes.length > NODE_COUNT_WITHOUT_ERROR_MESSAGE) {
-        form.removeChild(form.childNodes[0])
-    }
+
+$(document).ready(() => {
+    document.getElementById("FL-filename-search-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        findFile();
+    })
+})
+function addValidationErrors(eleId, name, accesslevelId, isNameTaken = false) {
+    let validationErrorMessage = document.getElementById(eleId);
+    console.log(eleId, "isNameTaken:", isNameTaken,`   ${!name ? '<li>Folder name field is required</li>' : ''}
+            ${!accesslevelId ? '<li>Access level field is required</li>' : ''}
+            ${isNameTaken ? `<li>${name} already exist in folder</li>` : ''}   
+        `)
     validationErrorMessage.innerHTML =
-        `<div class='validation-summary-errors'>
-                <ul>
-                    ${!name ? '<li>Folder name field is required</li>' : ''}
-                    ${!accesslevelId ? '<li>Access level field is required</li>' : ''}
-                    ${isNameTaken ? `<li>${name} already exist in folder</li>` : ''}
-                </ul>
-            </div>`
-    form.prepend(validationErrorMessage)
+        `   ${!name ? '<li>Folder name field is required</li>' : ''}
+            ${!accesslevelId ? '<li>Access level field is required</li>' : ''}
+            ${isNameTaken ? `<li>${name} already exist in folder</li>` : ''}   
+        `
+    console.log("validation added: ", validationErrorMessage)
 }
 async function getPartialView(url, id) {
     url =  `${url}?id=${id}` 
@@ -118,7 +122,7 @@ async function deleteFolder() {
             ParentId: parseInt(parentId)
         })
     })
-    if (resp.status === 204) {
+    if (resp.status === 200) {
         location.reload();
     }
     else if (resp.status === 400) {
@@ -145,13 +149,21 @@ async function editFolder() {
     let name = document.getElementById("EF-name").value;
     let parentId = document.getElementById("EF-parentId").value;
     let folderId = document.getElementById("EF-id").value;
-    console.log(verificationToken, accesslevelId, name, parentId);
+
     if (!name || !accesslevelId) {
-        addValidationErrors("editFolder", name, accesslevelId)
+        console.log("got heer")
+        addValidationErrors("EF-validation-errors", name, accesslevelId)
     }
     else {
-        await postData("/Folder/Edit", name, accesslevelId, parentId, verificationToken, id = folderId)
-        location.reload();
+        let res = await postData("/Folder/Edit", name, accesslevelId, parentId, verificationToken, id = folderId)
+        if (res.status == 400) {
+            console.log("got here")
+            addValidationErrors("EF-validation-errors", name,accesslevelId,true)
+        }
+        else if (res.status==200) {
+            location.reload();
+        }
+       
     }
     }
 
@@ -162,14 +174,14 @@ async function createFolder(url) {
     let name = document.getElementById("CF-name").value;
     
     if (!name || !accesslevelId) {
-        addValidationErrors("createFolder", name, accesslevelId)
+        addValidationErrors("CF-validation-errors", name, accesslevelId)
     }
     else {
-        let resp = await postData(url, name, accesslevelId, parentId, verificationToken, id = 0)
+        let resp = await postData(url, name, accesslevelId, parentId, verificationToken, 0)
         console.log(resp.status === 400)
         console.log(resp)
         if (resp.status === 400) {
-            addValidationErrors("createFolder", name, accesslevelId, isNameTaken = true)
+            addValidationErrors("CF-validation-errors", name, accesslevelId,true)
         }
         else {
             location.reload()
@@ -275,10 +287,32 @@ async function VerifyAccessToken() {
                     <li>${message}</li>
                 </ul>
          </div>`
-    form.prepend(validationErrorMessage)
+    form.prepend(validationErrorMessage);
+}
 
-
-
+async function findFile() {
+    console.log("fetching .... ")
+    document.getElementById("FL-filename-search-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+    })
+    let filename = document.getElementById("FL-filename-search-input").value;
+    let folderId = document.getElementById("FL-filename-search-input").getAttribute("data-folderId");
+    if (filename) {
+        let resp = await fetch(`/folder/getfile?filename=${filename}&folderId=${folderId}`)
+        console.log(resp.status)
+        if (resp.status === 200) {
+            let textresp = await resp.text();
+            document.getElementById("FL-files").innerHTML = textresp;
+        }
+    }
+    else {
+        let resp = await fetch(`/folder/getfile?filename=${filename}&folderId=${folderId}&returnall=true`)
+        if (resp.status === 200) {
+            let textresp = await resp.text();
+            document.getElementById("FL-files").innerHTML = textresp;
+        }
+    }
+    
 }
 
 
