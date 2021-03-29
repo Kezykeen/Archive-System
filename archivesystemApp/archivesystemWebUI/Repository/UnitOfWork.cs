@@ -14,6 +14,7 @@ namespace archivesystemWebUI.Repository
         public IAccessLevelRepository AccessLevelRepo { get; }
         public IFacultyRepository FacultyRepo { get; set; }
         public IAccessDetailsRepository AccessDetailsRepo { get; }
+        public IFolderRepo FolderRepo { get; }
         public IFileMetaRepo FileMetaRepo { get; }
         public IFileRepo FileRepo { get; }
         
@@ -41,6 +42,7 @@ namespace archivesystemWebUI.Repository
             AccessLevelRepo = accessLevelRepo;
             AccessDetailsRepo = accessDetailsRepository;
             UserRepo = userRepo;
+            FolderRepo = folderRepo;
             FacultyRepo = facultyRepo;
             
         }
