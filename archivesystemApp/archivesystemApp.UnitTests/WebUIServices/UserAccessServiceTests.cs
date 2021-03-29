@@ -17,6 +17,9 @@ namespace archivesystemApp.UnitTests.WebUIServices
     {
         private Mock<IUnitOfWork> _unitOfWork;
         private Mock<IAccessCodeGenerator> _accessCodeGenerator;
+        private Mock<IAccessDetailsRepository> _accessDetailsRepo;
+        private Mock<IUserRepository> _userRepo ;
+        private Mock<IAccessLevelRepository> _accessLevelRepo;
         private string _email;
         private AccessDetail _accessDetails;
         private UserAccessService _service;
@@ -26,24 +29,28 @@ namespace archivesystemApp.UnitTests.WebUIServices
         {
             _unitOfWork = new Mock<IUnitOfWork>();
             _accessCodeGenerator = new Mock<IAccessCodeGenerator>();
+            _accessDetailsRepo = new Mock<IAccessDetailsRepository>();
+            _userRepo = new Mock<IUserRepository>();
+            _accessLevelRepo = new Mock<IAccessLevelRepository>();
             _email = "marvelousfrank5@gmail.com";
             _accessDetails = new AccessDetail { Id = 1, AccessCode = "gkuy23rfd", AccessLevelId = 5, Status = Status.Active };
 
-            _unitOfWork.Setup(m => m.AccessDetailsRepo.GetAccessDetails())
+            _accessDetailsRepo.Setup(m => m.GetAccessDetails())
               .Returns(new AccessDetail[] {
                     new AccessDetail{Id = 1, AccessCode = "gkuy23rfd", AccessLevelId = 5, Status = Status.Active },
                     new AccessDetail{Id = 2, AccessCode = "23rfd", AccessLevelId = 1, Status = Status.Active }
              });
-            _unitOfWork.Setup(m => m.AccessDetailsRepo.Get(1)).Returns(_accessDetails);
-            _unitOfWork.Setup(m => m.AccessDetailsRepo.Remove(_accessDetails));
-            _unitOfWork.Setup(m => m.AccessDetailsRepo.GetByAppUserId(5))
+            _accessDetailsRepo.Setup(m => m.Get(1)).Returns(_accessDetails);
+            _accessDetailsRepo.Setup(m => m.Remove(_accessDetails));
+            _accessDetailsRepo.Setup(m => m.GetByAppUserId(5))
               .Returns(new AccessDetail{Id = 1, AppUserId = 5,  AccessCode = "gkuy23rfd", AccessLevelId = 5, Status = Status.Active });
-            _unitOfWork.Setup(m => m.UserRepo.GetUserByMail(_email))
+            _userRepo.Setup(m => m.GetUserByMail(_email))
                 .Returns(new AppUser { Id = 1, Name = "Marvelous", Email = _email });
-            _unitOfWork.Setup(m =>m.UserRepo.Get(1))
+            _userRepo.Setup(m =>m.Get(1))
                 .Returns(new AppUser { Id = 1, Name = "Marvelous", Email = _email });
 
-            _service = new UserAccessService(_unitOfWork.Object, _accessCodeGenerator.Object);
+            _service = new UserAccessService(_unitOfWork.Object, _accessCodeGenerator.Object, _accessDetailsRepo.Object,
+                _userRepo.Object, _accessLevelRepo.Object);
         }
 
         [Test]
@@ -84,7 +91,7 @@ namespace archivesystemApp.UnitTests.WebUIServices
             var result = _service.AddUser(model).Result;
 
             // Assert
-            _unitOfWork.Verify(m => m.UserRepo.GetUserByMail(_email));
+            _userRepo.Verify(m => m.GetUserByMail(_email));
             _unitOfWork.Verify(m => m.SaveAsync());
 
         }
@@ -125,7 +132,7 @@ namespace archivesystemApp.UnitTests.WebUIServices
             var result = _service.UpdateUser(model).Result;
 
             // Assert
-            _unitOfWork.Verify(r => r.AccessDetailsRepo.EditDetails(model.AccessDetails));
+            _accessDetailsRepo.Verify(r => r.EditDetails(model.AccessDetails));
             _unitOfWork.Verify(r => r.SaveAsync());
         }
 
@@ -152,7 +159,7 @@ namespace archivesystemApp.UnitTests.WebUIServices
             var result = _service.Delete(id).Result;
 
             // Assert
-            _unitOfWork.Verify(r => r.AccessDetailsRepo.Remove(_accessDetails));
+            _accessDetailsRepo.Verify(r => r.Remove(_accessDetails));
             _unitOfWork.Verify(r => r.SaveAsync());
         }
 
@@ -164,7 +171,7 @@ namespace archivesystemApp.UnitTests.WebUIServices
 
             // Assert
             Assert.That(result, Is.TypeOf<AppUser>());
-            _unitOfWork.Verify(r => r.UserRepo.GetUserByMail(_email));
+            _userRepo.Verify(r => r.GetUserByMail(_email));
         }
         
         [Test]
@@ -178,7 +185,7 @@ namespace archivesystemApp.UnitTests.WebUIServices
 
             // Assert
             Assert.That(result, Is.Null);
-            _unitOfWork.Verify(r => r.UserRepo.GetUserByMail(unknownEmail));
+            _userRepo.Verify(r => r.GetUserByMail(unknownEmail));
         }
 
         [Test]
@@ -192,7 +199,7 @@ namespace archivesystemApp.UnitTests.WebUIServices
 
             // Assert
             Assert.That(result, Is.TypeOf<AccessDetail>());
-            _unitOfWork.Verify(r => r.AccessDetailsRepo.GetByAppUserId(id));
+            _accessDetailsRepo.Verify(r => r.GetByAppUserId(id));
         }
         
         [Test]
@@ -206,7 +213,7 @@ namespace archivesystemApp.UnitTests.WebUIServices
 
             // Assert
             Assert.That(result, Is.Null);
-            _unitOfWork.Verify(r => r.AccessDetailsRepo.GetByAppUserId(id));
+            _accessDetailsRepo.Verify(r => r.GetByAppUserId(id));
         }
     }
 }
