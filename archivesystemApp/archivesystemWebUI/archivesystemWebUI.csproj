@@ -220,6 +220,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructures\AlreadyExistInLocationException.cs" />
     <Compile Include="Infrastructures\MaxFileSizeMb.cs" />
     <Compile Include="Infrastructures\UserValidator.cs" />
     <Compile Include="Infrastructures\MIMEType.cs" />
