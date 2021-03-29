@@ -1,6 +1,7 @@
 ﻿using archivesystemDomain.Entities;
 using archivesystemDomain.Interfaces;
 using archivesystemDomain.Services;
+using archivesystemWebUI.Interfaces;
 using archivesystemWebUI.Models.FolderModels;
 using archivesystemWebUI.Services;
 using AutoMapper;
@@ -17,14 +18,14 @@ namespace archivesystemApp.UnitTests.FolderServiceTests
     [TestFixture]
     class FolderService_DeleteFolder
     {
-        private Mock<IUnitOfWork> _repo;
+        private Mock<IFolderServiceRepo> _repo;
         private FolderService _service;
         private Folder _folder;
 
         [SetUp]
         public void Setup()
         {
-            _repo = new Mock<IUnitOfWork>();
+            _repo = new Mock<IFolderServiceRepo>();
             _service = new FolderService(_repo.Object);
             _folder = new Folder { Id = 2, IsRestricted = true };
 

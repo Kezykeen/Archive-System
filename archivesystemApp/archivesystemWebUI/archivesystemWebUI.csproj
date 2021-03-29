@@ -230,6 +230,7 @@
     <Compile Include="Interfaces\IAccessLevelService.cs" />
     <Compile Include="Interfaces\IFacultyService.cs" />
     <Compile Include="Interfaces\IFolderService.cs" />
+    <Compile Include="Interfaces\IFolderServiceRepo.cs" />
     <Compile Include="Interfaces\IUserAccessService.cs" />
     <Compile Include="Migrations\202103181107464_Initial.cs" />
     <Compile Include="Migrations\202103181107464_Initial.Designer.cs">
@@ -265,6 +266,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\AccessDetailsRepository.cs" />
     <Compile Include="Repository\DeptRepository.cs" />
+    <Compile Include="Repository\FolderServiceUnitOfWork.cs" />
     <Compile Include="Repository\UserRepository.cs" />
     <Compile Include="Repository\FacultyRepository.cs" />
     <Compile Include="Repository\FileMetaRepo.cs" />

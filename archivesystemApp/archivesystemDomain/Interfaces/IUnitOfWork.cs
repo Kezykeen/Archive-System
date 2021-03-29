@@ -13,7 +13,6 @@ namespace archivesystemDomain.Interfaces
         ITokenRepo TokenRepo { get; }
         IFacultyRepository FacultyRepo { get; }
         IAccessDetailsRepository AccessDetailsRepo { get; }
-        IFolderRepo FolderRepo { get; }
         IFileMetaRepo FileMetaRepo { get; }
         IFileRepo FileRepo { get; }
 

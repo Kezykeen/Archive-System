@@ -19,12 +19,13 @@ namespace archivesystemWebUI.Services
     }
     public class FolderService : IFolderService
     {
-        private IUnitOfWork _repo { get; set; }
+        private IFolderServiceRepo _repo { get; set; }
         private const int  _GroundLevelAccess=0;
+       
 
-        public FolderService(IUnitOfWork unitofwork )
+        public FolderService(IFolderServiceRepo repo)
         {
-            _repo = unitofwork;
+            _repo = repo;
         }
 
         public FolderServiceResult DeleteFolder(int folderId)

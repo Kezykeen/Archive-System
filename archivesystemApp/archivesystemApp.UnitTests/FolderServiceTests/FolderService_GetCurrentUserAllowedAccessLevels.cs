@@ -11,13 +11,14 @@ using archivesystemWebUI.Models;
 using archivesystemWebUI.Models.FolderModels;
 using System.Linq.Expressions;
 using AutoMapper;
+using archivesystemWebUI.Interfaces;
 
 namespace archivesystemApp.UnitTests.FolderServiceTests
 {
     [TestFixture]
     class FolderService_GetCurrentUserAllowedAccessLevels
     {
-        private Mock<IUnitOfWork> _repo;
+        private Mock<IFolderServiceRepo> _repo;
         private FolderService _service;
         private int _parentFolderId = 3;
         private string _userId;
@@ -32,7 +33,7 @@ namespace archivesystemApp.UnitTests.FolderServiceTests
             _parentFolder = new Folder { Id = 3 };
             _parentFolderId = 3;
             _userId = "dummy id";
-            _repo = new Mock<IUnitOfWork>();
+            _repo = new Mock<IFolderServiceRepo>();
             _service = new FolderService(_repo.Object);
             _user = new AppUser { UserId = _userId, Id = 1 };
             _repo.Setup(r => r.FolderRepo.Get(_parentFolderId)).Returns(_parentFolder);
