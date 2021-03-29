@@ -7,6 +7,7 @@ using System.Web.Http.Results;
 using System.Web.Mvc;
 using archivesystemDomain.Entities;
 using archivesystemDomain.Interfaces;
+using archivesystemWebUI.Interfaces;
 using archivesystemWebUI.Models;
 using AutoMapper;
 using Microsoft.AspNet.Identity;
@@ -19,13 +20,15 @@ namespace archivesystemWebUI.Controllers
     public class ApplicationsController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IDepartmentService _departmentService;
         private readonly IUpsertFile _upsertFile;
         private readonly IRoleService _roleService;
         private readonly IEmailSender _emailSender;
 
-        public ApplicationsController(IUnitOfWork unitOfWork, IUpsertFile upsertFile, IRoleService roleService, IEmailSender emailSender)
+        public ApplicationsController(IUnitOfWork unitOfWork, IDepartmentService departmentService, IUpsertFile upsertFile, IRoleService roleService, IEmailSender emailSender)
         {
             _unitOfWork = unitOfWork;
+            _departmentService = departmentService;
             _upsertFile = upsertFile;
             _roleService = roleService;
             _emailSender = emailSender;
@@ -188,6 +191,7 @@ namespace archivesystemWebUI.Controllers
             }
           
             var application = Mapper.Map<Application>(model);
+
             application.Title =
                 $"{user?.TagId}_{_unitOfWork.TicketRepo.Get(model.ApplicationTypeId).Acronym}_{DateTime.Now:yy/MM/dd}";
             application.Receivers.Add(
@@ -766,13 +770,13 @@ namespace archivesystemWebUI.Controllers
             }
 
             if (!User.IsInRole("HOD")) return View(application);
-            {
+            
                 ViewBag.HOD = true;
                 if (application.Approvals.Select(a => a.UserId).Contains(user.Id) && application.Approve == null)
                 {
                     ViewBag.Forward = true;
                 }
-            }
+            
 
 
 
@@ -802,13 +806,23 @@ namespace archivesystemWebUI.Controllers
                 return PartialView("AssignUsers", model);
             }
 
-            assigneeIds.ForEach(
-                id => application.Signers.Add(new Signer
+            foreach (var id in assigneeIds)
+            {
+                if (application.Signers.Select(a => a.UserId).Contains(id))
+                {
+                    var signer =  _unitOfWork.UserRepo.Get(id);
+                    ModelState.AddModelError("", $"{signer.Name} Already Exist");
+                    return PartialView("AssignUsers", model);
+                }
+
+                application.Signers.Add(new Signer
                 {
                     UserId = id,
                     InviteTime = DateTime.Now
 
-                }));
+                });
+            }
+           
             var receivedApp = application.Receivers.SingleOrDefault(r => r.ReceiverId == user?.DepartmentId);
 
             if (receivedApp!=null && !receivedApp.Forwarded)
@@ -876,7 +890,7 @@ namespace archivesystemWebUI.Controllers
                 return PartialView("SendToDepts", model);
             }
 
-            if (model.DepartmentId != null)
+            if (model.DepartmentId != null && !application.Receivers.Select( a => a.ReceiverId).Contains(model.Id))
                 application.Receivers.Add(new ApplicationReceiver
                 {
                     ReceiverId = model.DepartmentId.Value,

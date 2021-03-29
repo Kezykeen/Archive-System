@@ -223,15 +223,16 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Infrastructures\MaxFileSizeMb.cs" />
-    <Compile Include="Infrastructures\UserValidator.cs" />
     <Compile Include="Infrastructures\MIMEType.cs" />
     <Compile Include="Infrastructures\NinjectDependenceResolver.cs" />
     <Compile Include="Infrastructures\MappingProfile.cs" />
-    <Compile Include="Infrastructures\EmpUniqueProps.cs" />
+    <Compile Include="Infrastructures\UserUniqueProps.cs" />
     <Compile Include="Interfaces\IAccessLevelService.cs" />
+    <Compile Include="Interfaces\IApplicationService.cs" />
     <Compile Include="Interfaces\IFacultyService.cs" />
     <Compile Include="Interfaces\IFolderService.cs" />
     <Compile Include="Interfaces\IUserAccessService.cs" />
+    <Compile Include="Interfaces\IUserService.cs" />
     <Compile Include="Migrations\202103232108221_Initial.cs" />
     <Compile Include="Migrations\202103232108221_Initial.Designer.cs">
       <DependentUpon>202103232108221_Initial.cs</DependentUpon>
@@ -285,6 +286,7 @@
     <Compile Include="Repository\AccessLevelRepository.cs" />
     <Compile Include="Repository\TokenRepository.cs" />
     <Compile Include="Repository\UnitOfWork.cs" />
+    <Compile Include="Services\ApplicationService.cs" />
     <Compile Include="Services\DepartmentService.cs" />
     <Compile Include="Services\FacultyService.cs" />
     <Compile Include="Interfaces\IDepartmentService.cs" />
@@ -292,6 +294,7 @@
     <Compile Include="Services\RoleService.cs" />
     <Compile Include="Services\UserAccessService.cs" />
     <Compile Include="Services\AccessLevelService.cs" />
+    <Compile Include="Services\UserService.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>

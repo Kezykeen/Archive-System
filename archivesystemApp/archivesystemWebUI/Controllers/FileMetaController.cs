@@ -72,10 +72,7 @@ namespace archivesystemWebUI.Controllers
             return PartialView("_File", model.File);
         }
 
-        public ActionResult Edit()
-        {
-            return View();
-        }
+      
 
         public ActionResult GetAllFiles(int folderId)
         {

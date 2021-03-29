@@ -34,12 +34,12 @@ namespace archivesystemWebUI.Infrastructures
                 .ForMember(dest => dest.UpdatedAt, opt => opt.UseValue(DateTime.Now));
 
 
-            Mapper.CreateMap<EnrollViewModel, EmpUniqueProps>().ForMember(
+            Mapper.CreateMap<EnrollViewModel, UserUniqueProps>().ForMember(
                 dest => dest.Name,
                 opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}")
             );
 
-            Mapper.CreateMap<UpdateUserVm, EmpUniqueProps>().ForMember(
+            Mapper.CreateMap<UpdateUserVm, UserUniqueProps>().ForMember(
                 dest => dest.Name,
                 opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}")
             );

@@ -22,15 +22,7 @@ namespace archivesystemWebUI.Repository
             _context = context;
         }
 
-        public bool NameExists(string name, int? userId)
-        {
-            if (userId == null)
-                return GetAll().Any(e => string.Equals(e.Name, name,
-                StringComparison.OrdinalIgnoreCase));
-            return GetAll().Any(e => string.Equals(e.Name, name,
-                StringComparison.OrdinalIgnoreCase) && e.Id != userId.Value);
-
-        }
+      
 
         public AppUser GetUserByMail(string email)
         {
@@ -38,59 +30,10 @@ namespace archivesystemWebUI.Repository
             return employee;
         }
 
-        public IEnumerable<AppUser> GetUsersWithDept()
-        {
-            return _context.AppUsers.Include(e => e.Department).ToList();
-        }
-
-        public AppUser GetUserWithDept(int? id, string appId = null)
-        {
-            if (!string.IsNullOrWhiteSpace(appId))
-            {
-                return _context.AppUsers.Include(e => e.Department).SingleOrDefault(e => e.UserId == appId);
-            }
-
-            return _context.AppUsers.Include(e => e.Department).SingleOrDefault(e => e.Id == id);
-        }
-
-        public bool EmailExists(string email, int? userId)
-        {
-
-            if (userId == null)
-                return GetAll().Any(e => string.Equals(e.Email, email,
-                StringComparison.OrdinalIgnoreCase));
-            return GetAll().Any(e => string.Equals(e.Email, email,
-                StringComparison.OrdinalIgnoreCase) && e.Id != userId.Value);
-        }
+       
 
 
-        public bool TagIdExists(string tagId, int? userId)
-        {
-
-            if (userId == null)
-                return GetAll().Any(e => string.Equals(e.TagId, tagId,
-                StringComparison.OrdinalIgnoreCase));
-
-            return GetAll().Any(e => string.Equals(e.TagId, tagId,
-                StringComparison.OrdinalIgnoreCase) && e.Id != userId.Value);
-        }
-
-
-        public void UpdateUserId(string email, string id)
-        {
-            var employee = GetUserByMail(email);
-            employee.UserId = id;
-
-        }
-
-        public bool PhoneExists(string phone, int? userId)
-        {
-            if (userId == null)
-                return GetAll().Any(e => string.Equals(e.Phone, phone,
-                StringComparison.OrdinalIgnoreCase));
-            return GetAll().Any(e => string.Equals(e.Phone, phone,
-                StringComparison.OrdinalIgnoreCase) && e.Id != userId.Value);
-        }
+       
 
         public AppUser GetUserByUserId(string id)
         {

@@ -5,11 +5,11 @@ using System.Web;
 
 namespace archivesystemWebUI.Infrastructures
 {
-    public class EmpUniqueProps
+    public class UserUniqueProps
     {
         public string Name { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
-        public string StaffId { get; set; }
+        public string TagId { get; set; }
     }
 }

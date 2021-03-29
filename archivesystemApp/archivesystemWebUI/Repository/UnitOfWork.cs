@@ -8,8 +8,6 @@ namespace archivesystemWebUI.Repository
     {
         private readonly ApplicationDbContext _context;
 
-        public ITokenRepo TokenRepo { get; }
-        public IUserRepository UserRepo { get; }
         public IDeptRepository DeptRepo { get; }
         public IAccessLevelRepository AccessLevelRepo { get; }
         public IFacultyRepository FacultyRepo { get;  }
@@ -23,11 +21,9 @@ namespace archivesystemWebUI.Repository
 
         public UnitOfWork(
             ApplicationDbContext context,
-            IUserRepository userRepo,
             IDeptRepository deptRepo,
             IAccessLevelRepository accessLevelRepo,
-            IFacultyRepository facultyRepo, 
-            ITokenRepo tokenRepo,
+            IFacultyRepository facultyRepo,
             IAccessDetailsRepository accessDetailsRepository,
             IFolderRepo folderRepo,
             IFileMetaRepo fileMetaRepo,
@@ -40,11 +36,9 @@ namespace archivesystemWebUI.Repository
             _context = context;
             FileRepo = fileRepo;
             FileMetaRepo = fileMetaRepo;
-            TokenRepo = tokenRepo;
             DeptRepo = deptRepo;
             AccessLevelRepo = accessLevelRepo;
             AccessDetailsRepo = accessDetailsRepository;
-            UserRepo = userRepo;
             FolderRepo = folderRepo;
             FacultyRepo = facultyRepo;
             TicketRepo = ticketRepo;
@@ -68,5 +62,6 @@ namespace archivesystemWebUI.Repository
         {
             _context.Dispose();
         }
+
     }
 }
