@@ -16,7 +16,7 @@ namespace archivesystemApp.UnitTests.FolderServiceTests
     [TestFixture]
     class FolderService_EditFolder
     {
-        private Mock<IFolderServiceRepo> _repo;
+        private Mock<IFolderServiceUnitOfWork> _repo;
         private FolderService _service;
         private CreateFolderViewModel _viewmodel;
         private Folder _folderInDb;
@@ -26,21 +26,17 @@ namespace archivesystemApp.UnitTests.FolderServiceTests
         [SetUp]
         public void Setup()
         {
-            _repo = new Mock<IFolderServiceRepo>();
+            _repo = new Mock<IFolderServiceUnitOfWork>();
             _service = new FolderService(_repo.Object);
             _viewmodel = new CreateFolderViewModel { Name = GlobalConstants.RootFolderName, Id =3, AccessLevelId = 1 };
             _folderInDb = new Folder { Id = _viewmodel.Id, Name = _viewmodel.Name, AccessLevelId = 1 };
-            _folder2InDb = new Folder { Id = 4, Name = "dummy name 2", AccessLevelId = 1 };
+            _folder2InDb = new Folder { Id = 4, Name = "dummy name 5", AccessLevelId = 1 };
             _parentFolderInDb = new Folder
             {
                 Id = 2,
                 Name = "dummy parent",
                 Subfolders = new List<Folder> { _folderInDb,_folder2InDb }
             };
-            Mapper.Initialize(configuration => configuration
-                  .CreateMap<EditFolderViewModel, Folder>()
-                  .ForMember(dest => dest.Id, opt => opt.Ignore())
-                  .ForMember(dest => dest.UpdatedAt, opt => opt.UseValue(DateTime.Now)));
         }
 
         [Test]
@@ -55,6 +51,7 @@ namespace archivesystemApp.UnitTests.FolderServiceTests
 
             //Assert
             Assert.That(result, Is.EqualTo(FolderServiceResult.InvalidModelState));
+            _repo.Verify(r => r.Save(), Times.Never);
         }
 
         [Test]
@@ -69,6 +66,7 @@ namespace archivesystemApp.UnitTests.FolderServiceTests
 
             //Assert
             Assert.That(result, Is.EqualTo(FolderServiceResult.AlreadyExist));
+            _repo.Verify(r => r.Save(), Times.Never);
         }
 
 
@@ -84,6 +82,7 @@ namespace archivesystemApp.UnitTests.FolderServiceTests
             //Assert
             Assert.That(result, Is.EqualTo(FolderServiceResult.NotFound));
             _repo.Verify(r => r.FolderRepo.Get(_viewmodel.Id));
+            _repo.Verify(r => r.Save(), Times.Never);
         }
 
         [Test]
@@ -99,6 +98,7 @@ namespace archivesystemApp.UnitTests.FolderServiceTests
             //Assert
             var result = _service.Edit(_viewmodel);
             Assert.That(result, Is.EqualTo(FolderServiceResult.Prohibited));
+            _repo.Verify(r => r.Save(), Times.Never);
         }
 
         [Test]
@@ -129,6 +129,36 @@ namespace archivesystemApp.UnitTests.FolderServiceTests
                 It.IsAny<Expression<Func<Folder, object>>>()
                 ));
             _repo.Verify(r => r.Save());
+        }
+
+        [Test]
+        public void FolderIsNotRestrictedButNewNameAlreadyExist_ReturnFolderServiceResultAlreadyExist()
+        {
+            //Arrange
+            _folderInDb.Name = "dummy name 2";
+            _viewmodel.Name = _folder2InDb.Name;
+            _folderInDb.IsRestricted = false;
+            _folderInDb.ParentId = _parentFolderInDb.Id;
+            var folderList = new List<Folder> { _parentFolderInDb };
+
+            _repo.Setup(r => r.FolderRepo.Get(_viewmodel.Id)).Returns(_folderInDb);
+            _repo.Setup(r => r.FolderRepo.FindWithNavProps(
+                It.IsAny<Expression<Func<Folder, bool>>>(),
+                It.IsAny<Expression<Func<Folder, object>>>()
+                )).Returns(folderList);
+
+
+            //Act
+            var result = _service.Edit(_viewmodel);
+
+            //Assert
+            Assert.That(result, Is.EqualTo(FolderServiceResult.AlreadyExist));
+            _repo.Verify(r => r.FolderRepo.Get(_viewmodel.Id));
+            _repo.Verify(r => r.FolderRepo.FindWithNavProps(
+                It.IsAny<Expression<Func<Folder, bool>>>(),
+                It.IsAny<Expression<Func<Folder, object>>>()
+                ));
+            _repo.Verify(r => r.Save(), Times.Never);
         }
 
     }

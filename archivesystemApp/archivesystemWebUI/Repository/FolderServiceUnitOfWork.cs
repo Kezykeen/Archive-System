@@ -8,7 +8,7 @@ using System.Web;
 
 namespace archivesystemWebUI.Repository
 {
-    public class FolderServiceUnitOfWork: IFolderServiceRepo
+    public class FolderServiceUnitOfWork: IFolderServiceUnitOfWork
     {
         private readonly ApplicationDbContext _context;
 

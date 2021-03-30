@@ -222,6 +222,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructures\AlreadyExistInLocationException.cs" />
     <Compile Include="Infrastructures\MaxFileSizeMb.cs" />
     <Compile Include="Infrastructures\MIMEType.cs" />
     <Compile Include="Infrastructures\NinjectDependenceResolver.cs" />
@@ -232,8 +233,8 @@
     <Compile Include="Interfaces\IFacultyService.cs" />
     <Compile Include="Interfaces\IFileService.cs" />
     <Compile Include="Interfaces\IFolderService.cs" />
-    <Compile Include="Interfaces\IFolderServiceRepo.cs" />
     <Compile Include="Interfaces\IHomeService.cs" />
+    <Compile Include="Interfaces\IFolderServiceUnitOfWork.cs" />
     <Compile Include="Interfaces\IUserAccessService.cs" />
     <Compile Include="Interfaces\IUserService.cs" />
     <Compile Include="Interfaces\ITicketService.cs" />
@@ -559,6 +560,7 @@
     <Content Include="Views\Shared\_DashboardCards.cshtml" />
     <Content Include="Views\Department\ViewAllUsersInDept.cshtml" />
     <Content Include="Views\Faculty\ViewAllDepartmentsInFaculty.cshtml" />
+    <Content Include="Views\FileMeta\Details.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

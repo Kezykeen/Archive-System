@@ -7,6 +7,7 @@ using System.Linq;
 using System.Web;
 using System.Data.Entity;
 using archivesystemDomain.Services;
+using archivesystemWebUI.Infrastructures;
 
 namespace archivesystemWebUI.Repository
 {
@@ -37,7 +38,7 @@ namespace archivesystemWebUI.Repository
         }
         public List<FolderPath> GetFolderPath(int folderId)
         {
-            var currentfolder = _context.Folders.Find(folderId);
+            var currentfolder = Get(folderId);
             if (currentfolder.Name == GlobalConstants.RootFolderName)
             {
                 CurrentPathFolders.Add(new FolderPath { Name = GlobalConstants.RootFolderName, Id = currentfolder.Id });
@@ -54,28 +55,29 @@ namespace archivesystemWebUI.Repository
 
         public List<File> GetFilesThatMactchFileName(int folderId,string filename,bool returnall=false)
         {
-            var data=_context.Folders.Include(x => x.Files.Select( y=> y.FileMeta)).Where(c=> c.Id== folderId);
-            if (data == null) return null;
+            //var data=_context.Folders.Include(x => x.Files.Select( y=> y.FileMeta)).Where(c=> c.Id== folderId);
+            var data = FindWithNavProps(x => x.Id == folderId, y => y.Files.Select(z => z.FileMeta));
+            if (data == null || data.Count()==0) return null;
 
             var folder = data.SingleOrDefault(c => c.Id == folderId);
             if (folder == null) return null;
-
             if (folder.Files == null) return null;
-
             if (returnall) return folder.Files.ToList();
+
             return folder.Files.Where(x=> x.FileMeta.Title.ToLower().Contains(filename.ToLower())).ToList();
 
         }
+
         public void MoveFolder(int id, int newParentFolderId)
         {
-            var folder = _context.Folders.Find(id);
+            var folder = Get(id);
             if (folder.IsRestricted || folder == null)
                 return;
             var currentSubfolderNames =  FindWithNavProps(x=>x.Id == newParentFolderId,x => x.Subfolders)
                                         .FirstOrDefault()
                                         .Subfolders.Select(x => x.Name);
-            if (currentSubfolderNames.Contains(folder.Name))
-                throw new ArgumentException();
+            if (currentSubfolderNames.Any(x=> x.ToLower()==folder.Name.ToLower()))
+                throw new AlreadyExistInLocationException();
 
             folder.ParentId = newParentFolderId;
             return;
@@ -98,24 +100,23 @@ namespace archivesystemWebUI.Repository
         }
         public bool UpdateDepartmentalFolder(Folder model)
         {
-            var folders = FindWithNavProps(x => x.IsRestricted && x.DepartmentId == model.DepartmentId,x=> x.Department)?.ToList();
-            if (folders == null || folders.Count()!=1 ) return false;
-
-            var folderInDb=folders.SingleOrDefault();
+            var folderInDb = FindWithNavProps(x => 
+                x.IsRestricted && x.DepartmentId == model.DepartmentId,x=> x.Department)?.SingleOrDefault();
             if (folderInDb == null) return false;
 
             folderInDb.Name = model.Name;
             if(folderInDb.Department.FacultyId != model.FacultyId)
             {
-                var newParentFolder = _context.Folders.SingleOrDefault(x => x.IsRestricted && x.FacultyId == model.FacultyId);
+                var newParentFolder = Find(x => x.IsRestricted && x.FacultyId == model.FacultyId)?.SingleOrDefault();
+                if (newParentFolder == null) return false;
                 folderInDb.ParentId = newParentFolder.Id;
             }
             return true;
         }
         public bool UpdateFacultyFolder(Folder model)
         {
-            var folderInDb = FindWithNavProps(x => x.IsRestricted && x.FacultyId == model.FacultyId,x => x.Department)
-                            .SingleOrDefault();
+            var folderInDb = FindWithNavProps(x =>
+                x.IsRestricted && x.FacultyId == model.FacultyId,x => x.Department)?.SingleOrDefault();
             if (folderInDb == null) return false;
             folderInDb.Name = model.Name;
             return true;

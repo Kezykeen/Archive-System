@@ -64,6 +64,10 @@ namespace archivesystemWebUI.Services
 
         }
 
+        public File Details(int id)
+        {
+            return _fileRepo.FindWithNavProps(f => f.Id == id, _ => _.FileMeta, _ => _.FileMeta.UploadedBy, _ => _.Folder).SingleOrDefault();
+        }
         public File GetFile(int id, string fileName)
         {
             return _fileRepo.Get(id);
