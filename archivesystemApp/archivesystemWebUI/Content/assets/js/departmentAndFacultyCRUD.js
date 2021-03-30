@@ -47,10 +47,12 @@ $(document).ready(function () {
             {
                 data: "Id",
                 render: function (data) {
-                    return `<a class='btn btn-sm btn-outline-primary m-l-5 m-r-5' href='#' onclick="getAddOrEditPartialView('/Faculty/GetFacultyPartialView', ${data})"><i class='fa fa-pencil m-r-5'></i>Edit</a><a class='btn btn-sm btn-outline-danger' href='#' onclick='getDeletePartialView("/Faculty/GetDeletePartialView", ${data})'><i class='fa fa-trash-o m-r-5'></i>Delete</a>`;
+                    return `<a class='m-l-5 m-r-10' href='#' data-toggle="tooltip" data-placement="bottom" title="Edit" onclick="getAddOrEditPartialView('/Faculty/GetFacultyPartialView', ${data
+                        })"><i class='fa fa-pencil m-r-5'></i></a><a href='#' data-toggle="tooltip" data-placement="bottom" title="Delete" onclick='getDeletePartialView("/Faculty/GetDeletePartialView", ${data
+                        })'><i class='fa fa-trash-o'></i></a>`;
                 },
                 orderable: false,
-                width: "146px"
+                width: "50px"
             }
         ]
     });
@@ -67,6 +69,8 @@ $(document).ready(function () {
         })
         .draw();
     // End Faculty DataTable
+
+    $('[data-toggle="tooltip"]').tooltip();
 
     // Begin Department DataTable
     departmentDataTable = $("#departmentDataTable").DataTable({
@@ -108,10 +112,14 @@ $(document).ready(function () {
             {
                 data: "Id",
                 render: function (data) {
-                    return `<a class='btn btn-sm btn-outline-primary m-l-5 m-r-5' href='#' onclick="getAddOrEditPartialView('/Department/GetDepartmentPartialView', ${data})"><i class='fa fa-pencil m-r-5'></i>Edit</a><a class='btn btn-sm btn-outline-danger' href='#' onclick='getDeletePartialView("/Department/GetDeletePartialView", ${data})'><i class='fa fa-trash-o m-r-5'></i>Delete</a>`;
+                    return `<a class='m-l-5 m-r-10' href='#' data-toggle="tooltip" data-placement="bottom" title="Edit" onclick="getAddOrEditPartialView('/Department/GetDepartmentPartialView', ${
+                        data
+                        })"><i class='fa fa-pencil m-r-5'></i></a><a href='#' data-toggle="tooltip" data-placement="bottom" title="Delete" onclick='getDeletePartialView("/Department/GetDeletePartialView", ${
+                        data
+                        })'><i class='fa fa-trash-o'></i></a>`;
                 },
-                orderable: false,
-                width: "146px"
+                orderable: false,   
+                width: "50px"
             }
         ]
     });

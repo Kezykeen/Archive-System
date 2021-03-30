@@ -12,6 +12,7 @@ using archivesystemWebUI.Repository;
 using archivesystemWebUI.Services;
 using Ninject.Web.Common;
 using archivesystemWebUI.Interfaces;
+using AutoMapper;
 
 namespace archivesystemWebUI.Infrastructures
 {
@@ -60,6 +61,7 @@ namespace archivesystemWebUI.Infrastructures
             kernel.Bind<IFileRepo>().To<FileRepo>();
             kernel.Bind<IUpsertFile>().To<UpsertFile>();
             kernel.Bind<IFolderService>().To<FolderService>();
+            kernel.Bind<IAccessCodeGenerator>().To<AccessCodeGenerator>();
         }
     }
 }

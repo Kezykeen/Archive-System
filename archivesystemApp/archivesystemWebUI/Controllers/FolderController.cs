@@ -12,6 +12,7 @@ using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web.Mvc;
 using System.Web.Security;
 
@@ -25,10 +26,12 @@ namespace archivesystemWebUI.Controllers
         private const byte LOCKOUT_TIME = 10; //lockout user after last request exceeds lockout time in minutes
 
         private readonly IRoleService _roleService;
+        private readonly IAccessCodeGenerator _accessCodeGenerator;
         private readonly IFolderService _service;
        
-        public FolderController(IRoleService roleService, IFolderService service) 
+        public FolderController(IRoleService roleService, IFolderService service, IAccessCodeGenerator accessCodeGenerator) 
         {
+            _accessCodeGenerator = accessCodeGenerator;
             _service = service;
             _roleService = roleService;
         }
@@ -38,13 +41,13 @@ namespace archivesystemWebUI.Controllers
         public ActionResult Index(string search = null, string returnUrl="/folders")
         {
             FolderPageViewModel model = GetRootViewModel(returnUrl, search);
+            if (model == null) // user does not yet have an access level
+            {
+                TempData[GlobalConstants.userHasNoAccesscode] = true;
+                return RedirectToAction("Index", "Home");
+            }
             if (!HttpContext.User.IsInRole(RoleNames.Admin))
             {
-                if (string.IsNullOrEmpty(model.Name) && search ==null)
-                {
-                    TempData[GlobalConstants.userHasNoAccesscode] = true;
-                    return RedirectToAction("Index", "Home");
-                }
                 CheckForUserAccessCode(out bool hasCorrectAccessCode, out double timeSinceLastRequest);
                 model.CloseAccessCodeModal = hasCorrectAccessCode && timeSinceLastRequest <= LOCKOUT_TIME;
             }
@@ -76,12 +79,11 @@ namespace archivesystemWebUI.Controllers
         [ValidateHeaderAntiForgeryToken]
         public ActionResult Create(SaveFolderViewModel model)
         {
-            if (!HttpContext.User.IsInRole(RoleNames.Admin))
-            {
-                var userIsnotPermitted = IsCreateActionForbidden(_service.GetFolder(model.ParentId));
-                if (userIsnotPermitted)
-                    return new HttpStatusCodeResult(403);
-            }
+            if (HttpContext.User.IsInRole(RoleNames.Admin))
+                return new HttpStatusCodeResult(403);
+
+            var userIsnotPermitted = IsCreateActionForbidden(_service.GetFolder(model.ParentId));
+            if (userIsnotPermitted) return new HttpStatusCodeResult(403);
 
             var result = _service.SaveFolder(model);
             if (result == FolderServiceResult.Success) return new HttpStatusCodeResult(200);
@@ -112,11 +114,11 @@ namespace archivesystemWebUI.Controllers
         public ActionResult Delete(int id)
         {
             var result = _service.DeleteFolder(id);
-            if (result==FolderServiceResult.Success) return new HttpStatusCodeResult(System.Net.HttpStatusCode.OK);
+            if (result==FolderServiceResult.Success) return new HttpStatusCodeResult(HttpStatusCode.OK);
 
-            if (result == FolderServiceResult.Prohibited) return new HttpStatusCodeResult(System.Net.HttpStatusCode.OK);
+            if (result == FolderServiceResult.Prohibited) return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
 
-            return new HttpStatusCodeResult(System.Net.HttpStatusCode.OK);  
+            return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);  
         }
 
         //GET: /folders/{id}
@@ -128,7 +130,7 @@ namespace archivesystemWebUI.Controllers
             if (folder.Name == GlobalConstants.RootFolderName)
                 return RedirectToAction(nameof(Index));
             if (HttpContext.User.IsInRole(RoleNames.Admin))
-                ViewBag.AllowCreateFolder = true;
+                ViewBag.AllowCreateFolder = false;
             else
             {
                 CheckForUserAccessCode(out bool hasCorrectAccessCode, out double timeSinceLastRequest);
@@ -162,11 +164,15 @@ namespace archivesystemWebUI.Controllers
         [ValidateHeaderAntiForgeryToken]
         public ActionResult Edit(CreateFolderViewModel model) 
         {
+            if(!ModelState.IsValid)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
             var result = _service.Edit(model);
-            if (result == FolderServiceResult.InvalidModelState) return new HttpStatusCodeResult(400);
 
-            if (result == FolderServiceResult.Success) return new HttpStatusCodeResult(200);
-
+            if (result == FolderServiceResult.Prohibited) return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+            if (result == FolderServiceResult.NotFound) return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+            if (result == FolderServiceResult.AlreadyExist) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            if (result == FolderServiceResult.Success) return new HttpStatusCodeResult(HttpStatusCode.OK);  
             return new HttpStatusCodeResult(500);
         }
 
@@ -175,11 +181,9 @@ namespace archivesystemWebUI.Controllers
         public ActionResult GetEditFolderPartialView(int id)
         {
             var folder = _service.GetFolder(id);
-            if (folder.IsRestricted)
-                return new HttpStatusCodeResult(403);
-
-            if (folder == null)
-                return new HttpStatusCodeResult(400);
+           
+            if (folder == null) return new HttpStatusCodeResult(400);
+            if (folder.IsRestricted) return new HttpStatusCodeResult(403);
 
             CreateFolderViewModel model;
             if(!HttpContext.User.IsInRole(RoleNames.Admin))
@@ -202,9 +206,10 @@ namespace archivesystemWebUI.Controllers
         }
 
         //GET: /Folder/GetFiles
-        public ActionResult GetFile(string filename,int folderId)
+        public ActionResult GetFile(string filename,int folderId,bool returnall=false)
         {
-            var files=_service.GetFiles(filename, folderId);
+            var files = _service.GetFiles(filename, folderId, returnall:returnall);
+
             if (files == null) return new HttpStatusCodeResult(404);
             
             return PartialView("GetAllFiles",files);
@@ -238,18 +243,18 @@ namespace archivesystemWebUI.Controllers
         public ActionResult VerifyAccessCode(string accessCode)
         {
             if (string.IsNullOrWhiteSpace(accessCode))
-                return new HttpStatusCodeResult(400);
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
             var accessCodeInDb = _service.GetCurrentUserAccessCode(HttpContext.User.Identity.GetUserId());
             if (string.IsNullOrWhiteSpace(accessCodeInDb)) 
                 return new HttpStatusCodeResult(403);
-            var codeIsCorrect=AccessCodeGenerator.VerifyCode(accessCode, accessCodeInDb);
+            var codeIsCorrect=_accessCodeGenerator.VerifyCode(accessCode, accessCodeInDb);
             if (!codeIsCorrect)
                 return new HttpStatusCodeResult(400);
 
             Session[GlobalConstants.IsAccessValidated] = true;
             Session[GlobalConstants.LastVisit] = DateTime.Now;
-            return new HttpStatusCodeResult(200);
+            return new HttpStatusCodeResult(HttpStatusCode.OK);
         }
 
 
@@ -322,12 +327,8 @@ namespace archivesystemWebUI.Controllers
 
         private bool IsCreateActionForbidden(Folder folder)
         {
-            //parent folder is faculty folder and user is not faculty officer 
+            //folder is faculty folder and user is not faculty officer 
             if (folder.FacultyId != null && !HttpContext.User.IsInRole(RoleNames.FacultyOfficer))
-                return true;
-
-            //parent folder is departmental folder and user is not departmental officer
-            if (folder.DepartmentId != null && folder.IsRestricted && !HttpContext.User.IsInRole(RoleNames.DeptOfficer))
                 return true;
 
             if (folder.Name == GlobalConstants.RootFolderName)

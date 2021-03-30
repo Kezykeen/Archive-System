@@ -15,40 +15,55 @@ namespace archivesystemWebUI.Services
         #region Fields
 
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IFacultyRepository _facultyRepository;
+        private readonly IFolderRepo _folderRepo;
+        private readonly IDeptRepository _deptRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IAccessLevelRepository _accessLevelRepository;
         #endregion
 
         #region Constructors
 
-        public DepartmentService(IUnitOfWork unitOfWork)
+        public DepartmentService(IUnitOfWork unitOfWork, IFacultyRepository facultyRepository, IFolderRepo folderRepo,
+            IDeptRepository deptRepository, IUserRepository userRepository, IAccessLevelRepository accessLevelRepository)
         {
             _unitOfWork = unitOfWork;
+            _facultyRepository = facultyRepository;
+            _folderRepo = folderRepo;
+            _deptRepository = deptRepository;
+            _userRepository = userRepository;
+            _accessLevelRepository = accessLevelRepository;
         }
 
         #endregion
-        
+
         #region Public Methods
 
         public IEnumerable<Department> GetAllDepartmentToList()
         {
-            return _unitOfWork.DeptRepo.GetAllToList();
+            return _deptRepository.GetAllToList();
         }
 
         public IEnumerable<Faculty> GetAllFaculties()
         {
-            return _unitOfWork.FacultyRepo.GetAll();
+            return _facultyRepository.GetAll();
         }
 
-        public Department GetDepartment(int? id)
+        public Department GetDepartmentForPartialView(int id)
         {
-            var department = id != null ? _unitOfWork.DeptRepo.Get(id.Value) : new Department();
-            
+            var department = id == 0 ? new Department() : _deptRepository.Get(id);
+
             return department;
         }
 
-        public ServiceResult SaveDepartment(Department model)
+        public Department GetDepartmentById(int id)
         {
-            var folderExists = DoesDepartmentFolderAlreadyExist(model);
-            var department = CreateDepartment(model);
+            return _deptRepository.Get(id);
+        }
+
+        public ServiceResult SaveDepartment(Department department)
+        {
+            var folderExists = DoesDepartmentFolderAlreadyExist(department);
             var result = folderExists ? SaveOnlyDepartment(department) : TrySaveDepartmentWithFolder(department);
 
             return result;
@@ -58,7 +73,7 @@ namespace archivesystemWebUI.Services
         {
             try
             {
-                _unitOfWork.DeptRepo.Update(department);
+                _deptRepository.Update(department);
 
                 return ServiceResult.Succeeded;
             }
@@ -70,7 +85,7 @@ namespace archivesystemWebUI.Services
 
         public void UpdateDepartmentFolder(Folder folder)
         {
-            _unitOfWork.FolderRepo.UpdateDepartmentalFolder(folder);
+            _folderRepo.UpdateDepartmentalFolder(folder);
         }
 
         public async Task<ServiceResult> DeleteDepartment(int id)
@@ -78,7 +93,7 @@ namespace archivesystemWebUI.Services
             var departmentContainsUsers = DoesDepartmentContainUsers(id);
             if (departmentContainsUsers)
                 return ServiceResult.Prohibited;
-            var departmentFolder = _unitOfWork.FolderRepo.Find(x => x.DepartmentId == id).FirstOrDefault();
+            var departmentFolder = _folderRepo.Find(x => x.DepartmentId == id).FirstOrDefault();
             if (departmentFolder != null)
                 departmentFolder.DepartmentId = null;
 
@@ -91,8 +106,8 @@ namespace archivesystemWebUI.Services
         {
             var viewModel = new DepartmentUsersViewModel
             {
-                Users = _unitOfWork.UserRepo.Find(u=>u.DepartmentId == id),
-                Department = GetDepartment(id)
+                Users = _userRepository.Find(u => u.DepartmentId == id),
+                Department = GetDepartmentById(id)
             };
 
             return viewModel;
@@ -103,9 +118,9 @@ namespace archivesystemWebUI.Services
             await _unitOfWork.SaveAsync();
         }
 
-        public bool DepartNameCheck(string name, int id)
+        public bool DepartmentNameCheck(string name, int id)
         {
-            var departments = _unitOfWork.DeptRepo.GetAllToList();
+            var departments = GetAllDepartmentToList();
 
             // Check if the entry name exists & change is from a different entry and return error message from viewModel
             bool status = departments.Any(x => x.Name == name && x.Id != id);
@@ -117,19 +132,17 @@ namespace archivesystemWebUI.Services
 
         private bool DoesDepartmentContainUsers(int departmentId)
         {
-            var appUsers = _unitOfWork.UserRepo.Find(x => x.DepartmentId == departmentId);
-            if (appUsers.Any())
-                return true;
-            return false;
+            var appUsers = _userRepository.Find(x => x.DepartmentId == departmentId);
+            return appUsers.Any();
         }
 
         private bool DoesDepartmentFolderAlreadyExist(Department department)
         {
-            var faculty = _unitOfWork.FacultyRepo.Get(department.FacultyId);
+            var faculty = _facultyRepository.Get(department.FacultyId);
             if (faculty == null)
                 throw new ArgumentNullException();
 
-            var facultyfolder = _unitOfWork.FolderRepo.GetFacultyFolder(faculty.Name);
+            var facultyfolder = _folderRepo.GetFacultyFolder(faculty.Name);
             if (facultyfolder == null)
                 throw new ArgumentNullException();
 
@@ -141,40 +154,26 @@ namespace archivesystemWebUI.Services
 
         }
 
-        private Department CreateDepartment(Department department)
-        {
-            department.CreatedAt = DateTime.Now;
-            department.UpdatedAt = DateTime.Now;
-            return department;
-        }
-
-        private Folder CreateDepartmentAndFolder(Department department)
-        {
-            var faculty = _unitOfWork.FacultyRepo.Get(department.FacultyId);
-            var facultyFolder = _unitOfWork.FolderRepo.GetFacultyFolder(faculty.Name);
-            var folder = new Folder
-            {
-                Name = department.Name,
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now,
-                AccessLevelId = _unitOfWork.AccessLevelRepo.GetBaseLevel().Id,
-                ParentId = facultyFolder.Id,
-                IsRestricted = true,
-                Department = department
-            };
-
-            return folder;
-        }
-
         private ServiceResult TrySaveDepartmentWithFolder(Department department)
         {
             try
             {
-                var departmentFolder = CreateDepartmentAndFolder(department);
-                //The departmentFolder object contains the department to be created
+                var faculty = _facultyRepository.Get(department.FacultyId);
+                var facultyFolder = _folderRepo.GetFacultyFolder(faculty.Name);
+                var folder = new Folder
+                {
+                    Name = department.Name,
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now,
+                    AccessLevelId = _accessLevelRepository.GetBaseLevel().Id,
+                    ParentId = facultyFolder.Id,
+                    IsRestricted = true,
+                    Department = department
+                };
+                //The folder object contains the department to be created
                 //adding the department folder to the context also adds the 
                 //new department to the context.
-                _unitOfWork.FolderRepo.Add(departmentFolder);
+                _folderRepo.Add(folder);
                 _unitOfWork.Save();
                 return ServiceResult.Succeeded;
             }
@@ -186,7 +185,7 @@ namespace archivesystemWebUI.Services
 
         private ServiceResult SaveOnlyDepartment(Department department)
         {
-            _unitOfWork.DeptRepo.Add(department);
+            _deptRepository.Add(department);
             _unitOfWork.Save();
 
             return ServiceResult.Succeeded;
@@ -194,8 +193,8 @@ namespace archivesystemWebUI.Services
 
         private async Task Delete(int id)
         {
-            Department department = GetDepartment(id);
-            _unitOfWork.DeptRepo.Remove(department);
+            var department = GetDepartmentById(id);
+            _deptRepository.Remove(department);
             await _unitOfWork.SaveAsync();
         }
         #endregion

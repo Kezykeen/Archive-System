@@ -14,11 +14,10 @@ namespace archivesystemDomain.Interfaces
         void DeleteFolder(int folderId);
         Folder GetFacultyFolder(string name);
         List<FolderPath> GetFolderPath(int id);
-        List<File> GetFilesThatMactchFileName(int folderId, string filename);
+        List<File> GetFilesThatMactchFileName(int folderId, string filename, bool returnall=false);
         void MoveFolder(int id, int newParentFolderId);
         bool UpdateDepartmentalFolder(Folder model);
         bool UpdateFacultyFolder(Folder model);
-        bool UpdateFolder(Folder folder);
 
     }
 }

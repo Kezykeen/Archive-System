@@ -231,6 +231,7 @@
     <Compile Include="Interfaces\IApplicationService.cs" />
     <Compile Include="Interfaces\IFacultyService.cs" />
     <Compile Include="Interfaces\IFolderService.cs" />
+    <Compile Include="Interfaces\IFolderServiceRepo.cs" />
     <Compile Include="Interfaces\IUserAccessService.cs" />
     <Compile Include="Interfaces\IUserService.cs" />
     <Compile Include="Migrations\202103232108221_Initial.cs" />
@@ -260,6 +261,7 @@
     <Compile Include="Models\FileMetaVm.cs" />
     <Compile Include="Models\FolderModels\CreateFolderViewModel.cs" />
     <Compile Include="Models\FolderModels\DeleteFolderViewModel.cs" />
+    <Compile Include="Models\FolderModels\EditFolderViewModel.cs" />
     <Compile Include="Models\FolderModels\FolderPageViewModel.cs" />
     <Compile Include="Models\FolderModels\MoveItemViewModel.cs" />
     <Compile Include="Models\FolderModels\SaveFolderViewModel.cs" />
@@ -277,6 +279,7 @@
     <Compile Include="Repository\ApplicationRepo.cs" />
     <Compile Include="Repository\DeptRepository.cs" />
     <Compile Include="Repository\TicketRepo.cs" />
+    <Compile Include="Repository\FolderServiceUnitOfWork.cs" />
     <Compile Include="Repository\UserRepository.cs" />
     <Compile Include="Repository\FacultyRepository.cs" />
     <Compile Include="Repository\FileMetaRepo.cs" />
@@ -434,7 +437,6 @@
     <Content Include="Content\assets\plugins\summernote\dist\font\summernote.woff" />
     <Content Include="libman.json" />
     <Content Include="bower.json" />
-    <None Include="ApiKeys.config" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
