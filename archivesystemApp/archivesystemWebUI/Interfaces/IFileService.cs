@@ -9,6 +9,7 @@ namespace archivesystemWebUI.Interfaces
     {
         (bool save, FileMetaVm model) Create(FileMetaVm model, HttpPostedFileBase fileBase);
         ICollection<File> GetFiles(int folderId);
+        File Details(int id);
         File GetFile(int id, string fileName);
     }
 }

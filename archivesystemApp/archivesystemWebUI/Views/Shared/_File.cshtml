@@ -55,9 +55,9 @@
         <div class="dropdown-file">
             <a href="" class="dropdown-link" data-toggle="dropdown"><i class="fa fa-ellipsis-v"></i></a>
             <div class="dropdown-menu dropdown-menu-right">
-                <a href="#" class="dropdown-item">View Details</a>
-                <a href="@Url.Action("GetFile","FileMeta", new {id = @Model.Id, fileName})" class="dropdown-item">Download</a>
-                <a href="#" class="dropdown-item">Rename</a>
+                <a href="@Url.Action("Details", "FileMeta", new {id = Model.Id})" class="dropdown-item">View Details</a>
+                <a href="@Url.Action("GetFile","FileMeta", new {id = Model.Id, fileName})" class="dropdown-item">Download</a>
+                
                
             </div>
         </div>
@@ -65,8 +65,8 @@
             <i class="fa @icon"></i>
         </div>
         <div class="card-body">
-            <h6><a href="">@fileName</a></h6>
-            @* <span>Created: @Model.CreatedAt.ToString("g")</span> *@
+            <h6><a href="@Url.Action("Details", "FileMeta", new {id = Model.Id})">@fileName</a></h6>
+           
         </div>
         <div class="card-footer">Created: @Model.CreatedAt.ToString("d/M/yyyy HH:mm")</div>
         <div class="card-footer">Modified: @Model.UpdatedAt.ToString("d/M/yyyy HH:mm")</div>

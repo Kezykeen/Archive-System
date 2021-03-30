@@ -557,6 +557,7 @@
     <Content Include="Views\Shared\_DashboardCards.cshtml" />
     <Content Include="Views\Department\ViewAllUsersInDept.cshtml" />
     <Content Include="Views\Faculty\ViewAllDepartmentsInFaculty.cshtml" />
+    <Content Include="Views\FileMeta\Details.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
