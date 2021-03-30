@@ -232,7 +232,7 @@ namespace archivesystemWebUI.Services
                 {
                     _url.Action("Details", "Applications", new { id = application.Id });
                 });
-
+                 
                 await callbackUrl;
 
                 await _emailSender.SendEmailAsync(application.User.Email, $"RE: {application.Title}",

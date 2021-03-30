@@ -10,7 +10,7 @@ using AutoMapper;
 
 namespace archivesystemWebUI.Controllers
 {
-    [Authorize(Roles = "Admin, Manager")]
+    //[Authorize(Roles = "Admin, Manager")]
     public class FacultyController : Controller
     {
         #region Fields
@@ -59,7 +59,7 @@ namespace archivesystemWebUI.Controllers
 
         [HttpPost]
         // POST: Faculty/AddOrUpdate
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public async Task<ActionResult> AddOrUpdate(FacultyViewModel model)
         {
             if (!ModelState.IsValid)

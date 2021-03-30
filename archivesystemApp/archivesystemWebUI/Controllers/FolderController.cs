@@ -20,7 +20,7 @@ using System.Web.Security;
 namespace archivesystemWebUI.Controllers
 {
 
-    [Authorize]
+    [Authorize(Roles = RoleNames.FolderAllowedRoles)]
     public class FolderController : Controller
     {
         private const byte LOCKOUT_TIME = 10; //lockout user after last request exceeds lockout time in minutes

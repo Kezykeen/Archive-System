@@ -1,4 +1,6 @@
-﻿<div class="sidebar" id="sidebar">
+﻿@using archivesystemDomain.Services
+  
+<div class="sidebar" id="sidebar">
     <div class="sidebar-inner slimscroll">
         <div id="sidebar-menu" class="sidebar-menu">
             <ul>
@@ -10,7 +12,7 @@
 
                 </li>
 
-                @if (@User.IsInRole("Admin"))
+                @if (@User.IsInRole(RoleNames.Admin))
                 {
                     <li class="">
                         <a href="@Url.Action("Index", "Users")"><i class="la la-user"></i> <span> User Management</span> </a>
@@ -18,7 +20,7 @@
                     </li>
                 }
                
-            @if (User.IsInRole("Student") || User.IsInRole("Staff") || User.IsInRole("Alumni"))
+            @if (User.IsInRole(RoleNames.Student) || User.IsInRole(RoleNames.Staff) || User.IsInRole(RoleNames.Alumni))
             {
                 <li class="menu-title">
                     <span>Application Management</span>
@@ -29,7 +31,7 @@
 
                         <li><a href="@Url.Action("Index", "Applications")">My Applications</a></li>
 
-                        @if (User.IsInRole("Secretary"))
+                        @if (User.IsInRole(RoleNames.Secretary))
                         {
                             <li><a href="@Url.Action("Incoming", "Applications")">Incoming</a></li>
                             <li><a href="@Url.Action("IncomingForwarded", "Applications")">Incoming (Forwarded)</a></li>
@@ -39,7 +41,7 @@
                             <li><a href="@Url.Action("RejectedForwarded", "Applications")">Rejected (Forwarded)</a></li>
                             <li><a href="@Url.Action("Archived", "Applications")">Archived</a></li>
                         }
-                        @if (User.IsInRole("DeptOfficer"))
+                        @if (User.IsInRole(RoleNames.DeptOfficer))
                         {
                             <li><a href="@Url.Action("ToSign", "Applications")">Incoming</a></li>
                             <li><a href="@Url.Action("Signed", "Applications")">Signed</a></li>
@@ -47,7 +49,7 @@
 
                         }
 
-                        @if (User.IsInRole("HOD"))
+                        @if (User.IsInRole(RoleNames.HOD))
                         {
                             <li><a href="@Url.Action("ToApprove", "Applications")">Incoming</a></li>
                             <li><a href="@Url.Action("Approved", "Applications")">Approved</a></li>
@@ -60,7 +62,7 @@
                 </li>
             }
                 
-                @if (User.IsInRole("Admin"))
+                @if (User.IsInRole(RoleNames.Admin))
                 {
                     <li class="menu-title">
                         <span>Role Management</span>
@@ -108,7 +110,9 @@
                         </ul>
                     </li>
                 }
-                @if (!User.IsInRole("Student") || !User.IsInRole("Alumni"))
+                
+                @if (User.IsInRole(RoleNames.FacultyOfficer) 
+                    || User.IsInRole(RoleNames.DeptOfficer) || User.IsInRole(RoleNames.Admin))
                 {
                     
                     <li class="menu-title">
