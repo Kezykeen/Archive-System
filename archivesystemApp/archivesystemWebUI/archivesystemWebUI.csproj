@@ -231,7 +231,7 @@
     <Compile Include="Interfaces\IAccessLevelService.cs" />
     <Compile Include="Interfaces\IFacultyService.cs" />
     <Compile Include="Interfaces\IFolderService.cs" />
-    <Compile Include="Interfaces\IFolderServiceRepo.cs" />
+    <Compile Include="Interfaces\IFolderServiceUnitOfWork.cs" />
     <Compile Include="Interfaces\IUserAccessService.cs" />
     <Compile Include="Migrations\202103181107464_Initial.cs" />
     <Compile Include="Migrations\202103181107464_Initial.Designer.cs">

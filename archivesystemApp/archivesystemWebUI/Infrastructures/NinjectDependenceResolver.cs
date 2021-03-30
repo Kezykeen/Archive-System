@@ -56,6 +56,7 @@ namespace archivesystemWebUI.Infrastructures
             kernel.Bind<IFileRepo>().To<FileRepo>();
             kernel.Bind<IFolderService>().To<FolderService>();
             kernel.Bind<IAccessCodeGenerator>().To<AccessCodeGenerator>();
+            kernel.Bind<IFolderServiceUnitOfWork>().To<FolderServiceUnitOfWork>();
         }
     }
 }

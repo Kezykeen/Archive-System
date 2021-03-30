@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace archivesystemWebUI.Interfaces
 {
-    public interface IFolderServiceRepo
+    public interface IFolderServiceUnitOfWork
     {
         IAccessDetailsRepository AccessDetailsRepo { get;  }
         IFolderRepo FolderRepo { get; }

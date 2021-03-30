@@ -19,11 +19,11 @@ namespace archivesystemWebUI.Services
     }
     public class FolderService : IFolderService
     {
-        private IFolderServiceRepo _repo { get; set; }
+        private IFolderServiceUnitOfWork _repo { get; set; }
         private const int  _GroundLevelAccess=0;
        
 
-        public FolderService(IFolderServiceRepo repo)
+        public FolderService(IFolderServiceUnitOfWork repo)
         {
             _repo = repo;
         }
