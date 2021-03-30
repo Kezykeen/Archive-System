@@ -131,10 +131,11 @@ namespace archivesystemWebUI.Services
 
             try
             {
+                var callbackUrl = _url.Action("Details", "Applications", new { id = application.Id }, protocol: Context.Request.Url.Scheme);
                 await _unitOfWork.SaveAsync();
 
                 await _emailSender.SendEmailAsync(application.User.Email, $"RE: {application.Title}",
-                    $"Hi, {application.User.Name} was rejected  by {user.Name}. Reason: {appReceived.RejectionMsg}");
+                    $"Hi, {application.User.Name} your  <a href=" + callbackUrl + ">Application</a> was rejected  by {user.Name}. Reason: {appReceived.RejectionMsg}");
 
                 return (true, "");
             }
@@ -165,15 +166,11 @@ namespace archivesystemWebUI.Services
 
             try
             {
-                var callbackUrl = Task.Run(() =>
-                {
-                    _url.Action("Details", "Applications", new { id = application.Id });
-                });
+                var callbackUrl = _url.Action("Details", "Applications", new { id = application.Id }, protocol: Context.Request.Url.Scheme);
 
-                await callbackUrl;
                 await _unitOfWork.SaveAsync();
                 await _emailSender.SendEmailAsync(application.User.Email, $"RE: {application.Title}",
-                    $"Hi, {application.User.Name} Your <a href=\"" + callbackUrl + "\">Application</a> has been Accepted by {user.Name}");
+                    $"Hi, {application.User.Name} Your <a href=" + callbackUrl + ">Application</a> has been Accepted by {user.Name}");
                 return (true, "");
             }
             catch (Exception e)
@@ -228,15 +225,10 @@ namespace archivesystemWebUI.Services
 
             try
             {
-                var callbackUrl = Task.Run(() =>
-                {
-                    _url.Action("Details", "Applications", new { id = application.Id });
-                });
-
-                await callbackUrl;
+                var callbackUrl = _url.Action("Details", "Applications", new { id = application.Id }, protocol: Context.Request.Url.Scheme);
 
                 await _emailSender.SendEmailAsync(application.User.Email, $"RE: {application.Title}",
-                    $"Hi, {application.User.Name} {user.Name} Signed Your <a href=\"" + callbackUrl + "\">Application</a>");
+                    $"Hi, {application.User.Name} {user.Name} Signed Your <a href=" + callbackUrl + ">Application</a>");
 
                 await _emailSender.SendEmailAsync(nextSigner.Email, $"RE: {application.Title}",
                     $"Hi {nextSigner.Name}, You have Been Invited to Sign This  <a href=\"" + callbackUrl + "\">Application</a>");
@@ -279,10 +271,9 @@ namespace archivesystemWebUI.Services
             try
             {
                 await _unitOfWork.SaveAsync();
-                var callbackUrl = Task.Run(() => { _url.Action("Details", "Applications", new { id = application.Id }); });
-                await callbackUrl;
+                var callbackUrl = _url.Action("Details", "Applications", new { id = application.Id }, protocol: Context.Request.Url.Scheme);
                 await _emailSender.SendEmailAsync(application.User.Email, $"RE: {application.Title}",
-                    $"Hi, {application.User.Name} {user.Name} Declined Your <a href=\"" + callbackUrl + $"\">Application</a>.\r\n Reason:{model.Remark}");
+                    $"Hi, {application.User.Name} {user.Name} Declined Your <a href=" + callbackUrl + $">Application</a>.\r\n Reason:{model.Remark}");
 
                 return (true, "");
             }
@@ -351,15 +342,11 @@ namespace archivesystemWebUI.Services
 
             try
             {
-                var callbackUrl = Task.Run(() =>
-                {
-                    _url.Action("Details", "Applications", new {id = application.Id});
-                });
-
-                await callbackUrl;
+                var callbackUrl = _url.Action("Details", "Applications", new {id = application.Id}, protocol: Context.Request.Url.Scheme);
+                
                 await _unitOfWork.SaveAsync();
                 await _emailSender.SendEmailAsync(application.User.Email, $"Approved: {application.Title}",
-                    $"Hi, {application.User.Name} The Hod Signed and Approved Your <a href=\"" + callbackUrl + "\">Application</a>");
+                    $"Hi, {application.User.Name} The Hod Signed and Approved Your <a href=" + callbackUrl + ">Application</a>");
                 return (true, "");
             }
             catch (Exception e)
@@ -398,15 +385,10 @@ namespace archivesystemWebUI.Services
 
             try
             {
-                var callbackUrl = Task.Run(() =>
-                {
-                    _url.Action("Details", "Applications", new { id = application.Id });
-                });
-
-                await callbackUrl;
+                var callbackUrl = _url.Action("Details", "Applications", new { id = application.Id }, protocol: Context.Request.Url.Scheme);
                 await _unitOfWork.SaveAsync();
                 await _emailSender.SendEmailAsync(application.User.Email, $"RE: {application.Title}",
-                    $"Hi, {application.User.Name} The Hod Signed  Your <a href=\"" + callbackUrl + "\">Application</a> and will be Forwarded to another Department");
+                    $"Hi, {application.User.Name} The Hod Signed  Your <a href=" + callbackUrl + ">Application</a> and will be Forwarded to another Department");
                 return (true, "");
             }
             catch (Exception e)
@@ -447,17 +429,12 @@ namespace archivesystemWebUI.Services
                
             try
             {
-                var callbackUrl = Task.Run(() =>
-                {
-                    _url.Action("Details", "Applications", new { id = application.Id });
-                });
-
-                await callbackUrl;
+                var callbackUrl = _url.Action("Details", "Applications", new { id = application.Id }, protocol: Context.Request.Url.Scheme);
                 await _unitOfWork.SaveAsync();
                 await _emailSender.SendEmailAsync(application.User.Email,
                     $"Disapproved: {application.Title}",
-                    $"Hi, {application.User.Name} The Hod Disapproved  Your <a href=\"" 
-                    + callbackUrl + $"\">Application</a>. /r/n Reason: {model.Remark} ");
+                    $"Hi, {application.User.Name} The Hod Disapproved  Your <a href=" 
+                    + callbackUrl + $">Application</a>. /r/n Reason: {model.Remark} ");
 
                 return (true, "");
             }
@@ -548,21 +525,16 @@ namespace archivesystemWebUI.Services
 
                 try
                 {
-                     var callbackUrl = Task.Run(() =>
-                    {
-                        _url.Action("Details", "Applications", new { id = application.Id });
-                    });
-
-                    await callbackUrl;
+                    var callbackUrl = _url.Action("Details", "Applications", new { id = application.Id }, protocol: Context.Request.Url.Scheme);
                     await _unitOfWork.SaveAsync();
 
                     await _emailSender.SendEmailAsync(nextSigner.Email, $"RE: {application.Title}",
-                        $"Hi {nextSigner.Name}, You have Been Invited to Sign This  <a href=\"" + callbackUrl +
-                        "\">Application</a>");
+                        $"Hi {nextSigner.Name}, You have Been Invited to Sign This  <a href=" + callbackUrl +
+                        ">Application</a>");
 
                     await _emailSender.SendEmailAsync(application.User.Email, $"RE: {application.Title}",
                         $"Hi, {application.User.Name} Your <a href=\"" + callbackUrl +
-                        $"\">Application</a> has been Assigned to {nextSigner.Name}");
+                        $">Application</a> has been Assigned to {nextSigner.Name}");
 
                     return (true, "", application);
                 }
@@ -593,12 +565,7 @@ namespace archivesystemWebUI.Services
                 
                 try
                 {
-                    var callbackUrl = Task.Run(() =>
-                    {
-                        _url.Action("Details", "Applications", new { id = application.Id });
-                    });
-
-                    await callbackUrl;
+                    
                     await _unitOfWork.SaveAsync();
 
                     return (true, "", application);
@@ -639,16 +606,11 @@ namespace archivesystemWebUI.Services
 
             try
             {
-                var callbackUrl = Task.Run(() =>
-                {
-                    _url.Action("Details", "Applications", new { id = application.Id });
-                });
-
-                await callbackUrl;
+                var callbackUrl = _url.Action("Details", "Applications", new { id = application.Id }, protocol: Context.Request.Url.Scheme);
                 await _unitOfWork.SaveAsync();
                 await _emailSender.SendEmailAsync(application.User.Email, $"RE: {application.Title}",
-                    $"Hi, {application.User.Name} The Hod Forwarded  Your <a href=\"" + callbackUrl +
-                    $"\">Application</a> to {dept.Name}");
+                    $"Hi, {application.User.Name} The Hod Forwarded  Your <a href=" + callbackUrl +
+                    $">Application</a> to {dept.Name}");
 
                 return (true, "", application);
             }

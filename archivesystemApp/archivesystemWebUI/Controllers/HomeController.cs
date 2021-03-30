@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using archivesystemDomain.Interfaces;
+using archivesystemWebUI.Interfaces;
+using archivesystemWebUI.Models;
 using Microsoft.AspNet.Identity;
 
 namespace archivesystemWebUI.Controllers
@@ -11,16 +13,16 @@ namespace archivesystemWebUI.Controllers
     [Authorize]
     public class HomeController : Controller
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IHomeService _homeService;
 
-
-        public HomeController(IUnitOfWork unitOfWork)
+        public HomeController(IHomeService homeService)
         {
-            _unitOfWork = unitOfWork;
+            _homeService = homeService;
         }
         public ActionResult Index()
         {
-            return View();
+            var model = _homeService.GetAllClasses();
+            return View(model);
         }
 
         public ActionResult EmployeeDashboard()
