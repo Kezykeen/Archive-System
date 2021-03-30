@@ -62,8 +62,17 @@ namespace archivesystemWebUI.Controllers
             return PartialView("New", model);
         }
 
-      
 
+        public ActionResult Details(int id)
+        {
+            var model = _fileService.Details(id);
+            if (model == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(model);
+        }
         public ActionResult GetAllFiles(int folderId)
         {
 
@@ -83,5 +92,7 @@ namespace archivesystemWebUI.Controllers
             Response.AddHeader("Content-Disposition", "inline; filename=" + fileName);
             return File(file.Content, file.ContentType);
         }
+
+       
     }
 }

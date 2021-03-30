@@ -78,14 +78,14 @@ namespace archivesystemWebUI.Services
 
                 await _unitOfWork.SaveAsync();
 
-                var callbackUrl = _url.Action("Register", "Account", new {userId = user.Id, code});
-               
+                var callbackUrl = _url.Action("Register", "Account", new { userId = user.Id, code }, protocol: Context.Request.Url.Scheme);
+
 
                 await  _emailSender
                     .SendEmailAsync(user.Email,
                         "Complete Your Registration",
                         $"Hi, {user.Name} complete your Enrollment Process by clicking" +
-                        " <a href=\"" + callbackUrl + "\">here</a>");
+                        " <a href=" + callbackUrl + ">here</a>");
                 return (true, "success");
 
             }
@@ -210,14 +210,14 @@ namespace archivesystemWebUI.Services
 
            await _unitOfWork.SaveAsync();
 
-           var callbackUrl = _url.Action("Register", "Account", new { userId = id, code });
-
+           var callbackUrl = _url.Action("Register", "Account", new { userId = id, code }, protocol: Context.Request.Url.Scheme);
+          
             try
             {
                 await _emailSender.SendEmailAsync(email,
                     "Complete Your Registration", "Hi," + 
                     $" {name} complete your Enrollment Process by" +
-                    " clicking <a href=\"" + callbackUrl + "\">here</a>");
+                    " clicking <a href=" + callbackUrl + ">here</a>");
 
                 return (true, "Confirmation Link Sent");
             }
