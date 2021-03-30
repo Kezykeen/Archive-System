@@ -377,6 +377,8 @@ namespace archivesystemWebUI.Controllers
             ViewBag.Action = "Disapprove";
             return PartialView("Sign", model);
         }
+
+        [Authorize(Roles = "DeptOfficer")]
         public ActionResult AssignUsers(int appId)
         {
             var currentUserId = User.Identity.GetUserId();
@@ -450,6 +452,7 @@ namespace archivesystemWebUI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Secretary")]
         public  async Task<ActionResult> AssignUsers(AssignUsersVm model)
         {
             if (!ModelState.IsValid)
