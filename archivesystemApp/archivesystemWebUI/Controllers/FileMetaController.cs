@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using archivesystemDomain.Entities;
 using archivesystemDomain.Interfaces;
 using archivesystemWebUI.Infrastructures;
+using archivesystemWebUI.Interfaces;
 using archivesystemWebUI.Models;
 using Microsoft.AspNet.Identity;
 
@@ -13,12 +14,15 @@ namespace archivesystemWebUI.Controllers
 {
     public class FileMetaController : Controller
     {
-        private readonly IUnitOfWork _unitOfWork;
+      
+        private readonly IFileService _fileService;
+        private readonly IAccessLevelService _accessLevelService;
 
 
-        public FileMetaController(IUnitOfWork unitOfWork)
+        public FileMetaController(IFileService fileService , IAccessLevelService accessLevelService)
         {
-            _unitOfWork = unitOfWork;
+            _fileService = fileService;
+            _accessLevelService = accessLevelService;
         }
         
         // GET: FileMeta
@@ -28,7 +32,7 @@ namespace archivesystemWebUI.Controllers
 
             return PartialView(new FileMetaVm
             {
-                AccessLevel = _unitOfWork.AccessLevelRepo.GetAll(),
+                AccessLevel =_accessLevelService.GetAll(),
                 FolderId = folderId,
                 UploadedById = User.Identity.GetUserId()
                 
@@ -36,55 +40,48 @@ namespace archivesystemWebUI.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult New(FileMetaVm model, HttpPostedFileBase fileBase)
         {
             if (!ModelState.IsValid)
             {
-                model.AccessLevel = _unitOfWork.AccessLevelRepo.GetAll();
+                model.AccessLevel = _accessLevelService.GetAll();
                 Response.StatusCode = 200;
                 return PartialView("New", model);
             }
 
-            if (fileBase !=null)
+            var file = _fileService.Create(model, fileBase);
+
+            if (file.save)
             {
-                UpsertFile.Save(model, fileBase);
+                Response.StatusCode = 201;
+                return PartialView("_File", model.File);
             }
 
-            model.File.FileMeta = new FileMeta
-            {
-                Title = model.Title,
-                UploadedById = model.UploadedById,
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now
-            };
-         
-            model.File.AccessLevelId = model.AccessLevelId;
-            model.File.CreatedAt = DateTime.Now;
-            model.File.UpdatedAt = DateTime.Now;
-
-          _unitOfWork.FolderRepo
-                .FindWithNavProps(f => f.Id == model.FolderId, _ => _.Files)
-                .SingleOrDefault()?.Files.Add(model.File);
-            _unitOfWork.Save();
-            Response.StatusCode = 201;
-
-            return PartialView("_File", model.File);
+            ModelState.AddModelError("", "An Error Occurred!");
+            return PartialView("New", model);
         }
 
-        public ActionResult Edit()
-        {
-            return View();
-        }
+      
 
         public ActionResult GetAllFiles(int folderId)
         {
 
-            var files = _unitOfWork
-                .FileRepo
-                .FindWithNavProps(_ =>_.FolderId==folderId,
-                    _ => _.FileMeta, f =>f.AccessLevel).ToList();
+            var files = _fileService.GetFiles(folderId);
            
             return PartialView(files);
+        }
+
+        public FileContentResult GetFile(int id, string fileName)
+        {
+            var file = _fileService.GetFile(id, fileName);
+
+            if (file==null)
+            {
+                return null;
+            }
+            Response.AddHeader("Content-Disposition", "inline; filename=" + fileName);
+            return File(file.Content, file.ContentType);
         }
     }
 }

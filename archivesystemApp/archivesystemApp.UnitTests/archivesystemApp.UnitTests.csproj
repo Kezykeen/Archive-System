@@ -72,6 +72,7 @@
     <Reference Include="System.Web.Mvc, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DepartmentServiceTests\DepartmentServiceTests.cs" />
     <Compile Include="DomainServices\AccessCodeGeneratorTests.cs" />
     <Compile Include="FacultyServiceTests\FacultyServiceTests.cs" />
     <Compile Include="FolderServiceTests\FolderServiceTest.cs" />

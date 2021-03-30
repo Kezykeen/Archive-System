@@ -5,9 +5,7 @@ using archivesystemWebUI.Interfaces;
 using archivesystemWebUI.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Web.Mvc;
 
 namespace archivesystemWebUI.Services
 {
@@ -16,20 +14,26 @@ namespace archivesystemWebUI.Services
         #region FIELDS
         private readonly IUnitOfWork _unitOfWork;
         private readonly IAccessCodeGenerator _accessCode;
+        private readonly IAccessDetailsRepository _accessDetailsRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IAccessLevelRepository _accessLevelRepository;
         private const string add = "add";
         private const string update = "update";
         #endregion
 
         #region PROPERTIES
-        public IEnumerable<AccessLevel> AccessLevels { get { return _unitOfWork.AccessLevelRepo.GetAll(); } }
-        public IEnumerable<AccessDetail> AccessDetails { get { return _unitOfWork.AccessDetailsRepo.GetAccessDetails(); } }
+        public IEnumerable<AccessLevel> AccessLevels { get { return _accessLevelRepository.GetAll(); } }
+        public IEnumerable<AccessDetail> AccessDetails { get { return _accessDetailsRepository.GetAccessDetails(); } }
         #endregion
 
         #region CONSTRUCTOR
-        public UserAccessService(IUnitOfWork unitOfWork, IAccessCodeGenerator accessCode)
+        public UserAccessService(IUnitOfWork unitOfWork, IAccessCodeGenerator accessCode, IAccessDetailsRepository accessDetailsRepository, IUserRepository userRepository, IAccessLevelRepository accessLevelRepository)
         {
             _unitOfWork = unitOfWork;
             _accessCode = accessCode;
+            _accessDetailsRepository = accessDetailsRepository;
+            _userRepository = userRepository;
+            _accessLevelRepository = accessLevelRepository;
         }
         #endregion
 
@@ -38,7 +42,7 @@ namespace archivesystemWebUI.Services
         {
             try
             {
-                var user = _unitOfWork.UserRepo.GetUserByMail(model.Email);
+                var user = _userRepository.GetUserByMail(model.Email);
 
                 var newAccessDetails = new AccessDetail
                 {
@@ -48,7 +52,7 @@ namespace archivesystemWebUI.Services
                     Status = Status.Active
                 };
 
-                _unitOfWork.AccessDetailsRepo.Add(newAccessDetails);
+                _accessDetailsRepository.Add(newAccessDetails);
                 await _unitOfWork.SaveAsync();
 
                 return ("success", null);
@@ -57,23 +61,23 @@ namespace archivesystemWebUI.Services
             {
                 return ("failure", e);
             }
-            
+
         }
-        
+
         public AppUser GetUserByEmail(string email)
         {
-            return _unitOfWork.UserRepo.GetUserByMail(email);
+            return _userRepository.GetUserByMail(email);
         }
 
         public AccessDetail GetByAppUserId(int appUserId)
         {
-            return _unitOfWork.AccessDetailsRepo.GetByAppUserId(appUserId);
+            return _accessDetailsRepository.GetByAppUserId(appUserId);
         }
 
 
         public AccessDetail GetByNullableId(int? id)
         {
-            return _unitOfWork.AccessDetailsRepo.Get(id.Value);
+            return _accessDetailsRepository.Get(id.Value);
 
         }
 
@@ -84,7 +88,7 @@ namespace archivesystemWebUI.Services
 
         public void EditUserModel(int id, out EditUserViewModel model, out AccessDetail accessDetails)
         {
-            accessDetails = _unitOfWork.AccessDetailsRepo.Get(id);
+            accessDetails = _accessDetailsRepository.Get(id);
 
             model = new EditUserViewModel
             {
@@ -101,11 +105,11 @@ namespace archivesystemWebUI.Services
             {
                 if (model.RegenerateCode == CodeStatus.Yes)
                 {
-                    var user = _unitOfWork.UserRepo.Get(model.AccessDetails.AppUserId);
+                    var user = _userRepository.Get(model.AccessDetails.AppUserId);
                     model.AccessDetails.AccessCode = await _accessCode.GenerateCode(user, update);
                 }
 
-                _unitOfWork.AccessDetailsRepo.EditDetails(model.AccessDetails);
+                _accessDetailsRepository.EditDetails(model.AccessDetails);
                 await _unitOfWork.SaveAsync();
 
                 return ("success", null);
@@ -120,9 +124,9 @@ namespace archivesystemWebUI.Services
         {
             try
             {
-                var accessDetails = _unitOfWork.AccessDetailsRepo.Get(id);
+                var accessDetails = _accessDetailsRepository.Get(id);
 
-                _unitOfWork.AccessDetailsRepo.Remove(accessDetails);
+                _accessDetailsRepository.Remove(accessDetails);
                 await _unitOfWork.SaveAsync();
 
                 return "success";

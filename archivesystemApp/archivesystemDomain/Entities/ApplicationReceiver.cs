@@ -10,9 +10,10 @@ namespace archivesystemDomain.Entities
         public bool Forwarded { get; set; }
         public bool? Received { get; set; }
         public bool? Approved { get; set; }
+        public string RejectionMsg { get; set; }
         public DateTime TimeSent { get; set; }
         public DateTime? TimeReceived { get; set; }
-        public DateTime TimeRejected { get; set; }
+        public DateTime? TimeRejected { get; set; }
 
     }
 }

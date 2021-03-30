@@ -37,16 +37,21 @@ namespace archivesystemWebUI.Controllers
         // GET json data for DataTable
         public ActionResult GetFacultyData()
         {
-            var facultyData = _facultyService.GetFacultyData();
+            var facultyData = _facultyService.GetAllFacultiesToList();
             var map = Mapper.Map<IEnumerable<FacultyViewModel>>(facultyData);
 
             return Json(new {data = map}, JsonRequestBehavior.AllowGet);
         }
 
-        //GET: Faculty/AddOrUpdate/5?
-        public ActionResult GetFacultyPartialView(int? id)
+        public int GetDepartmentsCount(int id)
         {
-            var faculty = _facultyService.GetFaculty(id);
+            return _facultyService.GetAllDepartmentsInFacultyCount(id);
+        }
+
+        //GET: Faculty/AddOrUpdate/5?
+        public ActionResult GetFacultyPartialView(int id)
+        {
+            var faculty = _facultyService.GetFacultyForPartialView(id);
             var model = Mapper.Map<FacultyViewModel>(faculty);
 
             return PartialView("_AddOrEditFaculty", model);
@@ -60,15 +65,6 @@ namespace archivesystemWebUI.Controllers
             if (!ModelState.IsValid)
                 return PartialView("_AddOrEditFaculty", model);
 
-            var result = await AddOrUpdateResult(model);
-
-            return result == ServiceResult.Succeeded 
-                ? Json(new {success = true}, JsonRequestBehavior.AllowGet) 
-                : Json(new {failure = true}, JsonRequestBehavior.AllowGet);
-        }
-
-        public async Task<ServiceResult> AddOrUpdateResult(FacultyViewModel model)
-        {
             ServiceResult result;
             if (model.Id == 0)
             {
@@ -77,7 +73,7 @@ namespace archivesystemWebUI.Controllers
             }
             else
             {
-                var facultyInDb = _facultyService.GetFaculty(model.Id);
+                var facultyInDb = _facultyService.GetFacultyById(model.Id);
                 facultyInDb.UpdatedAt = DateTime.Now;
                 Mapper.Map(model, facultyInDb);
                 result = _facultyService.UpdateFaculty(facultyInDb);
@@ -85,7 +81,9 @@ namespace archivesystemWebUI.Controllers
                 await _facultyService.SaveChanges();
             }
 
-            return result;
+            return result == ServiceResult.Succeeded 
+                ? Json(new {success = true}, JsonRequestBehavior.AllowGet) 
+                : Json(new {failure = true}, JsonRequestBehavior.AllowGet);
         }
 
         public void UpdateFacultyFolder(Faculty faculty, ServiceResult result)
@@ -98,7 +96,7 @@ namespace archivesystemWebUI.Controllers
         //GET: Faculty/Delete/5
         public ActionResult GetDeletePartialView(int id)
         {
-            var faculty = _facultyService.GetFaculty(id);
+            var faculty = _facultyService.GetFacultyById(id);
             if (faculty == null)
                 return HttpNotFound();
 

@@ -10,19 +10,20 @@ namespace archivesystemDomain.Services
 {
     public class TokenGenerator : ITokenGenerator
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ITokenRepo _tokenRepo;
+      
 
-        public TokenGenerator(IUnitOfWork unitOfWork)
+        public TokenGenerator(ITokenRepo tokenRepo)
         {
-            _unitOfWork = unitOfWork;
+            _tokenRepo = tokenRepo;
         }
         public  string Code(int userId)
         {
 
-            var existingTokens = _unitOfWork.TokenRepo.Find(t => t.AppUserId == userId);
+            var existingTokens = _tokenRepo.Find(t => t.AppUserId == userId);
             if (existingTokens != null)
             {
-                _unitOfWork.TokenRepo.RemoveRange(existingTokens);
+                _tokenRepo.RemoveRange(existingTokens);
 
             }
 
@@ -32,7 +33,7 @@ namespace archivesystemDomain.Services
                 AppUserId = userId,
                 Expire = DateTime.Now.AddDays(3)
             };
-            _unitOfWork.TokenRepo.Add(token);
+            _tokenRepo.Add(token);
             return token.Code;
         }
     }

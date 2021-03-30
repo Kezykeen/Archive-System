@@ -13,6 +13,7 @@ using Microsoft.Owin.Security;
 using archivesystemWebUI.Models;
 using archivesystemDomain.Interfaces;
 using archivesystemDomain.Services;
+using archivesystemWebUI.Interfaces;
 using Microsoft.AspNet.Identity.Owin;
 
 namespace archivesystemWebUI.Controllers
@@ -23,13 +24,13 @@ namespace archivesystemWebUI.Controllers
         private ApplicationRoleManager _roleManager;
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IUserService _userService;
         private readonly ITokenGenerator _tokenGenerator;
         private readonly IEmailSender _emailSender;
 
-        public AccountController(IUnitOfWork unitOfWork, ITokenGenerator tokenGenerator, IEmailSender emailSender)
+        public AccountController(IUserService userService, ITokenGenerator tokenGenerator, IEmailSender emailSender)
         {
-            _unitOfWork = unitOfWork;
+            _userService = userService;
             _tokenGenerator = tokenGenerator;
             _emailSender = emailSender;
         }
@@ -181,8 +182,8 @@ namespace archivesystemWebUI.Controllers
                 return RedirectToAction("Login");
             }
 
-            var token = _unitOfWork.TokenRepo.Find(t => t.Code == code).SingleOrDefault();
-            var employee = _unitOfWork.UserRepo.Get(userId.Value);
+            var token = _userService.GetToken(code);
+            var (found, user) = _userService.Get(userId.Value);
             
             if (token == null)
             {
@@ -194,15 +195,14 @@ namespace archivesystemWebUI.Controllers
                 ModelState.AddModelError("", "Link Expired!,  Contact Admin");
                 return View();
             }
-            if (employee == null)
+            if (!found)
             {
                 ModelState.AddModelError("", "An Error Occured, Contact Admin");
                 return View();
             }
-            var model = new RegisterViewModel {Email = employee.Email};
+            var model = new RegisterViewModel {Email = user.Email};
 
-            _unitOfWork.TokenRepo.Remove(token);
-            _unitOfWork.Save();
+           _userService.RemoveToken(token);
 
             return View(model);
 
@@ -220,38 +220,37 @@ namespace archivesystemWebUI.Controllers
                 return View(model);
             }
 
-            if (_unitOfWork.UserRepo.EmailExists(model.Email, null))
+            if (_userService.EmailExists(model.Email, null))
             {
-                var user = _unitOfWork.UserRepo.GetUserByMail(model.Email);
+                var (found, user) = _userService.GetByMail(model.Email);
                   
-                var newUser = new ApplicationUser { UserName = user.Name, Email = model.Email, EmailConfirmed = true, PhoneNumber = user.Phone};
-                var result = await UserManager.CreateAsync(newUser, model.Password);
+                var identityUser = new ApplicationUser { UserName = user.Name, Email = model.Email, EmailConfirmed = true, PhoneNumber = user.Phone};
+                var result = await UserManager.CreateAsync(identityUser, model.Password);
                 if (result.Succeeded)
                 {         
-
-                    // Update UserId of User classS
-                    _unitOfWork.UserRepo.UpdateUserId(model.Email, newUser.Id);
-
-                    switch (user.Designation)
+                    var updateId = _userService.UpdateUserId(model.Email, identityUser.Id);
+                    // Update UserId of User class
+                    if (updateId)
                     {
-                        case Designation.Student:
-                            await UserManager.AddToRoleAsync(newUser.Id, "Student");
+                        switch (user.Designation)
+                        {
+                            case Designation.Student:
+                                await UserManager.AddToRoleAsync(identityUser.Id, "Student");
+                                break;
+                            case Designation.Alumni:
+                                await UserManager.AddToRoleAsync(identityUser.Id, "Alumni");
+                                break;
+                            case Designation.Staff:
+                                await UserManager.AddToRoleAsync(identityUser.Id, "Staff");
+                                break;
+                            default:
+                                break;
+                        }
 
-                            break;
-                        case Designation.Alumni:
-                            await UserManager.AddToRoleAsync(newUser.Id, "Alumni");
-                            break;
-                        case Designation.Staff:
-                            await UserManager.AddToRoleAsync(newUser.Id, "Staff");
-                            break;
-                        default:
-                            break;
                     }
 
-
-                    user.Completed = true;
-                    await _unitOfWork.SaveAsync();
-                    await SignInManager.SignInAsync(newUser, isPersistent: false, rememberBrowser: false);
+                    _userService.CompleteReg(user);
+                    await SignInManager.SignInAsync(identityUser, isPersistent: false, rememberBrowser: false);
                     return RedirectToAction("Index", "Home");
                 }
                 AddErrors(result);
@@ -376,7 +375,7 @@ namespace archivesystemWebUI.Controllers
             return View();
         }
 
-        //
+        
         // POST: /Account/ExternalLogin
         [HttpPost]
         [AllowAnonymous]

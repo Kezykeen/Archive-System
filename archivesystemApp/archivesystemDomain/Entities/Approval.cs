@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace archivesystemDomain.Entities
 {
@@ -11,7 +12,7 @@ namespace archivesystemDomain.Entities
         public Application Application { get; set; }
         public string Remark { get; set; }
         public bool? Approve { get; set; }
-        public DateTime UpdatedAt { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime? Date { get; set; }
+        public DateTime InviteDate { get; set; }
     }
 }

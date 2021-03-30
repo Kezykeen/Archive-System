@@ -15,26 +15,28 @@ namespace archivesystemApp.UnitTests.WebUIServices
     class AccessLevelServiceTests
     {
         private Mock<IUnitOfWork> _unitOfWork;
+        private Mock<IAccessLevelRepository> _accessLevelRepo;
         private AccessLevelService _service;
 
         [SetUp]
         public void SetUp()
         {
             _unitOfWork = new Mock<IUnitOfWork>();
+            _accessLevelRepo = new Mock<IAccessLevelRepository>();
 
-            _unitOfWork.Setup(m => m.AccessLevelRepo.GetAll())
+            _accessLevelRepo.Setup(m => m.GetAll())
               .Returns(new AccessLevel[] {
                     new AccessLevel{Id = 1, Level = "1", LevelDescription = "Base Level"},
                     new AccessLevel{Id = 2, Level = "2", LevelDescription = "Low Level"},
                     new AccessLevel{Id = 3, Level = "4", LevelDescription = "Average Level"},
                     new AccessLevel{Id = 4, Level = "4", LevelDescription = "High Level"}
               });
-            _unitOfWork.Setup(m => m.AccessLevelRepo.Get(1))
+            _accessLevelRepo.Setup(m => m.Get(1))
                 .Returns(new AccessLevel { Id = 1, Level = "1", LevelDescription = "Base Level" });
-            _unitOfWork.Setup(m => m.AccessLevelRepo.GetByLevel("1"))
+            _accessLevelRepo.Setup(m => m.GetByLevel("1"))
                 .Returns(new AccessLevel { Id = 1, Level = "1", LevelDescription = "Base Level" });
 
-            _service = new AccessLevelService(_unitOfWork.Object);
+            _service = new AccessLevelService(_unitOfWork.Object, _accessLevelRepo.Object);
 
         }
 
@@ -47,7 +49,7 @@ namespace archivesystemApp.UnitTests.WebUIServices
             // Assert
             Assert.That(result.Count(), Is.EqualTo(4));
             Assert.That(result, Is.Not.Empty);
-            _unitOfWork.Verify(r => r.AccessLevelRepo.GetAll());
+            _accessLevelRepo.Verify(r => r.GetAll());
         }
 
         [Test]
@@ -61,7 +63,7 @@ namespace archivesystemApp.UnitTests.WebUIServices
 
             // Assert
             Assert.That(result, Is.TypeOf<AccessLevel>());
-            _unitOfWork.Verify(r => r.AccessLevelRepo.Get(id));
+            _accessLevelRepo.Verify(r => r.Get(id));
         }
 
         [Test]
@@ -88,7 +90,7 @@ namespace archivesystemApp.UnitTests.WebUIServices
 
             // Assert
             Assert.That(result, Is.False);
-            _unitOfWork.Verify(r => r.AccessLevelRepo.GetByLevel(level));
+            _accessLevelRepo.Verify(r => r.GetByLevel(level));
         }
 
         [Test]
@@ -103,7 +105,7 @@ namespace archivesystemApp.UnitTests.WebUIServices
 
             // Assert
             Assert.That(result, Is.True);
-            _unitOfWork.Verify(r => r.AccessLevelRepo.GetByLevel(level));
+            _accessLevelRepo.Verify(r => r.GetByLevel(level));
 
         }
 
@@ -117,7 +119,7 @@ namespace archivesystemApp.UnitTests.WebUIServices
             var result = _service.Update(accessLevel);
 
             // Assert
-            _unitOfWork.Verify(r => r.AccessLevelRepo.EditDetails(accessLevel));
+            _accessLevelRepo.Verify(r => r.EditDetails(accessLevel));
         }
     }
 }

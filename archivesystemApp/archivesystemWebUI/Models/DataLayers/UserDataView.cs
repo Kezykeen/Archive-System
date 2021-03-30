@@ -26,5 +26,4 @@ namespace archivesystemWebUI.Models.DataLayers
         public string CreatedAt { get; set; }
 
     }
-
 }

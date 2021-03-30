@@ -9,62 +9,117 @@
                     <a href="@Url.Action("Index", "Home")"><i class="la la-dashboard"></i> <span> Dashboard</span> </a>
 
                 </li>
-                <li class="">
-                    <a href="@Url.Action("Index", "Users")"><i class="la la-user"></i> <span> User Management</span> </a>
 
-                </li>
+                @if (@User.IsInRole("Admin"))
+                {
+                    <li class="">
+                        <a href="@Url.Action("Index", "Users")"><i class="la la-user"></i> <span> User Management</span> </a>
+
+                    </li>
+                }
+               
+            @if (User.IsInRole("Student") || User.IsInRole("Staff") || User.IsInRole("Alumni"))
+            {
                 <li class="menu-title">
-                    <span>Role Management</span>
+                    <span>Application Management</span>
                 </li>
                 <li class="submenu">
-                    <a href="#" class="noti-dot"><i class="la la-tools"></i> <span> Roles</span> <span class="menu-arrow"></span></a>
+                    <a href="#"><i class="la la-mail-bulk"></i> <span> Applications</span> <span class="menu-arrow"></span></a>
                     <ul style="display: none;">
-                        <li><a href="@Url.Action("Index", "Roles")">All Roles</a></li>
+
+                        <li><a href="@Url.Action("Index", "Applications")">My Applications</a></li>
+
+                        @if (User.IsInRole("Secretary"))
+                        {
+                            <li><a href="@Url.Action("Incoming", "Applications")">Incoming</a></li>
+                            <li><a href="@Url.Action("IncomingForwarded", "Applications")">Incoming (Forwarded)</a></li>
+                            <li><a href="@Url.Action("Received", "Applications")">Received</a></li>
+                            <li><a href="@Url.Action("ReceivedForwarded", "Applications")">Received (Forwarded)</a></li>
+                            <li><a href="@Url.Action("Rejected", "Applications")">Rejected</a></li>
+                            <li><a href="@Url.Action("RejectedForwarded", "Applications")">Rejected (Forwarded)</a></li>
+                            <li><a href="@Url.Action("Archived", "Applications")">Archived</a></li>
+                        }
+                        @if (User.IsInRole("DeptOfficer"))
+                        {
+                            <li><a href="@Url.Action("ToSign", "Applications")">Incoming</a></li>
+                            <li><a href="@Url.Action("Signed", "Applications")">Signed</a></li>
+                            <li><a href="@Url.Action("Declined", "Applications")">Decline</a></li>
+
+                        }
+
+                        @if (User.IsInRole("HOD"))
+                        {
+                            <li><a href="@Url.Action("ToApprove", "Applications")">Incoming</a></li>
+                            <li><a href="@Url.Action("Approved", "Applications")">Approved</a></li>
+                            <li><a href="@Url.Action("Disapproved", "Applications")">Decline</a></li>
+                            <li><a href="@Url.Action("Forwarded", "Applications")">Forwarded</a></li>
+
+                        }
 
                     </ul>
                 </li>
-
-                <li class="menu-title">
-                    <span>Manage Faculties</span>
-                </li>
-                <li>
-                    <a href="@Url.Action("Index", "Faculty")"><i class="la la-school"></i> <span> All Faculties </span></a>
-
-                </li>
-
-                <li class="menu-title">
-                    <span>Manage Departments</span>
-                </li>
-                <li class="">
-                    <a href="@Url.Action("Index", "Department")"><i class="la la-school"></i> <span> Departments </span></a>
-
-                </li>
-
-                <li class="menu-title">
-                    <span>Manage Access Level</span>
-                </li>
-
-                <li>
-                <li>
-                    <a href="@Url.Action("ManageAccessLevel", "AccessLevel")"> <i class="la la-tools"></i> <span>Access Levels</span></a>
-                </li>
-                <li>
-                    <a href="@Url.Action("ManageUserAccess", "UserAccess")"> <i class="la la-user"></i> <span>User Access Levels</span></a>
-                </li>
-
-
-                <li class="menu-title">
-                    <span>Archive</span>
-                </li>
-                <li><a href="@Url.Action("Index", "Folder")"><i class="la la-archive"></i> <span> File Manager</span></a></li>
+            }
                 
-                <li class="submenu">
-                    <a href="#"><i class="la la-cog"></i> <span> Settings</span> <span class="menu-arrow"></span></a>
-                    <ul style="display: none;">
-                        <li><a href="@Url.Action("TicketTypes", "Settings")">Ticket Types</a></li>
+                @if (User.IsInRole("Admin"))
+                {
+                    <li class="menu-title">
+                        <span>Role Management</span>
+                    </li>
+                    <li class="submenu">
+                        <a href="#" class="noti-dot"><i class="la la-tools"></i> <span> Roles</span> <span class="menu-arrow"></span></a>
+                        <ul style="display: none;">
+                            <li><a href="@Url.Action("Index", "Roles")">All Roles</a></li>
 
-                    </ul>
-                </li>
+                        </ul>
+                    </li>
+
+                    <li class="menu-title">
+                        <span>Manage Faculties</span>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("Index", "Faculty")"><i class="la la-school"></i> <span> All Faculties </span></a>
+
+                    </li>
+
+                    <li class="menu-title">
+                        <span>Manage Departments</span>
+                    </li>
+                    <li class="">
+                        <a href="@Url.Action("Index", "Department")"><i class="la la-school"></i> <span> Departments </span></a>
+
+                    </li>
+
+                    <li class="menu-title">
+                        <span>Manage Access Level</span>
+                    </li>
+
+
+                    <li>
+                        <a href="@Url.Action("ManageAccessLevel", "AccessLevel")"> <i class="la la-tools"></i> <span>Access Levels</span></a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("ManageUserAccess", "UserAccess")"> <i class="la la-user"></i> <span>User Access Levels</span></a>
+                    </li>
+                    <li class="submenu">
+                        <a href="#"><i class="la la-cog"></i> <span> Settings</span> <span class="menu-arrow"></span></a>
+                        <ul style="display: none;">
+                            <li><a href="@Url.Action("TicketTypes", "Settings")">Ticket Types</a></li>
+
+                        </ul>
+                    </li>
+                }
+                @if (!User.IsInRole("Student") || !User.IsInRole("Alumni"))
+                {
+                    
+                    <li class="menu-title">
+                        <span>Archive</span>
+                    </li>
+                    <li><a href="@Url.Action("Index", "Folder")"><i class="la la-archive"></i> <span> File Manager</span></a></li>
+                }
+
+
+                
+             
             </ul>
         </div>
     </div>

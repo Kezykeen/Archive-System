@@ -11,6 +11,7 @@ using System.Web.Http;
 using archivesystemDomain.Entities;
 using archivesystemDomain.Interfaces;
 using archivesystemDomain.Services;
+using archivesystemWebUI.Interfaces;
 using archivesystemWebUI.Models.DataLayers;
 using AutoMapper;
 using Microsoft.AspNet.Identity;
@@ -21,16 +22,15 @@ namespace archivesystemWebUI.Controllers.Api
 {
     public class UsersController : ApiController
     {
-     
+        private readonly IUserService _userService;
+
 
         private ApplicationUserManager _userManager;
-        private readonly IUnitOfWork _unitOfWork;
 
 
-        public UsersController(IUnitOfWork unitOfWork)
+        public UsersController(IUserService userService)
         {
-            _unitOfWork = unitOfWork;
-           
+            _userService = userService;
         }
 
 
@@ -54,22 +54,13 @@ namespace archivesystemWebUI.Controllers.Api
             }
         }
 
-        [Route("api/employees")]
+        [Route("api/users")]
         [HttpGet]
-        public IHttpActionResult GetAllEmployees()
+        public IHttpActionResult GetAllUsers()
         {
-            var employees = _unitOfWork.UserRepo.GetUsersWithDept();
+            var employees = _userService.GetAll();
             var response = Mapper.Map<IEnumerable<AppUser>,List<UserDataView>>(employees);
-
             return Ok(response);
-
-        }
-
-        [Route("api/admins")]
-        [HttpGet]
-        public IHttpActionResult GetAllAdmins()
-        {
-            return NotFound();
 
         }
 
@@ -80,25 +71,15 @@ namespace archivesystemWebUI.Controllers.Api
             return NotFound();
         }
 
-       
 
         [HttpDelete]
         public IHttpActionResult DeleteUser(int id)
         {
 
-            var employee = _unitOfWork.UserRepo.Get(id);
-            if (employee == null)
-            {
-                return NotFound();
-            }
-            if (!string.IsNullOrWhiteSpace(employee.UserId))
-            {
-                var iduser = UserManager.FindById(employee.UserId);
-                UserManager.Delete(iduser);
-            }
-            _unitOfWork.UserRepo.Remove(employee);
-            _unitOfWork.Save();
-            return Ok();
+            var delete = _userService.Remove(id);
+            if (delete) return Ok();
+            
+            return NotFound();
         }
 
 
@@ -117,5 +98,4 @@ namespace archivesystemWebUI.Controllers.Api
             base.Dispose(disposing);
         }
     }
-
 }

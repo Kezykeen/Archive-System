@@ -28,8 +28,8 @@ namespace archivesystemDomain.Entities
         public DbSet<File> Files { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<Application> Applications { get; set; }
-        public DbSet<Comment> Comments { get; set; }
         public DbSet<Approval> Approvals { get; set; }
+        public DbSet<Signer> Signers { get; set; }
         public DbSet<ApplicationReceiver> ApplicationReceivers { get; set; }
         public DbSet<Activity> Activities { get; set; }
     }
