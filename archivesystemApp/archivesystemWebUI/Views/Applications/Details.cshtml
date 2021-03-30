@@ -231,7 +231,7 @@
                             <h6 class="card-title m-b-20">Signers 
                             @if (ViewBag.AssignUser != null)
                             {
-                                <button type="button" class="float-right btn btn-primary btn-sm assignBtn" data-toggle="modal" data-target="@Url.Action("AssignUsers", new {appId = Model.Id})" data-deptId="@Model.Receivers.First().ReceiverId"><i class="fa fa-plus"></i> Add</button>
+                                <button type="button" class="float-right btn btn-primary btn-sm assignBtn" data-toggle="modal" data-target="@Url.Action("AssignUsers", new {appId = Model.Id})" data-deptId="@Model.Receivers.First().ReceiverId", data-appId="@Model.Id"><i class="fa fa-plus"></i> Add</button>
                             }
                                 </h6>
                         

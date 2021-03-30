@@ -11,6 +11,7 @@ namespace archivesystemWebUI.Interfaces
         IEnumerable<Ticket> GetApplicationTypes(Designation designation);
         bool Create(ApplicationVm model, HttpPostedFileBase fileBase, AppUser user);
         Task<(bool reject, string msg)> Reject(SignVm model);
+        Task<(bool accept, string msg)> Accept(int id);
         Task<(bool sign, string msg)> Sign(SignVm model);
         Task<(bool decline, string msg)> Decline(SignVm model);
         Task<(bool sent, string msg )> SendToHod(Application application, AppUser user);
@@ -19,8 +20,8 @@ namespace archivesystemWebUI.Interfaces
         Task<(bool disapprove, string msg)> Disapprove(SignVm model);
         ( bool found, Application result )GetApplication(int id);
         (bool secetary, bool hod, bool deptOfficer, bool appOwner) DoCheck(Application application, AppUser user);
-        Task<(bool assign, string msg)> AssignUsers(AssignUsersVm model);
-        Task<(bool assign, string msg)> AssignToDept(AssignDeptsVm model);
+        Task<(bool assign, string msg, Application application)> AssignUsers(AssignUsersVm model);
+        Task<(bool assign, string msg, Application application)> AssignToDept(AssignDeptsVm model);
         (bool archive, string msg) Archive(int id);
         File GetFile(int id, string fileName);
         IEnumerable<Application> UserApplications();

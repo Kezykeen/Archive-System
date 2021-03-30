@@ -236,10 +236,10 @@ namespace archivesystemWebUI.Controllers
         }
 
        
-        public  async Task<ActionResult> Officers(int id , int appId, string searchTerm)
+        public  async Task<ActionResult> Officers(int id , string searchTerm)
         {
 
-            var deptOfficers = await _userService.GetDeptOfficers(id, appId, searchTerm);
+            var deptOfficers = await _userService.GetDeptOfficers(id, searchTerm);
             return Json(deptOfficers.result, JsonRequestBehavior.AllowGet);
 
         }

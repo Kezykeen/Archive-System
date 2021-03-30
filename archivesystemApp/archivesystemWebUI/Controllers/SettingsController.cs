@@ -3,6 +3,7 @@ using System.Linq;
 using System.Web.Mvc;
 using archivesystemDomain.Entities;
 using archivesystemDomain.Interfaces;
+using archivesystemWebUI.Interfaces;
 using archivesystemWebUI.Models;
 using AutoMapper;
 
@@ -10,11 +11,13 @@ namespace archivesystemWebUI.Controllers
 {
     public class SettingsController : Controller
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ITicketService _ticketService;
+    
 
-        public SettingsController(IUnitOfWork unitOfWork)
+        public SettingsController(ITicketService ticketService)
         {
-            _unitOfWork = unitOfWork;
+            _ticketService = ticketService;
+           
         }
         public ActionResult TicketTypes()
         {
@@ -28,7 +31,7 @@ namespace archivesystemWebUI.Controllers
 
         public ActionResult EditTicket(int id)
         {
-            var model = _unitOfWork.TicketRepo.Get(id);
+            var model = _ticketService.GetTicket(id);
             if (model == null)
             {
                 return HttpNotFound();
@@ -48,8 +51,7 @@ namespace archivesystemWebUI.Controllers
 
             if (model.Id == 0)
             {
-             var nameExists =  _unitOfWork.TicketRepo.GetAll().Any(e => string.Equals(e.Name, model.Name,
-                    StringComparison.OrdinalIgnoreCase));
+                var nameExists = _ticketService.NameExists(model, null);
              if (nameExists)
              {
                  ModelState.AddModelError("name", "Name Exists");
@@ -58,29 +60,25 @@ namespace archivesystemWebUI.Controllers
              }
 
              var ticket = Mapper.Map<Ticket>(model);
-             _unitOfWork.TicketRepo.Add(ticket);
-             _unitOfWork.Save();
+
+             _ticketService.Create(ticket);
              return Json(new { saved = true });
             }
 
-            var nameExist = _unitOfWork.TicketRepo.GetAll()
-                .Any(e => string.Equals(e.Name, model.Name,
-                    StringComparison.OrdinalIgnoreCase) && e.Id != model.Id);
+            var nameExist = _ticketService.NameExists(model, model.Id);
             if (nameExist)
             {
                 ModelState.AddModelError("name", "Name Exists");
                 return PartialView("TicketTypeModal", model);
             }
-            var ticketDb = _unitOfWork.TicketRepo.Get(model.Id);
+            var ticketDb = _ticketService.GetTicket(model.Id);
 
             if (ticketDb == null)
             {
                 return HttpNotFound();
             }
 
-            ticketDb = Mapper.Map(model, ticketDb);
-            // ticketDb.UpdatedAt = DateTime.Now;
-            _unitOfWork.Save();
+            _ticketService.Update(model, ticketDb);
 
             return Json(new { updated = true });
 

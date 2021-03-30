@@ -24,7 +24,6 @@ namespace archivesystemWebUI.Controllers
         private ApplicationRoleManager _roleManager;
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IUserService _userService;
         private readonly ITokenGenerator _tokenGenerator;
         private readonly IEmailSender _emailSender;

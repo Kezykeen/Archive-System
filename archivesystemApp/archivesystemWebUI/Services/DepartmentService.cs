@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -126,11 +127,31 @@ namespace archivesystemWebUI.Services
             bool status = departments.Any(x => x.Name == name && x.Id != id);
             return status;
         }
+
+        public IEnumerable GetDepartments(int id, string searchTerm = null)
+        {
+            var departments = _deptRepository.Find(d => d.Name.Contains(searchTerm) && d.Id != id).Select(x => new
+            {
+                id = x.Id,
+                text = x.Name
+            });
+            if (string.IsNullOrWhiteSpace(searchTerm))
+            {
+                departments = _deptRepository.Find(d => d.Id != id).Select(x => new
+                {
+                    id = x.Id,
+                    text = x.Name
+                });
+            }
+
+            return departments;
+        }
+
         #endregion
 
-        #region Private Methods
+            #region Private Methods
 
-        private bool DoesDepartmentContainUsers(int departmentId)
+            private bool DoesDepartmentContainUsers(int departmentId)
         {
             var appUsers = _userRepository.Find(x => x.DepartmentId == departmentId);
             return appUsers.Any();

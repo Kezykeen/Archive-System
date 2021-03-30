@@ -14,6 +14,7 @@ namespace archivesystemWebUI.Services
 {
     public class RoleService : IRoleService
     {
+        private readonly IUserRepository _userRepository;
         private static HttpContext  Context => HttpContext.Current;
         private ApplicationUserManager _userManager;
         private ApplicationRoleManager RoleManager => Context.GetOwinContext().GetUserManager<ApplicationRoleManager>();
@@ -29,10 +30,10 @@ namespace archivesystemWebUI.Services
             }
         }
 
-        private IUnitOfWork repo;
-        public RoleService(IUnitOfWork repo)
+        public RoleService(IUserRepository userRepository)
         {
-            this.repo = repo; 
+            _userRepository = userRepository;
+            
         }
         public IEnumerable<ApplicationRole> GetAllRoles()
         {
@@ -61,7 +62,7 @@ namespace archivesystemWebUI.Services
         }
         public IdentityResult AddToRoleByEmail(string userEmail,string roleId)
         {
-            var user=repo.UserRepo.GetUserByMail(userEmail);
+            var user=_userRepository.GetUserByMail(userEmail);
             if (user == null) return IdentityResult.Failed("user does not exist");
             return AddToRole(user.UserId, roleId);
         }
@@ -101,12 +102,12 @@ namespace archivesystemWebUI.Services
 
         public string GetEmployeeName(string userId)
         {
-            return repo.UserRepo.Find(x => x.UserId == userId).FirstOrDefault().Name;
+            return _userRepository.Find(x => x.UserId == userId).FirstOrDefault()?.Name;
         }
 
         public IEnumerable<RoleMemberData> GetUsersData(ICollection<string> userIds)
         {
-            return repo.UserRepo.GetUserDataByUserIds(userIds);
+            return _userRepository.GetUserDataByUserIds(userIds);
         }
 
         public IdentityResult RemoveFromRole ( string userId,string roleName)
@@ -114,7 +115,7 @@ namespace archivesystemWebUI.Services
             var role = RoleManager.FindByName(roleName);
             var result=UserManager.RemoveFromRole(userId, roleName);
             return result;
-            //f7fbf102-8f11-43d6-86a1-d34bd0fa7ed2
+            
         }
 
     }

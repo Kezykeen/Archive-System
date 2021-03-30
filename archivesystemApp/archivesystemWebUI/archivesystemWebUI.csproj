@@ -230,10 +230,12 @@
     <Compile Include="Interfaces\IAccessLevelService.cs" />
     <Compile Include="Interfaces\IApplicationService.cs" />
     <Compile Include="Interfaces\IFacultyService.cs" />
+    <Compile Include="Interfaces\IFileService.cs" />
     <Compile Include="Interfaces\IFolderService.cs" />
     <Compile Include="Interfaces\IFolderServiceRepo.cs" />
     <Compile Include="Interfaces\IUserAccessService.cs" />
     <Compile Include="Interfaces\IUserService.cs" />
+    <Compile Include="Interfaces\ITicketService.cs" />
     <Compile Include="Migrations\202103232108221_Initial.cs" />
     <Compile Include="Migrations\202103232108221_Initial.Designer.cs">
       <DependentUpon>202103232108221_Initial.cs</DependentUpon>
@@ -293,8 +295,10 @@
     <Compile Include="Services\DepartmentService.cs" />
     <Compile Include="Services\FacultyService.cs" />
     <Compile Include="Interfaces\IDepartmentService.cs" />
+    <Compile Include="Services\FileService.cs" />
     <Compile Include="Services\FolderService.cs" />
     <Compile Include="Services\RoleService.cs" />
+    <Compile Include="Services\TicketService.cs" />
     <Compile Include="Services\UserAccessService.cs" />
     <Compile Include="Services\AccessLevelService.cs" />
     <Compile Include="Services\UserService.cs" />

@@ -28,7 +28,7 @@ namespace archivesystemWebUI.Services
         private readonly IEmailSender _emailSender;
         private readonly ITokenRepo _tokenRepo;
         private readonly ITokenGenerator _tokenGenerator;
-        private static readonly HttpContext Context = HttpContext.Current;
+        private static HttpContext Context => HttpContext.Current;
         private readonly UrlHelper _url = new UrlHelper(Context.Request.RequestContext);
 
         public UserService(
@@ -78,13 +78,8 @@ namespace archivesystemWebUI.Services
 
                 await _unitOfWork.SaveAsync();
 
-                var callbackUrl = Task.Run(() =>
-                {
-                    _url.Action("Register", "Account", new {userId = user.Id, code},
-                        protocol: Context.Request.Url.Scheme);
-                });
-
-                await callbackUrl;
+                var callbackUrl = _url.Action("Register", "Account", new {userId = user.Id, code});
+               
 
                 await  _emailSender
                     .SendEmailAsync(user.Email,
@@ -168,6 +163,12 @@ namespace archivesystemWebUI.Services
             return (false, null);
         }
 
+        public (bool found, AppUser result) GetById(string id)
+        {
+            var user = _userRepository.FindWithNavProps(u => u.UserId == id, _ => _.Department).SingleOrDefault();
+            if (user != null) return (true, user);
+            return (false, null);
+        }
         public (bool found, AppUser result) GetByMail(string email)
         {
             var user = _userRepository.FindWithNavProps(u => String.Equals(u.Email, 
@@ -209,13 +210,8 @@ namespace archivesystemWebUI.Services
 
            await _unitOfWork.SaveAsync();
 
-           var callbackUrl = Task.Run(() =>
-           {
-               _url.Action("Register", "Account",
-                   new {userId = id, code}, protocol: Context.Request.Url.Scheme);
-           });
+           var callbackUrl = _url.Action("Register", "Account", new { userId = id, code });
 
-            await callbackUrl;
             try
             {
                 await _emailSender.SendEmailAsync(email,
@@ -259,19 +255,18 @@ namespace archivesystemWebUI.Services
             _tokenRepo.Remove(token);
             _unitOfWork.Save();
         }
-        public async Task<(bool found, IEnumerable result)> GetDeptOfficers(int id, int appId, string searchTerm)
+        public async Task<(bool found, IEnumerable result)> GetDeptOfficers(int id, string searchTerm)
         {
             var currentUserId = Context.User.Identity.GetUserId();
             var officersInDept = await _roleService.GetUserIdsOfUsersInRole("DeptOfficer");
-            var assocApp = _applicationRepo.FindWithNavProps(a => a.Id == id, _ => _.User).SingleOrDefault();
-            if (assocApp == null || officersInDept  == null)
+            // var assocApp = _applicationRepo.FindWithNavProps(a => a.Id == id, _ => _.User).SingleOrDefault();
+            if (officersInDept  == null)
             {
                 return (false, null);
             }
 
             var users = _userRepository.Find(u => u.DepartmentId == id
                                                   && officersInDept.Contains(u.UserId)
-                                                  && !officersInDept.Contains(assocApp.User.UserId)
                                                   && u.UserId != currentUserId
                                                   && u.Name.Contains(searchTerm)
                 ).Select(x => new
@@ -287,7 +282,6 @@ namespace archivesystemWebUI.Services
                 users = _userRepository.Find(
                     u => u.DepartmentId == id
                          && officersInDept.Contains(u.UserId)
-                         && !officersInDept.Contains(assocApp.User.UserId)
                          && u.UserId != currentUserId
                 ).Select(x => new
                 {

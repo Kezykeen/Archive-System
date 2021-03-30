@@ -23,11 +23,12 @@ namespace archivesystemWebUI.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserRepository _userRepository;
         private readonly IApplicationRepo _applicationRepo;
+        private readonly IDeptRepository _deptRepository;
         private readonly ITicketRepo _ticketRepo;
         private readonly IUpsertFile _upsertFile;
         private readonly IEmailSender _emailSender;
+        private static HttpContext Context => HttpContext.Current;
         private readonly UrlHelper _url = new UrlHelper(Context.Request.RequestContext);
-        private static readonly HttpContext Context = HttpContext.Current;
         private static IIdentity User => Context.User.Identity;
         private static string UserId => User.GetUserId();
 
@@ -35,6 +36,7 @@ namespace archivesystemWebUI.Services
             IUnitOfWork unitOfWork,
             IUserRepository userRepository, 
             IApplicationRepo applicationRepo,
+            IDeptRepository repository,
             ITicketRepo ticketRepo,
             IUpsertFile upsertFile,
             IRoleService roleService,
@@ -44,6 +46,7 @@ namespace archivesystemWebUI.Services
             _unitOfWork = unitOfWork;
             _userRepository = userRepository;
             _applicationRepo = applicationRepo;
+            _deptRepository = repository;
             _ticketRepo = ticketRepo;
             _upsertFile = upsertFile;
             _emailSender = emailSender;
@@ -141,12 +144,51 @@ namespace archivesystemWebUI.Services
             }
         }
 
+        public async Task<(bool accept, string msg)> Accept(int id)
+        {
+            var user = _userRepository.Find(u => u.UserId == UserId).SingleOrDefault();
+            var application = _applicationRepo
+                .FindWithNavProps(a => a.Id == id,
+                    _ => _.User, _ => _.Receivers, _ => _.Activities)
+                .SingleOrDefault();
+            if (application == null || user == null) return (false, "An Error Occurred!");
+            var appReceived = application.Receivers.SingleOrDefault(r => r.ReceiverId == user.DepartmentId);
+            if (appReceived == null || appReceived.Received != null) return (false, "An Error Occurred");
+
+            appReceived.Received = true;
+            appReceived.TimeReceived = DateTime.Now;
+            application.Status = ApplicationStatus.Opened;
+            application.Activities.Add(
+                ActivityLog(user.Id, "Accepted The Application"));
+
+            application.UpdatedAt = DateTime.Now;
+
+            try
+            {
+                var callbackUrl = Task.Run(() =>
+                {
+                    _url.Action("Details", "Applications", new { id = application.Id });
+                });
+
+                await callbackUrl;
+                await _unitOfWork.SaveAsync();
+                await _emailSender.SendEmailAsync(application.User.Email, $"RE: {application.Title}",
+                    $"Hi, {application.User.Name} Your <a href=\"" + callbackUrl + "\">Application</a> has been Accepted by {user.Name}");
+                return (true, "");
+            }
+            catch (Exception e)
+            {
+                return (false, $"{e.Message} \r\n{e.InnerException}");
+
+            }
+        }
+
         public async Task<(bool sign, string msg)> Sign(SignVm model)
         {
             var user = _userRepository.Find(u => u.UserId == UserId).SingleOrDefault();
             if (user == null) return (false, "An Error Occured!");
 
-            var application = _unitOfWork.ApplicationRepo
+            var application = _applicationRepo
                 .FindWithNavProps(a => a.Id == model.AppId, 
                     _ => _.Approvals,
                     _ => _.Signers,
@@ -218,7 +260,7 @@ namespace archivesystemWebUI.Services
                 return (false, "An Error Occured!");
             }
 
-            var application = _unitOfWork.ApplicationRepo
+            var application = _applicationRepo
                 .FindWithNavProps(a => a.Id == model.AppId,
                     _ => _.Approvals, _ => _.Activities)
                 .SingleOrDefault();
@@ -288,7 +330,7 @@ namespace archivesystemWebUI.Services
                 return (false, "An Error Occured!");
             }
 
-            var application = _unitOfWork.ApplicationRepo
+            var application = _applicationRepo
                 .FindWithNavProps(a => a.Id == model.AppId && a.SendToHead,
                     _ => _.Approvals, _ => _.Activities)
                 .SingleOrDefault();
@@ -335,7 +377,7 @@ namespace archivesystemWebUI.Services
                 return (false, "An Error Occured!");
             }
 
-            var application = _unitOfWork.ApplicationRepo
+            var application = _applicationRepo
                 .FindWithNavProps(a => a.Id == model.AppId && a.SendToHead,
                     _ => _.Approvals, _ => _.Activities)
                 .SingleOrDefault();
@@ -383,7 +425,7 @@ namespace archivesystemWebUI.Services
                 return (false, "An Error Occured!");
             }
 
-            var application = _unitOfWork.ApplicationRepo
+            var application = _applicationRepo
                 .FindWithNavProps(a => a.Id == model.AppId,
                     _ => _.Approvals, _ => _.Activities)
                 .SingleOrDefault();
@@ -431,7 +473,7 @@ namespace archivesystemWebUI.Services
         public ( bool found, Application result )GetApplication(int id)
         {
             var user = _userRepository.Find(u => u.UserId == UserId).SingleOrDefault();
-            var application = _unitOfWork.ApplicationRepo.FindWithNavProps(a => a.Id == id,
+            var application = _applicationRepo.FindWithNavProps(a => a.Id == id,
             _ => _.User,
             _ => _.Receivers,
             _ => _.Receivers.Select(c => c.Receiver),
@@ -462,23 +504,23 @@ namespace archivesystemWebUI.Services
                 );
         }
 
-        public async Task<(bool assign, string msg)> AssignUsers(AssignUsersVm model)
+        public async Task<(bool assign, string msg, Application application)> AssignUsers(AssignUsersVm model)
         {
             var user = _userRepository.Find(u => u.UserId == UserId).SingleOrDefault();
 
 
             var assigneeIds = model.UserIds.Select(int.Parse).ToList();
-            var application = _unitOfWork.ApplicationRepo
+            var application = _applicationRepo
                 .FindWithNavProps(a => a.Id == model.Id && a.Approve == null && a.Archive == false,
                     _ => _.Signers, _ => _.Approvals, _ => _.Receivers, _ => _.Activities).SingleOrDefault();
-            if (user == null || application == null) return (false, "An Error Occured!");
+            if (user == null || application == null) return (false, "An Error Occured!", null);
 
             foreach (var id in assigneeIds)
             {
                 if (application.Signers.Select(a => a.UserId).Contains(id))
                 {
                     var signer = _userRepository.Get(id);
-                    return (false, $"{signer.Name} Already Exist");
+                    return (false, $"{signer.Name} Already Exist", null);
                 }
 
                 application.Signers.Add(new Signer
@@ -522,23 +564,23 @@ namespace archivesystemWebUI.Services
                         $"Hi, {application.User.Name} Your <a href=\"" + callbackUrl +
                         $"\">Application</a> has been Assigned to {nextSigner.Name}");
 
-                    return (true, "");
+                    return (true, "", application);
                 }
                 catch (Exception e)
                 {
-                    return (false, $"{e.Message} \r\n{e.InnerException}");
+                    return (false, $"{e.Message} \r\n{e.InnerException}", null);
                 }
 
             }
 
-            if (receivedApp == null || !receivedApp.Forwarded) return (false, "An Error Occured!");
+            if (receivedApp == null || !receivedApp.Forwarded) return (false, "An Error Occured!", null);
             {
                 foreach (var id in assigneeIds)
                 {
                     if (application.Signers.Select(a => a.UserId).Contains(id))
                     {
                         var signer = _userRepository.Get(id);
-                        return (false, $"{signer.Name} Already Exist");
+                        return (false, $"{signer.Name} Already Exist", null);
                     }
 
                     application.Signers.Add(new Signer
@@ -559,38 +601,38 @@ namespace archivesystemWebUI.Services
                     await callbackUrl;
                     await _unitOfWork.SaveAsync();
 
-                    return (true, "");
+                    return (true, "", application);
                 }
                 catch (Exception e)
                 {
-                    return (false, $"{e.Message} \r\n{e.InnerException}");
+                    return (false, $"{e.Message} \r\n{e.InnerException}", null);
                 }
             }
         }
 
 
-        public async Task<(bool assign, string msg)> AssignToDept(AssignDeptsVm model)
+        public async Task<(bool assign, string msg, Application application)> AssignToDept(AssignDeptsVm model)
         {
 
             var user = _userRepository.Find(u => u.UserId == UserId).SingleOrDefault();
 
-            var application = _unitOfWork.ApplicationRepo
+            var application = _applicationRepo
                 .FindWithNavProps(a => a.Id == model.Id && a.Approve == null
                                                         && a.Archive == false, _ => _.Receivers, _ => _.Activities)
                 .SingleOrDefault();
             if (user == null || application == null)
             {
-                return (false, "An Error Occurred");
+                return (false, "An Error Occurred", null);
             }
 
             if (model.DepartmentId == null || application.Receivers.Select(a => a.ReceiverId).Contains(model.Id))
-                return (false, "An Error Occured!");
+                return (false, "An Error Occured!", null);
             var recipient = Recipient(model.DepartmentId.Value);
             recipient.Forwarded = true;
             application.Receivers.Add(recipient);
             application.SendToHead = false;
 
-            var dept = _unitOfWork.DeptRepo.Get(model.DepartmentId.Value);
+            var dept = _deptRepository.Get(model.DepartmentId.Value);
             application.Activities.Add(
                 ActivityLog(user.Id, $"Forwarded the Application to {dept.Name}"));
             application.UpdatedAt = DateTime.Now;
@@ -608,11 +650,11 @@ namespace archivesystemWebUI.Services
                     $"Hi, {application.User.Name} The Hod Forwarded  Your <a href=\"" + callbackUrl +
                     $"\">Application</a> to {dept.Name}");
 
-                return (true, "");
+                return (true, "", application);
             }
             catch (Exception e)
             {
-                return (false, $"{e.Message} \r\n{e.InnerException}");
+                return (false, $"{e.Message} \r\n{e.InnerException}", null);
 
             }
 
@@ -623,7 +665,7 @@ namespace archivesystemWebUI.Services
         {
             
             var user = _userRepository.Find(u => u.UserId == UserId).SingleOrDefault();
-            var application = _unitOfWork.ApplicationRepo.FindWithNavProps(a => a.Id == id, _ => _.Receivers, _ => _.Activities).SingleOrDefault();
+            var application = _applicationRepo.FindWithNavProps(a => a.Id == id, _ => _.Receivers, _ => _.Activities).SingleOrDefault();
             if (application == null || user == null) return (false, "An Error Occured!");
             var appReceived = application.Receivers.SingleOrDefault(r => r.ReceiverId == user.DepartmentId);
             if (appReceived == null || appReceived.Received != null) return (false, "An Error Occured!");
@@ -643,7 +685,7 @@ namespace archivesystemWebUI.Services
         {
             var user = _userRepository.Find(u => u.UserId == UserId).SingleOrDefault();
             
-            var application = _unitOfWork.ApplicationRepo.FindWithNavProps(a => a.Id == id,
+            var application = _applicationRepo.FindWithNavProps(a => a.Id == id,
                 _ => _.User,
                 _ => _.Receivers,
                 _ => _.Receivers.Select(c => c.Receiver),

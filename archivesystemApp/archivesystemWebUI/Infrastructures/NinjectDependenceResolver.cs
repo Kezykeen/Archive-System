@@ -57,7 +57,9 @@ namespace archivesystemWebUI.Infrastructures
             kernel.Bind<IAccessLevelService>().To<AccessLevelService>();
             kernel.Bind<IUserAccessService>().To<UserAccessService>();
             kernel.Bind<IApplicationService>().To<ApplicationService>();
+            kernel.Bind<ITicketService>().To<TicketService>();
             kernel.Bind<IUserService>().To<UserService>();
+            kernel.Bind<IFileService>().To<FileService>();
             kernel.Bind<IFileRepo>().To<FileRepo>();
             kernel.Bind<IUpsertFile>().To<UpsertFile>();
             kernel.Bind<IFolderService>().To<FolderService>();

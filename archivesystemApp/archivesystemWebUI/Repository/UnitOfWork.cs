@@ -7,22 +7,16 @@ namespace archivesystemWebUI.Repository
     public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationDbContext _context;
-        public IFileRepo FileRepo { get; }
-        public ITicketRepo TicketRepo { get; }
-        public IApplicationRepo ApplicationRepo { get; }
-
 
         public UnitOfWork(
             ApplicationDbContext context,
-            IFileRepo fileRepo,
-            ITicketRepo ticketRepo,
-            IApplicationRepo applicationRepo   
-            )
+            ITicketRepo ticketRepo
+        )
         {
+          
             _context = context;
-            FileRepo = fileRepo;
-            TicketRepo = ticketRepo;
-            ApplicationRepo = applicationRepo;
+          
+
         }
 
 

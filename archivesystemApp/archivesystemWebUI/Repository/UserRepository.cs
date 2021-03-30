@@ -30,10 +30,8 @@ namespace archivesystemWebUI.Repository
             return employee;
         }
 
-       
+        
 
-
-       
 
         public AppUser GetUserByUserId(string id)
         {

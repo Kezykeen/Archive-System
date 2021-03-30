@@ -19,16 +19,24 @@ namespace archivesystemWebUI.Controllers
     [Authorize]
     public class ApplicationsController : Controller
     {
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IDepartmentService _departmentService;
+        private readonly IApplicationService _applicationService;
+        private readonly IUserService _userService;
         private readonly IUpsertFile _upsertFile;
         private readonly IRoleService _roleService;
         private readonly IEmailSender _emailSender;
 
-        public ApplicationsController(IUnitOfWork unitOfWork, IDepartmentService departmentService, IUpsertFile upsertFile, IRoleService roleService, IEmailSender emailSender)
+        public ApplicationsController(
+             IDepartmentService departmentService,
+             IApplicationService applicationService,
+             IUserService userService,
+             IUpsertFile upsertFile, 
+             IRoleService roleService,
+             IEmailSender emailSender)
         {
-            _unitOfWork = unitOfWork;
             _departmentService = departmentService;
+            _applicationService = applicationService;
+            _userService = userService;
             _upsertFile = upsertFile;
             _roleService = roleService;
             _emailSender = emailSender;
@@ -41,11 +49,13 @@ namespace archivesystemWebUI.Controllers
             return View();
         }
 
+
         [Authorize(Roles = "Secretary")]
         public ActionResult Incoming()
         {
             return View();
         }
+
 
         [Authorize(Roles = "Secretary")]
         public ActionResult Received()
@@ -53,11 +63,13 @@ namespace archivesystemWebUI.Controllers
             return View();
         }
 
+
         [Authorize(Roles = "Secretary")]
         public ActionResult Rejected()
         {
             return View();
         }
+
 
         [Authorize(Roles = "Secretary")]
         public ActionResult IncomingForwarded()
@@ -65,11 +77,13 @@ namespace archivesystemWebUI.Controllers
             return View();
         }
 
+
         [Authorize(Roles = "Secretary")]
         public ActionResult RejectedForwarded()
         {
             return View();
         }
+
 
         [Authorize(Roles = "Secretary")]
         public ActionResult ReceivedForwarded()
@@ -77,11 +91,13 @@ namespace archivesystemWebUI.Controllers
             return View();
         }
 
+
         [Authorize(Roles = "Secretary")]
         public ActionResult Archived()
         {
             return View();
         }
+
 
         [Authorize(Roles = "DeptOfficer")]
         public ActionResult ToSign()
@@ -89,17 +105,20 @@ namespace archivesystemWebUI.Controllers
             return View();
         }
 
+
         [Authorize(Roles = "DeptOfficer")]
         public ActionResult Signed()
         {
             return View();
         }
 
+
         [Authorize(Roles = "DeptOfficer")]
         public ActionResult Declined()
         {
             return View();
         }
+
 
         [Authorize(Roles = "HOD")]
         public ActionResult ToApprove()
@@ -114,11 +133,13 @@ namespace archivesystemWebUI.Controllers
             return View();
         }
 
+
         [Authorize(Roles = "HOD")]
         public ActionResult Disapproved()
         {
             return View();
         }
+
 
         [Authorize(Roles = "HOD")]
         public ActionResult Forwarded()
@@ -133,27 +154,15 @@ namespace archivesystemWebUI.Controllers
             var currentUserId = User.Identity.GetUserId();
 
 
-            var user = _unitOfWork.UserRepo.Find(u => u.UserId == currentUserId).SingleOrDefault();
+            var user = _userService.GetById(currentUserId).result;
             var model = new ApplicationVm
             {
                 UserId = user?.Id ?? 0
             };
-            if (User.IsInRole("Student"))
-            {
-                model.ApplicationTypes = _unitOfWork.TicketRepo.Find(t => t.Designation == Designation.Student);
-                model.DepartmentId = user?.DepartmentId ?? 0;
-            }else if (User.IsInRole("Alumni"))
-            {
-                model.ApplicationTypes = _unitOfWork.TicketRepo.Find(t => t.Designation == Designation.Alumni);
-                model.Departments = _unitOfWork.DeptRepo.GetAll();
 
-            }else if (User.IsInRole("Staff"))
-            {
-                model.ApplicationTypes = _unitOfWork.TicketRepo.Find(t => t.Designation == Designation.Staff);
-                model.Departments = _unitOfWork.DeptRepo.GetAll();
-            }
+           RetainFormState(model,user);
 
-            return PartialView(model);
+           return PartialView(model);
         }
 
         [HttpPost]
@@ -161,98 +170,35 @@ namespace archivesystemWebUI.Controllers
         public ActionResult Save(ApplicationVm model, HttpPostedFileBase fileBase)
         {
             var currentUserId = User.Identity.GetUserId();
-            var user = _unitOfWork.UserRepo.Find(u => u.UserId == currentUserId).SingleOrDefault();
+            var user = _userService.GetById(currentUserId).result;
 
             if (!ModelState.IsValid)
             {
+                RetainFormState(model, user);
 
-                if (User.IsInRole("Student"))
-                {
-                    model.ApplicationTypes = _unitOfWork.TicketRepo.Find(t => t.Designation == Designation.Student);
-                    model.DepartmentId = user?.DepartmentId ?? 0;
-                }
-                else if (User.IsInRole("Alumni"))
-                {
-                    model.ApplicationTypes = _unitOfWork.TicketRepo.Find(t => t.Designation == Designation.Alumni);
-                    model.Departments = _unitOfWork.DeptRepo.GetAll();
-
-                }
-                else if (User.IsInRole("Staff"))
-                {
-                    _unitOfWork.TicketRepo.Find(t => t.Designation == Designation.Staff);
-                    model.Departments = _unitOfWork.DeptRepo.GetAll();
-                }
                 return PartialView("New", model);
             }
 
-            if (fileBase != null)
+            var save = _applicationService.Create(model, fileBase, user);
+            if (save)
             {
-              model.Attachment = _upsertFile.Save(model.Attachment, fileBase);
+                return Json(new { saved = true });
             }
-          
-            var application = Mapper.Map<Application>(model);
 
-            application.Title =
-                $"{user?.TagId}_{_unitOfWork.TicketRepo.Get(model.ApplicationTypeId).Acronym}_{DateTime.Now:yy/MM/dd}";
-            application.Receivers.Add(
+            ModelState.AddModelError("", "An Error Occured!");
+            RetainFormState(model, user);
 
-                new ApplicationReceiver
-                {
-                    ReceiverId = model.DepartmentId,
-                    TimeSent = DateTime.Now
-                }
-            );
-            application.Activities.Add(
-                new Activity
-                {
-                    UserId = user.Id,
-                    Action = "Submitted An Application",
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now
-                }
-                );
-            _unitOfWork.ApplicationRepo.Add(application);
-            _unitOfWork.Save();
-
-            return Json(new { saved = true });
-
+            return PartialView("New", model);
         }
 
         [Authorize(Roles = "Secretary")]
         public async  Task<ActionResult> Accept(int id)
         {
-            var currentUserId = User.Identity.GetUserId();
-            var user = _unitOfWork.UserRepo.Find(u => u.UserId == currentUserId).SingleOrDefault();
-            var application = _unitOfWork.ApplicationRepo.FindWithNavProps(a => a.Id == id, _=>_.User,  _=> _.Receivers, _=> _.Activities).SingleOrDefault();
-            if (application == null) return HttpNotFound();
-            var appReceived = application.Receivers.SingleOrDefault(r => r.ReceiverId == user?.DepartmentId);
-            if (appReceived == null || appReceived.Received != null) return RedirectToAction("Details", new {id});
-            appReceived.Received = true;
-            appReceived.TimeReceived = DateTime.Now;
-            application.Status = ApplicationStatus.Opened;
-
-            application.Activities.Add(
-                new Activity
-                {
-                    UserId = user.Id,
-                    Action = "Accepted The Application",
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now
-                }
-            ); 
-            application.UpdatedAt = DateTime.Now;
-            try
-            {
-                await _unitOfWork.SaveAsync();
-                await _emailSender.SendEmailAsync(application.User.Email, $"RE: {application.Title}",
-                    $"Hi, {application.User.Name} has been Accepted by {user.Name}");
-            }
-            catch (Exception e)
-            {
-                TempData["Msg"] = $"{e.Message} \r\n{e.InnerException}";
+            var (accept, msg) = await _applicationService.Accept(id);
+            if (accept) return RedirectToAction("Details", new { id });
             
-            }
-          
+            TempData["Msg"] = msg;
+
             return  RedirectToAction("Details", new{id});
         }
 
@@ -311,43 +257,15 @@ namespace archivesystemWebUI.Controllers
                 ViewBag.Action = "Reject";
                 return PartialView("Sign",model);
             }
-            var currentUserId = User.Identity.GetUserId();
-            var user = _unitOfWork.UserRepo.Find(u => u.UserId == currentUserId).SingleOrDefault();
-            var application = _unitOfWork.ApplicationRepo.FindWithNavProps(a => a.Id == model.AppId, _ => _.Receivers, _=> _.Activities).SingleOrDefault();
-            if (application == null) return HttpNotFound();
-            var appReceived = application.Receivers.SingleOrDefault(r => r.ReceiverId == user?.DepartmentId);
-            if (appReceived == null || appReceived.Received != null) return RedirectToAction("Details", new { id =model.AppId});
-            appReceived.Received = false;
-            appReceived.TimeRejected = DateTime.Now;
-            appReceived.RejectionMsg = model.Remark;
-            application.Status = ApplicationStatus.Rejected;
-            application.Activities.Add(
-                new Activity
-                {
-                    UserId = user.Id,
-                    Action = $@"Rejected The Application.
-                                   Remark:{appReceived.RejectionMsg}",
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now
-                }
-            );
-            application.UpdatedAt = DateTime.Now;
-            try
-            {
-                await _unitOfWork.SaveAsync();
-                await _emailSender.SendEmailAsync(application.User.Email, $"RE: {application.Title}",
-                    $"Hi, {application.User.Name} was rejected  by {user.Name}. Reason: {appReceived.RejectionMsg}");
-                return Json(new { done = true });
-            }
-            catch (Exception e)
-            {
-                ModelState.AddModelError("", $"{e.Message} \r\n{e.InnerException}");
-                ViewBag.Action = "Reject";
-                return PartialView("Sign", model);
-            }
-           
 
+            var (reject, msg) = await _applicationService.Reject(model);
 
+            if (reject) return Json(new { done = true });
+            
+            ModelState.AddModelError("", msg);
+            ViewBag.Action = "Reject";
+            return PartialView("Sign", model);
+            
         }
 
 
@@ -361,95 +279,12 @@ namespace archivesystemWebUI.Controllers
                 ViewBag.Action = "Sign";
                 return PartialView(model);
             }
-            
-            var currentUserId = User.Identity.GetUserId();
-            var user = _unitOfWork.UserRepo.Find(u => u.UserId == currentUserId).SingleOrDefault();
-            var application = _unitOfWork.ApplicationRepo
-                .FindWithNavProps(a => a.Id == model.AppId,
-                    _ => _.Approvals, _ => _.Signers, _=> _.Activities)
-                .SingleOrDefault();
-            if (application != null)
-            {
-                var callbackUrl = Url.Action("Details", "Applications", new { id = application.Id });
-                var appToSign = application?.Approvals.SingleOrDefault(a => a.UserId == user?.Id);
-                if (appToSign!=null )
-                {
-                    appToSign.Remark = model.Remark;
-                    appToSign.Approve = true;
-                    appToSign.Date = DateTime.Now;
 
-                    application.Activities.Add(
-                        new Activity
-                        {
-                            UserId = user.Id,
-                            Action = "Signed the Application",
-                            CreatedAt = DateTime.Now,
-                            UpdatedAt = DateTime.Now
-                        }
-                    );
-                 
-                    var signers = application.Signers.ToList();
-                    if (signers.Last().UserId == user?.Id)
-                    {
-                        application.SendToHead = true;
-                        application.Activities.Add(
-                            new Activity
-                            {
-                                UserId = user.Id,
-                                Action = "Sent Application To HOD",
-                                CreatedAt = DateTime.Now,
-                                UpdatedAt = DateTime.Now
-                            }
-                        );
-                   
-                        application.UpdatedAt = DateTime.Now;
-                        try
-                        {
-                            await _unitOfWork.SaveAsync();
-                            await _emailSender.SendEmailAsync(application.User.Email, $"RE: {application.Title}",
-                                $"Hi, {application.User.Name} Your  <a href=\"" + callbackUrl + "\">Application</a> is With the HOD for Approval");
-                            return Json(new { done = true });
 
-                        }
-                        catch (Exception e)
-                        {
-                            ModelState.AddModelError("", $"{e.Message} \r\n{e.InnerException}");
-                            ViewBag.Action = "Sign";
-                            return PartialView("Sign", model);
-                        }
-                      
-                    }
-                    signers = application.Signers.Where(s => s.UserId != user?.Id).OrderBy(s => s.InviteTime).ToList();
-                    application.Approvals.Add(
-                        new Approval
-                        {
-                            ApplicationId = model.AppId,
-                            InviteDate = DateTime.Now,
-                            UserId = signers.First().UserId
-                        });
-                    application.UpdatedAt = DateTime.Now;
-                    await _unitOfWork.SaveAsync();
-                    var nextSignerId = application.Approvals.Last().UserId;
-                    var nextSigner = _unitOfWork.UserRepo.Get(nextSignerId);
-                    try
-                    {
-                        await _emailSender.SendEmailAsync(application.User.Email, $"RE: {application.Title}",
-                            $"Hi, {application.User.Name} {user.Name} Signed Your <a href=\"" + callbackUrl + "\">Application</a>");
-                        await _emailSender.SendEmailAsync(nextSigner.Email, $"RE: {application.Title}",
-                            $"Hi {nextSigner.Name}, You have Been Invited to Sign This  <a href=\"" + callbackUrl + "\">Application</a>");
-                        return Json(new { done = true });
-                    }
-                    catch (Exception e)
-                    {
-                        ModelState.AddModelError("", $"{e.Message} \r\n{e.InnerException}");
-                        ViewBag.Action = "Sign";
-                        return PartialView("Sign", model);
-                    }
-                   
-                   
-                }
-            }
+            var (sign, msg) = await _applicationService.Sign(model);
+            if (sign) return Json(new { done = true });
 
+            ModelState.AddModelError("", msg);
             ViewBag.Action = "Sign";
             return PartialView(model);
         }
@@ -467,49 +302,14 @@ namespace archivesystemWebUI.Controllers
                 return PartialView("Sign",model);
             }
 
-            var currentUserId = User.Identity.GetUserId();
-            var user = _unitOfWork.UserRepo.Find(u => u.UserId == currentUserId).SingleOrDefault();
-            var application = _unitOfWork.ApplicationRepo
-                .FindWithNavProps(a => a.Id == model.AppId,
-                    _ => _.Approvals, _ => _.Activities)
-                .SingleOrDefault();
-            var appToSign = application?.Approvals.SingleOrDefault(a => a.UserId == user?.Id);
-            if (appToSign != null)
-            {
-                appToSign.Remark = model.Remark;
-                appToSign.Approve = false;
-                appToSign.Date = DateTime.Now;
-                application.Activities.Add(
-                    new Activity
-                    {
-                        UserId = user.Id,
-                        Action = $"Declined the Application.\r\nRemark:{model.Remark}",
-                        CreatedAt = DateTime.Now,
-                        UpdatedAt = DateTime.Now
-                    }
-                );
-                var callbackUrl = Url.Action("Details", "Applications", new { id = application.Id });
-                application.UpdatedAt = DateTime.Now;
+            var (decline, msg) = await _applicationService.Decline(model);
 
-                try
-                {
-                    await _unitOfWork.SaveAsync();
-                    await _emailSender.SendEmailAsync(application.User.Email, $"RE: {application.Title}",
-                        $"Hi, {application.User.Name} {user.Name} Declined Your <a href=\"" + callbackUrl + $"\">Application</a>.\r\n Reason:{model.Remark}");
+            if (decline) return Json(new { done = true });
 
-                    return Json(new { done = true });
-                }
-                catch (Exception e)
-                {
-                  
-                    ModelState.AddModelError("", $"{e.Message} \r\n{e.InnerException}");
-                    ViewBag.Action = "Decline";
-                    return PartialView("Sign", model);
-                }
-              
-            }
+            ModelState.AddModelError("", msg);
             ViewBag.Action = "Decline";
-            return PartialView("Sign",model);
+            return PartialView("Sign", model);
+           
         }
 
 
@@ -523,56 +323,18 @@ namespace archivesystemWebUI.Controllers
                 ViewBag.Action = "SignApprove";
                 return PartialView("Sign", model);
             }
-            
-            var currentUserId = User.Identity.GetUserId();
-            var user = _unitOfWork.UserRepo.Find(u => u.UserId == currentUserId).SingleOrDefault();
-            var application = _unitOfWork.ApplicationRepo
-                .FindWithNavProps(a => a.Id == model.AppId && a.SendToHead,
-                    _ => _.Approvals, _=> _.Activities)
-                .SingleOrDefault();
-            if (application != null)
-            {
-                var callbackUrl = Url.Action("Details", "Applications", new { id = application.Id });
-                application.Approvals.Add(new Approval
-                {
-                    ApplicationId = application.Id,
-                    InviteDate = DateTime.Now,
-                    Approve = true,
-                    Date = DateTime.Now,
-                    UserId = user.Id,
-                    Remark = model.Remark
-                });
-                application.Approve = true;
-                application.Activities.Add(
-                    new Activity
-                    {
-                        UserId = user.Id,
-                        Action = "Approved the Application",
-                        CreatedAt = DateTime.Now,
-                        UpdatedAt = DateTime.Now
-                    }
-                );
-                application.UpdatedAt = DateTime.Now;
 
-                try
-                {
-                    await _unitOfWork.SaveAsync();
-                    await _emailSender.SendEmailAsync(application.User.Email, $"Approved: {application.Title}",
-                        $"Hi, {application.User.Name} The Hod Signed and Approved Your <a href=\"" + callbackUrl + "\">Application</a>");
-                    return Json(new { done = true });
-                }
-                catch (Exception e)
-                {
-                    ModelState.AddModelError("", $"{e.Message} \r\n{e.InnerException}");
-                    ViewBag.Action = "SignApprove";
-                    return PartialView("Sign", model);
-                }
-                
-            }
+            var (approve, msg) = await _applicationService.SignApprove(model);
 
+            if (approve) return Json(new { done = true });
+
+            ModelState.AddModelError("", msg);
             ViewBag.Action = "SignApprove";
             return PartialView("Sign", model);
+
         }
+
+        
 
         [Authorize(Roles = "HOD")]
         [HttpPost]
@@ -585,53 +347,14 @@ namespace archivesystemWebUI.Controllers
                 return PartialView("Sign", model);
             }
 
-            var currentUserId = User.Identity.GetUserId();
-            var user = _unitOfWork.UserRepo.Find(u => u.UserId == currentUserId).SingleOrDefault();
-            var application = _unitOfWork.ApplicationRepo
-                .FindWithNavProps(a => a.Id == model.AppId && a.SendToHead,
-                    _ => _.Approvals, _=> _.Activities)
-                .SingleOrDefault();
-            if (application != null)
-            {
-                application.Approvals.Add(new Approval
-                {
-                    ApplicationId = application.Id,
-                    InviteDate = DateTime.Now,
-                    Approve = true,
-                    Date = DateTime.Now,
-                    UserId = user.Id,
-                    Remark = model.Remark,
-                });
-                application.Activities.Add(
-                    new Activity
-                    {
-                        UserId = user.Id,
-                        Action = "Signed the Application",
-                        CreatedAt = DateTime.Now,
-                        UpdatedAt = DateTime.Now
-                    }
-                );
-                application.UpdatedAt = DateTime.Now;
-                var callbackUrl = Url.Action("Details", "Applications", new { id = application.Id });
-                try
-                {
-                    await _unitOfWork.SaveAsync();
-                    await _emailSender.SendEmailAsync(application.User.Email, $"RE: {application.Title}",
-                        $"Hi, {application.User.Name} The Hod Signed  Your <a href=\"" + callbackUrl + "\">Application</a> and will be Forwarded to another Department");
-                    return Json(new { done = true });
-                }
-                catch (Exception e)
-                {
-                    ModelState.AddModelError("", $"{e.Message} \r\n{e.InnerException}");
-                    ViewBag.Action = "SignForward";
-                    return PartialView("Sign", model);
-                }
-                
+            var (forward, msg) = await _applicationService.SignForward(model);
 
-            }
+            if (forward) return Json(new { done = true });
 
+            ModelState.AddModelError("", msg);
             ViewBag.Action = "SignForward";
             return PartialView("Sign", model);
+           
         }
 
 
@@ -646,58 +369,18 @@ namespace archivesystemWebUI.Controllers
                 return PartialView("Sign", model);
             }
 
-            var currentUserId = User.Identity.GetUserId();
-            var user = _unitOfWork.UserRepo.Find(u => u.UserId == currentUserId).SingleOrDefault();
-            var application = _unitOfWork.ApplicationRepo
-                .FindWithNavProps(a => a.Id == model.AppId,
-                    _ => _.Approvals, _ => _.Activities)
-                .SingleOrDefault();
-            if (application != null)
-            {
-                application.Approvals.Add(new Approval
-                {
-                    ApplicationId = application.Id,
-                    InviteDate = DateTime.Now,
-                    Approve = false,
-                    Date = DateTime.Now,
-                    UserId = user.Id,
-                    Remark = model.Remark,
-                });
-                application.Approve = false;
-                application.Activities.Add(
-                    new Activity
-                    {
-                        UserId = user.Id,
-                        Action = $"Disapproved the Application.\r\nRemark:{model.Remark}",
-                        CreatedAt = DateTime.Now,
-                        UpdatedAt = DateTime.Now
-                    }
-                );
-                application.UpdatedAt = DateTime.Now;
-                var callbackUrl = Url.Action("Details", "Applications", new { id = application.Id });
-                try
-                {
-                    await _unitOfWork.SaveAsync();
-                    await _emailSender.SendEmailAsync(application.User.Email, $"Disapproved: {application.Title}",
-                        $"Hi, {application.User.Name} The Hod Disapproved  Your <a href=\"" + callbackUrl + $"\">Application</a>. /r/n Reason: {model.Remark} ");
-                    return Json(new { done = true });
-                }
-                catch (Exception e)
-                {
-                    ModelState.AddModelError("", $"{e.Message} \r\n{e.InnerException}");
-                    ViewBag.Action = "Disapprove";
-                    return PartialView("Sign", model);
-                }
-               
-            }
+            var (disapprove, msg) = await _applicationService.Disapprove(model);
 
+            if(disapprove) return Json(new { done = true });
+
+            ModelState.AddModelError("", msg);
             ViewBag.Action = "Disapprove";
             return PartialView("Sign", model);
         }
         public ActionResult AssignUsers(int appId)
         {
             var currentUserId = User.Identity.GetUserId();
-            var user = _unitOfWork.UserRepo.Find(u => u.UserId == currentUserId).SingleOrDefault();
+            var user = _userService.GetById(currentUserId).result;
             if (user==null)
             {
                 return HttpNotFound();
@@ -717,38 +400,23 @@ namespace archivesystemWebUI.Controllers
             });
         }
 
-        [Authorize(Roles = "Secretary, Secretary, HOD, DeptOfficer,Alumni,Staff")]
+
+        [Authorize(Roles = "Admin, Student, Secretary, Secretary, HOD, DeptOfficer,Alumni,Staff")]
         public ActionResult Details(int id)
         {
             var currentUserId = User.Identity.GetUserId();
-            var user = _unitOfWork.UserRepo.Find(u => u.UserId == currentUserId).SingleOrDefault();
-            var application = _unitOfWork.ApplicationRepo.FindWithNavProps(a => a.Id == id,
-                _ => _.User,
-                _=> _.Receivers,
-                _=> _.Receivers.Select(c => c.Receiver),
-                _=> _.Activities,
-                _ => _.Activities.Select(a => a.User),
-                _ => _.Signers,
-                _ => _.Signers.Select(a => a.User),   
-                _ => _.ApplicationType,
-                _ => _.Attachment,
-                _ => _.Approvals,
-                _ => _.Approvals.Select(a => a.User)
-                ).SingleOrDefault();
-           
-            if (application == null)
+            var user = _userService.GetById(currentUserId);
+            var application =  _applicationService.GetApplication(id);
+            if (!application.found || !user.found)
             {
                 return HttpNotFound();
             }
-            var secretary = application.Receivers.Select(r => r.ReceiverId).Contains(user.DepartmentId) && User.IsInRole("Secretary");
-            var hod = application.SendToHead && application.Receivers.Select(a => a.ReceiverId).Contains(user.DepartmentId) &&
-                      User.IsInRole("HOD");
-            var deptOfficer = application.Approvals.Select(a => a.UserId).Contains(user.Id) &&
-                              User.IsInRole("DeptOfficer") && application.Archive == false;
-            var appOwner = application.UserId == user.Id && application.Archive == false;
+
+            var (secretary, hod, deptOfficer, appOwner) = _applicationService.DoCheck(application.result, user.result);
+
             if (!secretary && !(deptOfficer | hod) && !appOwner) return HttpNotFound();
-            if (application.User.UserId == User.Identity.GetUserId() &&
-                application.Status == ApplicationStatus.Rejected)
+            if (application.result.User.UserId == User.Identity.GetUserId() &&
+                application.result.Status == ApplicationStatus.Rejected)
             {
                 ViewBag.AddNewVersion = true;
             }
@@ -756,31 +424,27 @@ namespace archivesystemWebUI.Controllers
             if (User.IsInRole("Secretary"))
             {
                 ViewBag.Secretary = true;
-                if (application.Receivers.FirstOrDefault()?.Received == true 
-                    && secretary && application.Archive == false && application.Approve == null)
+                if (application.result.Receivers.FirstOrDefault()?.Received == true 
+                    && secretary && application.result.Archive == false && application.result.Approve == null)
                 {
                     ViewBag.AssignUser = true;
                 }
             }
 
-            if (deptOfficer && application.Approve == null)
+            if (deptOfficer && application.result.Approve == null)
             {
                 ViewBag.DeptOfficer = true;
                 
             }
 
-            if (!User.IsInRole("HOD")) return View(application);
-            
-                ViewBag.HOD = true;
-                if (application.Approvals.Select(a => a.UserId).Contains(user.Id) && application.Approve == null)
-                {
-                    ViewBag.Forward = true;
-                }
-            
+            if (!User.IsInRole("HOD")) return View(application.result);
+            ViewBag.HOD = true;
+            if (application.result.Approvals.Select(a => a.UserId).Contains(user.result.Id) && application.result.Approve == null)
+            {
+                ViewBag.Forward = true;
+            }
 
-
-
-            return View(application);
+            return View(application.result);
 
         }
 
@@ -793,82 +457,15 @@ namespace archivesystemWebUI.Controllers
                 return PartialView("AssignUsers", model);
             }
 
-            var currentUserId = User.Identity.GetUserId();
-            var user = _unitOfWork.UserRepo.Find(u => u.UserId == currentUserId).SingleOrDefault();
-            var assigneeIds =  model.UserIds.Select(int.Parse).ToList();
-            var application = _unitOfWork.ApplicationRepo
-                .FindWithNavProps(a => a.Id == model.Id && a.Approve == null && a.Archive==false, 
-                    _ => _.Signers, _ => _.Approvals, _=>_.Receivers, _=>_.Activities).SingleOrDefault();
-            
-            if (application == null)
+            var (assign, msg, application) = await _applicationService.AssignUsers(model);
+
+            if (assign)
             {
-                ModelState.AddModelError("", @"Invalid Operation!");
-                return PartialView("AssignUsers", model);
+                Response.StatusCode = 201;
+                return PartialView("_Assignees", application);
             }
-
-            foreach (var id in assigneeIds)
-            {
-                if (application.Signers.Select(a => a.UserId).Contains(id))
-                {
-                    var signer =  _unitOfWork.UserRepo.Get(id);
-                    ModelState.AddModelError("", $"{signer.Name} Already Exist");
-                    return PartialView("AssignUsers", model);
-                }
-
-                application.Signers.Add(new Signer
-                {
-                    UserId = id,
-                    InviteTime = DateTime.Now
-
-                });
-            }
-           
-            var receivedApp = application.Receivers.SingleOrDefault(r => r.ReceiverId == user?.DepartmentId);
-
-            if (receivedApp!=null && !receivedApp.Forwarded)
-            {
-                application.Approvals.Add(new Approval
-                {
-                    ApplicationId = model.Id,
-                    InviteDate = DateTime.Now,
-                    UserId = assigneeIds.First()
-                });
-                application.Status = ApplicationStatus.InProgress;
-                application.UpdatedAt = DateTime.Now;
-                var nextSignerId = application.Approvals.First().UserId;
-                var nextSigner = _unitOfWork.UserRepo.Get(nextSignerId);
-                application.Activities.Add(
-                    new Activity
-                    {
-                        UserId = user.Id,
-                        Action = $"Assigned the Application to {nextSigner.Name}",
-                        CreatedAt = DateTime.Now,
-                        UpdatedAt = DateTime.Now
-                    }
-                );
-                application.UpdatedAt = DateTime.Now;
-                var callbackUrl = Url.Action("Details", "Applications", new { id = application.Id });
-
-                try
-                {
-                    await _unitOfWork.SaveAsync();
-                    await _emailSender.SendEmailAsync(nextSigner.Email, $"RE: {application.Title}",
-                        $"Hi {nextSigner.Name}, You have Been Invited to Sign This  <a href=\"" + callbackUrl + "\">Application</a>");
-                    await _emailSender.SendEmailAsync(application.User.Email, $"RE: {application.Title}",
-                        $"Hi, {application.User.Name} Your <a href=\"" + callbackUrl + $"\">Application</a> has been Assigned to {nextSigner.Email}");
-                    Response.StatusCode = 201;
-                    return PartialView("_Assignees", application);
-                }
-                catch (Exception e)
-                {
-                    ModelState.AddModelError("", $"{e.Message} \r\n{e.InnerException}");
-                    return PartialView("AssignUsers", model);
-                }
-
-            }
-            ModelState.AddModelError("", "Invalid Operation!");
+            ModelState.AddModelError("", msg);
             return PartialView("AssignUsers", model);
-
         }
 
         [HttpPost]
@@ -879,115 +476,38 @@ namespace archivesystemWebUI.Controllers
             {
                 return PartialView("SendToDepts", model);
             }
-            var currentUserId = User.Identity.GetUserId();
-            var user = _unitOfWork.UserRepo.Find(u => u.UserId == currentUserId).SingleOrDefault();
-            var application = _unitOfWork.ApplicationRepo
-                .FindWithNavProps(a => a.Id == model.Id && a.Approve == null
-                                                        && a.Archive == false,  _ => _.Receivers, _=> _.Activities).SingleOrDefault();
-            if (application == null)
-            {
-                ModelState.AddModelError("", "Invalid Operation");
-                return PartialView("SendToDepts", model);
-            }
 
-            if (model.DepartmentId != null && !application.Receivers.Select( a => a.ReceiverId).Contains(model.Id))
-                application.Receivers.Add(new ApplicationReceiver
-                {
-                    ReceiverId = model.DepartmentId.Value,
-                    TimeSent = DateTime.Now,
-                    Forwarded = true
-                });
-            application.SendToHead = false;
-            application.UpdatedAt = DateTime.Now;
-            _unitOfWork.Save();
-            var dept = _unitOfWork.DeptRepo.Get(model.DepartmentId.Value);
-            application.Activities.Add(
-                new Activity
-                {
-                    UserId = user.Id,
-                    Action = $"Forwarded the Application to {dept.Name}",
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now
-                }
-            );
-            application.UpdatedAt = DateTime.Now;
-            var callbackUrl = Url.Action("Details", "Applications", new { id = application.Id });
-            try
+            var (assign, msg, application) = await _applicationService.AssignToDept(model);
+
+            if (assign)
             {
-                await _unitOfWork.SaveAsync();
-                await _emailSender.SendEmailAsync(application.User.Email, $"RE: {application.Title}",
-                    $"Hi, {application.User.Name} The Hod Forwarded  Your <a href=\"" + callbackUrl + $"\">Application</a> to {dept.Name}");
                 Response.StatusCode = 201;
                 return PartialView("_FwdDepts", application.Receivers);
             }
-            catch (Exception e)
-            {
-                ModelState.AddModelError("", $"{e.Message} \r\n{e.InnerException}");
-                return PartialView("SendToDepts", model);
-              
-            }
+
+            ModelState.AddModelError("", msg);
+            return PartialView("SendToDepts", model);
+
            
         }
 
-        public async Task<ActionResult>  Archive(int id)
+        public ActionResult  Archive(int id)
         {
-            var currentUserId = User.Identity.GetUserId();
-            var user = _unitOfWork.UserRepo.Find(u => u.UserId == currentUserId).SingleOrDefault();
-            var application = _unitOfWork.ApplicationRepo.FindWithNavProps(a => a.Id == id, _ => _.Receivers, _ => _.Activities).SingleOrDefault();
-            if (application == null) return HttpNotFound();
-            var appReceived = application.Receivers.SingleOrDefault(r => r.ReceiverId == user?.DepartmentId);
-            if (appReceived == null || appReceived.Received != null) return RedirectToAction("Details", new { id });
-            if (application.Status == ApplicationStatus.Closed)
-            {
-                application.Archive = true;
-                application.Activities.Add(
-                    new Activity
-                    {
-                        UserId = user.Id,
-                        Action = "Archived the Application",
-                        CreatedAt = DateTime.Now,
-                        UpdatedAt = DateTime.Now
-                    }
-                );
-                application.UpdatedAt = DateTime.Now;
-                await _unitOfWork.SaveAsync();
-                return RedirectToAction("Archived");
-            }
-           
-            TempData["Msg"] = "This Document Is not Closed!, Kindly Set it As Close!";
+
+            var (archive, msg) = _applicationService.Archive(id);
+
+            if (archive) return RedirectToAction("Archived");
+
+            TempData["Msg"] = msg;
 
             return RedirectToAction("Details", new { id });
+
         }
 
         public FileContentResult GetFile(int id, string fileName)
         {
-            var currentUserId = User.Identity.GetUserId();
-            var user = _unitOfWork.UserRepo.Find(u => u.UserId == currentUserId).SingleOrDefault();
-            if (user == null)
-            {
-                return null;
-            }
-            var application = _unitOfWork.ApplicationRepo.FindWithNavProps(a => a.Id == id,
-                _ => _.User,
-                _ => _.Receivers,
-                _ => _.Receivers.Select(c => c.Receiver),
-                _ => _.Attachment,
-                _ => _.Approvals,
-                _ => _.Approvals.Select(a => a.User)
-            ).SingleOrDefault();
-            if (application == null)
-            {
-                return null;
-            }
-            var secretary = application.Receivers.Select(r => r.ReceiverId).Contains(user.DepartmentId) && User.IsInRole("Secretary");
-            var hod = application.SendToHead && application.Receivers.Select(a => a.ReceiverId).Contains(user.DepartmentId) &&
-                      User.IsInRole("HOD");
-            var deptOfficer = application.Approvals.Select(a => a.UserId).Contains(user.Id) &&
-                              User.IsInRole("DeptOfficer") && application.Archive == false;
-            var fileOwner = application.UserId == user.Id && application.Archive == false;
-
-            if (!secretary && !hod && !deptOfficer && !fileOwner) return null;
-            var file = application.Attachment;
+            
+            var file = _applicationService.GetFile(id, fileName);
             if (file == null)
             {
                 return null;
@@ -995,6 +515,26 @@ namespace archivesystemWebUI.Controllers
             Response.AddHeader("Content-Disposition", "inline; filename=" + fileName);
             return File(file.Content, file.ContentType);
 
+        }
+
+        private void RetainFormState(ApplicationVm model, AppUser user)
+        {
+            if (User.IsInRole("Student"))
+            {
+                model.ApplicationTypes = _applicationService.GetApplicationTypes(Designation.Student);
+                model.DepartmentId = user?.DepartmentId ?? 0;
+            }
+            else if (User.IsInRole("Alumni"))
+            {
+                model.ApplicationTypes = _applicationService.GetApplicationTypes(Designation.Alumni);
+                model.Departments = _departmentService.GetAllDepartmentToList();
+
+            }
+            else if (User.IsInRole("Staff"))
+            {
+                model.ApplicationTypes = _applicationService.GetApplicationTypes(Designation.Staff);
+                model.Departments = _departmentService.GetAllDepartmentToList();
+            }
         }
 
     }

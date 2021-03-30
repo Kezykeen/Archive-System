@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using archivesystemDomain.Entities;
 using archivesystemDomain.Services;
@@ -17,6 +18,7 @@ namespace archivesystemWebUI.Interfaces
         void UpdateDepartmentFolder(Folder folder);
         Task<ServiceResult> DeleteDepartment(int id);
         DepartmentUsersViewModel GetAllUsersInDepartment(int id);
+        IEnumerable GetDepartments(int id, string searchTerm = null);
         Task SaveChanges();
         bool DepartmentNameCheck(string name, int id);
     }
