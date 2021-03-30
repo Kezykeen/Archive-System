@@ -43,43 +43,65 @@ namespace archivesystemWebUI.Controllers
             return Json(new {data = viewModel}, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult GetDepartmentPartialView(int id)
+        public ActionResult GetEditDepartmentPartialView(int id)
         {
             var model = _departmentService.GetDepartmentForPartialView(id);
             var viewModel = Mapper.Map<DepartmentViewModel>(model);
 
             viewModel.Faculties = _departmentService.GetAllFaculties();
 
-            return PartialView("_AddOrEditDepartment", viewModel);
+            return PartialView("_EditDepartment", viewModel);
+        }
+
+        public ActionResult GetAddDepartmentPartialView()
+        {
+            var model = new DepartmentViewModel {Faculties = _departmentService.GetAllFaculties()};
+
+            return PartialView("_AddDepartment", model);
         }
 
         [HttpPost]
-        // POST: Department/AddOrUpdate
-        //[ValidateAntiForgeryToken]
-        public async Task<ActionResult> AddOrUpdate(DepartmentViewModel model)
+        // POST: Department/AddDepartment
+        [ValidateAntiForgeryToken]
+        public ActionResult AddDepartment(DepartmentViewModel model)
         {
             if (!ModelState.IsValid)
-                return PartialView("_AddOrEditDepartment", model);
+                return PartialView("_AddDepartment", model);
 
-            ServiceResult result;
-            if (model.Id == 0)
+            var department = Mapper.Map<Department>(model);
+            var (serviceResult, message) = _departmentService.SaveDepartment(department);
+            if (string.IsNullOrWhiteSpace(message))
+                return serviceResult == ServiceResult.Succeeded
+                    ? Json(new {success = true}, JsonRequestBehavior.AllowGet)
+                    : Json(new {failure = true}, JsonRequestBehavior.AllowGet);
+
+            ModelState.AddModelError("", message);
+            return PartialView("_AddDepartment", model);
+        }
+
+        [HttpPost]
+        // POST: Department/EditDepartment
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> EditDepartment(DepartmentViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return PartialView("_EditDepartment", model);
+
+            var departmentInDb = _departmentService.GetDepartmentById(model.Id);
+            departmentInDb.UpdatedAt = DateTime.Now;
+            Mapper.Map(model, departmentInDb);
+            var (serviceResult, message) = _departmentService.UpdateDepartment(departmentInDb);
+            if (string.IsNullOrWhiteSpace(message))
             {
-                var department = Mapper.Map<Department>(model);
-                result = _departmentService.SaveDepartment(department);
-            }
-            else
-            {
-                var departmentInDb = _departmentService.GetDepartmentById(model.Id);
-                departmentInDb.UpdatedAt = DateTime.Now;
-                Mapper.Map(model, departmentInDb);
-                result = _departmentService.UpdateDepartment(departmentInDb);
-                UpdateDepartmentFolder(departmentInDb, result);
+                UpdateDepartmentFolder(departmentInDb, serviceResult);
                 await _departmentService.SaveChanges();
+                return serviceResult == ServiceResult.Succeeded
+                    ? Json(new {success = true}, JsonRequestBehavior.AllowGet)
+                    : Json(new {failure = true}, JsonRequestBehavior.AllowGet);
             }
 
-            return result == ServiceResult.Succeeded
-                ? Json(new { success = true }, JsonRequestBehavior.AllowGet)
-                : Json(new { failure = true }, JsonRequestBehavior.AllowGet);
+            ModelState.AddModelError("", message);
+            return PartialView("_EditDepartment", model);
         }
 
         public void UpdateDepartmentFolder(Department department, ServiceResult result)
@@ -130,7 +152,7 @@ namespace archivesystemWebUI.Controllers
         [HttpPost]
         public JsonResult DepartmentNameCheck(string name, int id)
         {
-            var status = _departmentService.DepartmentNameCheck(name, id);
+            var status = _departmentService.DoesDepartmentNameExist(name, id);
 
             return Json(!status, JsonRequestBehavior.AllowGet);
         }

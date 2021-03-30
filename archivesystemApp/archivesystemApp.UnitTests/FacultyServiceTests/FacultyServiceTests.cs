@@ -78,9 +78,10 @@ namespace archivesystemApp.UnitTests.FacultyServiceTests
             _folderRepo.Setup(u => u.Find(x => x.Name == GlobalConstants.RootFolderName)).Returns(folders);
             _accessLevelRepo.Setup(u=>u.GetBaseLevel()).Returns(new AccessLevel{Id=1});
 
-            var result = _service.SaveFaculty(_faculty);
+            var (serviceResult, message) = _service.SaveFaculty(_faculty);
 
-            Assert.That(result,Is.EqualTo(ServiceResult.Succeeded));
+            Assert.That(serviceResult, Is.EqualTo(ServiceResult.Succeeded));
+            Assert.That(message, Is.EqualTo(""));
 
             _accessLevelRepo.Verify(u=> u.GetBaseLevel());
             _unitOfWork.Verify(u=>u.Save());
@@ -94,12 +95,15 @@ namespace archivesystemApp.UnitTests.FacultyServiceTests
             _folderRepo.Setup(u => u.Find(x => x.Name == GlobalConstants.RootFolderName)).Returns(_folders);
             _accessLevelRepo.Setup(u => u.GetBaseLevel()).Returns(new AccessLevel {Id = 1});
             _facultyRepo.Setup(u=> u.Add(_faculty)).Verifiable();
+            _facultyRepo.Setup(u => u.GetAllToList()).Returns(_faculties);
 
-            var result = _service.SaveFaculty(_faculty);
+            var(serviceResult, message) = _service.SaveFaculty(_faculty);
 
-            Assert.That(result, Is.EqualTo(ServiceResult.Succeeded));
+            Assert.That(serviceResult, Is.EqualTo(ServiceResult.Succeeded));
+            Assert.That(message, Is.EqualTo(""));
 
             _facultyRepo.Verify(x => x.Add(_faculty));
+            _facultyRepo.Verify(u => u.GetAllToList());
             _accessLevelRepo.Verify(x => x.GetBaseLevel(),Times.Never);
             _unitOfWork.Verify(x => x.Save());
         }
@@ -108,12 +112,15 @@ namespace archivesystemApp.UnitTests.FacultyServiceTests
         public void UpdateFaculty_WhenCalled_ReturnServiceResultSucceeded()
         {
             _facultyRepo.Setup(x => x.Update(_faculty));
+            _facultyRepo.Setup(u => u.GetAllToList()).Returns(_faculties);
 
-            var result = _service.UpdateFaculty(_faculty);
+            var(serviceResult, message) = _service.UpdateFaculty(_faculty);
 
-            Assert.That(result, Is.EqualTo(ServiceResult.Succeeded));
+            Assert.That(serviceResult, Is.EqualTo(ServiceResult.Succeeded));
+            Assert.That(message, Is.EqualTo(""));
 
             _facultyRepo.Verify(x=>x.Update(_faculty));
+            _facultyRepo.Verify(u => u.GetAllToList());
         }
 
         [Test]
@@ -194,7 +201,7 @@ namespace archivesystemApp.UnitTests.FacultyServiceTests
         public void FacultyNameCheck_WhenNameExistAndIdIsDifferent_ReturnsTrue(string name, int id, bool expectedResult)
         {
             _facultyRepo.Setup(u => u.GetAllToList()).Returns(_faculties);
-            var result = _service.FacultyNameCheck(name, id);
+            var result = _service.DoesFacultyNameExist(name, id);
 
             Assert.That(result, Is.EqualTo(expectedResult));
 

@@ -114,9 +114,10 @@ namespace archivesystemApp.UnitTests.DepartmentServiceTests
             _folderRepo.Setup(u => u.GetFacultyFolder(_faculty.Name)).Returns(rootfolder);
             _folderRepo.Setup(u => u.Add(folder)).Verifiable();
 
-            var result = _service.SaveDepartment(_department);
+            var (serviceResult, message) = _service.SaveDepartment(_department);
 
-            Assert.That(result,Is.EqualTo(ServiceResult.Succeeded));
+            Assert.That(serviceResult,Is.EqualTo(ServiceResult.Succeeded));
+            Assert.That(message,Is.EqualTo(""));
 
             _facultyRepo.Verify(u => u.Get(_department.FacultyId));
             _accessLevelRepo.Verify(u => u.GetBaseLevel());
@@ -130,14 +131,17 @@ namespace archivesystemApp.UnitTests.DepartmentServiceTests
             _facultyRepo.Setup(u => u.Get(_department.FacultyId)).Returns(_faculty);
             _folderRepo.Setup(u => u.GetFacultyFolder(_faculty.Name)).Returns(_folder);
             _deptRepo.Setup(u=> u.Add(_department)).Verifiable();
+            _deptRepo.Setup(u => u.GetAllToList()).Returns(_departments);
 
-            var result = _service.SaveDepartment(_department);
+            var (serviceResult, message) = _service.SaveDepartment(_department);
 
-            Assert.That(result, Is.EqualTo(ServiceResult.Succeeded));
+            Assert.That(serviceResult, Is.EqualTo(ServiceResult.Succeeded));
+            Assert.That(message, Is.EqualTo(""));
 
             _facultyRepo.Verify(u => u.Get(_department.FacultyId));
             _folderRepo.Verify(u => u.GetFacultyFolder(_faculty.Name));
             _deptRepo.Verify(u => u.Add(_department));
+            _deptRepo.Verify(u => u.GetAllToList());
             _accessLevelRepo.Verify(u => u.GetBaseLevel(),Times.Never);
             _unitOfWork.Verify(u => u.Save());
         }
@@ -146,12 +150,15 @@ namespace archivesystemApp.UnitTests.DepartmentServiceTests
         public void UpdateDepartment_WhenCalled_ReturnServiceResultSucceeded()
         {
             _deptRepo.Setup(x => x.Update(_department));
+            _deptRepo.Setup(u => u.GetAllToList()).Returns(_departments);
 
-            var result = _service.UpdateDepartment(_department);
+            var(serviceResult, message) = _service.UpdateDepartment(_department);
 
-            Assert.That(result, Is.EqualTo(ServiceResult.Succeeded));
+            Assert.That(serviceResult, Is.EqualTo(ServiceResult.Succeeded));
+            Assert.That(message, Is.EqualTo(""));
 
             _deptRepo.Verify(x=>x.Update(_department));
+            _deptRepo.Setup(u => u.GetAllToList());
         }
 
         [Test]
@@ -211,7 +218,7 @@ namespace archivesystemApp.UnitTests.DepartmentServiceTests
         public void DepartmentNameCheck_WhenNameExistAndIdIsDifferent_ReturnsTrue(string name, int id, bool expectedResult)
         {
             _deptRepo.Setup(u => u.GetAllToList()).Returns(_departments);
-            var result = _service.DepartmentNameCheck(name, id);
+            var result = _service.DoesDepartmentNameExist(name, id);
 
             Assert.That(result, Is.EqualTo(expectedResult));
 

@@ -1,9 +1,5 @@
 ﻿@model archivesystemWebUI.Models.DepartmentViewModel
 
-@{
-    ViewBag.Title = "Index";
-}
-
 <!-- Datatable CSS -->
 <link href="~/Content/assets/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
 
@@ -19,7 +15,7 @@
                 </ul>
             </div>
             <div class="col-auto float-right ml-auto">
-                <a href="#" class="btn add-btn" onclick="getAddOrEditPartialView('@Url.Action("GetDepartmentPartialView", "Department")', 0)"><i class="fa fa-plus"></i> Add Department</a>
+                <a href="#" class="btn add-btn" onclick="getAddPartialView('@Url.Action("GetAddDepartmentPartialView", "Department")')"><i class="fa fa-plus"></i> Add Department</a>
             </div>
         </div>
     </div>

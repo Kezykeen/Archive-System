@@ -13,13 +13,13 @@ namespace archivesystemWebUI.Interfaces
         IEnumerable<Faculty> GetAllFaculties();
         Department GetDepartmentForPartialView(int id);
         Department GetDepartmentById(int id);
-        ServiceResult SaveDepartment(Department department);
-        ServiceResult UpdateDepartment(Department department);
+        (ServiceResult, string message) SaveDepartment(Department department);
+        (ServiceResult, string message) UpdateDepartment(Department department);
         void UpdateDepartmentFolder(Folder folder);
         Task<ServiceResult> DeleteDepartment(int id);
         DepartmentUsersViewModel GetAllUsersInDepartment(int id);
         IEnumerable GetDepartments(int id, string searchTerm = null);
         Task SaveChanges();
-        bool DepartmentNameCheck(string name, int id);
+        bool DoesDepartmentNameExist(string name, int id);
     }
 }

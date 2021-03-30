@@ -43,7 +43,7 @@ namespace archivesystemWebUI.Services
 
         public Faculty GetFacultyForPartialView(int id)
         {
-            var faculty = id == 0 ? new Faculty() : _facultyRepository.Get(id);
+            var faculty = _facultyRepository.Get(id);
 
             return faculty;
         }
@@ -53,7 +53,7 @@ namespace archivesystemWebUI.Services
             return _facultyRepository.Get(id);
         }
 
-        public ServiceResult SaveFaculty(Faculty faculty)
+        public (ServiceResult, string message) SaveFaculty(Faculty faculty)
         {
             var facultyFolderExist = DoesFacultyFolderAlreadyExist(faculty);
             var result = facultyFolderExist ? SaveOnlyFaculty(faculty) : TrySaveFacultyWithFolder(faculty);
@@ -61,17 +61,20 @@ namespace archivesystemWebUI.Services
             return result;
         }
 
-        public ServiceResult UpdateFaculty(Faculty faculty)
+        public (ServiceResult, string message) UpdateFaculty(Faculty faculty)
         {
+            var status = DoesFacultyNameExist(faculty.Name, faculty.Id);
+            if (status)
+                return (ServiceResult.Failure, "Name already exist");
             try
             {
                 _facultyRepository.Update(faculty);
 
-                return ServiceResult.Succeeded;
+                return (ServiceResult.Succeeded, "");
             }
-            catch
+            catch (Exception e)
             {
-                return ServiceResult.Failure;
+                return (ServiceResult.Failure, e.Message);
             }
         }
 
@@ -105,17 +108,12 @@ namespace archivesystemWebUI.Services
             return viewModel;
         }
 
-        public int GetAllDepartmentsInFacultyCount(int id)
-        {
-           return _deptRepository.Find(f => f.FacultyId == id).ToList().Count;
-        }
-
         public async Task SaveChanges()
         {
             await _unitOfWork.SaveAsync();
         }
 
-        public bool FacultyNameCheck(string name, int id)
+        public bool DoesFacultyNameExist(string name, int id)
         {
             var faculties = GetAllFacultiesToList();
 
@@ -152,7 +150,7 @@ namespace archivesystemWebUI.Services
             return rootFolder.Subfolders.Select(x => x.Name).Contains(faculty.Name);
         }
 
-        private ServiceResult TrySaveFacultyWithFolder(Faculty faculty)
+        private (ServiceResult, string message) TrySaveFacultyWithFolder(Faculty faculty)
         {
             try
             {
@@ -173,20 +171,30 @@ namespace archivesystemWebUI.Services
                 //new faculty to the context.
                 _folderRepo.Add(folder);
                 _unitOfWork.Save();
-                return ServiceResult.Succeeded;
+                return (ServiceResult.Succeeded, "");
             }
-            catch
+            catch (Exception e)
             {
-                return ServiceResult.Failure;
+                return (ServiceResult.Failure, e.Message);
             }
         }
 
-        private ServiceResult SaveOnlyFaculty(Faculty faculty)
+        private (ServiceResult, string message) SaveOnlyFaculty(Faculty faculty)
         {
-            _facultyRepository.Add(faculty);
-            _unitOfWork.Save();
+            var status = DoesFacultyNameExist(faculty.Name, faculty.Id);
+            if (status)
+                return (ServiceResult.Failure, "Name already exist");
+            try
+            {
+                _facultyRepository.Add(faculty);
+                _unitOfWork.Save();
+            }
+            catch (Exception e)
+            {
+                return (ServiceResult.Failure, e.Message);
+            }
 
-            return ServiceResult.Succeeded;
+            return (ServiceResult.Succeeded, "");
         }
 
         private async Task Delete(int id)
