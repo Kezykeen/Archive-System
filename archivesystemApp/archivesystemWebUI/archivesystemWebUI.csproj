@@ -233,6 +233,7 @@
     <Compile Include="Interfaces\IFileService.cs" />
     <Compile Include="Interfaces\IFolderService.cs" />
     <Compile Include="Interfaces\IFolderServiceRepo.cs" />
+    <Compile Include="Interfaces\IHomeService.cs" />
     <Compile Include="Interfaces\IUserAccessService.cs" />
     <Compile Include="Interfaces\IUserService.cs" />
     <Compile Include="Interfaces\ITicketService.cs" />
@@ -244,6 +245,7 @@
     <Compile Include="Models\ApplicationVm.cs" />
     <Compile Include="Models\AssignDeptsVm.cs" />
     <Compile Include="Models\AssignUsersVm.cs" />
+    <Compile Include="Models\CardsViewModel.cs" />
     <Compile Include="Models\CodeStatus.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\DataLayers\ApplicationsDataView.cs" />
@@ -297,6 +299,7 @@
     <Compile Include="Interfaces\IDepartmentService.cs" />
     <Compile Include="Services\FileService.cs" />
     <Compile Include="Services\FolderService.cs" />
+    <Compile Include="Services\HomeService.cs" />
     <Compile Include="Services\RoleService.cs" />
     <Compile Include="Services\TicketService.cs" />
     <Compile Include="Services\UserAccessService.cs" />
