@@ -47,7 +47,7 @@ $(document).ready(function () {
             {
                 data: "Id",
                 render: function (data) {
-                    return `<a class='m-l-5 m-r-10' href='#' data-toggle="tooltip" data-placement="bottom" title="Edit" onclick="getAddOrEditPartialView('/Faculty/GetFacultyPartialView', ${data
+                    return `<a class='m-l-5 m-r-10' href='#' data-toggle="tooltip" data-placement="bottom" title="Edit" onclick="getEditPartialView('/Faculty/GetEditFacultyPartialView', ${data
                         })"><i class='fa fa-pencil m-r-5'></i></a><a href='#' data-toggle="tooltip" data-placement="bottom" title="Delete" onclick='getDeletePartialView("/Faculty/GetDeletePartialView", ${data
                         })'><i class='fa fa-trash-o'></i></a>`;
                 },
@@ -69,8 +69,6 @@ $(document).ready(function () {
         })
         .draw();
     // End Faculty DataTable
-
-    $('[data-toggle="tooltip"]').tooltip();
 
     // Begin Department DataTable
     departmentDataTable = $("#departmentDataTable").DataTable({
@@ -112,7 +110,7 @@ $(document).ready(function () {
             {
                 data: "Id",
                 render: function (data) {
-                    return `<a class='m-l-5 m-r-10' href='#' data-toggle="tooltip" data-placement="bottom" title="Edit" onclick="getAddOrEditPartialView('/Department/GetDepartmentPartialView', ${
+                    return `<a class='m-l-5 m-r-10' href='#' data-toggle="tooltip" data-placement="bottom" title="Edit" onclick="getEditPartialView('/Department/GetEditDepartmentPartialView', ${
                         data
                         })"><i class='fa fa-pencil m-r-5'></i></a><a href='#' data-toggle="tooltip" data-placement="bottom" title="Delete" onclick='getDeletePartialView("/Department/GetDeletePartialView", ${
                         data
@@ -137,16 +135,18 @@ $(document).ready(function () {
         .draw();
 
     // End Department DataTable
+
+    $('[data-toggle="tooltip"]').tooltip();
     // END DATATABLES
 });
 
-//Get Add or Edit View
-function getAddOrEditPartialView(url, id) {
+//Get Edit View
+function getEditPartialView(url, id) {
     $.get(url, { id: id }, function (res) {
         $("#modalBody").html(res);
         $("#modal").modal({ backdrop: "static", keyboard: true });
         $("#modal").modal("show");
-        $.validator.unobtrusive.parse("#AddOrUpdateDepartmentForm");
+        $.validator.unobtrusive.parse("#UpdateForm");
 
         if ($("#modal .select").length > 0) {
             $("#modal .select").select2({
@@ -155,6 +155,24 @@ function getAddOrEditPartialView(url, id) {
             });
         }
     });
+}
+
+//Get Add View
+function getAddPartialView(url) {
+    $.get(url,
+        function(res) {
+            $("#modalBody").html(res);
+            $("#modal").modal({ backdrop: "static", keyboard: true });
+            $("#modal").modal("show");
+            $.validator.unobtrusive.parse("#AddForm");
+
+            if ($("#modal .select").length > 0) {
+                $("#modal .select").select2({
+                    minimumResultsForSearch: -1,
+                    width: "100%"
+                });
+            }
+        });
 }
 
 function departmentOnSuccess(response) {

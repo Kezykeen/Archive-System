@@ -497,7 +497,7 @@
     <Content Include="Views\Department\Index.cshtml" />
     <Content Include="Views\Faculty\Index.cshtml" />
     <Content Include="Views\UserAccess\ManageUserAccess.cshtml" />
-    <Content Include="Views\Department\_AddOrEditDepartment.cshtml" />
+    <Content Include="Views\Department\_AddDepartment.cshtml" />
     <Content Include="Views\Users\DelPrompt.cshtml" />
     <Content Include="Views\Users\Details.cshtml" />
     <Content Include="Views\Home\EmployeeDashboard.cshtml" />
@@ -505,7 +505,7 @@
     <Content Include="Views\Shared\_EnrollPartial.cshtml" />
     <Content Include="Views\Users\EnrollModal.cshtml" />
     <Content Include="Views\Department\_DeleteDepartment.cshtml" />
-    <Content Include="Views\Faculty\_AddOrEditFaculty.cshtml" />
+    <Content Include="Views\Faculty\_AddFaculty.cshtml" />
     <Content Include="Views\Faculty\_DeleteFaculty.cshtml" />
     <Content Include="Views\Folder\FolderList.cshtml" />
     <Content Include="Views\Shared\_EditUserAccess.cshtml" />
@@ -557,6 +557,8 @@
     <Content Include="Views\Shared\_DashboardCards.cshtml" />
     <Content Include="Views\Department\ViewAllUsersInDept.cshtml" />
     <Content Include="Views\Faculty\ViewAllDepartmentsInFaculty.cshtml" />
+    <Content Include="Views\Department\_EditDepartment.cshtml" />
+    <Content Include="Views\Faculty\_EditFaculty.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

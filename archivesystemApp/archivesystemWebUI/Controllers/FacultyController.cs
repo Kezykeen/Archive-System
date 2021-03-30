@@ -43,47 +43,64 @@ namespace archivesystemWebUI.Controllers
             return Json(new {data = map}, JsonRequestBehavior.AllowGet);
         }
 
-        public int GetDepartmentsCount(int id)
-        {
-            return _facultyService.GetAllDepartmentsInFacultyCount(id);
-        }
-
-        //GET: Faculty/AddOrUpdate/5?
-        public ActionResult GetFacultyPartialView(int id)
+        //GET: Faculty/AddFaculty/5?
+        public ActionResult GetEditFacultyPartialView(int id)
         {
             var faculty = _facultyService.GetFacultyForPartialView(id);
             var model = Mapper.Map<FacultyViewModel>(faculty);
 
-            return PartialView("_AddOrEditFaculty", model);
+            return PartialView("_EditFaculty", model);
+        }
+
+        public ActionResult GetAddFacultyPartialView()
+        {
+            var model = new FacultyViewModel();
+            
+            return PartialView("_AddFaculty", model);
         }
 
         [HttpPost]
-        // POST: Faculty/AddOrUpdate
+        // POST: Faculty/AddFaculty
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> AddOrUpdate(FacultyViewModel model)
+        public ActionResult AddFaculty(FacultyViewModel model)
         {
             if (!ModelState.IsValid)
-                return PartialView("_AddOrEditFaculty", model);
+                return PartialView("_AddFaculty", model);
 
-            ServiceResult result;
-            if (model.Id == 0)
+            var faculty = Mapper.Map<Faculty>(model);
+            var (serviceResult, message) = _facultyService.SaveFaculty(faculty);
+            if (string.IsNullOrWhiteSpace(message))
+                return serviceResult == ServiceResult.Succeeded
+                    ? Json(new {success = true}, JsonRequestBehavior.AllowGet)
+                    : Json(new {failure = true}, JsonRequestBehavior.AllowGet);
+
+            ModelState.AddModelError("", message);
+            return PartialView("_AddFaculty", model);
+        }
+
+        [HttpPost]
+        // POST: Faculty/EditFaculty
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> EditFaculty(FacultyViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return PartialView("_EditFaculty", model);
+
+            var facultyInDb = _facultyService.GetFacultyById(model.Id);
+            facultyInDb.UpdatedAt = DateTime.Now;
+            Mapper.Map(model, facultyInDb);
+            var (serviceResult, message) = _facultyService.UpdateFaculty(facultyInDb);
+            if (string.IsNullOrWhiteSpace(message))
             {
-                var faculty = Mapper.Map<Faculty>(model);
-                result = _facultyService.SaveFaculty(faculty);
-            }
-            else
-            {
-                var facultyInDb = _facultyService.GetFacultyById(model.Id);
-                facultyInDb.UpdatedAt = DateTime.Now;
-                Mapper.Map(model, facultyInDb);
-                result = _facultyService.UpdateFaculty(facultyInDb);
-                UpdateFacultyFolder(facultyInDb, result);
+                UpdateFacultyFolder(facultyInDb, serviceResult);
                 await _facultyService.SaveChanges();
+                return serviceResult == ServiceResult.Succeeded
+                    ? Json(new {success = true}, JsonRequestBehavior.AllowGet)
+                    : Json(new {failure = true}, JsonRequestBehavior.AllowGet);
             }
 
-            return result == ServiceResult.Succeeded 
-                ? Json(new {success = true}, JsonRequestBehavior.AllowGet) 
-                : Json(new {failure = true}, JsonRequestBehavior.AllowGet);
+            ModelState.AddModelError("", message);
+            return PartialView("_EditFaculty", model);
         }
 
         public void UpdateFacultyFolder(Faculty faculty, ServiceResult result)
@@ -133,7 +150,7 @@ namespace archivesystemWebUI.Controllers
         [HttpPost]
         public JsonResult FacultyNameCheck(string name, int id)
         {
-            var status = _facultyService.FacultyNameCheck(name, id);
+            var status = _facultyService.DoesFacultyNameExist(name, id);
 
             return Json(!status, JsonRequestBehavior.AllowGet);
         }

@@ -52,7 +52,7 @@ namespace archivesystemWebUI.Services
 
         public Department GetDepartmentForPartialView(int id)
         {
-            var department = id == 0 ? new Department() : _deptRepository.Get(id);
+            var department = _deptRepository.Get(id);
 
             return department;
         }
@@ -62,7 +62,7 @@ namespace archivesystemWebUI.Services
             return _deptRepository.Get(id);
         }
 
-        public ServiceResult SaveDepartment(Department department)
+        public (ServiceResult, string message) SaveDepartment(Department department)
         {
             var folderExists = DoesDepartmentFolderAlreadyExist(department);
             var result = folderExists ? SaveOnlyDepartment(department) : TrySaveDepartmentWithFolder(department);
@@ -70,17 +70,20 @@ namespace archivesystemWebUI.Services
             return result;
         }
 
-        public ServiceResult UpdateDepartment(Department department)
+        public (ServiceResult, string message) UpdateDepartment(Department department)
         {
+            var status = DoesDepartmentNameExist(department.Name, department.Id);
+            if (status)
+                return (ServiceResult.Failure, "Name already exist");
             try
             {
                 _deptRepository.Update(department);
 
-                return ServiceResult.Succeeded;
+                return (ServiceResult.Succeeded, "");
             }
-            catch
+            catch (Exception e)
             {
-                return ServiceResult.Failure;
+                return (ServiceResult.Failure, e.Message);
             }
         }
 
@@ -119,7 +122,7 @@ namespace archivesystemWebUI.Services
             await _unitOfWork.SaveAsync();
         }
 
-        public bool DepartmentNameCheck(string name, int id)
+        public bool DoesDepartmentNameExist(string name, int id)
         {
             var departments = GetAllDepartmentToList();
 
@@ -175,7 +178,8 @@ namespace archivesystemWebUI.Services
 
         }
 
-        private ServiceResult TrySaveDepartmentWithFolder(Department department)
+        private
+        (ServiceResult, string message) TrySaveDepartmentWithFolder(Department department)
         {
             try
             {
@@ -196,20 +200,30 @@ namespace archivesystemWebUI.Services
                 //new department to the context.
                 _folderRepo.Add(folder);
                 _unitOfWork.Save();
-                return ServiceResult.Succeeded;
+                return (ServiceResult.Succeeded, "");
             }
-            catch
+            catch (Exception e)
             {
-                return ServiceResult.Failure;
+                return (ServiceResult.Failure, e.Message);
             }
         }
 
-        private ServiceResult SaveOnlyDepartment(Department department)
+        private (ServiceResult, string message) SaveOnlyDepartment(Department department)
         {
-            _deptRepository.Add(department);
-            _unitOfWork.Save();
+            var status = DoesDepartmentNameExist(department.Name, department.Id);
+            if (status)
+                return (ServiceResult.Failure, "Name already exist");
+            try
+            {
+                _deptRepository.Add(department);
+                _unitOfWork.Save();
+            }
+            catch (Exception e)
+            {
+                return (ServiceResult.Failure, e.Message);
+            }
 
-            return ServiceResult.Succeeded;
+            return (ServiceResult.Succeeded, "");
         }
 
         private async Task Delete(int id)
