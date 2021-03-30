@@ -70,6 +70,8 @@ namespace archivesystemWebUI.Controllers
                 viewModel=_service.GetCreateFolderViewModel(id, HttpContext.User.Identity.GetUserId(),userIsAdmin:true);
             else
                 viewModel = _service.GetCreateFolderViewModel(id, HttpContext.User.Identity.GetUserId());
+
+            if (viewModel == null) return RedirectToAction(nameof(Index));
             return PartialView("_CreateFolder",viewModel );
         }
 
@@ -79,30 +81,33 @@ namespace archivesystemWebUI.Controllers
         [ValidateHeaderAntiForgeryToken]
         public ActionResult Create(SaveFolderViewModel model)
         {
-            if (HttpContext.User.IsInRole(RoleNames.Admin))
-                return new HttpStatusCodeResult(403);
+            if (!ModelState.IsValid) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            if (HttpContext.User.IsInRole(RoleNames.Admin)) return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
 
             var userIsnotPermitted = IsCreateActionForbidden(_service.GetFolder(model.ParentId));
-            if (userIsnotPermitted) return new HttpStatusCodeResult(403);
+            if (userIsnotPermitted) return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
 
             var result = _service.SaveFolder(model);
-            if (result == FolderServiceResult.Success) return new HttpStatusCodeResult(200);
-            if (result == FolderServiceResult.AlreadyExist) return new HttpStatusCodeResult(400);
-            if (result == FolderServiceResult.InvalidAccessLevel) return new HttpStatusCodeResult(403);
-            if (result== FolderServiceResult.MaxFolderDepthReached) return new HttpStatusCodeResult(404);
+            if (result == FolderServiceResult.Success) return new HttpStatusCodeResult(HttpStatusCode.OK);
+            if (result == FolderServiceResult.NotFound) return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+            if (result == FolderServiceResult.AlreadyExist) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            if (result == FolderServiceResult.InvalidAccessLevel) return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+            if (result== FolderServiceResult.MaxFolderDepthReached) return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
 
-            return new HttpStatusCodeResult(500);
+            return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
         }
 
         [Route("folders/move")]
         [HttpPost]
         [ValidateHeaderAntiForgeryToken]
         public ActionResult MoveItem(MoveItemViewModel model)
-        { 
+        {
+            if (!ModelState.IsValid) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             var result= _service.MoveFolder(model);
-            if (result== FolderServiceResult.InvalidModelState) return new HttpStatusCodeResult(400);
-            if (result== FolderServiceResult.Prohibited) return new HttpStatusCodeResult(405);
-            if (result== FolderServiceResult.Success) return new HttpStatusCodeResult(200);
+            if (result== FolderServiceResult.InvalidModelState) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            if (result== FolderServiceResult.Prohibited) return new HttpStatusCodeResult(HttpStatusCode.Conflict);
+            if (result== FolderServiceResult.Success) return new HttpStatusCodeResult(HttpStatusCode.OK);
+            if (result== FolderServiceResult.AlreadyExist) return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
 
             return new HttpStatusCodeResult(500);
         }
@@ -115,7 +120,7 @@ namespace archivesystemWebUI.Controllers
         {
             var result = _service.DeleteFolder(id);
             if (result==FolderServiceResult.Success) return new HttpStatusCodeResult(HttpStatusCode.OK);
-
+            if (result == FolderServiceResult.NotFound) return new HttpStatusCodeResult(HttpStatusCode.NotFound);
             if (result == FolderServiceResult.Prohibited) return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
 
             return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);  
@@ -127,7 +132,7 @@ namespace archivesystemWebUI.Controllers
         public ActionResult GetFolder(int folderId)
         {
             GetFolder(out Folder folder, folderId);
-            if (folder.Name == GlobalConstants.RootFolderName)
+            if (folder.Name == GlobalConstants.RootFolderName || folder== null)
                 return RedirectToAction(nameof(Index));
             if (HttpContext.User.IsInRole(RoleNames.Admin))
                 ViewBag.AllowCreateFolder = false;

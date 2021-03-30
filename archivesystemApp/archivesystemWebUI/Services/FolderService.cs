@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
-
+using archivesystemWebUI.Infrastructures;
 
 namespace archivesystemWebUI.Services
 {
@@ -19,11 +19,11 @@ namespace archivesystemWebUI.Services
     }
     public class FolderService : IFolderService
     {
-        private IFolderServiceRepo _repo { get; set; }
+        private IFolderServiceUnitOfWork _repo { get; set; }
         private const int  _GroundLevelAccess=0;
        
 
-        public FolderService(IFolderServiceRepo repo)
+        public FolderService(IFolderServiceUnitOfWork repo)
         {
             _repo = repo;
         }
@@ -223,7 +223,7 @@ namespace archivesystemWebUI.Services
             var moveIsSuccessful=TryMoveFolder(model);
             if(moveIsSuccessful)
                 return FolderServiceResult.Success;
-            return FolderServiceResult.Prohibited;
+            return FolderServiceResult.AlreadyExist;
         }
 
         public FolderServiceResult SaveFolder(SaveFolderViewModel model)
@@ -259,7 +259,7 @@ namespace archivesystemWebUI.Services
                 _repo.Save();
                 return true;
             }
-            catch (ArgumentException) { return false; } 
+            catch (AlreadyExistInLocationException) { return false; } 
         }
         private void TrySaveFolder(SaveFolderViewModel model)
         {

@@ -16,7 +16,7 @@ namespace archivesystemApp.UnitTests.FolderServiceTests
     [TestFixture]
     public class FolderServiceUnitTests
     {
-        private Mock<IFolderServiceRepo> _repo;
+        private Mock<IFolderServiceUnitOfWork> _repo;
         private FolderService _service;
         private CreateFolderViewModel _editModel;
         private Folder _editFolderInDb;
@@ -24,7 +24,7 @@ namespace archivesystemApp.UnitTests.FolderServiceTests
         [SetUp]
         public void Setup()
         {
-            _repo = new Mock<IFolderServiceRepo>();
+            _repo = new Mock<IFolderServiceUnitOfWork>();
             _service = new FolderService(_repo.Object);
             _editModel = new CreateFolderViewModel { Name = GlobalConstants.RootFolderName, Id = 1, AccessLevelId = 1 };
             _editFolderInDb = new Folder { Id = _editModel.Id, Name = _editModel.Name, AccessLevelId = 1 };

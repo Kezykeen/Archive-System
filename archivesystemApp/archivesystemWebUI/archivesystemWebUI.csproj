@@ -222,6 +222,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructures\AlreadyExistInLocationException.cs" />
     <Compile Include="Infrastructures\MaxFileSizeMb.cs" />
     <Compile Include="Infrastructures\MIMEType.cs" />
     <Compile Include="Infrastructures\NinjectDependenceResolver.cs" />
@@ -232,7 +233,7 @@
     <Compile Include="Interfaces\IFacultyService.cs" />
     <Compile Include="Interfaces\IFileService.cs" />
     <Compile Include="Interfaces\IFolderService.cs" />
-    <Compile Include="Interfaces\IFolderServiceRepo.cs" />
+    <Compile Include="Interfaces\IFolderServiceUnitOfWork.cs" />
     <Compile Include="Interfaces\IUserAccessService.cs" />
     <Compile Include="Interfaces\IUserService.cs" />
     <Compile Include="Interfaces\ITicketService.cs" />

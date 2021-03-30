@@ -18,14 +18,14 @@ namespace archivesystemApp.UnitTests.FolderServiceTests
     [TestFixture]
     class FolderService_DeleteFolder
     {
-        private Mock<IFolderServiceRepo> _repo;
+        private Mock<IFolderServiceUnitOfWork> _repo;
         private FolderService _service;
         private Folder _folder;
 
         [SetUp]
         public void Setup()
         {
-            _repo = new Mock<IFolderServiceRepo>();
+            _repo = new Mock<IFolderServiceUnitOfWork>();
             _service = new FolderService(_repo.Object);
             _folder = new Folder { Id = 2, IsRestricted = true };
 
