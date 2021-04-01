@@ -34,6 +34,7 @@ $(document).ready(function () {
                 width: "20px"
             },
             { data: "Name" },
+            { data: "count" },
             {
                 data: "Id",
                 render: function (data) {
@@ -101,6 +102,7 @@ $(document).ready(function () {
             { data: null },
             { data: "Name" },
             { data: "Faculty" },
+            { data: "count" },
             {
                 data: "Id",
                 render: function(data) {
@@ -138,6 +140,14 @@ $(document).ready(function () {
 
     $('[data-toggle="tooltip"]').tooltip();
     // END DATATABLES
+    
+    function getFaculty() {
+        $.get("/Faculty/GetFacultyData",
+            function(res) {
+                debugger;
+                console.log(res);
+            });
+    }
 });
 
 //Get Edit View

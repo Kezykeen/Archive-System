@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using archivesystemDomain.Entities;
@@ -38,9 +40,10 @@ namespace archivesystemWebUI.Controllers
         public ActionResult GetFacultyData()
         {
             var facultyData = _facultyService.GetAllFacultiesToList();
-            var map = Mapper.Map<IEnumerable<FacultyViewModel>>(facultyData);
+            var m = facultyData.Select(x => new {x.Name, x.Id, count = x.Departments.Count});
+            // var map = Mapper.Map<IEnumerable<FacultyViewModel>>(facultyData);
 
-            return Json(new {data = map}, JsonRequestBehavior.AllowGet);
+            return Json(new {data = m}, JsonRequestBehavior.AllowGet);
         }
 
         //GET: Faculty/AddFaculty/5?
