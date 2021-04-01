@@ -171,8 +171,7 @@ namespace archivesystemWebUI.Services
         }
         public (bool found, AppUser result) GetByMail(string email)
         {
-            var user = _userRepository.FindWithNavProps(u => String.Equals(u.Email, 
-                email, StringComparison.OrdinalIgnoreCase), _ => _.Department).SingleOrDefault();
+            var user = _userRepository.FindWithNavProps(u => u.Email == email, _ => _.Department).SingleOrDefault();
 
             if (user != null) return (true, user);
 
