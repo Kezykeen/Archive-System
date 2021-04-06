@@ -51,7 +51,7 @@ namespace archivesystemDomain.Services
         public const string Secretary="Secretary";
         public const string Alumni="Alumni";
         public const string Student="Student";
-        public const string FolderAllowedRoles = "Admin";
+        public const string FolderAllowedRoles = "Admin,FacultyOfficer,DeptOfficer";
 
         
     }
