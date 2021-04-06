@@ -315,4 +315,57 @@ async function findFile() {
     
 }
 
+const handleSubfolder = (event) => {
+    console.log(event.target.id, event.target.className)
+   
 
+    if (event.target.className === "far fa-folder") {
+        let folderId = document.getElementById(event.target.id).split("-")[1];
+        console.log(ul);
+        document.getElementById(event.target.id).parentNode.parentNode.parentNode.appendChild(ul);
+    }
+    else if (event.target.className === "far fa-folder-open") {
+        let currentSubfolder = document.getElementById(event.target.id).parentNode.parentNode.parentNode;
+        let currentSubfolderChildNodes = currentSubfolder.childNodes
+        console.log(currentSubfolderChildNodes);
+        currentSubfolder.removeChild(currentSubfolderChildNodes[3])
+        //currentSubfolder.innerHTML = currentSubfolder.firstChild.textContent
+    }
+
+    event.target.className === "far fa-folder" ?
+        document.getElementById(`${event.target.id}`).className = "far fa-folder-open" :
+        document.getElementById(`${event.target.id}`).className = "far fa-folder" 
+    
+
+}
+
+const getUlElement =(folderId,folderName)=>{
+    let ul = document.createElement("ul");
+    ul.className = "file-menu subfolder-child";
+    ul.id = "FL-folders";
+    ul.innerHTML = `
+        <li>  
+            <div style="display:block">
+                <div style="display:flex;justify-content:space-between;align-items: center;" class="folderlist-folder">
+                    <i class="far fa-folder" id="subfolder-${folderId}" onclick="handleSubfolder(event)"></i>
+                    <a href=${"name"} >DUMMY folder </a>
+                    <a href="" class="dropdown-link" data-toggle="dropdown" style="padding:0;width: 3em;margin:0; display:flex;justify-content:center">
+                        <i class="fa fa-ellipsis-v"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right">
+
+                        <a href="#" class="dropdown-item" onclick="getPartialView('/Folder/GetEditFolderPartialView',${folderId})">
+                            Edit Folder
+                        </a>
+                        <a href="#" class="dropdown-item" onclick="getPartialView('/Folder/GetDeleteFolderPartialView',${folderId})">
+                            Delete Folder
+                        </a>
+                        <a href="#" class="dropdown-item"
+                            onclick="CtrlX(${folder.Id}, ${folderName}', 'folder')"> Cut Folder</a>
+                </div>
+            </div>
+
+            </div>
+        </li>
+    `
+}

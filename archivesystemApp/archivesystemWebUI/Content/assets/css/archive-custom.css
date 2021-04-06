@@ -19,6 +19,9 @@
     color: #20c997;
 }
 
+.subfolder-child{
+    margin-left:1em
+}
 /*custom alert message popup styles*/
 #alertMessageBox {
     opacity: 0;

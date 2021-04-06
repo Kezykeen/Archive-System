@@ -270,6 +270,7 @@
     <Compile Include="Models\FolderModels\FolderPageViewModel.cs" />
     <Compile Include="Models\FolderModels\MoveItemViewModel.cs" />
     <Compile Include="Models\FolderModels\SaveFolderViewModel.cs" />
+    <Compile Include="Models\FolderModels\SubfolderViewModel.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\RoleViewModels\AddOrEditRoleViewModel.cs" />
     <Compile Include="Models\RoleViewModels\AddtoRoleViewModel.cs" />

@@ -245,6 +245,7 @@ namespace archivesystemWebUI.Controllers
         }
          
         //GET: /Folder/VerifyAccessCode
+        [HttpGet]
         public ActionResult VerifyAccessCode(string accessCode)
         {
             if (string.IsNullOrWhiteSpace(accessCode))
@@ -260,6 +261,14 @@ namespace archivesystemWebUI.Controllers
             Session[GlobalConstants.IsAccessValidated] = true;
             Session[GlobalConstants.LastVisit] = DateTime.Now;
             return new HttpStatusCodeResult(HttpStatusCode.OK);
+        }
+
+
+        //GET: /folder/getsubfolders
+        [HttpGet]
+        public IEnumerable<SubfolderViewModel> GetSubFolders(string folderId)
+        {
+            return null;
         }
 
 
@@ -282,6 +291,7 @@ namespace archivesystemWebUI.Controllers
             var userId = HttpContext.User.Identity.GetUserId();
             var userRoles = _roleService.GetCurrentUserRoles();
             var model = _service.GetRootFolderPageViewModel(userId, userRoles);
+            if (model == null) return null;
             model.ReturnUrl = returnUrl;
             return model;
         }
