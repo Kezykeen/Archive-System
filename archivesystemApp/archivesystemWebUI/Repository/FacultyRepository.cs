@@ -23,7 +23,7 @@ namespace archivesystemWebUI.Repository
 
         public List<Faculty> GetAllToList()
         {
-            return _context.Faculties.ToList();
+            return _context.Faculties.Include(d=>d.Departments).ToList();
         }
 
         public ApplicationDbContext ApplicationDbContext => Context as ApplicationDbContext;

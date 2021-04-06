@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace archivesystemDomain.Entities
@@ -19,5 +20,7 @@ namespace archivesystemDomain.Entities
 
         [Display(Name = "Updated At")]
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
+
+        public List<AppUser> Users { get; set; }
     }
 }

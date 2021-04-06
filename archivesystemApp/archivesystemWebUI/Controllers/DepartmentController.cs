@@ -38,7 +38,7 @@ namespace archivesystemWebUI.Controllers
         public ActionResult GetDepartmentData()
         {
             var model = _departmentService.GetAllDepartmentToList();
-            var viewModel = model.Select(x => new {x.Name, Faculty = x.Faculty.Name, x.Id});
+            var viewModel = model.Select(x => new {x.Name, Faculty = x.Faculty.Name, x.Id, count = x.Users.Count});
 
             return Json(new {data = viewModel}, JsonRequestBehavior.AllowGet);
         }
