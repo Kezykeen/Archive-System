@@ -267,6 +267,7 @@
     <Compile Include="Models\FolderModels\CreateFolderViewModel.cs" />
     <Compile Include="Models\FolderModels\DeleteFolderViewModel.cs" />
     <Compile Include="Models\FolderModels\EditFolderViewModel.cs" />
+    <Compile Include="Models\FolderModels\FolderFilesViewModel.cs" />
     <Compile Include="Models\FolderModels\FolderPageViewModel.cs" />
     <Compile Include="Models\FolderModels\MoveItemViewModel.cs" />
     <Compile Include="Models\FolderModels\SaveFolderViewModel.cs" />

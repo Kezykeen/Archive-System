@@ -23,11 +23,13 @@ namespace archivesystemWebUI.Interfaces
         IEnumerable<AccessLevel> GetCurrentUserAllowedAccessLevels(string userId);
 
         List<File> GetFiles(string filename, int folderId, bool returnall=false);
+        IEnumerable<FolderFilesViewModel> GetFolderFiles(int folderId);
         List<FolderPath> GetFolderPath(int folderId);
         IEnumerable<Folder> GetFoldersThatMatchName(string search);
         Folder GetFolder(int folderId);
         Folder GetRootFolder();
         FolderPageViewModel GetRootFolderPageViewModel(string userId, string userRole);
+        IEnumerable<SubfolderViewModel> GetSubFolders(int folderId);
         UserData GetUserData(string userId);
         FolderServiceResult MoveFolder(MoveItemViewModel model);
         FolderServiceResult SaveFolder(SaveFolderViewModel model);

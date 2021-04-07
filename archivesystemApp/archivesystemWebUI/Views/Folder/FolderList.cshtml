@@ -155,7 +155,7 @@
                                     <div class="file-content-inner" id="FL-files">
                                         @if (Model.CloseAccessCodeModal == true)
                                         {
-                                            Html.RenderAction("GetAllFiles", "FileMeta", new { folderId = Model.Id });
+                                            Html.RenderAction("GetFolderFiles", "Folder", new { folderId = Model.Id });
                                         }
                                     </div>
                                 </div>

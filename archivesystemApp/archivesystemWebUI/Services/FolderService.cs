@@ -178,6 +178,26 @@ namespace archivesystemWebUI.Services
             return folders.Single(x => x.Id == folderId);
         }
 
+        public IEnumerable<FolderFilesViewModel> GetFolderFiles(int folderId)
+        {
+            var files =
+                _repo.FileRepo
+                .FindWithNavProps(_ => _.FolderId == folderId,
+                    _ => _.FileMeta, f => f.AccessLevel).ToList();
+            if (files.Count() < 1) return null;
+            var folderfilesmodel=files.Select(x => new FolderFilesViewModel
+            { 
+                Id = x.Id,
+                Title = x.FileMeta.Title,
+                Name= x.Name,
+                CreatedAt = x.CreatedAt,
+                UpdatedAt = x.UpdatedAt,
+                ContentType=x.ContentType
+            });;
+            return folderfilesmodel;
+
+        }
+
         public Folder GetRootFolder()
         {
             return _repo.FolderRepo
@@ -204,6 +224,14 @@ namespace archivesystemWebUI.Services
             return model;
         }
 
+        public IEnumerable<SubfolderViewModel> GetSubFolders(int folderId)
+        {
+            var folder= _repo.FolderRepo.FindWithNavProps(x => x.Id == folderId, x => x.Subfolders).AsQueryable();
+            if (folder.Count() != 1) return null;
+            if (folder.Single().Subfolders.Count() < 1) return new List<SubfolderViewModel>();
+            return folder.Single().Subfolders.Select( x=> new SubfolderViewModel{Name=x.Name,Id=x.Id });
+
+        }
         public UserData GetUserData(string userId)
         {
             var user = _repo.UserRepo.FindWithNavProps(c => c.UserId == userId, _ => _.Department).SingleOrDefault();

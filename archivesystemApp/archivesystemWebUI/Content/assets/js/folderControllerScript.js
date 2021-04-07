@@ -315,21 +315,27 @@ async function findFile() {
     
 }
 
-const handleSubfolder = (event) => {
+const handleSubfolder = async (event) => {
     console.log(event.target.id, event.target.className)
    
 
     if (event.target.className === "far fa-folder") {
-        let folderId = document.getElementById(event.target.id).split("-")[1];
-        console.log(ul);
-        document.getElementById(event.target.id).parentNode.parentNode.parentNode.appendChild(ul);
+        let folderId = event.target.id.split("-")[1];
+        let resp = await fetch(`/folder/getsubfolders?folderId=${folderId}`)
+        if (resp.status === 200) {
+            let respJson = await resp.json()
+            let ul=getUlElement(respJson)
+            document.getElementById(event.target.id).parentNode.parentNode.parentNode.appendChild(ul);
+        }   
     }
     else if (event.target.className === "far fa-folder-open") {
         let currentSubfolder = document.getElementById(event.target.id).parentNode.parentNode.parentNode;
         let currentSubfolderChildNodes = currentSubfolder.childNodes
-        console.log(currentSubfolderChildNodes);
-        currentSubfolder.removeChild(currentSubfolderChildNodes[3])
-        //currentSubfolder.innerHTML = currentSubfolder.firstChild.textContent
+        console.log(currentSubfolderChildNodes)
+        if (currentSubfolderChildNodes.length==4) {
+            currentSubfolder.removeChild(currentSubfolderChildNodes[3])
+        }
+
     }
 
     event.target.className === "far fa-folder" ?
@@ -339,33 +345,37 @@ const handleSubfolder = (event) => {
 
 }
 
-const getUlElement =(folderId,folderName)=>{
+const getUlElement =(data)=>{
     let ul = document.createElement("ul");
     ul.className = "file-menu subfolder-child";
     ul.id = "FL-folders";
-    ul.innerHTML = `
+    data.map(x => {
+        ul.innerHTML += `
         <li>  
             <div style="display:block">
                 <div style="display:flex;justify-content:space-between;align-items: center;" class="folderlist-folder">
-                    <i class="far fa-folder" id="subfolder-${folderId}" onclick="handleSubfolder(event)"></i>
-                    <a href=${"name"} >DUMMY folder </a>
+                    <i class="far fa-folder" id="subfolder-${x.Id}" onclick="handleSubfolder(event)"></i>
+                    <a href=${`/folders/${x.Id}`} >${x.Name} </a>
                     <a href="" class="dropdown-link" data-toggle="dropdown" style="padding:0;width: 3em;margin:0; display:flex;justify-content:center">
                         <i class="fa fa-ellipsis-v"></i>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right">
 
-                        <a href="#" class="dropdown-item" onclick="getPartialView('/Folder/GetEditFolderPartialView',${folderId})">
+                        <a href="#" class="dropdown-item" onclick="getPartialView('/Folder/GetEditFolderPartialView',${x.id})">
                             Edit Folder
                         </a>
-                        <a href="#" class="dropdown-item" onclick="getPartialView('/Folder/GetDeleteFolderPartialView',${folderId})">
+                        <a href="#" class="dropdown-item" onclick="getPartialView('/Folder/GetDeleteFolderPartialView',${x.id})">
                             Delete Folder
                         </a>
                         <a href="#" class="dropdown-item"
-                            onclick="CtrlX(${folder.Id}, ${folderName}', 'folder')"> Cut Folder</a>
+                            onclick="CtrlX(${x.Id}, ${x.Name}', 'folder')"> Cut Folder</a>
                 </div>
             </div>
 
             </div>
         </li>
-    `
+    `;
+        return x
+    })
+    return ul;
 }

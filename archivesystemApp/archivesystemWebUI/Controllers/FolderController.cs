@@ -219,6 +219,13 @@ namespace archivesystemWebUI.Controllers
             
             return PartialView("GetAllFiles",files);
         }
+
+        public ActionResult GetFolderFiles(int folderId)
+        {
+            var files=_service.GetFolderFiles(folderId);
+            return PartialView("GetAllFiles",files);
+        }
+
         //GET: /Folder/GetDeleteFolderPartialView
         public ActionResult GetDeleteFolderPartialView(int id)
         {
@@ -244,8 +251,8 @@ namespace archivesystemWebUI.Controllers
             return PartialView("_ConfirmItemMove");
         }
          
-        //GET: /Folder/VerifyAccessCode
-        [HttpGet]
+        //POST: /Folder/VerifyAccessCode
+        [HttpPost]
         public ActionResult VerifyAccessCode(string accessCode)
         {
             if (string.IsNullOrWhiteSpace(accessCode))
@@ -266,9 +273,12 @@ namespace archivesystemWebUI.Controllers
 
         //GET: /folder/getsubfolders
         [HttpGet]
-        public IEnumerable<SubfolderViewModel> GetSubFolders(string folderId)
+        public JsonResult GetSubFolders(int folderId)
         {
-            return null;
+            var subfolders=_service.GetSubFolders(folderId);
+            if (subfolders == null) return Json(new SubfolderViewModelResult { Status = HttpStatusCode.NotFound});
+            if (subfolders.Count() == 0) return Json(new SubfolderViewModelResult { Status = HttpStatusCode.NoContent });
+            return Json( subfolders,JsonRequestBehavior.AllowGet );
         }
 
 

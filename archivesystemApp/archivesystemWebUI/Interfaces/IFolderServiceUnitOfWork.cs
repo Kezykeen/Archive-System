@@ -18,6 +18,8 @@ namespace archivesystemWebUI.Interfaces
         IFolderRepo FolderRepo { get; }
         IUserRepository UserRepo { get;  }
         IAccessLevelRepository AccessLevelRepo { get;  }
+
+        IFileRepo FileRepo { get; }
         void Save();
     }
 
