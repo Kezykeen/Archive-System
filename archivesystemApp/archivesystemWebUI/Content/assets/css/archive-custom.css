@@ -1,4 +1,15 @@
-﻿
+﻿/*generalm styles for input of type number*/
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
 /*file manager page custom styles*/
 .validation-summary-errors{
     color:red;
@@ -21,6 +32,24 @@
 
 .subfolder-child{
     margin-left:1em
+}
+
+.EAC-flex {
+    margin-top: 1em;
+    display: flex ;
+    flex-direction:column ;
+    align-items:center ;
+    justify-content:center ;
+}
+.EAC-btn {
+    margin: 0em !important;
+    margin-top: 1em !important;
+    width:260px;
+}
+
+#otpCounter{
+    display:inline-block !important; 
+    width:1.5em;
 }
 /*custom alert message popup styles*/
 #alertMessageBox {
@@ -70,20 +99,35 @@
     position: fixed;
     top: 30%;
     width: 90%;
-    left:5%;
+    left: 5%;
     padding: 1em 2em;
     border-radius: 10px;
 }
 
-#EAC-con h2{
-    text-align:center;
+#EAC-con h2 {
+    text-align: center;
 }
+
+@media only screen and (min-width:500px) {
+    .EAC-flex{
+        margin-top:2em
+    }
+}
+@media only screen  and (min-width:1000px){
+    .EAC-flex {
+        flex-direction:row !important;
+        justify-content: space-between !important;
+        margin-top:1em
+    }
+}
+
 
 @media only screen and (min-width:700px){
     #EAC-con {
         left: 30%;
         width: 50%;
-        padding: 2em 4em;
+        padding: 2em ;
         border-radius: 10px;
+       
     }
 }

@@ -249,14 +249,14 @@ async function CtrlV(newParentFolderId ) {
     }
 }
 
-async function VerifyAccessToken() {
-    document.getElementById("EAC-form").addEventListener("submit", async (e) => {
-        e.preventDefault();
-    })
+async function VerifyAccessToken(event) {
+    event.preventDefault();
 
     let verificationToken = document.getElementsByName("__RequestVerificationToken")[0].value;
-    var accessCode = document.getElementById('EAC-code').value;
-    var returnUrl = document.getElementById("EAC-returnUrl").value;
+    let input = document.getElementById('EAC-code')
+    console.log(input)
+    var accessCode =input.value;
+    var returnUrl = input.getAttribute("data-returnUrl");
     console.log(accessCode, returnUrl)
     resp = await fetch("/Folder/VerifyAccessCode", {
         method: "POST",
@@ -269,25 +269,21 @@ async function VerifyAccessToken() {
             
         })
     })
-    console.log(resp);
-    if (resp.status === 200) {
+    let validationMessageDiv = document.getElementById("EAC-form").children[1];
+    let respJson = await resp.json();
+    console.log(respJson);
+    if (respJson.Status === 200) {
         location.href = returnUrl;
         return;
     }
-    let form = document.getElementById("EAC-form");
-    let validationErrorMessage = document.createElement("div");
-    console.log(form.childNodes.length)
-    if (form.childNodes.length > NODE_COUNT_WITHOUT_ERROR_MESSAGE) {
-        form.removeChild(form.childNodes[0])
+    else {
+        
+        validationMessageDiv.innerHTML = (
+            `<ul>
+                <li>${respJson.Message}</li>
+            </ul>`)
     }
-    var message = resp.status === 400 ? "Access code is incorrect" : "Server Error"
-    validationErrorMessage.innerHTML =
-        `<div class='validation-summary-errors'>
-                <ul>
-                    <li>${message}</li>
-                </ul>
-         </div>`
-    form.prepend(validationErrorMessage);
+
 }
 
 async function findFile() {
@@ -315,10 +311,8 @@ async function findFile() {
     
 }
 
-const handleSubfolder = async (event) => {
+const getSubfolders = async (event) => {
     console.log(event.target.id, event.target.className)
-   
-
     if (event.target.className === "far fa-folder") {
         let folderId = event.target.id.split("-")[1];
         let resp = await fetch(`/folder/getsubfolders?folderId=${folderId}`)
@@ -354,7 +348,7 @@ const getUlElement =(data)=>{
         <li>  
             <div style="display:block">
                 <div style="display:flex;justify-content:space-between;align-items: center;" class="folderlist-folder">
-                    <i class="far fa-folder" id="subfolder-${x.Id}" onclick="handleSubfolder(event)"></i>
+                    <i class="far fa-folder" id="subfolder-${x.Id}" onclick="getSubfolders(event)"></i>
                     <a href=${`/folders/${x.Id}`} >${x.Name} </a>
                     <a href="" class="dropdown-link" data-toggle="dropdown" style="padding:0;width: 3em;margin:0; display:flex;justify-content:center">
                         <i class="fa fa-ellipsis-v"></i>
@@ -378,4 +372,47 @@ const getUlElement =(data)=>{
         return x
     })
     return ul;
+}
+
+const resendOTP = async (event) => {
+    let resp = await fetch("folders/resendotp")
+    event.target.disabled = true;
+    if (resp.status == 200) {
+        Swal.fire({
+            position: 'top-end',
+            icon: 'success',
+            title: 'OTP sent check your email.',
+            showConfirmButton: false,
+            timer: 2000
+        });
+        event.target.innerHTML = "Resend OTP in <span id='otpCounter'>60</span> secs";
+        event.target.disabled = true;
+        startResendOTPCountdown();
+    }
+    else {
+        event.target.disabled = false;
+        Swal.fire({
+            position: 'top-end',
+            icon: 'info',
+            title: 'Failed to send accesscode',
+            showConfirmButton: false,
+            timer: 2000
+        });
+    }
+}
+
+const startResendOTPCountdown = () => {
+    let secondsLeft = parseInt(document.getElementById("otpCounter").textContent);
+    if (secondsLeft > 0) {
+        document.getElementById("otpCounter").parentNode.disabled = true;
+        document.getElementById("otpCounter").textContent = --secondsLeft;
+        setTimeout(() => { startResendOTPCountdown() }, 1000)
+    }
+    else {
+        document.getElementById("otpCounter").parentNode.disabled = false;
+        document.getElementById("otpCounter").parentNode.textContent = "Resend OTP"
+    }
+    
+    
+
 }

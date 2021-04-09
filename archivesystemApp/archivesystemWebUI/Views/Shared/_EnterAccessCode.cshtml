@@ -7,20 +7,20 @@
 
     <div id="EAC-con">
         <h2>Access Code Verification</h2>
-        <form id="EAC-form" name="folderAccessCode"  method="post" onsubmit="VerifyAccessToken()">
+        <form  name="folderAccessCode" id="EAC-form" method="post" onsubmit="VerifyAccessToken(event)">
             @Html.AntiForgeryToken()
             @Html.ValidationSummary()
-            
-            <input name="returnUrl" value="@Model.ReturnUrl" hidden id="EAC-returnUrl" />
             <div class="form-group">
-                <label>Access Code</label>
-                <input name="name" class="form-control" rows="2" placeholder="Enter your access code" id="EAC-code" />
-            </div>
-
-            <div class="submit-section">
-                <button style=" margin:auto" class="btn btn-primary submit-btn" type="submit" onclick="VerifyAccessToken()">Submit</button>
+                <input name="name" class="form-control" rows="2" id="EAC-code" max="999999" min="100000" type="number"
+                       placeholder="Enter your OTP" data-returnUrl="@Model.ReturnUrl"   />
             </div>
         </form>
+        <div class="submit-section EAC-flex" >
+            <button style=" margin:auto;background-color:#6f42c1" class="btn btn-primary submit-btn EAC-btn" type="submit"
+                    onclick="VerifyAccessToken(event)">Submit</button>
+            <button style=" margin:auto" class="btn btn-primary submit-btn EAC-btn" type="submit" onclick="resendOTP(event)"
+                    >Resend OTP</button>
+        </div>
 
     </div>
 

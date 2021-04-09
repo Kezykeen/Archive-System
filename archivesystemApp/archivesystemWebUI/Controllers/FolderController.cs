@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.Security;
 
@@ -23,7 +24,7 @@ namespace archivesystemWebUI.Controllers
     [Authorize(Roles = RoleNames.FolderAllowedRoles)]
     public class FolderController : Controller
     {
-        private const byte LOCKOUT_TIME = 10; //lockout user after last request exceeds lockout time in minutes
+        
 
         private readonly IRoleService _roleService;
         private readonly IAccessCodeGenerator _accessCodeGenerator;
@@ -49,7 +50,17 @@ namespace archivesystemWebUI.Controllers
             if (!HttpContext.User.IsInRole(RoleNames.Admin))
             {
                 CheckForUserAccessCode(out bool hasCorrectAccessCode, out double timeSinceLastRequest);
-                model.CloseAccessCodeModal = hasCorrectAccessCode && timeSinceLastRequest <= LOCKOUT_TIME;
+                model.CloseAccessCodeModal = hasCorrectAccessCode && timeSinceLastRequest <= GlobalConstants.LOCKOUT_TIME;
+                if (!hasCorrectAccessCode || timeSinceLastRequest > GlobalConstants.LOCKOUT_TIME)
+                {
+                    model.DirectChildren = null;
+                    var errorMessage = hasCorrectAccessCode ? "Check your mail for your OTP" :
+                        Session["firstRequest"] == null ? "Check your mail for your OTP" :
+                        "Locked out due to inactivity, Check your mail for your OTP ";
+                    ModelState.AddModelError("", errorMessage);
+                    Session["firstRequest"] = false;
+                }
+                
             }
             else
                 model.CloseAccessCodeModal = true;
@@ -126,8 +137,18 @@ namespace archivesystemWebUI.Controllers
             return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);  
         }
 
+         [Route("folders/resendotp")]
+        public async Task<ActionResult> SendAccessCode()
+        {
+            var result= await _service.SendAccessCode(HttpContext.User.Identity.GetUserId());
+            if(result== FolderServiceResult.Success) return new HttpStatusCodeResult(HttpStatusCode.OK);
+
+            return new HttpStatusCodeResult(HttpStatusCode.OK);
+        }
+
+
         //GET: /folders/{id}
-        [Route("folders/{folderId}")]
+        [Route("folders/{folderId:int}")]
         [HttpGet]
         public ActionResult GetFolder(int folderId)
         {
@@ -139,7 +160,7 @@ namespace archivesystemWebUI.Controllers
             else
             {
                 CheckForUserAccessCode(out bool hasCorrectAccessCode, out double timeSinceLastRequest);
-                if (!hasCorrectAccessCode || timeSinceLastRequest > LOCKOUT_TIME)
+                if (!hasCorrectAccessCode || timeSinceLastRequest > GlobalConstants.LOCKOUT_TIME)
                     return RedirectToAction(nameof(Index), new { returnUrl = $"/folders/{folderId}" });
 
                 VerifyAccessAndFilterFolderSubFolders(out bool hasAuthorizedAccessToFolder, folder);
@@ -214,9 +235,7 @@ namespace archivesystemWebUI.Controllers
         public ActionResult GetFile(string filename,int folderId,bool returnall=false)
         {
             var files = _service.GetFiles(filename, folderId, returnall:returnall);
-
-            if (files == null) return new HttpStatusCodeResult(404);
-            
+            if (files == null) return new HttpStatusCodeResult(404); 
             return PartialView("GetAllFiles",files);
         }
 
@@ -253,21 +272,20 @@ namespace archivesystemWebUI.Controllers
          
         //POST: /Folder/VerifyAccessCode
         [HttpPost]
-        public ActionResult VerifyAccessCode(string accessCode)
+        public JsonResult VerifyAccessCode(string accessCode)
         {
             if (string.IsNullOrWhiteSpace(accessCode))
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return Json(new RequestResponse<string> {Status=HttpStatusCode.BadRequest, Message="accesscode cannot be empty" });
 
-            var accessCodeInDb = _service.GetCurrentUserAccessCode(HttpContext.User.Identity.GetUserId());
-            if (string.IsNullOrWhiteSpace(accessCodeInDb)) 
-                return new HttpStatusCodeResult(403);
-            var codeIsCorrect=_accessCodeGenerator.VerifyCode(accessCode, accessCodeInDb);
-            if (!codeIsCorrect)
-                return new HttpStatusCodeResult(400);
+            var userId = HttpContext.User.Identity.GetUserId();
+            var result = _service.VerifyAccessCode(userId,accessCode);
+            if (result.Status == HttpStatusCode.OK) 
+            {
+                Session[GlobalConstants.IsAccessValidated] = true;
+                Session[GlobalConstants.LastVisit] = DateTime.Now;
+            } 
 
-            Session[GlobalConstants.IsAccessValidated] = true;
-            Session[GlobalConstants.LastVisit] = DateTime.Now;
-            return new HttpStatusCodeResult(HttpStatusCode.OK);
+            return Json(result);
         }
 
 
@@ -276,17 +294,20 @@ namespace archivesystemWebUI.Controllers
         public JsonResult GetSubFolders(int folderId)
         {
             var subfolders=_service.GetSubFolders(folderId);
-            if (subfolders == null) return Json(new SubfolderViewModelResult { Status = HttpStatusCode.NotFound});
-            if (subfolders.Count() == 0) return Json(new SubfolderViewModelResult { Status = HttpStatusCode.NoContent });
+            if (subfolders == null) return Json(new RequestResponse<IEnumerable<SubfolderViewModel>> { Status = HttpStatusCode.NotFound});
+            if (subfolders.Count() == 0) return Json(new RequestResponse<IEnumerable<SubfolderViewModel>> { Status = HttpStatusCode.NoContent });
             return Json( subfolders,JsonRequestBehavior.AllowGet );
         }
 
+        
 
         #region Private Methods
         private void CheckForUserAccessCode(out bool hasCorrectAccessCode, out double timeSinceLastRequest)
         {
             hasCorrectAccessCode =
                Session[GlobalConstants.IsAccessValidated] != null && (bool)Session[GlobalConstants.IsAccessValidated];
+
+            if (!hasCorrectAccessCode) SendUserAccessCodeToUser();
             var lastVisitTime = Session[GlobalConstants.LastVisit] ?? new DateTime();
             timeSinceLastRequest = (DateTime.Now - (DateTime)lastVisitTime).TotalMinutes;
         }
@@ -371,9 +392,13 @@ namespace archivesystemWebUI.Controllers
 
             TempData["errorMessage"] =
                 hasAuthorizedAccessToFolder ? null : $"You are not authorized to view {folder.Name} folder";
-
         }
 
+        private void SendUserAccessCodeToUser()
+        {
+            var userId = HttpContext.User.Identity.GetUserId();
+            _service.SendAccessCode(userId);
+        }
         
 
        

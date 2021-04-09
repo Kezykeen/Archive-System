@@ -26,11 +26,11 @@ namespace archivesystemDomain.Services
         {
         }
 
-        public string NewCode(string staffId)
+        public string NewOTP()
         {
-            var guid = Guid.NewGuid().ToString("N").Substring(0, 6);
-            var accessCode = guid + staffId;
-            return accessCode;
+            Random _random = new Random();
+            var code = _random.Next(100000, 999999);
+            return code.ToString();
         }
 
         public string HashCode(string code)
@@ -42,13 +42,13 @@ namespace archivesystemDomain.Services
 
         public bool VerifyCode(string code, string hashedcode)
         {
-            var verified = BCrypt.Net.BCrypt.Verify(code, hashedcode);
+             var verified = BCrypt.Net.BCrypt.Verify(code, hashedcode);
             return verified;
         }
 
         public async Task<string> GenerateCode(AppUser user, string method)
         {
-            var accessCode = NewCode(user.TagId);
+            var accessCode = NewOTP()+ user.TagId;
 
             switch (method)
             {

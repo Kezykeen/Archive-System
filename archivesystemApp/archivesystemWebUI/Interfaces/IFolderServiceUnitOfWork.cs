@@ -14,12 +14,13 @@ namespace archivesystemWebUI.Interfaces
 {
     public interface IFolderServiceUnitOfWork
     {
-        IAccessDetailsRepository AccessDetailsRepo { get;  }
+        IAccessDetailsRepository AccessDetailsRepo { get; }
         IFolderRepo FolderRepo { get; }
-        IUserRepository UserRepo { get;  }
-        IAccessLevelRepository AccessLevelRepo { get;  }
-
+        IUserRepository UserRepo { get; }
+        IAccessLevelRepository AccessLevelRepo { get; }
+        IEmailSender MailSender { get; }
         IFileRepo FileRepo { get; }
+        IAccessCodeGenerator CodeGenerator {get;}
         void Save();
     }
 

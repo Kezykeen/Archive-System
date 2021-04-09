@@ -7,7 +7,7 @@ namespace archivesystemDomain.Services
     {
         Task<string> GenerateCode(AppUser user, string method);
         string HashCode(string code);
-        string NewCode(string staffId);
+        string NewOTP();
         bool VerifyCode(string code, string hashedcode);
     }
 }

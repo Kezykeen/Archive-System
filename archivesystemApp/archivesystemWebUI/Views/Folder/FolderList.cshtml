@@ -63,7 +63,7 @@
                                     <li>
                                         <div style="display:block">
                                             <div style="display:flex;justify-content:space-between;align-items: center;" class="folderlist-folder">
-                                                <i class="far fa-folder" id="subfolder-@folder.Id" onclick="handleSubfolder(event)"></i>
+                                                <i class="far fa-folder" id="subfolder-@folder.Id" onclick="getSubfolders(event)"></i>
                                                 @Html.ActionLink(@folder.Name, $"/{@folder.Id}", "folders")
 
                                                 <a href="" class="dropdown-link" data-toggle="dropdown" style="padding:0;width: 3em;margin:0; display:flex;justify-content:center">

@@ -33,10 +33,8 @@ namespace archivesystemWebUI.Interfaces
         UserData GetUserData(string userId);
         FolderServiceResult MoveFolder(MoveItemViewModel model);
         FolderServiceResult SaveFolder(SaveFolderViewModel model);
-
-
-
-
+        Task<FolderServiceResult> SendAccessCode(string userId);
+        RequestResponse<string> VerifyAccessCode(string userId, string code);
     }
 
     

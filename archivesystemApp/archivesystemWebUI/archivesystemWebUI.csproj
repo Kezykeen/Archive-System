@@ -242,6 +242,10 @@
     <Compile Include="Migrations\202103232108221_Initial.Designer.cs">
       <DependentUpon>202103232108221_Initial.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202104071200243_AddTimeStampToAccessDetails.cs" />
+    <Compile Include="Migrations\202104071200243_AddTimeStampToAccessDetails.Designer.cs">
+      <DependentUpon>202104071200243_AddTimeStampToAccessDetails.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationVm.cs" />
     <Compile Include="Models\AssignDeptsVm.cs" />
@@ -591,6 +595,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202103232108221_Initial.resx">
       <DependentUpon>202103232108221_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202104071200243_AddTimeStampToAccessDetails.resx">
+      <DependentUpon>202104071200243_AddTimeStampToAccessDetails.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

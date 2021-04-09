@@ -1,5 +1,6 @@
 ﻿using archivesystemDomain.Entities;
 using archivesystemDomain.Interfaces;
+using archivesystemDomain.Services;
 using archivesystemWebUI.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,8 @@ namespace archivesystemWebUI.Repository
         public IAccessDetailsRepository AccessDetailsRepo { get; }
         public IFolderRepo FolderRepo { get; }
         public IFileRepo FileRepo { get; }
+        public IEmailSender MailSender { get; }
+        public IAccessCodeGenerator CodeGenerator { get; }
 
 
 
@@ -26,7 +29,9 @@ namespace archivesystemWebUI.Repository
             IAccessLevelRepository accessLevelRepo,
             IAccessDetailsRepository accessDetailsRepository,
             IFolderRepo folderRepo,
-            IFileRepo fileRepo
+            IFileRepo fileRepo,
+            IEmailSender mailsender,
+            IAccessCodeGenerator codeGenerator
             )
         {
             _context = context;
@@ -35,7 +40,8 @@ namespace archivesystemWebUI.Repository
             UserRepo = userRepo;
             FolderRepo = folderRepo;
             FileRepo = fileRepo;
-
+            MailSender = mailsender;
+            CodeGenerator = codeGenerator;
         }
 
 

@@ -13,9 +13,10 @@ namespace archivesystemWebUI.Models.FolderModels
         public string Name { get; set; }
     }
 
-    public class SubfolderViewModelResult
+    public class RequestResponse<T>
     {
         public HttpStatusCode Status { get; set; }
-        public IEnumerable<SubfolderViewModel> Data { get; set; }
+        public T Data { get; set; }
+        public string  Message { get; set; }
     }
 }

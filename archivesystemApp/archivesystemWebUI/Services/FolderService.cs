@@ -9,13 +9,16 @@ using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using archivesystemWebUI.Infrastructures;
+using System.Text;
+using System.Threading.Tasks;
+using System.Net;
 
 namespace archivesystemWebUI.Services
 {
     public enum FolderServiceResult
     {
-        AlreadyExist, InvalidAccessLevel, MaxFolderDepthReached, Success
-            , InvalidModelState, Prohibited, NotFound, UnknownError
+        AlreadyExist, InvalidAccessLevel, MaxFolderDepthReached, Success, Expired
+            , InvalidModelState, Prohibited, NotFound, UnknownError,Failure
     }
     public class FolderService : IFolderService
     {
@@ -150,10 +153,34 @@ namespace archivesystemWebUI.Services
         {
             var user = _repo.UserRepo.GetUserByUserId(userId);
             if (user == null)
-                return "";
+                return null;
             var userDetails = _repo.AccessDetailsRepo.Find(x => x.AppUserId == user.Id)?.SingleOrDefault();
-            if (userDetails == null) return "";
+            if (userDetails == null) return null;
+            var timeDiff = DateTime.Now - userDetails.UpdatedAt;
+            if (timeDiff > new TimeSpan(0, GlobalConstants.LOCKOUT_TIME, 0)) return null;
             return userDetails.AccessCode;
+        }
+
+        public RequestResponse<string> VerifyAccessCode(string userId,string code)
+        {
+
+            var user = _repo.UserRepo.GetUserByUserId(userId);
+            if (user == null)
+                return new RequestResponse<string> { Status=HttpStatusCode.NotFound ,Message="Data not found contact admin."};
+            var userDetails = _repo.AccessDetailsRepo.Find(x => x.AppUserId == user.Id)?.SingleOrDefault();
+            if (userDetails == null) return new RequestResponse<string> { 
+                Status = HttpStatusCode.Forbidden,Message="You are not yet permitted to view documents" };
+            var timeDiff = DateTime.Now - userDetails.UpdatedAt;
+
+            if (timeDiff > new TimeSpan(0, GlobalConstants.LOCKOUT_TIME, 0)) return new RequestResponse<string>{
+                Status=HttpStatusCode.BadRequest,Message="Locked Out: Check mail for new OTP"};
+            if (_repo.CodeGenerator.VerifyCode(code, userDetails.AccessCode)) return new RequestResponse<string>{
+                    Status = HttpStatusCode.OK, Message = "access code is correct"};
+            return new RequestResponse<string>
+            {
+                Status = HttpStatusCode.BadRequest,
+                Message = "Access code is incorrect"
+            }; ;
         }
 
         public List<File> GetFiles(string filename,int folderId, bool returnall=false)
@@ -268,6 +295,29 @@ namespace archivesystemWebUI.Services
                 return FolderServiceResult.MaxFolderDepthReached;
 
             TrySaveFolder(model);
+            return FolderServiceResult.Success;
+        }
+
+        public async Task<FolderServiceResult> SendAccessCode(string userId)
+        {
+            var user=_repo.UserRepo.Find(x => x.UserId == userId);
+            if (user.Count() != 1) return FolderServiceResult.NotFound;
+            if (string.IsNullOrEmpty(user.Single().Email)) return FolderServiceResult.Failure;
+            var appuserId = user.First().Id;
+            var userAccessDetails=_repo.AccessDetailsRepo.Find(x => x.AppUserId == appuserId).ToList();
+            if(userAccessDetails.Count() != 1) return FolderServiceResult.NotFound;
+
+            var code=_repo.CodeGenerator.NewOTP();
+            var userAccessDetail = userAccessDetails.First();
+            userAccessDetail.UpdatedAt = DateTime.Now;
+            userAccessDetail.AccessCode = _repo.CodeGenerator.HashCode(code);
+
+            await  _repo.MailSender.SendEmailAsync(
+                    user.Single().Email,
+                    "One Time AccessCode",
+                    $"Hi , Here is your one time accesscode {code}"
+                    );
+            _repo.Save();
             return FolderServiceResult.Success;
         }
 

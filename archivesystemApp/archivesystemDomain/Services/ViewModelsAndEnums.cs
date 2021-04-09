@@ -37,6 +37,7 @@ namespace archivesystemDomain.Services
         public const string userHasNoAccesscode = " userHasNoAccesscode";
         public const string RootFolderName = "Root";
         public const int MaxFolderDepth = 7;
+        public  const byte LOCKOUT_TIME = 10;
 
     }
 

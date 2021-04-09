@@ -48,8 +48,9 @@ namespace archivesystemWebUI.Services
                 {
                     AppUserId = user.Id,
                     AccessLevelId = model.AccessLevel,
-                    AccessCode = await _accessCode.GenerateCode(user, add),
-                    Status = Status.Active
+                    Status = Status.Active,
+                    CreatedAt=DateTime.Now,
+                    UpdatedAt=DateTime.Now,
                 };
 
                 _accessDetailsRepository.Add(newAccessDetails);
