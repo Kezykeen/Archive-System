@@ -60,7 +60,8 @@
             <div class="dropdown-menu dropdown-menu-right">
                 <a href="@Url.Action("Details", "FileMeta", new {id = Model.Id})" class="dropdown-item">View Details</a>
                 <a href="@Url.Action("GetFile","FileMeta", new {id = Model.Id, fileName})" class="dropdown-item">Download</a>
-                <a href="@Url.Action("Delete","FileMeta", new {id = Model.Id, fileName})" class="dropdown-item">Delete</a>
+                <a href="#" data-id="@Model.Id" data-fileName="@fileName"class="dropdown-item" 
+                   onclick="DeleteFile(event)">Delete</a>
                 
                
             </div>
@@ -76,3 +77,5 @@
         <div class="card-footer">Modified: @Model.UpdatedAt.ToString("d/M/yyyy HH:mm")</div>
     </div>
 </div>
+
+

@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Net;
 using System.Web;
 using archivesystemDomain.Entities;
 using archivesystemDomain.Interfaces;
 using archivesystemWebUI.Interfaces;
 using archivesystemWebUI.Models;
-
+using archivesystemWebUI.Models.FolderModels;
 
 namespace archivesystemWebUI.Services
 {
@@ -70,6 +71,17 @@ namespace archivesystemWebUI.Services
         {
             return _fileRepo.FindWithNavProps(f => f.Id == id, _ => _.FileMeta, _ => _.FileMeta.UploadedBy, _ => _.Folder).SingleOrDefault();
         }
+
+        public RequestResponse<string> DeleteFile(int id)
+        {
+            var file=_fileRepo.Get(id);
+            if (file == null) return new RequestResponse<string> { Status = HttpStatusCode.NotFound };
+            if(file.IsArchived) return new RequestResponse<string> { Status = HttpStatusCode.Forbidden };
+            
+            _fileRepo.Remove(file);
+            _unitOfWork.Save();
+            return new RequestResponse<string> { Status = HttpStatusCode.OK };
+        }
         public archivesystemDomain.Entities.File GetFile(int id, string fileName)
         {
             var file=_fileRepo.Get(id);
@@ -81,7 +93,7 @@ namespace archivesystemWebUI.Services
 
         }
 
-        public byte[]  ZipFile(archivesystemDomain.Entities.File file,string fileName)
+        private byte[]  ZipFile(archivesystemDomain.Entities.File file,string fileName)
         {
             using (var ms = new MemoryStream())
             {

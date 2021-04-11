@@ -2,6 +2,7 @@
 using System.Web;
 using archivesystemDomain.Entities;
 using archivesystemWebUI.Models;
+using archivesystemWebUI.Models.FolderModels;
 
 namespace archivesystemWebUI.Interfaces
 {
@@ -11,5 +12,6 @@ namespace archivesystemWebUI.Interfaces
         ICollection<File> GetFiles(int folderId);
         File Details(int id);
         File GetFile(int id, string fileName);
+        RequestResponse<string> DeleteFile(int id);
     }
 }

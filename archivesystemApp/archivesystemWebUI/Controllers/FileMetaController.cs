@@ -68,6 +68,17 @@ namespace archivesystemWebUI.Controllers
 
             return View(model);
         }
+
+        
+        public JsonResult Delete(int id, string fileName)
+        {
+            var result=_fileService.DeleteFile(id);
+            if (result.Status == HttpStatusCode.NotFound) result.Message = $"{fileName} was not found";
+            if (result.Status == HttpStatusCode.Forbidden) result.Message = $"Not allowed:{fileName} is archived";
+            if (result.Status == HttpStatusCode.OK) result.Message = $"{fileName} was successfully deleted";
+            
+            return Json(result);
+        }
         public ActionResult GetAllFiles(int folderId)
         {
 
