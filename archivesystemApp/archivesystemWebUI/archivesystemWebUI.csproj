@@ -104,6 +104,11 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Compression.4.3.0\lib\net46\System.IO.Compression.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
     </Reference>
@@ -245,6 +250,10 @@
     <Compile Include="Migrations\202104071200243_AddTimeStampToAccessDetails.cs" />
     <Compile Include="Migrations\202104071200243_AddTimeStampToAccessDetails.Designer.cs">
       <DependentUpon>202104071200243_AddTimeStampToAccessDetails.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202104100515151_addedIsArchivedFlagToFilesEntity.cs" />
+    <Compile Include="Migrations\202104100515151_addedIsArchivedFlagToFilesEntity.Designer.cs">
+      <DependentUpon>202104100515151_addedIsArchivedFlagToFilesEntity.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationVm.cs" />
@@ -598,6 +607,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202104071200243_AddTimeStampToAccessDetails.resx">
       <DependentUpon>202104071200243_AddTimeStampToAccessDetails.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202104100515151_addedIsArchivedFlagToFilesEntity.resx">
+      <DependentUpon>202104100515151_addedIsArchivedFlagToFilesEntity.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

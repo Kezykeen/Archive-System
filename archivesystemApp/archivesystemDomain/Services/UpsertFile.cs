@@ -29,6 +29,7 @@ namespace archivesystemDomain.Services
                     Name = $"{Guid.NewGuid():N}.{System.IO.Path.GetFileName(file.FileName)?.Split('.').Last()}",
                     ContentType = file.ContentType
                 };
+                
                 using (var reader = new System.IO.BinaryReader(file.InputStream))
                 {
                     model.Content = reader.ReadBytes(file.ContentLength);

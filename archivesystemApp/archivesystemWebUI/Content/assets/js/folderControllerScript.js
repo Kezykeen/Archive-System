@@ -251,13 +251,12 @@ async function CtrlV(newParentFolderId ) {
 
 async function VerifyAccessToken(event) {
     event.preventDefault();
-
+    debugger;
+    document.getElementById("verifyaccesstoken-btn").disabled = true;
     let verificationToken = document.getElementsByName("__RequestVerificationToken")[0].value;
     let input = document.getElementById('EAC-code')
-    console.log(input)
     var accessCode =input.value;
     var returnUrl = input.getAttribute("data-returnUrl");
-    console.log(accessCode, returnUrl)
     resp = await fetch("/Folder/VerifyAccessCode", {
         method: "POST",
         headers: {
@@ -271,13 +270,22 @@ async function VerifyAccessToken(event) {
     })
     let validationMessageDiv = document.getElementById("EAC-form").children[1];
     let respJson = await resp.json();
-    console.log(respJson);
+   
     if (respJson.Status === 200) {
+        validationMessageDiv.innerHTML = "";
+        Swal.fire({
+            position: 'top-end',
+            icon: 'success',
+            title: 'Access Granted!!!',
+            showConfirmButton: false,
+            timer: 2000
+        });
+        
         location.href = returnUrl;
         return;
     }
     else {
-        
+        document.getElementById("verifyaccesstoken-btn").disabled = false;
         validationMessageDiv.innerHTML = (
             `<ul>
                 <li>${respJson.Message}</li>
@@ -287,7 +295,6 @@ async function VerifyAccessToken(event) {
 }
 
 async function findFile() {
-    console.log("fetching .... ")
     document.getElementById("FL-filename-search-form").addEventListener("submit", async (e) => {
         e.preventDefault();
     })
@@ -374,7 +381,9 @@ const getUlElement =(data)=>{
     return ul;
 }
 
+
 const resendOTP = async (event) => {
+    
     let resp = await fetch("folders/resendotp")
     event.target.disabled = true;
     if (resp.status == 200) {
@@ -416,3 +425,4 @@ const startResendOTPCountdown = () => {
     
 
 }
+

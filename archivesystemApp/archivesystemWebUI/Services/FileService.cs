@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Web;
 using archivesystemDomain.Entities;
 using archivesystemDomain.Interfaces;
 using archivesystemWebUI.Interfaces;
 using archivesystemWebUI.Models;
+
 
 namespace archivesystemWebUI.Services
 {
@@ -34,7 +37,7 @@ namespace archivesystemWebUI.Services
             {
                 model.File = _upsertFile.Save(model.File, fileBase);
             }
-
+            model.File.IsArchived = model.Archive;
             model.File.FileMeta = new FileMeta
             {
                 Title = model.Title,
@@ -42,7 +45,6 @@ namespace archivesystemWebUI.Services
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now
             };
-
 
             model.File.AccessLevelId = model.AccessLevelId;
             _folderRepo
@@ -53,7 +55,7 @@ namespace archivesystemWebUI.Services
 
         }
 
-        public ICollection<File> GetFiles(int folderId)
+        public ICollection<archivesystemDomain.Entities.File> GetFiles(int folderId)
         {
             var files = 
                 _fileRepo
@@ -64,13 +66,37 @@ namespace archivesystemWebUI.Services
 
         }
 
-        public File Details(int id)
+        public archivesystemDomain.Entities.File Details(int id)
         {
             return _fileRepo.FindWithNavProps(f => f.Id == id, _ => _.FileMeta, _ => _.FileMeta.UploadedBy, _ => _.Folder).SingleOrDefault();
         }
-        public File GetFile(int id, string fileName)
+        public archivesystemDomain.Entities.File GetFile(int id, string fileName)
         {
-            return _fileRepo.Get(id);
+            var file=_fileRepo.Get(id);
+            if (!file.IsArchived) return file;
+
+            file.Content=ZipFile(file,fileName);
+            return file;
+
+
+        }
+
+        public byte[]  ZipFile(archivesystemDomain.Entities.File file,string fileName)
+        {
+            using (var ms = new MemoryStream())
+            {
+                using (var archive = new ZipArchive(ms, ZipArchiveMode.Create, true))
+                {
+                    byte[] bytes = file.Content;
+                    var zipEntry = archive.CreateEntry(fileName, CompressionLevel.Fastest);
+                    using (var zipStream = zipEntry.Open())
+                    {
+                        zipStream.Write(bytes, 0, bytes.Length);
+                    }
+
+                }
+                return ms.ToArray();
+            }
         }
     }
 }

@@ -219,7 +219,9 @@ namespace archivesystemWebUI.Services
                 Name= x.Name,
                 CreatedAt = x.CreatedAt,
                 UpdatedAt = x.UpdatedAt,
-                ContentType=x.ContentType
+                ContentType=x.ContentType,
+                IsArchived= x.IsArchived
+
             });;
             return folderfilesmodel;
 

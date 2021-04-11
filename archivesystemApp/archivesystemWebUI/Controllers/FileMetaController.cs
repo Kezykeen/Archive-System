@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using archivesystemDomain.Entities;
@@ -8,6 +9,7 @@ using archivesystemDomain.Interfaces;
 using archivesystemWebUI.Infrastructures;
 using archivesystemWebUI.Interfaces;
 using archivesystemWebUI.Models;
+using archivesystemWebUI.Models.FolderModels;
 using Microsoft.AspNet.Identity;
 
 namespace archivesystemWebUI.Controllers
@@ -40,26 +42,19 @@ namespace archivesystemWebUI.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult New(FileMetaVm model, HttpPostedFileBase fileBase)
+        [ValidateHeaderAntiForgeryToken]
+        public JsonResult New(FileMetaVm model)
         {
             if (!ModelState.IsValid)
-            {
-                model.AccessLevel = _accessLevelService.GetAll();
-                Response.StatusCode = 200;
-                return PartialView("New", model);
-            }
+               return Json(new RequestResponse<string> { Status = HttpStatusCode.BadRequest,
+                    Message = "Some required feilds were missing" });
 
-            var file = _fileService.Create(model, fileBase);
+            var file = _fileService.Create(model, model.FileBase);
+            if (file.save)  return Json( new RequestResponse<string> {Status=HttpStatusCode.Created,
+                Message="file added successfully" });
 
-            if (file.save)
-            {
-                Response.StatusCode = 201;
-                return PartialView("_File", model.File);
-            }
-
-            ModelState.AddModelError("", "An Error Occurred!");
-            return PartialView("New", model);
+           return Json(new RequestResponse<string> { Status = HttpStatusCode.InternalServerError,
+               Message = "An Error Occurred" });
         }
 
 
@@ -89,7 +84,12 @@ namespace archivesystemWebUI.Controllers
             {
                 return null;
             }
-            Response.AddHeader("Content-Disposition", "inline; filename=" + fileName);
+            
+            //Response.AppendHeader("Content-Disposition", "inline; filename=" + fileName
+            
+            if(file.IsArchived) return File(file.Content, "application/zip", fileName.Split('.')[0]+".zip");
+
+            Response.AddHeader("Content-Disposition", "attachment; filename=" + fileName);
             return File(file.Content, file.ContentType);
         }
 

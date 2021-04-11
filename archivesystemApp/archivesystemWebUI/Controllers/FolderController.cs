@@ -54,11 +54,10 @@ namespace archivesystemWebUI.Controllers
                 if (!hasCorrectAccessCode || timeSinceLastRequest > GlobalConstants.LOCKOUT_TIME)
                 {
                     model.DirectChildren = null;
-                    var errorMessage = hasCorrectAccessCode ? "Check your mail for your OTP" :
-                        Session["firstRequest"] == null ? "Check your mail for your OTP" :
-                        "Locked out due to inactivity, Check your mail for your OTP ";
+                    if (!hasCorrectAccessCode) SendUserAccessCodeToUser();
+                    var errorMessage = hasCorrectAccessCode ? "Locked out due to inactivity, Check your mail for your OTP " :
+                        "Check your mail for your OTP" ;
                     ModelState.AddModelError("", errorMessage);
-                    Session["firstRequest"] = false;
                 }
                 
             }
@@ -307,7 +306,6 @@ namespace archivesystemWebUI.Controllers
             hasCorrectAccessCode =
                Session[GlobalConstants.IsAccessValidated] != null && (bool)Session[GlobalConstants.IsAccessValidated];
 
-            if (!hasCorrectAccessCode) SendUserAccessCodeToUser();
             var lastVisitTime = Session[GlobalConstants.LastVisit] ?? new DateTime();
             timeSinceLastRequest = (DateTime.Now - (DateTime)lastVisitTime).TotalMinutes;
         }

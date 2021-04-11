@@ -8,34 +8,25 @@
             </button>
         </div>
         <div class="modal-body">
-            @using (Ajax.BeginForm("New", "FileMeta", new AjaxOptions
-            {
-                HttpMethod = "POST",
-                OnSuccess = "OnUploadSuccess",
-                OnFailure = "OnUploadFailure",
-                LoadingElementId = "saving",
-                LoadingElementDuration = 1000
-
-            }, new { id = "upload", enctype = "multipart/form-data" }))
-            {
+            <form id="upload" >
                 <div class="form-horizontal">
                     @Html.ValidationSummary(true, "", new { @class = "" })
                     @Html.AntiForgeryToken()
                     @Html.HiddenFor(e => e.FolderId)
                     @Html.HiddenFor(e => e.UploadedById)
-                   
-                       
+
+
                     <div class="form-group">
-                        @Html.LabelFor(e => e.Title, new {@class= "control-label col-md-6" })
-                                
+                        @Html.LabelFor(e => e.Title, new { @class = "control-label col-md-6" })
+
                         <div class="col-md-12">
                             @Html.TextBoxFor(e => e.Title, new { @class = "form-control" })
                             @Html.ValidationMessageFor(e => e.Title)
                         </div>
 
                     </div>
-                      
-                  
+
+
                     <div class="form-group">
                         @Html.LabelFor(e => e.AccessLevelId)
 
@@ -48,75 +39,102 @@
                     <div class="form-group">
                         @Html.LabelFor(e => e.FileBase, new { @class = "control-label col-md-6" })
                         <div class="col-md-12">
-                            @Html.TextBoxFor(e => e.FileBase, new { @class = "form-control", type="file" })
+                            @Html.TextBoxFor(e => e.FileBase, new { @class = "form-control", type = "file" })
                             @Html.ValidationMessageFor(e => e.FileBase)
                         </div>
 
                     </div>
-                  
-                       
-                      
+
+                    <div class="form-check">
+                        <input class="form-check-input" id="Archive" name="Archive" type="checkbox" value="false"
+                               data-val="true" data-val-required="Archive flag is required" onchange="changeCheckBoxVal()"/>
+                        @* @Html.CheckBoxFor(e => e.Archive, new { @class = "form-check-input" })*@
+                        @Html.LabelFor(e => e.Archive, new { @class = "form-check-label" })
+                    </div>
 
 
-                  
+
+
 
                     <div class="submit-section">
-                        <div style="display:flex;justify-content:space-between">
-                            <button class="btn btn-primary submit-btn">Upload</button>
-                            <button class="btn btn-primary submit-btn">Archive</button>
+                        <div>
+                            <button class="btn btn-primary submit-btn" id="file-submit-btn"  type="submit">Upload</button>
                         </div>
-                        
+
                         <div id="saving" class="fa-2x" style="color: gray; display: none">
-                            <i class="fa fa-cog fa-spin  fa-fw" aria-hidden="true"></i>
                             <span class="sr-only">Uploading. Hang tight!</span>
+                            <i class="fa fa-cog fa-spin  fa-fw" aria-hidden="true"></i>
+
                         </div>
                     </div>
                 </div>
-            }
+            </form>
         </div>
     </div>
 
 </div>
 
 <script>
-    function OnUploadSuccess(response, status, xhr) {
+    const changeCheckBoxVal = () => {
+        let shouldArchiveVal = document.getElementById("Archive").value
+        document.getElementById("Archive").value= shouldArchiveVal==="false" ? true : false
+    }
 
-        if (xhr.status === 201) {
+    document.getElementById("upload").addEventListener("submit", (event) => {
+        event.preventDefault();
+        document.getElementById("file-submit-btn").disabled = true;
+        document.getElementById("saving").style.display = "block";
+        submitForm(event);
+    })
 
-            debugger;
-            console.log(xhr.status === 201);
-            
-               
-            $('#new_upload').modal('hide');
-
-            $("#filesContainer").append(response);
+    const submitForm = async (event) => {
+        let shouldArchive = document.getElementById("Archive").value;
+        debugger;
+        document.getElementById("file-submit-btn").innerText = shouldArchive === "true" ? "Archiving...." : "Uploading....";
+        let verificationToken = document.getElementsByName("__RequestVerificationToken")[0].value;
+        const formData = new FormData();
+        let title = document.getElementById("Title").value;
+        formData.append("FileBase" ,document.getElementById("FileBase").files[0])
+        formData.append("Title",title )
+        formData.append("AccessLevelId", document.getElementById("AccessLevelId").value)
+        formData.append("FolderId" ,document.getElementById("FolderId").value)
+        formData.append("UploadedById", document.getElementById("UploadedById").value)
+        formData.append("Archive", shouldArchive)
+        
+        let resp = await fetch("/FileMeta/New", {
+            method: "POST",
+            headers: {
+                __RequestVerificationToken: verificationToken,
+            },
+            body: formData
+        })
+        let respJson = await resp.json()
+        if (respJson.Status = 201) {
             Swal.fire({
                 position: 'top-end',
                 icon: 'success',
-                title: 'File Successfully Archived',
+                title: `${title} ${shouldArchive === "true" ? "was succefully archived" : 'was succesfully uploaded'}`,
                 showConfirmButton: false,
-                timer: 1500
+                timer: 2000
             });
-           
-
-        } else if (xhr.status === 200) {
-           
-            $("#new_upload").html(response);
-            $("#new_upload").modal("show");
-            $.validator.unobtrusive.parse("#upload");
-
-            if ($('#upload .select').length > 0) {
-                $('#upload .select').select2({
-                    minimumResultsForSearch: -1,
-                    width: '100%'
-                });
-
-            }
-
+            document.getElementById("file-submit-btn").innerText = shouldArchive === "true" ? "Archiving Completed" : "Uploading Completed";
+            document.getElementById("saving").style.display = "none";
+            setTimeout(() => { window.location.reload(); }, 2000)
+            
         }
-    }
+        else {
+            document.getElementById("file-submit-btn").disabled = false;
+            document.getElementById("saving").style.display = "none";
 
-    function OnUploadFailure(response) {
-        console.log(response);
+            Swal.fire({
+                position: 'top-end',
+                icon: 'info',
+                title: "Something went wrong",
+                showConfirmButton: false,
+                timer: 2000
+            });
+        }
+        
+        
     }
 </script>

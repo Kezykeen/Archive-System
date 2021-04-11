@@ -22,9 +22,10 @@ namespace archivesystemWebUI.Models
         public string UploadedById  { get; set; }
         public int FolderId { get; set; }
 
+        public bool Archive { get; set; }
+
         [Required]
         [Display(Name = "Attach File")]
-        [MaxFileSizeMb(50)]
         [MIMEType(mimeTypes:"docx,doc,pdf,ppt,pptx,zip,xls,xlsx")]
         public HttpPostedFileBase FileBase { get; set; }
       
