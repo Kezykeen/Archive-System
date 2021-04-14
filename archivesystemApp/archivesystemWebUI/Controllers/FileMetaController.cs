@@ -57,6 +57,19 @@ namespace archivesystemWebUI.Controllers
                Message = "An Error Occurred" });
         }
 
+        [HttpPost]
+        [ValidateHeaderAntiForgeryToken]
+        public JsonResult Archive(int fileId)
+        {
+            if (!ModelState.IsValid) return Json(new RequestResponse<string> {
+                    Status = HttpStatusCode.BadRequest,
+                    Message = "fileId is missing"
+                });
+
+           var result= _fileService.ArchiveFile(fileId);
+            return Json(result);  
+        }
+
 
         public ActionResult Details(int id)
         {

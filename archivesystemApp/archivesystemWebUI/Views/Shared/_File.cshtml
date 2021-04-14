@@ -6,7 +6,7 @@
     if (Model.ContentType.Split('/').First().ToLower() == "image")
     {
         icon = "fa-file-photo-o";
-    }else if (Model.ContentType.Split('/').First().ToLower() == "video")
+    } else if (Model.ContentType.Split('/').First().ToLower() == "video")
     {
         icon = "fa-file-video-o";
     }
@@ -44,23 +44,27 @@
                 break;
 
 
-        } 
+        }
     }
 
 
     }
 
 @{ 
-    var bgColor = Model.IsArchived ? "" : "green";
+    var bgColor = Model.IsArchived ? "" : "#6f42c1";
+    var display = Model.IsArchived ? "none" : "inline-block";
 }
 <div class="col-6 col-sm-4 col-md-3 col-lg-4 col-xl-3" >
-    <div class="card card-file">
+    <div class="card card-file" >
         <div class="dropdown-file">
             <a href="" class="dropdown-link" data-toggle="dropdown"><i class="fa fa-ellipsis-v"></i></a>
             <div class="dropdown-menu dropdown-menu-right">
-                <a href="@Url.Action("Details", "FileMeta", new {id = Model.Id})" class="dropdown-item">View Details</a>
+                <a href="@Url.Action("Details", "FileMeta", new {id = Model.Id})" 
+                    class="dropdown-item"> View Details</a>
+                <a href="#" style="display:@display" data-fileId="@Model.Id"
+                   class="dropdown-item" onclick="ArchiveFile(event)" data-icon="@icon">Archive File</a>
                 <a href="@Url.Action("GetFile","FileMeta", new {id = Model.Id, fileName})" class="dropdown-item">Download</a>
-                <a href="#" data-id="@Model.Id" data-fileName="@fileName"class="dropdown-item" 
+                <a href="#" data-id="@Model.Id" data-fileName="@fileName"class="dropdown-item"  style="display:@display"
                    onclick="DeleteFile(event)">Delete</a>
                 
                

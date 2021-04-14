@@ -13,5 +13,6 @@ namespace archivesystemWebUI.Interfaces
         File Details(int id);
         File GetFile(int id, string fileName);
         RequestResponse<string> DeleteFile(int id);
+        RequestResponse<string> ArchiveFile(int fileId);
     }
 }

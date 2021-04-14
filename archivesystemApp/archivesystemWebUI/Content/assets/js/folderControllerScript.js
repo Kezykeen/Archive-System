@@ -251,7 +251,6 @@ async function CtrlV(newParentFolderId ) {
 
 async function VerifyAccessToken(event) {
     event.preventDefault();
-    debugger;
     document.getElementById("verifyaccesstoken-btn").disabled = true;
     let verificationToken = document.getElementsByName("__RequestVerificationToken")[0].value;
     let input = document.getElementById('EAC-code')
@@ -385,6 +384,7 @@ const getUlElement =(data)=>{
 const resendOTP = async (event) => {
     
     let resp = await fetch("folders/resendotp")
+    document.getElementById("confirming-code").style.display = "block";
     event.target.disabled = true;
     if (resp.status == 200) {
         Swal.fire({
@@ -396,6 +396,7 @@ const resendOTP = async (event) => {
         });
         event.target.innerHTML = "Resend OTP in <span id='otpCounter'>60</span> secs";
         event.target.disabled = true;
+        document.getElementById("confirming-code").style.display = "none";
         startResendOTPCountdown();
     }
     else {
@@ -407,6 +408,7 @@ const resendOTP = async (event) => {
             showConfirmButton: false,
             timer: 2000
         });
+        document.getElementById("confirming-code").style.display = "none";
     }
 }
 
