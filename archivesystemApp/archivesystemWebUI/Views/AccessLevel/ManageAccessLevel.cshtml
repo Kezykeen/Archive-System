@@ -1,0 +1,104 @@
+﻿@model IEnumerable<archivesystemDomain.Entities.AccessLevel>
+
+@{
+    ViewBag.Title = "ManageAccessLevel";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item active">Access Levels</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr />
+
+
+    @if (Model.Count() == 0)
+    {
+        <div class="" style="display: flex; justify-content: center; align-items: center; height:200px; ">
+            <a id="addBtn" href="#" class="btn add-btn shadow " onclick="GetForm('/AccessLevel/CreateAccessLevel/', null, '#CreateAccessLevelForm')"><i class="fa fa-plus"></i> Create an Access Level</a>
+
+        </div>
+    }
+    else
+    {
+
+        <div class="col-auto float-right ml-auto">
+            <a id="addBtn" href="#" class="btn add-btn shadow " onclick="GetForm('/AccessLevel/CreateAccessLevel/', null, '#CreateAccessLevelForm')"><i class="fa fa-plus"></i> Create Access Level</a>
+        </div>
+
+        <h3 class="page-title">Manage Access Level</h3>
+
+        <br />
+        <table id="table" class="table table-active  table-striped custom-table mb-0  shadow">
+            <thead>
+
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Level)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.LevelDescription)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.CreatedAt)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.UpdatedAt)
+                    </th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Level)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.LevelDescription)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CreatedAt)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UpdatedAt)
+                        </td>
+
+                        <td>
+                            <a class='btn btn-outline-primary m-l-5 m-r-5' onclick="GetForm('/AccessLevel/EditAccessLevel/',  @item.Id,  '#EditAccessLevelForm' )"><i class='fa fa-pencil m-r-5'></i> Edit</a>
+
+                        </td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+
+    }
+</div>
+
+<!-- BEGIN: Access Level Modal -->
+<div class="modal custom-modal fade" role="dialog" id="modal">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" id="modalContent">
+        </div>
+    </div>
+</div>
+<!-- END: Access Level Modal  -->
+
+<!-- BEGIN: Scripts -->
+@section scripts{
+    @Scripts.Render("~/Content/datatables/js")
+    @Styles.Render("~/Content/custom/css")
+    <script src="~/Content/assets/js/accesslevel.js"></script>
+}
+<!-- END: Scripts -->

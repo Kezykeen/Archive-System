@@ -1,0 +1,85 @@
+﻿@model archivesystemWebUI.Models.FolderModels.FolderFilesViewModel
+@{
+    var icon = "fa-file-o";
+    var fileName = $"{Model.Title.Trim()}.{Model.Name.Split('.').Last()}";
+
+    if (Model.ContentType.Split('/').First().ToLower() == "image")
+    {
+        icon = "fa-file-photo-o";
+    } else if (Model.ContentType.Split('/').First().ToLower() == "video")
+    {
+        icon = "fa-file-video-o";
+    }
+    else if (Model.ContentType.Split('/').First().ToLower() == "text")
+    {
+        icon = "fa-file-text-o";
+    }
+    else if (Model.ContentType.Split('/').First().ToLower() == "audio")
+    {
+        icon = "fa-file-audio-o";
+    }
+    else
+    {
+        switch (Model.Name.Split('.').Last())
+        {
+            case "pdf":
+                icon = "fa-file-pdf-o";
+                break;
+            case "doc":
+            case "docx":
+                icon = "fa-file-word-o";
+                break;
+            case "ppt":
+            case "pptx":
+                icon = "fa-file-powerpoint-o";
+                break;
+            case "zip":
+                icon = "fa-file-zip-o";
+                break;
+            case "xls":
+            case "xlsx":
+                icon = "fa-file-excel-o";
+                break;
+            default:
+                break;
+
+
+        }
+    }
+
+
+    }
+
+@{ 
+    var bgColor = Model.IsArchived ? "" : "#6f42c1";
+    var display = Model.IsArchived ? "none" : "inline-block";
+}
+<div class="col-6 col-sm-4 col-md-3 col-lg-4 col-xl-3" >
+    <div class="card card-file" >
+        <div class="dropdown-file">
+            <a href="" class="dropdown-link" data-toggle="dropdown"><i class="fa fa-ellipsis-v"></i></a>
+            <div class="dropdown-menu dropdown-menu-right">
+                <a href="@Url.Action("Details", "FileMeta", new {id = Model.Id})" 
+                    class="dropdown-item"> View Details</a>
+                <a href="#" style="display:@display" data-fileId="@Model.Id"
+                   class="dropdown-item" onclick="ArchiveFile(event)" data-icon="@icon">Archive File</a>
+                <a href="@Url.Action("GetFile","FileMeta", new {id = Model.Id, fileName})" class="dropdown-item">Download</a>
+                <a href="#" data-id="@Model.Id" data-fileName="@fileName"class="dropdown-item"  style="display:@display"
+                   onclick="DeleteFile(event)">Delete</a>
+                
+               
+            </div>
+        </div>
+        <div class="card-file-thumb">
+            <i class="fa @icon" style="color:@bgColor"></i>
+        </div>
+        <div class="card-body">
+            <h6><a href="@Url.Action("Details", "FileMeta", new {id = Model.Id})">@fileName</a></h6>
+           
+        </div>
+        <div class="card-footer">Created: @Model.CreatedAt.ToString("d/M/yyyy HH:mm")</div>
+        <div class="card-footer">Modified: @Model.UpdatedAt.ToString("d/M/yyyy HH:mm")</div>
+    </div>
+</div>
+
+

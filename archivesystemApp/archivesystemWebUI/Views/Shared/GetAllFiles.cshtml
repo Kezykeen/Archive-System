@@ -1,0 +1,81 @@
+﻿@using System.Web.Mvc.Html
+@model  IEnumerable<archivesystemWebUI.Models.FolderModels.FolderFilesViewModel>
+
+
+<div class="row row-sm" id="filesContainer">
+
+    @if (Model != null)
+    {
+        foreach (var file in Model)
+        {
+            @Html.Partial("_File", file);
+
+        }
+    }
+
+
+</div>
+
+<script>
+    const DeleteFile = async (event) => {
+        let id = event.target.getAttribute("data-id")
+        let fileName = event.target.getAttribute("data-fileName")
+        let verificationToken = document.getElementsByName("__RequestVerificationToken")[0].value;
+        let formData = new FormData();
+        formData.append("id", id)
+        formData.append("fileName", fileName)
+        let resp = await fetch(`/FileMeta/Delete`, {
+            method: "POST",
+            headers: {
+                __RequestVerificationToken: verificationToken,
+            },
+            body: formData
+        })
+        resp = await resp.json();
+        if (resp.Message) {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: resp.Message,
+                showConfirmButton: false,
+                timer: 2000
+            });
+        }
+        if (resp.Status === 200) {
+            location.reload()
+        }
+
+    }
+
+    const ArchiveFile = async (event) => {
+        event.preventDefault()
+        var fileId = event.target.getAttribute("data-fileId");
+        let verificationToken = document.getElementsByName("__RequestVerificationToken")[0].value;
+        resp = await fetch("/FileMeta/Archive", {
+            method: "POST",
+            headers: {
+                __RequestVerificationToken: verificationToken,
+                'content-type': "application/json"
+            },
+            body: JSON.stringify({
+                fileId: fileId,
+
+            })
+        })
+        let respJson = await resp.json();
+
+        if (respJson.Status === 200) {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: respJson.Message,
+                showConfirmButton: false,
+                timer: 2000
+            });
+            location.reload()
+        }
+        
+
+}
+</script>
+

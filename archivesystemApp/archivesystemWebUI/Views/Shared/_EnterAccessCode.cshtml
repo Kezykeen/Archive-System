@@ -1,0 +1,40 @@
+﻿
+@using archivesystemWebUI.Models.FolderModels
+@using archivesystemDomain.Entities
+
+
+<div id="AIM-overlay"> 
+
+    <div id="EAC-con">
+        <h2>Access Code Verification</h2>
+        <form  name="folderAccessCode" id="EAC-form" method="post" onsubmit="VerifyAccessToken(event)">
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary()
+            <div class="form-group">
+                <input name="name" class="form-control" rows="2" id="EAC-code" max="999999" min="100000" type="number"
+                       placeholder="Enter your OTP" data-returnUrl="@Model.ReturnUrl"   />
+            </div>
+        </form>
+        <div class="submit-section EAC-flex" >
+            <button style=" margin:auto;background-color:#6f42c1" class="btn btn-primary submit-btn EAC-btn" type="submit"
+                    id="verifyaccesstoken-btn" onclick="VerifyAccessToken(event)">Submit</button>
+            <button style=" margin:auto" class="btn btn-primary submit-btn EAC-btn" type="submit" onclick="resendOTP(event)"
+                    >Resend OTP</button>
+        </div>
+        <div id="confirming-code" class="fa-2x" style="color: gray; display: none">
+            <span class="sr-only">Uploading. Hang tight!</span>
+            <i class="fa fa-cog fa-spin  fa-fw" aria-hidden="true"></i>
+
+        </div>
+    </div>
+
+</div>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Content/assets/js/folderControllerScript.js"></script>
+}
+    
+
+
+
+

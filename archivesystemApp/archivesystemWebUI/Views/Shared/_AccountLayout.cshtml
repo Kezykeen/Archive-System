@@ -1,0 +1,30 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <meta name="description" content="Account Regitration Page">
+    <title>@ViewBag.Title - Account</title>
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="/Content/assets/img/favicon.png">
+    <!--Styles-->
+    @Styles.Render("~/Content/custom/css")
+</head>
+<body class="account-page">
+    <div class="main-wrapper">
+        @RenderBody()
+    </div>
+
+    <!--Scripts-->
+    <!-- jQuery -->
+    @Scripts.Render("~/bundles/custom/jquery")
+
+    <!-- Bootstrap Core JS -->
+    @Scripts.Render("~/bundles/custom/bootstrap")
+
+    <!-- Custom JS -->
+    @Scripts.Render("~/bundles/custom/js")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

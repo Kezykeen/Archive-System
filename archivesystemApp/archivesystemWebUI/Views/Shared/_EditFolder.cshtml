@@ -1,0 +1,55 @@
+﻿@using archivesystemWebUI.Models.FolderModels
+@using archivesystemDomain.Entities
+@model CreateFolderViewModel
+@{
+    var currentAccesslevel = Model.AccessLevels.SingleOrDefault(x => x.Id == Model.AccessLevelId);
+}
+<div class="modal-header">
+    <h5 class="modal-title">@(Model.Id == 0? "Add Folder" :"Edit Folder")</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+
+    <form id="editFolder" name="editFolder">
+        @Html.AntiForgeryToken()
+        <div class='validation-summary-errors' >
+            <ul id="EF-validation-errors">
+                
+            </ul>
+        </div>
+        <input hidden value="@Request.Cookies["ASP.NET_SessionId"].Value" id="EF-sessionId" />
+        <input name="id" value="@Model.Id" hidden id="EF-id" />
+        <input name="id" value="@Model.ParentId" hidden id="EF-parentId" />
+        <div class="form-group">
+            <input name="name" class="form-control" rows="2" placeholder="Enter Folder Name" value="@Model.Name" id="EF-name" />
+        </div>
+        <div class="form-group">
+
+            <select name="accessLevelId" class="form-control" rows="2" typeof="number" id="EF-accessLevel">
+                <option value="@currentAccesslevel.Id">@currentAccesslevel.Level</option>
+                @foreach (AccessLevel level in Model.AccessLevels)
+                {
+                    if (level.Id != currentAccesslevel.Id)
+                    {
+                        <option value="@level.Id">@level.Level</option>
+                    }
+
+                }
+            </select>
+        </div>
+        <div class="submit-section">
+            <button style=" margin:auto" class="btn btn-primary submit-btn" type="submit">Update</button>
+        </div>
+    </form>
+
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+
+
+

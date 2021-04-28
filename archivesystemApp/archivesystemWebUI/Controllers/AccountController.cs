@@ -5,25 +5,39 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using archivesystemDomain;
+using archivesystemDomain.Entities;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
+
 using Microsoft.Owin.Security;
 using archivesystemWebUI.Models;
+using archivesystemDomain.Interfaces;
+using archivesystemDomain.Services;
+using archivesystemWebUI.Interfaces;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace archivesystemWebUI.Controllers
 {
     [Authorize]
     public class AccountController : Controller
     {
+        private ApplicationRoleManager _roleManager;
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private readonly IUserService _userService;
+        private readonly ITokenGenerator _tokenGenerator;
+        private readonly IEmailSender _emailSender;
 
-        public AccountController()
+        public AccountController(IUserService userService, ITokenGenerator tokenGenerator, IEmailSender emailSender)
         {
+            _userService = userService;
+            _tokenGenerator = tokenGenerator;
+            _emailSender = emailSender;
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, ApplicationRoleManager roleManager )
         {
+            _roleManager = roleManager;
             UserManager = userManager;
             SignInManager = signInManager;
         }
@@ -40,6 +54,7 @@ namespace archivesystemWebUI.Controllers
             }
         }
 
+
         public ApplicationUserManager UserManager
         {
             get
@@ -49,6 +64,18 @@ namespace archivesystemWebUI.Controllers
             private set
             {
                 _userManager = value;
+            }
+        }
+
+        public ApplicationRoleManager RoleManager
+        {
+            get
+            {
+                return _roleManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationRoleManager>();
+            }
+            private set
+            {
+                _roleManager = value;
             }
         }
 
@@ -66,8 +93,18 @@ namespace archivesystemWebUI.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
+        public async Task<ActionResult> Login(LoginViewModel model, string returnUrl=null)
         {
+
+            returnUrl = returnUrl ?? Url.Content("~/");
+            var user = await UserManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                ModelState.AddModelError("", "Invalid login attempt.");
+
+            }
+
+
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -75,7 +112,8 @@ namespace archivesystemWebUI.Controllers
 
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            var result = await SignInManager.PasswordSignInAsync(user.UserName, model.Password, model.RememberMe, shouldLockout: false);
+            var roles =  await UserManager.GetRolesAsync(user.Id);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -137,9 +175,37 @@ namespace archivesystemWebUI.Controllers
         //
         // GET: /Account/Register
         [AllowAnonymous]
-        public ActionResult Register()
+        public ActionResult Register(int? userId, string code)
         {
-            return View();
+            if (userId == null || code == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            var token = _userService.GetToken(code);
+            var (found, user) = _userService.Get(userId.Value);
+            
+            if (token == null)
+            {
+                ModelState.AddModelError("", "Invalid Link!,  Contact Admin");
+                return View();
+            }
+            if (DateTime.Now > token.Expire)
+            {
+                ModelState.AddModelError("", "Link Expired!,  Contact Admin");
+                return View();
+            }
+            if (!found)
+            {
+                ModelState.AddModelError("", "An Error Occured, Contact Admin");
+                return View();
+            }
+            var model = new RegisterViewModel {Email = user.Email};
+
+           _userService.RemoveToken(token);
+
+            return View(model);
+
         }
 
         //
@@ -149,25 +215,51 @@ namespace archivesystemWebUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                var result = await UserManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
-                {
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
-                    // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                return View(model);
+            }
 
+            if (_userService.EmailExists(model.Email, null))
+            {
+                var (found, user) = _userService.GetByMail(model.Email);
+                  
+                var identityUser = new ApplicationUser { UserName = user.Name, Email = model.Email, EmailConfirmed = true, PhoneNumber = user.Phone};
+                var result = await UserManager.CreateAsync(identityUser, model.Password);
+                if (result.Succeeded)
+                {         
+                    var updateId = _userService.UpdateUserId(model.Email, identityUser.Id);
+                    // Update UserId of User class
+                    if (updateId)
+                    {
+                        switch (user.Designation)
+                        {
+                            case Designation.Student:
+                                await UserManager.AddToRoleAsync(identityUser.Id, "Student");
+                                break;
+                            case Designation.Alumni:
+                                await UserManager.AddToRoleAsync(identityUser.Id, "Alumni");
+                                break;
+                            case Designation.Staff:
+                                await UserManager.AddToRoleAsync(identityUser.Id, "Staff");
+                                break;
+                            default:
+                                break;
+                        }
+
+                    }
+
+                    _userService.CompleteReg(user);
+                    await SignInManager.SignInAsync(identityUser, isPersistent: false, rememberBrowser: false);
                     return RedirectToAction("Index", "Home");
                 }
                 AddErrors(result);
             }
-
+            else
+            {
+                ModelState.AddModelError("Email", @"Email does not Exist. Please contact Admin");
+                return View(model);
+            }
             // If we got this far, something failed, redisplay form
             return View(model);
         }
@@ -200,25 +292,34 @@ namespace archivesystemWebUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var user = await UserManager.FindByNameAsync(model.Email);
-                if (user == null || !(await UserManager.IsEmailConfirmedAsync(user.Id)))
-                {
-                    // Don't reveal that the user does not exist or is not confirmed
-                    return View("ForgotPasswordConfirmation");
-                }
+                return View(model);
 
-                // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
-                // Send an email with this link
-                // string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                // var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);		
-                // await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
-                // return RedirectToAction("ForgotPasswordConfirmation", "Account");
+            }
+            var user = await UserManager.FindByEmailAsync(model.Email);
+            if (user == null || !(await UserManager.IsEmailConfirmedAsync(user.Id)))
+            {
+                // Don't reveal that the user does not exist or is not confirmed
+                return View("ForgotPasswordConfirmation");
             }
 
-            // If we got this far, something failed, redisplay form
-            return View(model);
+            // Send an email with this link
+            string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+            var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+
+            try
+            {
+                await _emailSender.SendEmailAsync(model.Email, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+            }
+            catch (Exception e)
+            {
+                ModelState.AddModelError("", e.Message);
+                return View(model);
+
+            }
+            return View("ForgotPasswordConfirmation");
         }
 
         //
@@ -248,17 +349,20 @@ namespace archivesystemWebUI.Controllers
             {
                 return View(model);
             }
-            var user = await UserManager.FindByNameAsync(model.Email);
+
+            var user = await UserManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
                 // Don't reveal that the user does not exist
                 return RedirectToAction("ResetPasswordConfirmation", "Account");
             }
+
             var result = await UserManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
             if (result.Succeeded)
             {
                 return RedirectToAction("ResetPasswordConfirmation", "Account");
             }
+
             AddErrors(result);
             return View();
         }
@@ -271,7 +375,7 @@ namespace archivesystemWebUI.Controllers
             return View();
         }
 
-        //
+        
         // POST: /Account/ExternalLogin
         [HttpPost]
         [AllowAnonymous]
@@ -305,7 +409,7 @@ namespace archivesystemWebUI.Controllers
         public async Task<ActionResult> SendCode(SendCodeViewModel model)
         {
             if (!ModelState.IsValid)
-            {
+            {   
                 return View();
             }
 
@@ -386,13 +490,12 @@ namespace archivesystemWebUI.Controllers
         }
 
         //
-        // POST: /Account/LogOff
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        // /Account/LogOff
+        [HttpGet]
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
         //
@@ -417,6 +520,12 @@ namespace archivesystemWebUI.Controllers
                 {
                     _signInManager.Dispose();
                     _signInManager = null;
+                }
+
+                if (_roleManager != null)
+                {
+                    _roleManager.Dispose();
+                    _roleManager = null;
                 }
             }
 

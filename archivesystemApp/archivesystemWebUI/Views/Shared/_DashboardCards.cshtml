@@ -1,0 +1,62 @@
+﻿@model archivesystemWebUI.Models.CardsViewModel
+
+    <div class="row">
+        <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
+            <div class="card dash-widget">
+                <div class="card-body">
+                    <span class="dash-widget-icon"><i class="fa fa-users"></i></span>
+                    <div class="dash-widget-info">
+                        <h3>@Model.Appusers.Count()</h3>
+                        <span>Users</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @*<div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
+            <div class="card dash-widget">
+                <div class="card-body">
+                    <span class="dash-widget-icon"><i class="fa fa-cubes"></i></span>
+                    <div class="dash-widget-info">
+                        <h3>@Model.AccessLevels.Count()</h3>
+                        <span>Access Levels</span>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+
+        <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
+            <div class="card dash-widget">
+                <div class="card-body">
+                    <span class="dash-widget-icon"><i class="la la-tools"></i></span>
+                    <div class="dash-widget-info">
+                        <h3>@Model.Roles.Count()</h3>
+                        <span>Roles</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
+            <div class="card dash-widget">
+                <div class="card-body">
+                    <span class="dash-widget-icon"><i class="la la-school"></i></span>
+                    <div class="dash-widget-info">
+                        <h3>@Model.Departments.Count()</h3>
+                        <span>Departments</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
+            <div class="card dash-widget">
+                <div class="card-body">
+                    <span class="dash-widget-icon"><i class="la la-school"></i></span>
+                    <div class="dash-widget-info">
+                        <h3>@Model.Faculties.Count()</h3>
+                        <span>Faculties</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

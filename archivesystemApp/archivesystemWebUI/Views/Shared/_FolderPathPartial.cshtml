@@ -1,0 +1,56 @@
+﻿
+@using archivesystemWebUI.Models.FolderModels
+@model FolderPageViewModel
+@{
+    var currentPath = Model.CurrentPath;
+    var currentFolderDepth = currentPath.Count();
+    var subFolderLenght = Model.DirectChildren == null ? 0 : Model.DirectChildren.Count();
+    var headerTitle = Model.Id == 0 ? "Your Search Result" : $"{Model.Name} Folder ";
+
+}
+
+<div id="alertMessageBox">
+
+</div>
+
+
+<div style="width:calc(100% - 4em); margin:0 2em;margin-top:2em; ">
+    @{
+        if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Error!</strong> @ViewBag.ErrorMessage
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+    }
+    @if (currentPath.Count() > 0)
+    {
+        <ul class="breadcrumb">
+            @{
+                var index = currentFolderDepth;
+                while (index >= 1)
+                {
+                    if (Model.CurrentPath[index - 1].Name == Model.Name)
+                    {
+                        <li class="breadcrumb-item" id="focused-folder">@Html.ActionLink(Model.CurrentPath[index - 1].Name, $"/{@Model.CurrentPath[index - 1].Id}", "folders")</li>
+                    }
+                    else
+                    {
+                        <li class="breadcrumb-item">@Html.ActionLink(Model.CurrentPath[index - 1].Name, $"/{@Model.CurrentPath[index - 1].Id}", "folders")</li>
+                    }
+                    index--;
+                }
+            }
+        </ul>
+    }
+
+
+    @if (Model.Id == 0 && subFolderLenght == 0)
+    {
+        <h3>No Folder Matches your search</h3>
+    }
+
+</div>

@@ -45,7 +45,40 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper, Version=4.1.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.4.1.0\lib\net45\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="BCrypt.Net-Next, Version=4.0.2.0, Culture=neutral, PublicKeyToken=1e11be04b6288443, processorArchitecture=MSIL">
+      <HintPath>..\packages\BCrypt.Net-Next.4.0.2\lib\net472\BCrypt.Net-Next.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.EntityFramework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.3\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=2.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Owin, Version=4.1.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.4.1.1\lib\net45\Microsoft.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=4.1.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.4.1.1\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.4.0.1\lib\net45\Microsoft.Owin.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Cookies, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.Cookies.4.0.1\lib\net45\Microsoft.Owin.Security.Cookies.dll</HintPath>
+    </Reference>
+    <Reference Include="MimeTypes, Version=2.3.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MimeTypeMapOfficial.1.0.15\lib\net452\MimeTypes.dll</HintPath>
+    </Reference>
     <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <HintPath>..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
     </Reference>
@@ -58,15 +91,49 @@
     <Reference Include="Ninject.Web.Mvc, Version=3.3.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <HintPath>..\packages\Ninject.MVC5.3.3.0\lib\net45\Ninject.Web.Mvc.dll</HintPath>
     </Reference>
+    <Reference Include="Ninject.WebApi.DependencyResolver, Version=0.1.4758.24814, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.WebApi.DependencyResolver.0.1.4758.24814\lib\net45\Ninject.WebApi.DependencyResolver.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Compression.4.3.0\lib\net46\System.IO.Compression.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.7\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Http, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.7\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.7\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
@@ -127,76 +194,225 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="EntityFramework">
-      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer">
-      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.3\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Owin">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Owin.2.2.3\lib\net45\Microsoft.AspNet.Identity.Owin.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.AspNet.Identity.EntityFramework">
-      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.3\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="Owin">
-      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin">
-      <HintPath>..\packages\Microsoft.Owin.4.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Host.SystemWeb">
-      <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.4.0.1\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security">
-      <HintPath>..\packages\Microsoft.Owin.Security.4.0.1\lib\net45\Microsoft.Owin.Security.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security.Cookies">
-      <HintPath>..\packages\Microsoft.Owin.Security.Facebook.4.0.1\lib\net45\Microsoft.Owin.Security.Facebook.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security.Cookies">
-      <HintPath>..\packages\Microsoft.Owin.Security.Cookies.4.0.1\lib\net45\Microsoft.Owin.Security.Cookies.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security.Google">
-      <HintPath>..\packages\Microsoft.Owin.Security.Google.4.0.1\lib\net45\Microsoft.Owin.Security.Google.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security.Twitter">
-      <HintPath>..\packages\Microsoft.Owin.Security.Twitter.4.0.1\lib\net45\Microsoft.Owin.Security.Twitter.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security.MicrosoftAccount">
-      <HintPath>..\packages\Microsoft.Owin.Security.MicrosoftAccount.4.0.1\lib\net45\Microsoft.Owin.Security.MicrosoftAccount.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security.OAuth">
-      <HintPath>..\packages\Microsoft.Owin.Security.OAuth.4.0.1\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform">
-      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
-    <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\NinjectWebCommon.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\AccessLevelController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\Api\TicketsController.cs" />
+    <Compile Include="Controllers\Api\UsersController.cs" />
+    <Compile Include="Controllers\ApplicationsController.cs" />
+    <Compile Include="Controllers\SettingsController.cs" />
+    <Compile Include="Infrastructures\CSRF.cs" />
+    <Compile Include="Controllers\FileMetaController.cs" />
+    <Compile Include="Controllers\UserAccessController.cs" />
+    <Compile Include="Controllers\DepartmentController.cs" />
+    <Compile Include="Controllers\UsersController.cs" />
+    <Compile Include="Controllers\FacultyController.cs" />
+    <Compile Include="Controllers\FolderController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructures\AlreadyExistInLocationException.cs" />
+    <Compile Include="Infrastructures\MaxFileSizeMb.cs" />
+    <Compile Include="Infrastructures\MIMEType.cs" />
     <Compile Include="Infrastructures\NinjectDependenceResolver.cs" />
+    <Compile Include="Infrastructures\MappingProfile.cs" />
+    <Compile Include="Infrastructures\UserUniqueProps.cs" />
+    <Compile Include="Interfaces\IAccessLevelService.cs" />
+    <Compile Include="Interfaces\IApplicationService.cs" />
+    <Compile Include="Interfaces\IFacultyService.cs" />
+    <Compile Include="Interfaces\IFileService.cs" />
+    <Compile Include="Interfaces\IFolderService.cs" />
+    <Compile Include="Interfaces\IHomeService.cs" />
+    <Compile Include="Interfaces\IFolderServiceUnitOfWork.cs" />
+    <Compile Include="Interfaces\IUserAccessService.cs" />
+    <Compile Include="Interfaces\IUserService.cs" />
+    <Compile Include="Interfaces\ITicketService.cs" />
+    <Compile Include="Migrations\202103232108221_Initial.cs" />
+    <Compile Include="Migrations\202103232108221_Initial.Designer.cs">
+      <DependentUpon>202103232108221_Initial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202104071200243_AddTimeStampToAccessDetails.cs" />
+    <Compile Include="Migrations\202104071200243_AddTimeStampToAccessDetails.Designer.cs">
+      <DependentUpon>202104071200243_AddTimeStampToAccessDetails.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202104100515151_addedIsArchivedFlagToFilesEntity.cs" />
+    <Compile Include="Migrations\202104100515151_addedIsArchivedFlagToFilesEntity.Designer.cs">
+      <DependentUpon>202104100515151_addedIsArchivedFlagToFilesEntity.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\ApplicationVm.cs" />
+    <Compile Include="Models\AssignDeptsVm.cs" />
+    <Compile Include="Models\AssignUsersVm.cs" />
+    <Compile Include="Models\CardsViewModel.cs" />
+    <Compile Include="Models\CodeStatus.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\DataLayers\ApplicationsDataView.cs" />
+    <Compile Include="Models\DataLayers\ApplicationsToSignDataView.cs" />
+    <Compile Include="Models\DataLayers\ApprovalDataView.cs" />
+    <Compile Include="Models\DataLayers\TicketDataView.cs" />
+    <Compile Include="Models\DataLayers\UserDataView.cs" />
+    <Compile Include="Models\AddUserToAccessViewModel.cs" />
+    <Compile Include="Models\CreateAccessLevelViewModel.cs" />
+    <Compile Include="Models\FacultyDepartmentsViewModel.cs" />
+    <Compile Include="Models\DepartmentUsersViewModel.cs" />
+    <Compile Include="Models\DepartmentViewModel.cs" />
+    <Compile Include="Models\EditAccessLevelViewModel.cs" />
+    <Compile Include="Models\EditUserviewModel.cs" />
+    <Compile Include="Models\EnrollViewModel.cs" />
+    <Compile Include="Models\FacultyViewModel.cs" />
+    <Compile Include="Models\FileMetaVm.cs" />
+    <Compile Include="Models\FolderModels\CreateFolderViewModel.cs" />
+    <Compile Include="Models\FolderModels\DeleteFolderViewModel.cs" />
+    <Compile Include="Models\FolderModels\EditFolderViewModel.cs" />
+    <Compile Include="Models\FolderModels\FolderFilesViewModel.cs" />
+    <Compile Include="Models\FolderModels\FolderPageViewModel.cs" />
+    <Compile Include="Models\FolderModels\MoveItemViewModel.cs" />
+    <Compile Include="Models\FolderModels\SaveFolderViewModel.cs" />
+    <Compile Include="Models\FolderModels\SubfolderViewModel.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\RoleViewModels\AddOrEditRoleViewModel.cs" />
+    <Compile Include="Models\RoleViewModels\AddtoRoleViewModel.cs" />
+    <Compile Include="Models\RoleViewModels\RemoveUserFromRoleViewModel.cs" />
+    <Compile Include="Models\RoleViewModels\UsersInRoleViewModel.cs" />
+    <Compile Include="Models\SignVm.cs" />
+    <Compile Include="Models\TicketViewModel.cs" />
+    <Compile Include="Models\UpdateUserVm.cs" />
+    <Compile Include="Models\UserData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\AccessDetailsRepository.cs" />
+    <Compile Include="Repository\ApplicationRepo.cs" />
+    <Compile Include="Repository\DeptRepository.cs" />
+    <Compile Include="Repository\TicketRepo.cs" />
+    <Compile Include="Repository\FolderServiceUnitOfWork.cs" />
+    <Compile Include="Repository\UserRepository.cs" />
+    <Compile Include="Repository\FacultyRepository.cs" />
+    <Compile Include="Repository\FileMetaRepo.cs" />
+    <Compile Include="Repository\FileRepo.cs" />
+    <Compile Include="Repository\FolderRepo.cs" />
+    <Compile Include="Repository\Repository.cs" />
+    <Compile Include="Repository\AccessLevelRepository.cs" />
+    <Compile Include="Repository\TokenRepository.cs" />
+    <Compile Include="Repository\UnitOfWork.cs" />
+    <Compile Include="Services\ApplicationService.cs" />
+    <Compile Include="Services\DepartmentService.cs" />
+    <Compile Include="Services\FacultyService.cs" />
+    <Compile Include="Interfaces\IDepartmentService.cs" />
+    <Compile Include="Services\FileService.cs" />
+    <Compile Include="Services\FolderService.cs" />
+    <Compile Include="Services\HomeService.cs" />
+    <Compile Include="Services\RoleService.cs" />
+    <Compile Include="Services\TicketService.cs" />
+    <Compile Include="Services\UserAccessService.cs" />
+    <Compile Include="Services\AccessLevelService.cs" />
+    <Compile Include="Services\UserService.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Readme\readme.txt" />
+    <Content Include="Content\assets\css\archive-custom.css" />
+    <Content Include="Content\assets\css\bootstrap-datetimepicker.min.css" />
+    <Content Include="Content\assets\css\bootstrap.min.css" />
+    <Content Include="Content\assets\css\dataTables.bootstrap4.min.css" />
+    <Content Include="Content\assets\css\font-awesome.min.css" />
+    <Content Include="Content\assets\css\fullcalendar.min.css" />
+    <Content Include="Content\assets\css\line-awesome.min.css" />
+    <Content Include="Content\assets\css\select2.min.css" />
+    <Content Include="Content\assets\css\style.css" />
+    <Content Include="Content\assets\fonts\fontawesome-webfont.svg" />
+    <Content Include="Content\assets\fonts\la-brands-400.svg" />
+    <Content Include="Content\assets\fonts\la-regular-400.svg" />
+    <Content Include="Content\assets\fonts\la-solid-900.svg" />
+    <Content Include="Content\assets\img\attachment.png" />
+    <Content Include="Content\assets\img\favicon.png" />
+    <Content Include="Content\assets\img\flags\de.png" />
+    <Content Include="Content\assets\img\flags\es.png" />
+    <Content Include="Content\assets\img\flags\fr.png" />
+    <Content Include="Content\assets\img\flags\us.png" />
+    <Content Include="Content\assets\img\img-01.jpg" />
+    <Content Include="Content\assets\img\logo.png" />
+    <Content Include="Content\assets\img\logo2.png" />
+    <Content Include="Content\assets\img\logo3.png" />
+    <Content Include="Content\assets\img\placeholder.jpg" />
+    <Content Include="Content\assets\img\profiles\avatar-01.jpg" />
+    <Content Include="Content\assets\img\profiles\avatar-02.jpg" />
+    <Content Include="Content\assets\img\profiles\avatar-03.jpg" />
+    <Content Include="Content\assets\img\profiles\avatar-04.jpg" />
+    <Content Include="Content\assets\img\profiles\avatar-05.jpg" />
+    <Content Include="Content\assets\img\profiles\avatar-06.jpg" />
+    <Content Include="Content\assets\img\profiles\avatar-07.jpg" />
+    <Content Include="Content\assets\img\profiles\avatar-08.jpg" />
+    <Content Include="Content\assets\img\profiles\avatar-09.jpg" />
+    <Content Include="Content\assets\img\profiles\avatar-10.jpg" />
+    <Content Include="Content\assets\img\profiles\avatar-11.jpg" />
+    <Content Include="Content\assets\img\profiles\avatar-12.jpg" />
+    <Content Include="Content\assets\img\profiles\avatar-13.jpg" />
+    <Content Include="Content\assets\img\profiles\avatar-14.jpg" />
+    <Content Include="Content\assets\img\profiles\avatar-15.jpg" />
+    <Content Include="Content\assets\img\profiles\avatar-16.jpg" />
+    <Content Include="Content\assets\img\profiles\avatar-17.jpg" />
+    <Content Include="Content\assets\img\profiles\avatar-18.jpg" />
+    <Content Include="Content\assets\img\profiles\avatar-19.jpg" />
+    <Content Include="Content\assets\img\profiles\avatar-20.jpg" />
+    <Content Include="Content\assets\img\profiles\avatar-21.jpg" />
+    <Content Include="Content\assets\img\profiles\avatar-22.jpg" />
+    <Content Include="Content\assets\img\profiles\avatar-24.jpg" />
+    <Content Include="Content\assets\img\profiles\avatar-25.jpg" />
+    <Content Include="Content\assets\img\profiles\avatar-26.jpg" />
+    <Content Include="Content\assets\img\profiles\avatar-28.jpg" />
+    <Content Include="Content\assets\img\profiles\avatar-29.jpg" />
+    <Content Include="Content\assets\img\user.jpg" />
+    <Content Include="Content\assets\img\video-call.jpg" />
+    <Content Include="Content\assets\js\accesslevel.js" />
+    <Content Include="Content\assets\js\app.js" />
+    <Content Include="Content\assets\js\folderControllerScript.js" />
+    <Content Include="Content\assets\js\bootbox.js" />
+    <Content Include="Content\assets\js\bootbox.min.js" />
+    <Content Include="Content\assets\js\bootstrap-datetimepicker.min.js" />
+    <Content Include="Content\assets\js\bootstrap.min.js" />
+    <Content Include="Content\assets\js\chart.js" />
+    <Content Include="Content\assets\js\dataTables.bootstrap4.min.js" />
+    <Content Include="Content\assets\js\departmentAndFacultyCRUD.js" />
+    <Content Include="Content\assets\js\dropfiles.js" />
+    <Content Include="Content\assets\js\fullcalendar.min.js" />
+    <Content Include="Content\assets\js\jquery-3.5.1.min.js" />
+    <Content Include="Content\assets\js\jquery-ui.min.js" />
+    <Content Include="Content\assets\js\jquery.dataTables.min.js" />
+    <Content Include="Content\assets\js\jquery.fullcalendar.js" />
+    <Content Include="Content\assets\js\jquery.maskedinput.min.js" />
+    <Content Include="Content\assets\js\jquery.slimscroll.min.js" />
+    <Content Include="Content\assets\js\jquery.ui.touch-punch.min.js" />
+    <Content Include="Content\assets\js\mask.js" />
+    <Content Include="Content\assets\js\moment.min.js" />
+    <Content Include="Content\assets\js\multiselect.min.js" />
+    <Content Include="Content\assets\js\popper.min.js" />
+    <Content Include="Content\assets\js\rolesControllerScript.js" />
+    <Content Include="Content\assets\js\select2.min.js" />
+    <Content Include="Content\assets\js\sweetalert2.all.min.js" />
+    <Content Include="Content\assets\js\task.js" />
+    <Content Include="Content\assets\plugins\bootstrap-tagsinput\bootstrap-tagsinput.css" />
+    <Content Include="Content\assets\plugins\bootstrap-tagsinput\bootstrap-tagsinput.min.js" />
+    <Content Include="Content\assets\plugins\morris\morris.css" />
+    <Content Include="Content\assets\plugins\morris\morris.min.js" />
+    <Content Include="Content\assets\plugins\raphael\raphael.min.js" />
+    <Content Include="Content\assets\plugins\sticky-kit-master\dist\sticky-kit.min.js" />
+    <Content Include="Content\assets\plugins\summernote\dist\summernote-bs4.css" />
+    <Content Include="Content\assets\plugins\summernote\dist\summernote-bs4.min.js" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -207,12 +423,51 @@
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Content\assets\fonts\CircularStd-Black.woff" />
+    <Content Include="Content\assets\fonts\CircularStd-BlackItalic.woff" />
+    <Content Include="Content\assets\fonts\CircularStd-Bold.woff" />
+    <Content Include="Content\assets\fonts\CircularStd-BoldItalic.woff" />
+    <Content Include="Content\assets\fonts\CircularStd-Book.woff" />
+    <Content Include="Content\assets\fonts\CircularStd-BookItalic.woff" />
+    <Content Include="Content\assets\fonts\CircularStd-Medium.woff" />
+    <Content Include="Content\assets\fonts\CircularStd-MediumItalic.woff" />
+    <Content Include="Content\assets\fonts\fontawesome-webfont-1.eot" />
+    <Content Include="Content\assets\fonts\fontawesome-webfont.eot" />
+    <Content Include="Content\assets\fonts\fontawesome-webfont.ttf" />
+    <Content Include="Content\assets\fonts\fontawesome-webfont.woff" />
+    <Content Include="Content\assets\fonts\fontawesome-webfont.woff2" />
+    <Content Include="Content\assets\fonts\la-brands-400-1.eot" />
+    <Content Include="Content\assets\fonts\la-brands-400.eot" />
+    <Content Include="Content\assets\fonts\la-brands-400.ttf" />
+    <Content Include="Content\assets\fonts\la-brands-400.woff" />
+    <Content Include="Content\assets\fonts\la-brands-400.woff2" />
+    <Content Include="Content\assets\fonts\la-regular-400-1.eot" />
+    <Content Include="Content\assets\fonts\la-regular-400.eot" />
+    <Content Include="Content\assets\fonts\la-regular-400.ttf" />
+    <Content Include="Content\assets\fonts\la-regular-400.woff" />
+    <Content Include="Content\assets\fonts\la-regular-400.woff2" />
+    <Content Include="Content\assets\fonts\la-solid-900-1.eot" />
+    <Content Include="Content\assets\fonts\la-solid-900.eot" />
+    <Content Include="Content\assets\fonts\la-solid-900.ttf" />
+    <Content Include="Content\assets\fonts\la-solid-900.woff" />
+    <Content Include="Content\assets\fonts\la-solid-900.woff2" />
+    <Content Include="Content\assets\fonts\MaterialIcons-Regular.eot" />
+    <Content Include="Content\assets\fonts\MaterialIcons-Regular.ttf" />
+    <Content Include="Content\assets\fonts\MaterialIcons-Regular.woff" />
+    <Content Include="Content\assets\fonts\MaterialIcons-Regular.woff2" />
+    <Content Include="Content\assets\plugins\summernote\dist\font\summernote.eot" />
+    <Content Include="Content\assets\plugins\summernote\dist\font\summernote.ttf" />
+    <Content Include="Content\assets\plugins\summernote\dist\font\summernote.woff" />
+    <Content Include="libman.json" />
+    <Content Include="bower.json" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
     <Content Include="Scripts\jquery-3.4.1.slim.js" />
     <Content Include="Scripts\jquery-3.4.1.slim.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
@@ -252,6 +507,77 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\Shared\_SideBarPartial.cshtml" />
+    <Content Include="Views\Shared\_AccountLayout.cshtml" />
+    <Content Include="Views\Users\Index.cshtml" />
+    <Content Include="Views\Roles\RolesList.cshtml" />
+    <Content Include="Views\AccessLevel\ManageAccessLevel.cshtml" />
+    <Content Include="Views\Department\Index.cshtml" />
+    <Content Include="Views\Faculty\Index.cshtml" />
+    <Content Include="Views\UserAccess\ManageUserAccess.cshtml" />
+    <Content Include="Views\Department\_AddDepartment.cshtml" />
+    <Content Include="Views\Users\DelPrompt.cshtml" />
+    <Content Include="Views\Users\Details.cshtml" />
+    <Content Include="Views\Home\EmployeeDashboard.cshtml" />
+    <Content Include="Views\Users\EditModal.cshtml" />
+    <Content Include="Views\Shared\_EnrollPartial.cshtml" />
+    <Content Include="Views\Users\EnrollModal.cshtml" />
+    <Content Include="Views\Department\_DeleteDepartment.cshtml" />
+    <Content Include="Views\Faculty\_AddFaculty.cshtml" />
+    <Content Include="Views\Faculty\_DeleteFaculty.cshtml" />
+    <Content Include="Views\Folder\FolderList.cshtml" />
+    <Content Include="Views\Shared\_EditUserAccess.cshtml" />
+    <Content Include="Views\Shared\_DeleteUserAccess.cshtml" />
+    <Content Include="Views\Shared\_AddUserAccess.cshtml" />
+    <Content Include="Views\Shared\_EditFolder.cshtml" />
+    <Content Include="Views\Shared\_DeleteFolder.cshtml" />
+    <Content Include="Views\Shared\_CreateFolder.cshtml" />
+    <Content Include="Views\Shared\_AddEditRole.cshtml" />
+    <Content Include="Views\Shared\_DeleteRole.cshtml" />
+    <Content Include="Views\Shared\_AddAccessLevel.cshtml" />
+    <Content Include="Views\Shared\_EditAccessLevel.cshtml" />
+    <Content Include="Views\Shared\_FolderPathPartial.cshtml" />
+    <Content Include="Views\Shared\_ConfirmItemMove.cshtml" />
+    <Content Include="Views\FileMeta\New.cshtml" />
+    <Content Include="Views\Folder\_Files.cshtml" />
+    <Content Include="Views\Shared\GetAllFiles.cshtml" />
+    <Content Include="Views\Shared\_File.cshtml" />
+    <Content Include="Views\Shared\_EnterAccessCode.cshtml" />
+    <Content Include="Views\Shared\_ChangePassword.cshtml" />
+    <Content Include="Views\Roles\UsersInRole.cshtml" />
+    <Content Include="Views\Shared\_AddUserToRole.cshtml" />
+    <Content Include="Views\Shared\_RemoveUserFromRole.cshtml" />
+    <Content Include="Views\Settings\TicketTypes.cshtml" />
+    <Content Include="Views\Settings\TicketTypeModal.cshtml" />
+    <Content Include="Views\Applications\Index.cshtml" />
+    <Content Include="Views\Applications\New.cshtml" />
+    <Content Include="Views\Applications\Details.cshtml" />
+    <Content Include="Views\Applications\Incoming.cshtml" />
+    <Content Include="Views\Applications\ToSign.cshtml" />
+    <Content Include="Views\Applications\AssignUsers.cshtml" />
+    <Content Include="Views\Applications\_Assignees.cshtml" />
+    <Content Include="Views\Applications\SendToDepts.cshtml" />
+    <Content Include="Views\Applications\_FwdDepts.cshtml" />
+    <Content Include="Views\Applications\Sign.cshtml" />
+    <Content Include="Views\Applications\IncomingForwarded.cshtml" />
+    <Content Include="Views\Applications\Received.cshtml" />
+    <Content Include="Views\Applications\Rejected.cshtml" />
+    <Content Include="Views\Applications\Archived.cshtml" />
+    <Content Include="Views\Applications\RejectedForwarded.cshtml" />
+    <Content Include="Views\Applications\ReceivedForwarded.cshtml" />
+    <Content Include="Views\Applications\Signed.cshtml" />
+    <Content Include="Views\Applications\Declined.cshtml" />
+    <Content Include="Views\Applications\ToApprove.cshtml" />
+    <Content Include="Views\Applications\Approved.cshtml" />
+    <Content Include="Views\Applications\Disapproved.cshtml" />
+    <Content Include="Views\Applications\Forwarded.cshtml" />
+    <Content Include="Views\Shared\_DashboardTables.cshtml" />
+    <Content Include="Views\Shared\_DashboardCards.cshtml" />
+    <Content Include="Views\Department\ViewAllUsersInDept.cshtml" />
+    <Content Include="Views\Faculty\ViewAllDepartmentsInFaculty.cshtml" />
+    <Content Include="Views\Department\_EditDepartment.cshtml" />
+    <Content Include="Views\Faculty\_EditFaculty.cshtml" />
+    <Content Include="Views\FileMeta\Details.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -274,6 +600,17 @@
       <Project>{dffc3d6e-004f-411f-addf-89544e0bf227}</Project>
       <Name>archivesystemDomain</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202103232108221_Initial.resx">
+      <DependentUpon>202103232108221_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202104071200243_AddTimeStampToAccessDetails.resx">
+      <DependentUpon>202104071200243_AddTimeStampToAccessDetails.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202104100515151_addedIsArchivedFlagToFilesEntity.resx">
+      <DependentUpon>202104100515151_addedIsArchivedFlagToFilesEntity.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

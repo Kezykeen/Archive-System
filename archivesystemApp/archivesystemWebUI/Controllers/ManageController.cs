@@ -3,10 +3,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using archivesystemDomain.Services;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using archivesystemWebUI.Models;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace archivesystemWebUI.Controllers
 {
@@ -228,20 +229,35 @@ namespace archivesystemWebUI.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return PartialView("_ChangePassword", model);
             }
+
             var result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword, model.NewPassword);
-            if (result.Succeeded)
+            if (!result.Succeeded)
             {
-                var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
-                if (user != null)
-                {
-                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-                }
-                return RedirectToAction("Index", new { Message = ManageMessageId.ChangePasswordSuccess });
+                AddErrors(result);
+
+                return PartialView("_ChangePassword", model);
             }
-            AddErrors(result);
-            return View(model);
+
+            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+            if (user != null)
+            {
+                await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+            }
+
+            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+        }
+
+        //
+        // Remote validaion for old password
+        [HttpPost]
+        public ActionResult ValidateOldPassword(string oldpassword)
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            var status = UserManager.CheckPassword(user, oldpassword);
+
+            return Json(status, JsonRequestBehavior.AllowGet);
         }
 
         //
@@ -385,5 +401,7 @@ namespace archivesystemWebUI.Controllers
         }
 
 #endregion
+
+
     }
 }

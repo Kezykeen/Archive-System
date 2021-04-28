@@ -1,0 +1,57 @@
+﻿@model archivesystemWebUI.Models.FacultyViewModel
+@{
+    ViewBag.Title = "Faculty";
+}
+
+<!-- Datatable CSS -->
+<link href="~/Content/assets/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Faculty</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Faculty</li>
+                </ul>
+            </div>
+            <div class="col-auto float-right ml-auto">
+                <a href="#" class="btn add-btn" onclick="getAddPartialView('@Url.Action("GetAddFacultyPartialView", "Faculty")')"><i class="fa fa-plus"></i> Add Faculty</a>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-striped table-bordered custom-table mb-0" id="facultyDataTable">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>No. of departments</th>
+                        <th>Departments</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Faculty Modal -->
+<div class="modal custom-modal fade" role="dialog" id="modal">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" id="modalBody">
+        </div>
+    </div>
+</div>
+<!-- / Faculty Modal -->
+
+@section scripts{
+    @Scripts.Render("~/Content/datatables/js")
+    <script src="~/Content/assets/js/departmentAndFacultyCRUD.js"></script>
+}

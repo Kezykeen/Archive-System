@@ -1,0 +1,120 @@
+﻿@model IEnumerable<archivesystemDomain.Entities.AccessDetail>
+
+@{
+    ViewBag.Title = "ManageUserAccess";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item active">Manage User Access</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <!-- /Page Header -->
+
+    @if (Model.Count() == 0)
+    {
+        <div class="" style="display: flex; justify-content: center; align-items: center; height:200px; ">
+            <a class="btn add-btn shadow" href="#" onclick="GetForm('/UserAccess/AddUser/',  null,  '#AddUserAccessForm' )"><i class="fa fa-plus"></i> Add User to an Access Level</a>
+           
+        </div>
+    }
+    else
+    {
+
+        <div>
+            <div class="col-auto float-right">
+                <a class="btn add-btn shadow" href="#" onclick="GetForm('/UserAccess/AddUser/',  null,  '#AddUserAccessForm' )"><i class="fa fa-plus"></i> Add User</a>
+            </div>
+            <h2 class="page-title">Manage User Access</h2>
+
+        </div>
+        <br />
+        <table id="table" class="table-active table table-striped custom-table mb-0 shadow">
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Employee Name
+                    </th>
+                    <th>
+                        Access Level
+                    </th>
+                    <th>
+                        Status
+                    </th>
+                    <th style="width:150px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AppUser.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AccessLevel.Level)
+                        </td>
+                        <td>
+                            @if (item.Status ==archivesystemDomain.Entities.Status.Active)
+                            {
+                                <span class="btn btn-rounded btn-sm  border-success"> <i class="fa fa-dot-circle-o text-success"></i> Active</span>
+                            }
+                            else
+                            {
+                                <span class="btn btn-rounded btn-sm  border-danger"> <i class="fa fa-dot-circle-o text-danger"></i> Inactive</span>
+                            }
+                        </td>
+                        <td class="row">
+                            <span class=" m-r-10"> <a class='btn btn-outline-primary col-12' onclick="GetForm('/UserAccess/EditUser/',  @item.Id,  '#EditUserAccessForm' )"><i class="fa fa-edit" aria-hidden="true"></i> Edit</a></span>
+                            <span> <a class='btn btn-outline-danger col-12' onclick="GetForm('/UserAccess/DeleteUser/', @item.Id, null)"><i class="fa fa-trash" aria-hidden="true"></i> Remove</a></span>
+
+                            @*<div class="dropdown dropdown-action">
+            <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+            <div class="dropdown-menu dropdown-menu-right">
+                <a class="dropdown-item" href="#" onclick="GetForm('/UserAccess/EditUser/',  @item.Id,  '#EditUserAccessForm' )"><i class="fa fa-edit" aria-hidden="true"></i> Edit</a>
+                <a class="dropdown-item" href="#" onclick="GetForm('/UserAccess/DeleteUser/', @item.Id, null)"><i class="fa fa-trash" aria-hidden="true"></i> Remove</a>
+            </div>
+        </div>*@
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+    }
+</div>
+
+
+
+<!-- User Access Modal -->
+<div class="modal custom-modal fade" role="dialog" id="modal">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" id="modalContent">
+        </div>
+    </div>
+</div>
+<!-- /  User Access Modal  -->
+
+
+<!-- BEGIN: Scripts -->
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+
+    @Scripts.Render("~/Content/datatables/js")
+    @Scripts.Render("~/Content/custom/css")
+    <script src="~/Content/assets/js/accesslevel.js"></script>
+}
+<!-- END: Scripts -->

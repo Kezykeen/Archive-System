@@ -1,0 +1,232 @@
+﻿@using archivesystemWebUI.Models.FolderModels
+@using archivesystemDomain.Entities
+@using archivesystemDomain.Services
+@model FolderPageViewModel
+@{
+    ViewBag.Title = $"{Model.Name} Folder";
+    var currentPath = Model.CurrentPath;
+    var currentFolderDepth = currentPath.Count();
+    var subFolderLenght = Model.DirectChildren == null ? 0 : Model.DirectChildren.Count();
+    var headerTitle = Model.Id == 0 ? "Your Search Result" : $"{Model.Name} ";
+    ICollection<archivesystemDomain.Entities.File> Files = Model.Files;
+
+}
+
+@Html.Partial("_FolderPathPartial", Model)
+
+<!-- Page Content -->
+<div class="content container-fluid">
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="file-wrap">
+
+                <!--Folders section-->
+                <div class="file-sidebar">
+
+                    <!--page title-->
+                    <div class="file-header justify-content-center">
+                        <span>@headerTitle </span>
+                        <a href="javascript:void(0);" class="file-side-close"><i class="fa fa-times"></i></a>
+                    </div>
+
+                    <!--folder search section form-->
+                    @using (Html.BeginForm("Index", "Folder", null, FormMethod.Get, new { @class = "file-search" }))
+                    {
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <i class="fa fa-search"></i>
+                            </div>
+                            <input type="text" class="form-control" placeholder="Search for folder"
+                                   name="search" value="" />
+                        </div>
+                    }
+
+                    <!--folder list side bar-->
+                    <div class="file-pro-list">
+                        <div class="file-scroll">
+                            <!--Create new folder button-->
+                            @if (currentFolderDepth < (int)AllowableFolderDepth.Max && (bool)ViewBag.AllowCreateFolder)
+                            {
+                                <div class="btn add-btn float-left" style="margin:1em 0;color:white"
+                                     onclick="getPartialView('@Url.Action("Create", "Folder")', @Model.Id)">
+                                    <i class="fa fa-plus"></i>
+                                    <a href="#" style="color:white"> Add Folder</a>
+                                </div>
+                            }
+                            @if (subFolderLenght > 0)
+                            {
+                                <!--Folders subfolders list-->
+                                <ul class="file-menu" id="FL-folders">
+                                    @foreach (Folder folder in Model.DirectChildren)
+                                    {
+                                    <li>
+                                        <div style="display:block">
+                                            <div style="display:flex;justify-content:space-between;align-items: center;" class="folderlist-folder">
+                                                <i class="far fa-folder" id="subfolder-@folder.Id" onclick="getSubfolders(event)"></i>
+                                                @Html.ActionLink(@folder.Name, $"/{@folder.Id}", "folders")
+
+                                                <a href="" class="dropdown-link" data-toggle="dropdown" style="padding:0;width: 3em;margin:0; display:flex;justify-content:center">
+                                                    <i class="fa fa-ellipsis-v"></i>
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+
+                                                    <a href="#" class="dropdown-item" onclick="getPartialView
+                                                    ('@Url.Action("GetEditFolderPartialView", "Folder")', @folder.Id)">
+                                                        Edit Folder
+                                                    </a>
+                                                    <a href="#" class="dropdown-item" onclick="getPartialView
+                                                    ('@Url.Action("GetDeleteFolderPartialView", "Folder")',@folder.Id)">
+                                                        Delete Folder
+                                                    </a>
+                                                    <a href="#" class="dropdown-item"
+                                                       onclick="CtrlX(@folder.Id, '@folder.Name', 'folder')"> Cut Folder</a>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </li>
+                                    }
+                                </ul>
+
+                            }
+
+                            <!--Back to previous folder button-->
+                            @if (Model.Name != "Root" && Model.Id != 0)
+                            {
+                                <div style="display:block;margin-top:3em" >
+                                    @using (Html.BeginForm($"/{Model.ParentId}", "folders", FormMethod.Post))
+                                    {
+                                        <input hidden name="parentId" value="@Model.ParentId" />
+                                        <button type="submit" style="margin:1em 0;color:white" class="btn btn-primary">Back</button>
+                                    }
+                                </div> 
+                            }
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <!--Files section-->
+                <div class="file-cont-wrap" style="width:100%">
+                    <div class="file-cont-inner">
+                        <div class="file-cont-header">
+                            <div class="file-options">
+                                <a href="javascript:void(0)" id="file_sidebar_toggle" class="file-sidebar-toggle">
+                                    <i class="fa fa-bars"></i>
+                                </a>
+                            </div>
+                            <span>File Manager</span>
+
+                            @{
+                                if (Model.Id != 0)
+                                {
+                                    <div class="file-options">
+                                        <span class="btn-fil"><a href="#" class=" text-dark modal-upload" data-toggle="modal" data-target="@Url.Action("New", "FileMeta", new { folderId = @Model.Id })"><i class="fa fa-upload"></i></a></span>
+                                    </div>
+                                    <div class="file-options">
+                                        @Html.AntiForgeryToken()
+                                        <span class="btn-file"><i class="fa fa-paste" data-FolderId=@Model.Id id="paste-here" onclick="ConfirmMove('@Model.Name',@Model.Id)"></i></span>
+                                    </div>
+
+                                }
+
+                            }
+
+                        </div>
+
+                        <!--File search section-->
+                        <div class="file-content">
+                            <form class = "file-search", id = "FL-filename-search-form" onsubmit="findFile()">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <i class="fa fa-search"></i>
+                                    </div>
+                                    <input type="text" id="FL-filename-search-input" placeholder="Search for Files"
+                                           data-folderId="@Model.Id" class="form-control" onkeypress="findFile()" onblur="findFile()">
+                                </div>
+                            </form>
+                        <!--------------------------->
+
+                            
+                            <div class="file-body">
+                                <div class="file-scroll">
+                                    <div class="file-content-inner" id="FL-files">
+                                        @if (Model.CloseAccessCodeModal == true)
+                                        {
+                                            Html.RenderAction("GetFolderFiles", "Folder", new { folderId = Model.Id });
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Folder Modal -->
+<div class="modal custom-modal fade" role="dialog" id="modal">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" id="modalBody">
+        </div>
+    </div>
+</div>
+<!-- / Folder Modal -->
+
+<!--  Access code Modal -->
+@{
+    if (Model.CloseAccessCodeModal==false)
+    {
+        @Html.Partial("_EnterAccessCode")
+    }
+
+}
+<!-- / Access code Modal -->
+<!-- upload Modal -->
+<div id="new_upload" class="modal custom-modal fade" role="dialog">
+
+</div>
+<!-- / Upload Modal -->
+<!-- edit-upload Modal -->
+<div id="edit_upload" class="modal custom-modal fade" role="dialog">
+
+</div>
+<!-- / edit-Upload Modal -->
+
+@section scripts{
+    <script src="~/Content/assets/js/folderControllerScript.js">
+    </script>
+
+    <script>
+
+        $(".modal-upload").on("click", function (e) {
+            
+            e.preventDefault();
+            var addButton = $(this);
+            $("#new_upload").remove;
+            $.get(addButton.data("target")).done(
+                function (data) {
+
+                    $("#new_upload").html(data);
+
+                    $("#new_upload").modal("show");
+                    $.validator.unobtrusive.parse("#upload");
+                    if ($('#new_upload .select').length > 0) {
+                        $('#new_upload .select').select2({
+                            minimumResultsForSearch: -1,
+                            width: '100%'
+                        });
+
+                    }
+
+                });
+
+
+        });
+    </script>
+}

@@ -1,0 +1,30 @@
+﻿@model archivesystemDomain.Entities.AccessDetail
+
+    <div class="modal-body">
+        @using (Ajax.BeginForm("DeleteUser", "UserAccess", new AjaxOptions
+        {
+            OnSuccess = "OnDeleteUserSuccess",
+            OnFailure = "OnFailure"
+
+
+        }, new { Id = "DeleteUserAccessForm" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="form-header">
+                <input type="hidden" value=@Model.Id id="txtDeleteId" name="Id" />
+                <h3>Delete User</h3>
+                <p>Are you sure Remove User from Access Level?</p>
+            </div>
+            <div class="modal-btn">
+                <div class="row">
+                    <div class="col-6" >
+                        <button href="#" class="btn btn-primary continue-btn btn-block " type="submit">Delete</button>
+
+                    </div>
+                    <div class="col-6">
+                        <button href="#" data-dismiss="modal" class="btn btn-primary cancel-btn btn-block ">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>    

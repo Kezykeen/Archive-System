@@ -1,0 +1,84 @@
+﻿@model archivesystemWebUI.Models.CardsViewModel
+
+
+<div class="row">
+    <div class="col-md-6 d-flex">
+        <div class="card card-table flex-fill">
+            <div class="card-header">
+                <h3 class="card-title mb-0">Users</h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-nowrap custom-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Appusers.Take(5))
+                            {
+                            <tr>
+                                <td><h2 ><a href="@Url.Action("Details", "Users",new {id = item.Id })" style="color: blue;">@item.Name</a></h2></td>
+                                <td>@item.Email</td>
+                                <td><span class="badge bg-inverse-success">@item.Designation</span></td>
+                            </tr>
+                            }
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="@Url.Action("Index", "Users")">View all</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 d-flex">
+        <div class="card card-table flex-fill">
+            <div class="card-header">
+                <h3 class="card-title mb-0">Users With Access</h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table custom-table table-nowrap mb-0">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Level</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.AccessDetails.Take(5))
+                            {
+                            <tr>
+                                <td><h2><a href="@Url.Action("Details", "Users",new {id = item.AppUserId })" style="color: blue;">@item.AppUser.Name</a></h2></td>
+                                <td>@item.AccessLevel.Level</td>
+                                <td class="text-left">
+
+                                    @if (item.Status == archivesystemDomain.Entities.Status.Active)
+                                    {
+                                        <div class="btn btn-rounded btn-sm  border-success"> <i class="fa fa-dot-circle-o text-success"></i> Active</div>
+                                    }
+                                    else
+                                    {
+                                        <span class="btn btn-rounded btn-sm  border-danger"> <i class="fa fa-dot-circle-o text-danger"></i> Inactive</span>
+                                    }
+                                </td>
+                            </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="@Url.Action("ManageUserAccess", "UserAccess")">View all</a>
+            </div>
+        </div>
+    </div>
+</div>
+
